@@ -13,7 +13,7 @@ import SnapKit
 import IQKeyboardManagerSwift
 
 
-class RLViewController: UIViewController {
+public class RLViewController: UIViewController {
 
     var customNavigationBar :SCCustomNavigationBar!
     var backBaseView = UIView()
@@ -28,16 +28,16 @@ class RLViewController: UIViewController {
         }
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.navigationController?.isNavigationBarHidden = true
         self.view.backgroundColor = .white
         setupIQKeyboardManager()
         setNavigationBar()
     }
     
     func setNavigationBar(){
-        customNavigationBar = SCCustomNavigationBar(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: TSNavigationBarHeight + 44))
+        customNavigationBar = SCCustomNavigationBar(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: TSNavigationBarHeight))
         view.addSubview(allStackView)
         allStackView.bindToEdges()
         allStackView.addArrangedSubview(customNavigationBar)
@@ -63,7 +63,10 @@ class RLViewController: UIViewController {
     }
 
     @objc func backAtcion(){
-        self.navigationController?.popViewController(animated: true)
+       // self.navigationController?.popViewController(animated: true)
+        if self.navigationController?.popViewController(animated: true) == nil {
+            self.dismiss(animated: true)
+        }
     }
     
     deinit {

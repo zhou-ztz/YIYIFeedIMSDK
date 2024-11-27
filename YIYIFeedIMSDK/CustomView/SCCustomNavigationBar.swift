@@ -29,18 +29,21 @@ class SCCustomNavigationBar: UIView {
         let stack = UIStackView()
         stack.spacing = 4
         stack.axis = .horizontal
+        stack.alignment = .leading
         return stack
     }()
     lazy var rightStackView: UIStackView = {
         let stack = UIStackView()
-        stack.spacing = 4
+        stack.spacing = 5
         stack.axis = .horizontal
+        stack.alignment = .trailing
+        stack.distribution = .fill
         return stack
     }()
     
     lazy var backItem: UIButton = {
         let item = UIButton()
-        item.setImage(UIImage(named: "iconleftBlack")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        item.setImage(UIImage.set_image(named: "iconsArrowCaretleftBlack")?.withRenderingMode(.alwaysOriginal), for: .normal)
         item.setTitleColor(.black, for: .normal)
         item.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return item
@@ -119,6 +122,8 @@ class SCCustomNavigationBar: UIView {
             leftStackView.addArrangedSubview(item)
             item.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
+                make.height.equalTo(30)
+                make.width.greaterThanOrEqualTo(30)
             }
         }
         
@@ -130,6 +135,8 @@ class SCCustomNavigationBar: UIView {
             rightStackView.addArrangedSubview(item)
             item.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
+                make.height.equalTo(30)
+                make.width.greaterThanOrEqualTo(30)
             }
         }
     }

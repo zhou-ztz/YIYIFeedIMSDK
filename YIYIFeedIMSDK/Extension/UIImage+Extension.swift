@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import CoreServices
+import ObjectiveC
 
 extension UIImage {
     // 默认设置为kUTTypeJPEG
@@ -166,6 +167,27 @@ extension UIImage {
                                               duration: Double(duration) / 1000.0)
         
         return animation
+    }
+    
+    class func set_image(named: String) -> UIImage?{
+        
+        // 获取框架的 Bundle
+        let frameworkBundle = Bundle(identifier: "com.yiyi.feedimsdk")
+
+        if let resourceBundleURL = frameworkBundle?.url(forResource: "SDKResource", withExtension: "bundle"),
+           let resourceBundle = Bundle(url: resourceBundleURL) {
+
+            if let image = UIImage(named: named, in: resourceBundle, compatibleWith: nil) {
+    
+                return image
+            } else {
+                print("Failed to load image from SDKResource.bundle")
+            }
+        } else {
+            print("SDKResource.bundle not found in framework")
+        }
+
+        return nil
     }
 
 }

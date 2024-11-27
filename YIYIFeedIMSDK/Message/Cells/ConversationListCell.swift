@@ -137,7 +137,7 @@ class ConversationListCell: UITableViewCell {
         if let sessions = session.session {
             titleL.text = MessageUtils.getShowName(userId: sessions.sessionId , teamId: sessions.sessionId, session: sessions)
             let url = MessageUtils.getUserAvatar(userId: sessions.sessionId, session: sessions)
-            headImage.sd_setImage(with: URL(string: url ?? ""), placeholderImage: UIImage(named: "defaultProfile"))
+            headImage.sd_setImage(with: URL(string: url ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
         }
         redPiont.text = "\(session.unreadCount)"
         redPiont.isHidden = session.unreadCount == 0 ? true : false
@@ -165,7 +165,7 @@ class ConversationListCell: UITableViewCell {
             }
             contentL.text = nick + "\(session.lastMessage?.text ?? "")"
         default:
-            contentL.text = ""
+            contentL.text = "[未知消息]"
         }
     }
     

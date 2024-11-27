@@ -25,7 +25,7 @@ class OperationCell: UICollectionViewCell {
     
     var model: OperationItem? {
         didSet {
-            imageView.image = UIImage(named: model?.imageName ?? "")
+            imageView.image = UIImage.set_image(named: model?.imageName ?? "")
             label.text = model?.text ?? ""
         }
     }

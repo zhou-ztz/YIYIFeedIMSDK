@@ -18,8 +18,12 @@ public class RLSDKManager: NSObject {
         RLNIMSDKManager.shared.setupNIMSDK()
     }
     
-    public func loginIM(){
-        RLNIMSDKManager.shared.imLogin(with: self.loginParma?.imAccid ?? "", imToken: self.loginParma?.imToken ?? "")
+    public func loginIM(success: @escaping ()->Void, failure: @escaping ()->Void){
+        RLNIMSDKManager.shared.imLogin(with: self.loginParma?.imAccid ?? "", imToken: self.loginParma?.imToken ?? "") {
+            success()
+        } failure: {
+            failure()
+        }
     }
 
 }

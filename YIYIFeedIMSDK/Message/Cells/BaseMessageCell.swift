@@ -18,11 +18,16 @@ class BaseMessageCell: UITableViewCell {
     weak var delegate: BaseMessageCellDelegate?
     
     var contentModel: RLMessageData?
-    let defaultSenderImage = UIImage(named: "chat_message_send")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
-    let defaultReceiverImage = UIImage(named: "chat_message_receive")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
+    let defaultSenderImage = UIImage.set_image(named: "senderMessage")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
+    let defaultReceiverImage = UIImage.set_image(named: "receiverMessage")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
     
-    let unreadImage = UIImage(named: "chat_unread_all")
-    let readImage = UIImage(named: "chat_read_all")
+    let senderRedPacket = UIImage.set_image(named: "pink_bubble_right")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
+    let receiverRedPacket = UIImage.set_image(named: "pink_bubble_left")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
+    
+    let urlPattern = "<{0,1}(((https|http)?://)?([a-z0-9_-]+[.])|(www.))" + "\\w+[.|\\/]([a-z0-9\\-]{0,})?[[.]([a-z0-9\\-]{0,})]+((/[\\S&&[^,;\\u4E00-\\u9FA5]]+)+)?([.][a-z0-9\\-]{0,}+|/?)>{0,1}"
+    
+    let unreadImage = UIImage.set_image(named: "unreadTick")
+    let readImage = UIImage.set_image(named: "readTick")
     
     lazy var bubbleImage: UIImageView = {
         let imageView = UIImageView()
@@ -45,11 +50,28 @@ class BaseMessageCell: UITableViewCell {
     //发送失败
     lazy var failImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "sendMessage_failed")
+        imageView.image = UIImage.set_image(named: "icMessageError")
         imageView.contentMode = .scaleAspectFit
         imageView.isHidden = true
         //imageView.backgroundColor = .lightGray
         return imageView
+    }()
+    
+    lazy var pinendImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.set_image(named: "MdOutlinePushPin")
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    lazy var timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 9)
+        label.textColor = UIColor(hex: "#808080")
+        label.text = "00:00"
+        label.isHidden = false
+        return label
     }()
     
     lazy var wholeContentStackView: UIStackView = {
@@ -78,12 +100,21 @@ class BaseMessageCell: UITableViewCell {
     }()
     lazy var avatarHeaderView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "defaultProfile")
+        imageView.image = UIImage.set_image(named: "defaultProfile")
         imageView.contentMode = .scaleAspectFit
         imageView.isHidden = false
         imageView.layer.cornerRadius = 20
         imageView.clipsToBounds = true
         return imageView
+    }()
+    
+    lazy var timeTickStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.distribution = .fill
+        stackView.alignment = .bottom
+        return stackView
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -97,8 +128,8 @@ class BaseMessageCell: UITableViewCell {
     }
 
     func setUI(){
+        
         self.contentView.addSubview(wholeContentStackView)
-        self.contentView.addSubview(tickImage)
         self.contentView.addSubview(failImage)
         wholeContentStackView.addArrangedSubview(avatarHeaderView)
         wholeContentStackView.addArrangedSubview(allContentStackView)
@@ -107,12 +138,20 @@ class BaseMessageCell: UITableViewCell {
         allContentStackView.addArrangedSubview(bubbleView)
         bubbleView.addSubview(bubbleImage)
         bubbleImage.bindToEdges()
+        
+        timeTickStackView.addArrangedSubview(timeLabel)
+        timeTickStackView.addArrangedSubview(pinendImage)
+        timeTickStackView.addArrangedSubview(tickImage)
+        
         setupLongPressGesture()
         bubbleView.addAction { [weak self] in
             self?.delegate?.tapItemMessage(cell: self, model: self?.contentModel)
         }
         avatarHeaderView.addAction { [weak self] in
             self?.delegate?.tapUserAvatar(cell: self, model: self?.contentModel)
+        }
+        failImage.addAction {
+            
         }
     }
     
@@ -122,7 +161,8 @@ class BaseMessageCell: UITableViewCell {
         
         nicknameLabel.isHidden = !(model.showName ?? false)
         wholeContentStackView.removeAllArrangedSubviews()
-        let isleft = messageModel.isReceivedMsg 
+        
+        let isleft = messageModel.isReceivedMsg
         if isleft {
             wholeContentStackView.addArrangedSubview(avatarHeaderView)
             wholeContentStackView.addArrangedSubview(allContentStackView)
@@ -132,9 +172,17 @@ class BaseMessageCell: UITableViewCell {
             wholeContentStackView.addArrangedSubview(avatarHeaderView)
             allContentStackView.alignment = .trailing
         }
+        avatarHeaderView.isHidden = isleft ? false : true
         bubbleImage.image = isleft ? defaultReceiverImage : defaultSenderImage
         tickImage.isHidden = true
         failImage.isHidden = true
+        pinendImage.isHidden = true
+        tickImage.snp.makeConstraints { make in
+            make.height.width.equalTo(15)
+        }
+        pinendImage.snp.makeConstraints { make in
+            make.height.width.equalTo(15)
+        }
         if isleft {
             wholeContentStackView.snp.remakeConstraints { make in
                 make.left.equalTo(8)
@@ -164,11 +212,7 @@ class BaseMessageCell: UITableViewCell {
             allContentStackView.snp.remakeConstraints { make in
                 make.top.equalToSuperview()
             }
-            tickImage.snp.remakeConstraints { make in
-                make.bottom.equalToSuperview().inset(9)
-                make.height.width.equalTo(14)
-                make.right.equalTo(wholeContentStackView.snp.left).offset(-5)
-            }
+            
             
             failImage.snp.remakeConstraints { make in
                 make.centerY.equalTo(bubbleView.snp.centerY)
@@ -188,7 +232,12 @@ class BaseMessageCell: UITableViewCell {
             }
         }
         
+        if let sessions = model.nimMessageModel?.session {
+            let url = MessageUtils.getUserAvatar(userId: sessions.sessionId, session: sessions)
+            avatarHeaderView.sd_setImage(with: URL(string: url ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
+        }
         
+        timeLabel.text = messageModel.timestamp.messageTimeString()
         
     }
     
@@ -206,3 +255,15 @@ class BaseMessageCell: UITableViewCell {
     }
 
 }
+
+extension TimeInterval {
+    func messageTimeString() -> String {
+        let date = Date(timeIntervalSince1970: self)
+        let df = DateFormatter()
+        //df.dateFormat = "MM-dd HH:mm"
+        df.dateFormat = "hh:mm a"
+        return df.string(from: date)
+
+    }
+}
+

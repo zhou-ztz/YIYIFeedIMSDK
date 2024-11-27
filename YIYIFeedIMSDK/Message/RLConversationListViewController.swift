@@ -8,7 +8,7 @@
 import UIKit
 import NIMSDK
 
-class RLConversationListViewController: RLViewController, ConversationListCellDelegate {
+public class RLConversationListViewController: RLViewController, ConversationListCellDelegate {
 
     lazy var stackView: UIStackView = {
         let stack = UIStackView()
@@ -40,30 +40,22 @@ class RLConversationListViewController: RLViewController, ConversationListCellDe
         return ad
     }()
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         viewmodel.delegate = self
-        view.addSubview(stackView)
+        backBaseView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        stackView.addArrangedSubview(advertisement)
+        customNavigationBar.backItem.isHidden = true
         stackView.addArrangedSubview(tableView)
-        advertisement.snp.makeConstraints { make in
-            make.left.equalTo(15)
-            make.top.equalToSuperview()
-            make.height.equalTo(80)
-            make.width.equalTo(ScreenWidth - 30)
-        }
-        
         tableView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
         }
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewmodel.getConversationList { [weak self] _ in
             self?.tableView.reloadData()
@@ -111,10 +103,10 @@ class RLConversationListViewController: RLViewController, ConversationListCellDe
 
 extension RLConversationListViewController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewmodel.conversationList.count
     }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ConversationListCell.cellIdentifier, for: indexPath) as! ConversationListCell
         
         cell.selectionStyle = .none
@@ -123,7 +115,7 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let session = viewmodel.conversationList[indexPath.row].session {
             let vc = RLBaseChatViewController(session: session, unreadCount: 0)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -134,23 +126,23 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
 
 // MARK: ConversationViewModelDelegate
 extension RLConversationListViewController: ConversationViewModelDelegate {
-    func didRemoveRecentSession(index: Int) {
+    public func didRemoveRecentSession(index: Int) {
         let indexPath = IndexPath(row: index, section: 0)
         self.tableView.deleteRows(at: [indexPath], with: .none)
     }
     
-    func didAddRecentSession() {
+    public func didAddRecentSession() {
         viewmodel.getConversationList { [weak self] _ in
             self?.tableView.reloadData()
         }
     }
     
-    func didUpdateRecentSession(index: Int) {
+    public func didUpdateRecentSession(index: Int) {
         let indexPath = IndexPath(row: index, section: 0)
         tableView.reloadRows(at: [indexPath], with: .none)
     }
     
-    func reloadData() {
+    public func reloadData() {
         viewmodel.getConversationList { [weak self] _ in
             self?.tableView.reloadData()
         }

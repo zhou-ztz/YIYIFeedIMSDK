@@ -44,7 +44,7 @@ class ChatRecordView: UIView, UIGestureRecognizerDelegate {
         }
         
         recordImageView.translatesAutoresizingMaskIntoConstraints = false
-        recordImageView.image = UIImage(named: "chat_record")
+        recordImageView.image = UIImage.set_image(named: "chat_record")
         recordImageView.contentMode = .center
         addSubview(recordImageView)
         recordImageView.snp.makeConstraints { make in
@@ -53,9 +53,9 @@ class ChatRecordView: UIView, UIGestureRecognizerDelegate {
             make.centerX.equalToSuperview()
         }
         
-        if let image1 = UIImage(named: "record_4"),
-           let image2 = UIImage(named: "record_3"),
-           let image3 = UIImage(named: "record_2") {
+        if let image1 = UIImage.set_image(named: "record_4"),
+           let image2 = UIImage.set_image(named: "record_3"),
+           let image3 = UIImage.set_image(named: "record_2") {
             recordImageView.animationImages = [image1, image2, image3]
         }
         recordImageView.animationDuration = 0.8

@@ -33,7 +33,7 @@ class LocationMessageCell: BaseMessageCell {
     
     lazy var piontImage: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "ic_location")
+        view.image = UIImage.set_image(named: "ic_location")
         view.contentMode = .scaleAspectFit
         return view
     }()

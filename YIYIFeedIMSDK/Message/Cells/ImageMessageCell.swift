@@ -20,7 +20,7 @@ class ImageMessageCell: BaseMessageCell {
     }()
     lazy var playImage: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "ic_feed_video_icon")
+        view.image = UIImage.set_image(named: "ic_feed_video_icon")
         view.isHidden = true
         return view
     }()
@@ -157,13 +157,13 @@ class ImageMessageCell: BaseMessageCell {
 //                self.playImage.isHidden = false
 //            }
 //            
-//            imageView.sd_setImage(with: URL(string: url), placeholderImage: placeholderImage == nil ? UIImage(named: "IMG_icon") : UIImage(contentsOfFile: placeholderImage!))
+//            imageView.sd_setImage(with: URL(string: url), placeholderImage: placeholderImage == nil ? UIImage.set_image(named: "IMG_icon") : UIImage(contentsOfFile: placeholderImage!))
 //        }
         if isVideo  {
             self.playImage.isHidden = false
         }
         
-        imageView.sd_setImage(with: URL(string: url), placeholderImage: placeholderImage == nil ? UIImage(named: "IMG_icon") : UIImage(contentsOfFile: placeholderImage!))
+        imageView.sd_setImage(with: URL(string: url), placeholderImage: placeholderImage == nil ? UIImage.set_image(named: "IMG_icon") : UIImage(contentsOfFile: placeholderImage!))
     }
 
 }

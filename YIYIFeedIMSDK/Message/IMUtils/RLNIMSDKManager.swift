@@ -8,6 +8,8 @@
 import UIKit
 import NIMSDK
 
+let NIMAppKey: String = "43cf17ab859f4c669349fd68e363d6db"
+
 class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     
     public static let shared = RLNIMSDKManager()
@@ -25,17 +27,10 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         NIMSDKConfig.shared().shouldCountTeamNotification = true
         NIMSDKConfig.shared().maxAutoLoginRetryTimes = 3
         
-        #if DEBUG
-        let appKey = "a64fb0d3c5d98a0f5af8532e8c255eb7"
         let apnsCername = ""
         let pkCername = ""
-        #else
-        let appKey  = "a64fb0d3c5d98a0f5af8532e8c255eb7"
-        let apnsCername = ""
-        let pkCername = ""
-        #endif
         
-        let option = NIMSDKOption(appKey: appKey)
+        let option = NIMSDKOption(appKey: NIMAppKey)
         option.apnsCername = apnsCername
         option.pkCername = pkCername
         /// 使用 v2 版本
@@ -60,12 +55,14 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
 
     }
     
-    public func imLogin(with accid: String, imToken: String){
+    public func imLogin(with accid: String, imToken: String, success: @escaping ()->Void, failure: @escaping ()->Void){
 
         NIMSDK.shared().v2LoginService.login(accid, token: imToken, option: nil) {
             print("im login success")
+            success()
         } failure: { error in
             print("im login fail = \(error.detail), code = \(error.code)")
+            failure()
         }
 
     }

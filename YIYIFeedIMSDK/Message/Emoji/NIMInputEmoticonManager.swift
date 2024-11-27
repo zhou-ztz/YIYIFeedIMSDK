@@ -260,7 +260,7 @@ extension UIImage {
         guard let imageName = name else {
             return nil
         }
-        return UIImage(named: imageName)
+        return UIImage.set_image(named: imageName)
     }
     
     class func ne_bundleImage(name: String) -> UIImage {

@@ -178,5 +178,9 @@ class MessageUtils: NSObject {
         }
         return text
     }
+    
+    class func mediaItems() -> [MediaItem] {
+        return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+    }
 
 }

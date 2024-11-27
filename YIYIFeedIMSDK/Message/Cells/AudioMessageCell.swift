@@ -13,7 +13,7 @@ class AudioMessageCell: BaseMessageCell {
     var messageId: String?
     var isPlaying: Bool = false
 
-    var audioImageViewLeft = UIImageView(image: UIImage(named: "left_audio_3"))
+    var audioImageViewLeft = UIImageView(image: UIImage.set_image(named: "left_audio_3"))
     var timeLabelLeft: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
@@ -23,7 +23,7 @@ class AudioMessageCell: BaseMessageCell {
         return label
     }()
 
-    var audioImageViewRight = UIImageView(image: UIImage(named: "right_audio_3"))
+    var audioImageViewRight = UIImageView(image: UIImage.set_image(named: "right_audio_3"))
     var timeLabelRight: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
@@ -49,15 +49,15 @@ class AudioMessageCell: BaseMessageCell {
         bubbleImage.addSubview(timeLabelRight)
         audioImageViewRight.animationDuration = 1
         audioImageViewLeft.animationDuration = 1
-        if let image1 = UIImage(named: "left_audio_1"),
-           let image2 = UIImage(named: "left_audio_2"),
-           let image3 = UIImage(named: "left_audio_3") {
+        if let image1 = UIImage.set_image(named: "left_audio_1"),
+           let image2 = UIImage.set_image(named: "left_audio_2"),
+           let image3 = UIImage.set_image(named: "left_audio_3") {
           audioImageViewLeft.animationImages = [image1, image2, image3]
         }
         
-        if let image1 = UIImage(named: "right_audio_1"),
-           let image2 = UIImage(named: "right_audio_2"),
-           let image3 = UIImage(named: "right_audio_3") {
+        if let image1 = UIImage.set_image(named: "right_audio_1"),
+           let image2 = UIImage.set_image(named: "right_audio_2"),
+           let image3 = UIImage.set_image(named: "right_audio_3") {
           audioImageViewRight.animationImages = [image1, image2, image3]
         }
         self.bubbleImage.layoutIfNeeded()

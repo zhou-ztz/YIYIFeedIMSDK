@@ -8,7 +8,7 @@
 import UIKit
 
 class InputMoreCell: UICollectionViewCell {
-    var cellData: NEMoreItemModel?
+    var cellData: MediaItem?
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -19,14 +19,20 @@ class InputMoreCell: UICollectionViewCell {
     }
     
     func setupViews() {
-        contentView.addSubview(avatarImage)
+        contentView.addSubview(bgView)
+        bgView.addSubview(avatarImage)
         contentView.addSubview(titleLabel)
+        bgView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(12)
+            make.centerX.equalToSuperview()
+            make.height.width.equalTo(50)
+        }
         avatarImage.snp.makeConstraints { make in
-            make.left.right.top.equalToSuperview()
-            make.height.width.equalTo(56)
+            make.center.equalToSuperview()
+           
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(avatarImage.snp.bottom).offset(6)
+            make.top.equalTo(bgView.snp.bottom).offset(6)
             make.left.right.equalToSuperview()
         }
     }
@@ -34,6 +40,7 @@ class InputMoreCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -46,9 +53,26 @@ class InputMoreCell: UICollectionViewCell {
         return title
     }()
     
-    func config(_ itemModel: NEMoreItemModel) {
+    
+    lazy var bgView: UIView = {
+        let view = UIView()
+        view.backgroundColor = RLColor.share.backGroundGray
+        view.layer.cornerRadius = 6
+        view.clipsToBounds = true
+        return view
+    }()
+    func config(_ itemModel: MediaItem?) {
         cellData = itemModel
-        avatarImage.image = itemModel.image
-        titleLabel.text = itemModel.title
+        if  let model = itemModel {
+            avatarImage.image = model.info.icon
+            titleLabel.text = model.info.title
+            bgView.isHidden = false
+        } else {
+            bgView.isHidden = true
+            avatarImage.image = nil
+            titleLabel.text = ""
+        }
+        
+        
     }
 }

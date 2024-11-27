@@ -10,13 +10,13 @@ import NIMSDK
 
 /// 屏幕间隔
 public let kScreenInterval: CGFloat = 20
-public let NEMoreView_Section_Padding: CGFloat = 24.0
+public let NEMoreView_Section_Padding: CGFloat = 20.0
 
 // 更多操作view
 public let NEMoreCell_ReuseId: String = "InputMoreCell"
-public let NEMoreCell_Image_Size: CGSize = .init(width: 56.0, height: 56.0)
+public let NEMoreCell_Image_Size: CGSize = .init(width: 80.0, height: 90.0)
 public let NEMoreCell_Title_Height: CGFloat = 20.0
-public let NEMoreView_Margin: CGFloat = 16.0
+public let NEMoreView_Margin: CGFloat = 12.0
 public let NEMoreView_Column_Count: Int = 4
 
 protocol ChatMoreViewDelegate: NSObjectProtocol {
@@ -32,7 +32,7 @@ class ChatMoreActionView: UIView {
     // 流水布局
     public var moreFlowLayout: UICollectionViewFlowLayout?
     
-    private var data: [NEMoreItemModel]?
+    private var data: [MediaItem]?
     
     private var itemIndexs: [IndexPath: NSNumber]?
     
@@ -48,7 +48,7 @@ class ChatMoreActionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configData(data: [NEMoreItemModel]) {
+    func configData(data: [MediaItem]) {
         self.data = data
         rowCount = (data.count > NEMoreView_Column_Count) ? 2 : 1
         itemsInSection = NEMoreView_Column_Count * rowCount
@@ -69,7 +69,7 @@ class ChatMoreActionView: UIView {
     }
     
     func setupConstraints() {
-        let cellSize = CGSize(width: 56, height: 80)
+        let cellSize = NEMoreCell_Image_Size
         let collectionHeight = cellSize.height * CGFloat(rowCount) + NEMoreView_Margin * CGFloat(rowCount - 1)
         
         // 设置collectionview frame
@@ -87,11 +87,9 @@ class ChatMoreActionView: UIView {
     }
     
     // MARK: 懒加载方法
-    
     lazy var collcetionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        //        layout.itemSize = CGSize(width: 56, height: 80)
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         layout.sectionInset = UIEdgeInsets(top: 0, left: NEMoreView_Margin, bottom: 0, right: NEMoreView_Margin)
@@ -126,16 +124,16 @@ extension ChatMoreActionView: UICollectionViewDataSource, UICollectionViewDelega
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: NEMoreCell_ReuseId,
             for: indexPath
-        ) as? InputMoreCell
+        ) as! InputMoreCell
         
-        var itemModel: NEMoreItemModel?
+        var itemModel: MediaItem?
         
         guard let index = itemIndexs?[indexPath] else {
             return UICollectionViewCell()
         }
         
         guard let cellData = data else {
-            return UICollectionViewCell()
+            return cell
         }
         
         if index.intValue >= cellData.count {
@@ -143,8 +141,8 @@ extension ChatMoreActionView: UICollectionViewDataSource, UICollectionViewDelega
         } else {
             itemModel = cellData[index.intValue]
         }
-        cell?.config(itemModel ?? NEMoreItemModel())
-        return cell ?? UICollectionViewCell()
+        cell.config(itemModel)
+        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -154,31 +152,8 @@ extension ChatMoreActionView: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 56, height: 80)
+        return NEMoreCell_Image_Size
     }
-}
-enum NEMoreActionType: Int {
-    case takePicture = 1
-    case location
-    case file
-    case rtc
 }
 
-class NEMoreItemModel: NSObject {
-    // 单元图标
-    var image: UIImage?
-    
-    // 单元名称
-    var title: String?
-    
-    // 对应的单元类型
-    var type: NEMoreActionType?
-    
-    init(image: UIImage? = nil, title: String? = nil, type: NEMoreActionType? = nil) {
-        self.image = image
-        self.title = title
-        self.type = type
-    }
-    
-}
 

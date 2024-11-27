@@ -228,8 +228,8 @@ extension UIView {
     /// 获取付费占位图
     func getPayLockedImage() -> UIImage? {
         let isSquare = frame.width == frame.height
-        let lockImage = UIImage(named: "IMG_ico_lock")!
-        let backImage = UIImage(named: isSquare ? "IMG_pic_locked_square_bg" : "IMG_pic_locked_bg")!
+        let lockImage = UIImage.set_image(named: "IMG_ico_lock")!
+        let backImage = UIImage.set_image(named: isSquare ? "IMG_pic_locked_square_bg" : "IMG_pic_locked_bg")!
 
         let scale = UIScreen.main.scale
         let size = CGSize(width: frame.width * scale, height: frame.height * scale)

@@ -39,8 +39,8 @@ class RLBaseChatViewController: RLViewController {
     }()
     
     let chatInputView = BaseChatInputView(frame: .zero)
-    var bottomExanpndHeight: CGFloat = 204 // 底部展开高度
-    var normalInputHeight: CGFloat = 100
+    var bottomExanpndHeight: CGFloat = 204 + TSBottomSafeAreaHeight // 底部展开高度
+    var normalInputHeight: CGFloat = 50.0
     //记录播放语音的cell
     private var playingCell: AudioMessageCell?
     private var playingModel: RLMessageData?
@@ -49,6 +49,24 @@ class RLBaseChatViewController: RLViewController {
 
     var operationView: MessageOperationView?
     var replyView = ReplyView()
+ 
+    lazy var enterInfoBtn: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        button.setImage(UIImage.set_image(named: "more")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(UIImage.set_image(named: "more")?.withRenderingMode(.alwaysOriginal), for: .highlighted)
+        button.tintColor = UIColor(hex: 0x808080)
+        button.addTarget(self, action: #selector(enterPersonInfoCard), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var videoCallBtn: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        button.setImage(UIImage.set_image(named: "ic_call_plus")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(UIImage.set_image(named: "ic_call_plus")?.withRenderingMode(.alwaysOriginal), for: .highlighted)
+        button.tintColor = UIColor(hex: 0x808080)
+        button.addTarget(self, action: #selector(callActionSheet), for: .touchUpInside)
+        return button
+    }()
   
     init(session: NIMSession, unreadCount: Int = 0) {
         self.session = session
@@ -95,7 +113,7 @@ class RLBaseChatViewController: RLViewController {
         backBaseView.addSubview(tableView)
         backBaseView.addSubview(chatInputView)
         chatInputView.delegate = self
-        tableView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: ScreenHeight - chatInputView.menuHeight - TSNavigationBarHeight)
+        tableView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: ScreenHeight - chatInputView.menuHeight - TSNavigationBarHeight - TSBottomSafeAreaHeight)
         tableView.register(TextMessageCell.self, forCellReuseIdentifier: "TextMessageCell")
         tableView.register(ImageMessageCell.self, forCellReuseIdentifier: "ImageMessageCell")
         tableView.register(TipMessageCell.self, forCellReuseIdentifier: "TipMessageCell")
@@ -103,15 +121,11 @@ class RLBaseChatViewController: RLViewController {
         tableView.register(FileMessageCell.self, forCellReuseIdentifier: "FileMessageCell")
         tableView.register(LocationMessageCell.self, forCellReuseIdentifier: "LocationMessageCell")
         tableView.register(ReplyMessageCell.self, forCellReuseIdentifier: "ReplyMessageCell")
-        
-        chatInputView.frame = CGRect(x: 0, y: ScreenHeight - chatInputView.menuHeight - TSNavigationBarHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
+        chatInputView.frame = CGRect(x: 0, y: ScreenHeight - chatInputView.menuHeight - TSNavigationBarHeight - TSBottomSafeAreaHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
         
         self.customNavigationBar.title = viewmodel.getShowName(userId: session.sessionId, teamId: nil)
-        
-        let barItem = UIButton()
-        barItem.setImage(UIImage(named: "buttonsMoreDotBlack")?.withRenderingMode(.alwaysOriginal), for: .normal)
-        barItem.addTarget(self, action: #selector(settingAcion), for: .touchUpInside)
-        customNavigationBar.setRightViews(views: [barItem])
+
+        customNavigationBar.setRightViews(views: [videoCallBtn, enterInfoBtn])
     }
     
     func loadData() {
@@ -140,9 +154,51 @@ class RLBaseChatViewController: RLViewController {
         }
     }
     
-    @objc func settingAcion(){
-//        let vc = ChatSettingViewController()
-//        self.navigationController?.pushViewController(vc, animated: true)
+    @objc func enterPersonInfoCard(){
+        
+    }
+    
+    @objc func callActionSheet(){
+        self.layoutInputView(offset: TSBottomSafeAreaHeight)
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let voiceImage = UIImage.set_image(named: "voiceCallTop")
+        let videoImage = UIImage.set_image(named: "videoCallTop")
+        let videoCall = UIAlertAction(title: "msg_type_video_call".localized, style: .default, handler: nil)
+        videoCall.setValue(videoImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
+        switch self.session.sessionType {
+        case .team:
+            let videoCall = UIAlertAction(title: "msg_type_video_call".localized, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                
+            })
+            videoCall.setValue(videoImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
+            actionSheet.addAction(videoCall)
+            break
+        case .P2P:
+            let voiceCall = UIAlertAction(title: "msg_type_voice_call".localized, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                let vc = RLAudioCallController(callee: self.session.sessionId)
+                self.navigationController?.pushViewController(vc, animated: true)
+            })
+            voiceCall.setValue(voiceImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
+
+            let videoImage = UIImage.set_image(named: "videoCallTop")
+            let videoCall = UIAlertAction(title: "msg_type_video_call".localized, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                let vc = RLVideoCallViewController(callee: self.session.sessionId)
+                self.navigationController?.pushViewController(vc, animated: true)
+            })
+            videoCall.setValue(videoImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
+            
+            actionSheet.addAction(voiceCall)
+            actionSheet.addAction(videoCall)
+            break
+        default:
+            break
+        }
+        
+        actionSheet.addAction(UIAlertAction(title: "cancel".localized, style: .cancel, handler: nil))
+        self.present(actionSheet, animated: true, completion: nil)
     }
     
     deinit {
@@ -184,7 +240,7 @@ class RLBaseChatViewController: RLViewController {
             return
         }
         chatInputView.currentButton?.isSelected = false
-        layoutInputView(offset: 0)
+        layoutInputView(offset: TSBottomSafeAreaHeight)
     }
     
     private func scrollTableViewToBottom() {
@@ -202,16 +258,16 @@ class RLBaseChatViewController: RLViewController {
     func layoutInputView(offset: CGFloat) {
         print("layoutInputView offset : ", offset)
         operationView?.removeFromSuperview()
-        if offset == 0 {
+        if offset == TSBottomSafeAreaHeight {
             removeGesture()
-            chatInputView.contentSubView.isHidden = true
-            chatInputView.currentButton?.isSelected = false
+            chatInputView.keyboardDismiss()
+            
         }else{
             addGesture()
         }
         UIView.animate(withDuration: 0.15, animations: {
             
-            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: offset, right: 0)
+            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: offset - TSBottomSafeAreaHeight, right: 0)
             self.tableView.contentInset = contentInsets
             self.tableView.scrollIndicatorInsets = contentInsets
             var frame = self.chatInputView.frame
@@ -242,7 +298,7 @@ class RLBaseChatViewController: RLViewController {
     @objc func dismissInputView(){
         operationView?.removeFromSuperview()
         chatInputView.textView.resignFirstResponder()
-        layoutInputView(offset: 0)
+        layoutInputView(offset: TSBottomSafeAreaHeight)
     }
     // MARK: inputview action
     // 打开相册
@@ -266,8 +322,8 @@ class RLBaseChatViewController: RLViewController {
     }
     //打开文件
     func openFile(){
-        SendFileManager.shared.presentView(owner: self)
-        SendFileManager.shared.completion = {[weak self] urls in
+        RLSendFileManager.shared.presentView(owner: self)
+        RLSendFileManager.shared.completion = {[weak self] urls in
             guard let url = urls.first else { return }
             NSFileCoordinator().coordinate(readingItemAt: url, options: .withoutChanges, error: nil) { newUrl in
                 let displayName = newUrl.lastPathComponent
@@ -739,19 +795,36 @@ extension RLBaseChatViewController: UITableViewDelegate, UITableViewDataSource {
 //    MARK: ChatInputViewDelegate
 extension RLBaseChatViewController: ChatInputViewDelegate {
     func didSelectMoreCell(cell: InputMoreCell) {
-        guard let type = cell.cellData?.type else {
+        guard let item = cell.cellData else {
             return
         }
-        switch type {
-        case .takePicture:
-            openCamera()
+        switch item {
+        case .album:
+            openPhotoLibrary()
         case .file:
             openFile()
-        case .location:
+        case .sendLocation:
             openLocation()
-        case .rtc:
+        case .sendCard:
             break
-           // self.showTips(message: "暂无该功能")
+        case .camera:
+            openCamera()
+        case .redpacket:
+            break
+        case .videoCall:
+            break
+        case .voiceCall:
+            break
+        case .whiteBoard:
+            break
+        case .voiceToText:
+            break
+        case .rps:
+            break
+        case .collectMessage:
+            break
+        default:
+            break
         }
     }
     
@@ -782,18 +855,11 @@ extension RLBaseChatViewController: ChatInputViewDelegate {
         
     }
     
-    func willSelectItem(button: UIButton?, index: Int) {
-        if index == 2 {
-            openPhotoLibrary()
-        }else {
-            guard let btn = button else {
-                return
-            }
-            if btn.isSelected {
-                self.layoutInputView(offset: self.bottomExanpndHeight)
-            }else{
-                self.layoutInputView(offset: 0)
-            }
+    func willSelectItem(show: Bool) {
+        if show {
+            self.layoutInputView(offset: self.bottomExanpndHeight)
+        }else{
+            self.layoutInputView(offset: TSBottomSafeAreaHeight)
         }
     }
     
@@ -851,7 +917,9 @@ extension RLBaseChatViewController: ChatViewModelDelegate{
     }
     
     func willSend(_ message: NIMMessage) {
-        
+        if message.session != session { return }
+        self.tableView.reloadData()
+        self.scrollTableViewToBottom()
     }
     
     func send(_ message: NIMMessage, didCompleteWithError error: Error?) {

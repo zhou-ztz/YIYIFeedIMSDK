@@ -15,7 +15,7 @@ class ReplyView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = UIColor(hex: "#EFF1F2")
-        closeButton.setImage(UIImage(named: "close"), for: .normal)
+        closeButton.setImage(UIImage.set_image(named: "close"), for: .normal)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         addSubview(closeButton)
         

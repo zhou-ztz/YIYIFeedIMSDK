@@ -75,7 +75,7 @@ class MapViewSearchView: UIView, UITextFieldDelegate {
         searchBtn.layer.cornerRadius = 4
         searchBtn.clipsToBounds = true
         searchBtn.backgroundColor = .clear
-        searchBtn.setImage(UIImage(named: "iconsSearchGrey"), for: .normal)
+        searchBtn.setImage(UIImage.set_image(named: "iconsSearchGrey"), for: .normal)
         searchBtn.frame = CGRect(x: 10, y: 0, width: 30, height: 30)
         let leView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
         leView.addSubview(searchBtn)

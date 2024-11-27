@@ -11,11 +11,16 @@ class TextMessageCell: BaseMessageCell {
     
     lazy var contentLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = RLColor.share.black3
         label.text = "未知消息类型"
         label.numberOfLines = 0
         return label
+    }()
+    
+    lazy var textView: UIView = {
+        let view = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 30, height: 30)))
+        return view
     }()
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -27,21 +32,71 @@ class TextMessageCell: BaseMessageCell {
     }
     
     func setupUI() {
-        self.bubbleImage.addSubview(contentLabel)
-        contentLabel.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(6)
-            make.top.bottom.equalToSuperview().inset(7)
-        }
+        self.bubbleImage.addSubview(textView)
+        self.textView.addSubview(contentLabel)
+        self.textView.addSubview(timeTickStackView)
     }
     
     override func setData(model: RLMessageData) {
         super.setData(model: model)
+        let showLeft = model.nimMessageModel?.isReceivedMsg ?? false
         let attribute = NEEmotionTool.getAttWithStr(
           str: model.nimMessageModel?.text ?? "",
-          font: UIFont.systemFont(ofSize: 15),
+          font: UIFont.systemFont(ofSize: 14),
           CGPoint(x: 0, y: -4)
         )
         contentLabel.attributedText = attribute
+       
+        let atSide = !self.timeShowAtBottom(messageModel: model)
         
+        timeTickStackView.snp.remakeConstraints { make in
+            if atSide {
+                make.top.right.bottom.equalToSuperview()
+            } else {
+                make.bottom.right.equalToSuperview()
+            }
+        }
+        contentLabel.snp.remakeConstraints { make in
+            if atSide {
+                make.bottom.left.equalToSuperview()
+                make.top.equalToSuperview().offset(0)
+                make.right.equalTo(timeTickStackView.snp.left).offset(-8)
+            } else {
+                make.top.left.right.equalToSuperview()
+                make.bottom.equalTo(timeTickStackView.snp.top)
+            }
+            make.height.greaterThanOrEqualTo(20)
+        }
+        
+        textView.snp.remakeConstraints { make in
+            make.top.equalToSuperview().offset(8)
+            make.bottom.equalToSuperview().offset(-8)
+            make.left.equalToSuperview().offset(showLeft ? 10:10)
+            make.right.equalToSuperview().offset(showLeft ? -10:-10)
+        }
+        
+        timeTickStackView.alignment = .fill
+        timeTickStackView.layoutIfNeeded()
+        contentLabel.layoutIfNeeded()
+        textView.layoutIfNeeded()
+        self.layoutIfNeeded()
+        
+    }
+    
+    private func timeShowAtBottom(messageModel: RLMessageData) -> Bool {
+        let tempContentLabel = contentLabel
+        let tempTimeLabel = timeLabel
+        tempTimeLabel.text = messageModel.messageTime.messageTimeString()
+        var atBottom = false
+        let maxSize = CGSize(width: ScreenWidth - 140, height: CGFloat(Float.infinity))
+        let contentLabelSize = tempContentLabel.sizeThatFits(maxSize)
+        let timeLabelSize = tempTimeLabel.sizeThatFits(maxSize)
+        let newLine = tempContentLabel.text!.contains("\n")
+        print("-----=\(contentLabelSize.width + timeLabelSize.width + 30)")
+        print("-----=\(ScreenWidth - 170)")
+        if (contentLabelSize.width + timeLabelSize.width + 30 > ScreenWidth - 150 || newLine) || (contentLabelSize.height > 30 || newLine)  {
+            atBottom = true
+        }
+        return atBottom
     }
 }

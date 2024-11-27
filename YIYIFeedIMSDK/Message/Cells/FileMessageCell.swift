@@ -16,7 +16,7 @@ class FileMessageCell: BaseMessageCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = RLColor.share.black3
-        label.text = "name"
+        label.text = "name".localized
         label.numberOfLines = 1
         return label
     }()
@@ -25,7 +25,7 @@ class FileMessageCell: BaseMessageCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 11)
         label.textColor = RLColor.share.lightGray
-        label.text = "大小"
+        label.text = "大小".localized
         label.numberOfLines = 1
         return label
     }()
@@ -68,7 +68,7 @@ class FileMessageCell: BaseMessageCell {
         guard let message = model.nimMessageModel, let fileObject = message.messageObject as? NIMFileObject else { return }
         contentLabel.text = fileObject.displayName
         sizeLabel.text = fileObject.fileLength.fileSizeString()
-        let icon = SendFileManager.fileIcon(with: URL(string: fileObject.path ?? "")?.pathExtension ?? "")
+        let icon = RLSendFileManager.fileIcon(with: URL(string: fileObject.path ?? "")?.pathExtension ?? "")
         fileImageView.image = icon.icon
     }
 
