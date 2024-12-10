@@ -8,7 +8,7 @@
 import UIKit
 import NIMSDK
 
-public class RLConversationListViewController: RLViewController, ConversationListCellDelegate {
+public class RLConversationListViewController: TGViewController, ConversationListCellDelegate {
 
     lazy var stackView: UIStackView = {
         let stack = UIStackView()
@@ -52,13 +52,21 @@ public class RLConversationListViewController: RLViewController, ConversationLis
         tableView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
         }
+        tableView.mj_header = SCRefreshHeader(refreshingTarget: self, refreshingAction: #selector(getConversationList))
+        tableView.mj_footer = SCRefreshFooter(refreshingTarget: self, refreshingAction: #selector(loadmoreConversationList))
+        tableView.mj_footer.isHidden = true
         
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewmodel.getConversationList { [weak self] _ in
-            self?.tableView.reloadData()
+        viewmodel.getConversationList { [weak self] _,_  in
+            guard let self = self else {return}
+            self.tableView.reloadData()
+            self.tableView.mj_footer.isHidden = false
+            if self.viewmodel.conversationList.count < self.viewmodel.limit {
+                self.tableView.mj_footer.endRefreshingWithNoMoreData()
+            }
         }
     }
     
@@ -66,7 +74,7 @@ public class RLConversationListViewController: RLViewController, ConversationLis
 
     }
     
-    func handleLongPress(cell: ConversationListCell, session: NIMRecentSession?) {
+    func handleLongPress(cell: ConversationListCell, conversation: V2NIMConversation?) {
         
         weak var weakSelf = self
         let alertVC = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -78,7 +86,7 @@ public class RLConversationListViewController: RLViewController, ConversationLis
             
         }
         let delete = UIAlertAction(title: "删除该聊天", style: .default) { _ in
-            if let recentSession = session {
+            if let recentSession = conversation {
                 weakSelf?.viewmodel.deleteRecentSession(recentSession: recentSession)
             }
         }
@@ -97,7 +105,41 @@ public class RLConversationListViewController: RLViewController, ConversationLis
         present(alertVC, animated: true)
     }
     
-    
+    @objc func getConversationList(){
+        viewmodel.getConversationList { [weak self] list,_  in
+            guard let self = self else {return}
+            self.tableView.mj_header.endRefreshing()
+            self.tableView.reloadData()
+            self.tableView.mj_footer.isHidden = false
+            if let list = list, list.count < self.viewmodel.limit {
+                self.tableView.mj_footer.endRefreshingWithNoMoreData()
+                if list.count == 0 {
+                    DispatchQueue.main.async {
+                        let vc = TGChatViewController(conversationId: "azizistg22|1|zhouztz", conversationType: .CONVERSATION_TYPE_P2P)
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
+                    
+                }
+            } else {
+                self.tableView.mj_footer.endRefreshing()
+            }
+        }
+        
+    }
+    @objc func loadmoreConversationList(){
+        guard !self.viewmodel.finished else {
+            self.tableView.mj_footer.endRefreshing()
+            self.tableView.mj_footer.endRefreshingWithNoMoreData()
+            return}
+        viewmodel.getConversationList(isRefresh: false) { [weak self] list,_  in
+            guard let self = self else {return}
+            self.tableView.mj_footer.endRefreshing()
+            self.tableView.reloadData()
+            if let list = list, list.count < self.viewmodel.limit {
+                self.tableView.mj_footer.endRefreshingWithNoMoreData()
+            }
+        }
+    }
 
 }
 
@@ -110,16 +152,16 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: ConversationListCell.cellIdentifier, for: indexPath) as! ConversationListCell
         
         cell.selectionStyle = .none
-        cell.setData(session: viewmodel.conversationList[indexPath.row])
+        cell.setData(conversation: viewmodel.conversationList[indexPath.row])
         cell.delegate = self
         return cell
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let session = viewmodel.conversationList[indexPath.row].session {
-            let vc = RLBaseChatViewController(session: session, unreadCount: 0)
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
+        let conversationId = viewmodel.conversationList[indexPath.row].conversationId
+        let conversationType = viewmodel.conversationList[indexPath.row].type
+        let vc = TGChatViewController(conversationId: conversationId, conversationType: conversationType)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 }
@@ -132,7 +174,7 @@ extension RLConversationListViewController: ConversationViewModelDelegate {
     }
     
     public func didAddRecentSession() {
-        viewmodel.getConversationList { [weak self] _ in
+        viewmodel.getConversationList { [weak self] _,_  in
             self?.tableView.reloadData()
         }
     }
@@ -143,7 +185,7 @@ extension RLConversationListViewController: ConversationViewModelDelegate {
     }
     
     public func reloadData() {
-        viewmodel.getConversationList { [weak self] _ in
+        viewmodel.getConversationList { [weak self] _,_  in
             self?.tableView.reloadData()
         }
     }

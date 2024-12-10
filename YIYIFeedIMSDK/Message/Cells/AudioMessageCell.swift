@@ -101,12 +101,13 @@ class AudioMessageCell: BaseMessageCell {
     }
 
     
-    override func setData(model: RLMessageData) {
+    override func setData(model: TGMessageData) {
         super.setData(model: model)
-        guard let message = model.nimMessageModel, let audioObject = message.messageObject as? NIMAudioObject else { return }
-        let isRight = message.isOutgoingMsg
+        guard let message = model.nimMessageModel, let audioObject = message.attachment as? V2NIMMessageAudioAttachment else { return }
+        let isRight = message.isSelf
         showLeftOrRight(showRight: isRight)
-        messageId = message.messageId
+        messageId = message.messageClientId
+        
         if isRight {
             audioImageViewRight.snp.remakeConstraints { make in
                 make.right.equalTo(-12)

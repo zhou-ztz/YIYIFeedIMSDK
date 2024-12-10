@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class RLNavigationController: UINavigationController {
+public class TGNavigationController: UINavigationController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +61,7 @@ public class RLNavigationController: UINavigationController {
    
 }
 // 遵循UIGestureRecognizerDelegate协议
-extension RLNavigationController: UIGestureRecognizerDelegate {
+extension TGNavigationController: UIGestureRecognizerDelegate {
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // 允许侧滑返回手势
         return true

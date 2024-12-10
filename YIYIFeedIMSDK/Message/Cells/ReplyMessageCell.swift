@@ -49,7 +49,7 @@ class ReplyMessageCell: BaseMessageCell {
         }
     }
     
-    override func setData(model: RLMessageData) {
+    override func setData(model: TGMessageData) {
         super.setData(model: model)
         let attribute = NEEmotionTool.getAttWithStr(
             str: model.nimMessageModel?.text ?? "",

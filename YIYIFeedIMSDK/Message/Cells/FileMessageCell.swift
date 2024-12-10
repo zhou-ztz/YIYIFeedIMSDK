@@ -63,11 +63,11 @@ class FileMessageCell: BaseMessageCell {
         }
     }
     
-    override func setData(model: RLMessageData) {
+    override func setData(model: TGMessageData) {
         super.setData(model: model)
-        guard let message = model.nimMessageModel, let fileObject = message.messageObject as? NIMFileObject else { return }
-        contentLabel.text = fileObject.displayName
-        sizeLabel.text = fileObject.fileLength.fileSizeString()
+        guard let message = model.nimMessageModel, let fileObject = message.attachment as? V2NIMMessageFileAttachment else { return }
+        contentLabel.text = fileObject.name
+        sizeLabel.text = Int64(fileObject.size).fileSizeString()
         let icon = RLSendFileManager.fileIcon(with: URL(string: fileObject.path ?? "")?.pathExtension ?? "")
         fileImageView.image = icon.icon
     }

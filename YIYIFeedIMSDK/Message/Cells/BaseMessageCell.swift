@@ -9,15 +9,15 @@ import UIKit
 
 protocol BaseMessageCellDelegate: AnyObject {
     
-    func tapItemMessage(cell: BaseMessageCell?, model: RLMessageData?)
-    func handleBaseMessageCellLongPress(cell: BaseMessageCell, model: RLMessageData?)
-    func tapUserAvatar(cell: BaseMessageCell?, model: RLMessageData?)
+    func tapItemMessage(cell: BaseMessageCell?, model: TGMessageData?)
+    func handleBaseMessageCellLongPress(cell: BaseMessageCell, model: TGMessageData?)
+    func tapUserAvatar(cell: BaseMessageCell?, model: TGMessageData?)
 }
 
 class BaseMessageCell: UITableViewCell {
     weak var delegate: BaseMessageCellDelegate?
     
-    var contentModel: RLMessageData?
+    var contentModel: TGMessageData?
     let defaultSenderImage = UIImage.set_image(named: "senderMessage")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
     let defaultReceiverImage = UIImage.set_image(named: "receiverMessage")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
     
@@ -155,14 +155,14 @@ class BaseMessageCell: UITableViewCell {
         }
     }
     
-    func setData(model: RLMessageData){
+    func setData(model: TGMessageData){
         contentModel = model
         guard let messageModel = model.nimMessageModel else { return }
         
         nicknameLabel.isHidden = !(model.showName ?? false)
         wholeContentStackView.removeAllArrangedSubviews()
         
-        let isleft = messageModel.isReceivedMsg
+        let isleft = !messageModel.isSelf
         if isleft {
             wholeContentStackView.addArrangedSubview(avatarHeaderView)
             wholeContentStackView.addArrangedSubview(allContentStackView)
@@ -177,10 +177,10 @@ class BaseMessageCell: UITableViewCell {
         tickImage.isHidden = true
         failImage.isHidden = true
         pinendImage.isHidden = true
-        tickImage.snp.makeConstraints { make in
+        tickImage.snp.remakeConstraints { make in
             make.height.width.equalTo(15)
         }
-        pinendImage.snp.makeConstraints { make in
+        pinendImage.snp.remakeConstraints { make in
             make.height.width.equalTo(15)
         }
         if isleft {
@@ -223,21 +223,21 @@ class BaseMessageCell: UITableViewCell {
             nicknameLabel.snp.remakeConstraints { make in
                 make.right.top.equalToSuperview()
             }
-            tickImage.image = messageModel.isRemoteRead ? readImage : unreadImage
+            tickImage.image = messageModel.isSelf ? readImage : unreadImage
             
-            if messageModel.deliveryState != .failed {
+            if messageModel.sendingState != .MESSAGE_SENDING_STATE_FAILED {
                 tickImage.isHidden = false
             }else{
                 failImage.isHidden = false
             }
         }
         
-        if let sessions = model.nimMessageModel?.session {
-            let url = MessageUtils.getUserAvatar(userId: sessions.sessionId, session: sessions)
-            avatarHeaderView.sd_setImage(with: URL(string: url ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
+        MessageUtils.getUserShowNameAvatar(conversationId: model.nimMessageModel?.conversationId ?? "") {[weak self] name, avatar in
+            self?.avatarHeaderView.sd_setImage(with: URL(string: avatar ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
         }
+        //avatarHeaderView.sd_setImage(with: URL(string: messageModel.senderId ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
         
-        timeLabel.text = messageModel.timestamp.messageTimeString()
+        timeLabel.text = messageModel.createTime.messageTimeString()
         
     }
     

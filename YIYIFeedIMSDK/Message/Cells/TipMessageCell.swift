@@ -34,12 +34,12 @@ class TipMessageCell: UITableViewCell {
         }
     }
     
-    func setData(model: RLMessageData){
+    func setData(model: TGMessageData){
         if model.type == .time {
             tipLabel.text = model.messageTime.messageTime(showDetail: true) ?? ""
         }else{
             var nick = "对方"
-            if model.nimMessageModel?.from == RLCurrentUserInfo.shared.accid {
+            if model.nimMessageModel?.isSelf == true {
                 nick = "你"
             }
             tipLabel.text = nick + "\(model.nimMessageModel?.text ?? "")"

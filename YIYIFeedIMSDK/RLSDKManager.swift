@@ -16,6 +16,7 @@ public class RLSDKManager: NSObject {
     public func initSDK(parma: RLLoginParma){
         self.loginParma = parma
         RLNIMSDKManager.shared.setupNIMSDK()
+        IMNotificationCenter.sharedCenter.start()
     }
     
     public func loginIM(success: @escaping ()->Void, failure: @escaping ()->Void){

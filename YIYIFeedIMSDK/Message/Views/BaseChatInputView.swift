@@ -7,6 +7,7 @@
 
 import UIKit
 import KMPlaceholderTextView
+import AudioToolbox
 
 enum ChatMenuType: Int {
     case normal = 0
@@ -25,21 +26,38 @@ public let atRangeOffset = 1
 public let atSegmentsKey = "segments"
 public let atTextKey = "text"
 
-protocol ChatInputViewDelegate: NSObjectProtocol {
-  func sendText(text: String?, attribute: NSAttributedString?)
-  func willSelectItem(show: Bool)
-  func didSelectMoreCell(cell: InputMoreCell)
+@objc protocol ChatInputViewDelegate: NSObjectProtocol {
+    func sendText(text: String?, attribute: NSAttributedString?)
+    func willSelectItem(show: Bool)
+    func didSelectMoreCell(cell: InputMoreCell)
+    
+    @discardableResult
+    func textChanged(text: String) -> Bool
+    func textDelete(range: NSRange, text: String) -> Bool
+    func startRecord()
+    func moveOutView()
+    func moveInView()
+    func endRecord(insideView: Bool)
+    func textFieldDidChange(_ textField: UITextView)
+    func textFieldDidEndEditing(_ textField: UITextView)
+    func textFieldDidBeginEditing(_ textField: UITextView)
+    
+    @objc optional func onStartRecording()
+    @objc optional func onStopRecording()
+    @objc optional func onCancelRecording()
+    @objc optional func onConverting()
+    @objc optional func onConvertError()
+    @objc optional func pasteImage(image: UIImage)
+    @objc optional func onPasteMentioned(usernames: [String], _ message: String)
 
-  @discardableResult
-  func textChanged(text: String) -> Bool
-  func textDelete(range: NSRange, text: String) -> Bool
-  func startRecord()
-  func moveOutView()
-  func moveInView()
-  func endRecord(insideView: Bool)
-  func textFieldDidChange(_ textField: UITextView)
-  func textFieldDidEndEditing(_ textField: UITextView)
-  func textFieldDidBeginEditing(_ textField: UITextView)
+    //取消发送
+    @objc optional func cancelButtonTapped()
+    //发送原语音
+    @objc optional func sendVoiceButtonTapped()
+    //发送文字
+    @objc optional func sendVoiceMsgTextButtonTapped()
+    //弹出更多语言页面
+    @objc optional func moreLanguageButtonTapped()
 }
 
 class BaseChatInputView: UIView {
@@ -71,7 +89,7 @@ class BaseChatInputView: UIView {
         textView.clipsToBounds = true
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.backgroundColor = .clear
-        textView.returnKeyType = .send
+       // textView.returnKeyType = .send
         textView.allowsEditingTextAttributes = true
         textView.typingAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
         textView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
@@ -123,7 +141,82 @@ class BaseChatInputView: UIView {
         return stack
     }()
     var greyView = UIView()
-    var recordView = ChatRecordView(frame: .zero)
+    
+    // Recording
+    var _recordPhase: AudioRecordPhase? = nil
+    var recordPhase: AudioRecordPhase? = nil {
+        willSet {
+            
+            let prevPhase = recordPhase
+            _recordPhase = newValue
+            self.audioRecordIndicator.phase = recordPhase
+            if prevPhase == .end || prevPhase == .converterror {
+                if  _recordPhase == .start {
+                    delegate?.onStartRecording?()
+                }
+            }else if prevPhase == .start || prevPhase == .recording {
+                if _recordPhase == .end {
+                    delegate?.onStopRecording?()
+                }
+            }else if prevPhase == .cancelling {
+                if _recordPhase == .end {
+                    delegate?.onCancelRecording?()
+                }
+            }else if prevPhase == .converting {
+                if _recordPhase == .converted {
+                    self.audioRecordIndicator.phase = .converted
+                    delegate?.onConverting?()
+                }
+                if _recordPhase == .converterror {
+                    self.audioRecordIndicator.phase = .converterror
+                    delegate?.onConvertError?()
+                }
+            }else if _recordPhase == .converterror {
+                self.audioRecordIndicator.phase = .converterror
+                delegate?.onConvertError?()
+            }else if _recordPhase == .converted {
+                self.audioRecordIndicator.phase = .converted
+                delegate?.onConverting?()
+            }
+        }
+    }
+    
+    var recognizedText: String = "" {
+        didSet {
+            SpeechVoiceDetectManager.shared.hasRecognizedText = true
+            self.audioRecordIndicator.recognizedTextView.text = "\(recognizedText) ···"
+            if SpeechVoiceDetectManager.shared.isRecordEnd == true {
+                var recognizedStr = self.audioRecordIndicator.recognizedTextView.text
+                recognizedStr = recognizedStr?.replacingOccurrences(of: "·", with: "")
+                self.audioRecordIndicator.recognizedTextView.text = recognizedStr
+            }
+            
+        }
+    }
+    
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    
+    var recording: Bool = false {
+        didSet {
+            if recording {
+                let soundShort = SystemSoundID(1519)
+                AudioServicesPlaySystemSound(soundShort)
+                self.audioRecordIndicator.frame = CGRectMake(0, 0, ScreenWidth, ScreenHeight)
+                UIApplication.shared.windows.first?.addSubview(self.audioRecordIndicator)
+                self.recordPhase = .end
+                self.setRecordIndicatorAction()
+                self.audioRecordIndicator.recordStateView.startMeterTimer()
+            } else {
+                self.audioRecordIndicator.recordStateView.stopMeterTimer()
+                self.recordPhase = .end
+                self.audioRecordIndicator.removeFromSuperview()
+            }
+        }
+    }
+    
+    var audioRecordIndicator: InputAudioRecordIndicatorView = InputAudioRecordIndicatorView()
+    
+    var isShowingPressToTalk = false
     
     lazy var textfieldView: UIView = {
         let view = UIView()
@@ -220,19 +313,14 @@ class BaseChatInputView: UIView {
             make.left.right.equalToSuperview()
             make.height.equalTo(200)
         }
-        contentSubView.addSubview(recordView)
         contentSubView.addSubview(emojiView)
         contentSubView.addSubview(chatAddMoreView)
-        recordView.isHidden = true
         emojiView.isHidden = true
         chatAddMoreView.isHidden = true
 
         let moreItems = MessageUtils.mediaItems()
         chatAddMoreView.configData(data: moreItems)
-        
-        recordView.snp.makeConstraints { make in
-            make.left.top.bottom.right.equalToSuperview()
-        }
+
         emojiView.snp.makeConstraints { make in
             make.left.top.bottom.right.equalToSuperview()
         }
@@ -240,7 +328,13 @@ class BaseChatInputView: UIView {
             make.left.top.bottom.right.equalToSuperview()
         }
         
-        recordView.delegate = self
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress(recognizer:)))
+        longPressRecognizer.delegate = self
+        recordButton.addGestureRecognizer(longPressRecognizer)
+        
+        let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panAction(recognizer:)))
+        panGesture.delegate = self
+        recordButton.addGestureRecognizer(panGesture)
     }
     
     func keyboardDismiss(){
@@ -288,7 +382,6 @@ class BaseChatInputView: UIView {
             textView.resignFirstResponder()
             chatAddMoreView.isHidden = true
             contentSubView.isHidden = false
-            recordView.isHidden = true
             emojiView.isHidden = false
             delegate?.willSelectItem(show: true)
         } else {
@@ -306,7 +399,6 @@ class BaseChatInputView: UIView {
             textView.resignFirstResponder()
             chatAddMoreView.isHidden = false
             contentSubView.isHidden = false
-            recordView.isHidden = true
             emojiView.isHidden = true
             delegate?.willSelectItem(show: true)
         } else {
@@ -319,7 +411,6 @@ class BaseChatInputView: UIView {
     
     public func stopRecordAnimation() {
       greyView.isHidden = true
-      recordView.stopRecordAnimation()
     }
     
     // MARK: ===================== lazy method =====================
@@ -363,12 +454,6 @@ class BaseChatInputView: UIView {
                 temRange = NSMakeRange(findRange.location, findRange.length + atRangeOffset)
                 stop.pointee = true
             }
-            
-            //      if (findRange.location <= start && start < findRange.location + findRange.length + atRangeOffset) ||
-            //        (findRange.location < end && end <= findRange.location + findRange.length + atRangeOffset) {
-            //        temRange = NSMakeRange(findRange.location, findRange.length + atRangeOffset)
-            //        stop.pointee = true
-            //      }
         }
         return temRange
     }
@@ -458,9 +543,6 @@ class BaseChatInputView: UIView {
                     } catch {
                         print("Error encoding person to JSON: \(error)")
                     }
-//                    if let object = model.yx_modelToJSONObject() {
-//                        array?.append(object)
-//                    }
                     dic?[atSegmentsKey] = array
                     dic?[atTextKey] = String(text) + " "
                     dic?[#keyPath(MessageAtCacheModel.accid)] = accid
@@ -499,6 +581,27 @@ class BaseChatInputView: UIView {
 //        }
         return nil
     }
+    
+    func setRecordIndicatorAction() {
+        self.audioRecordIndicator.cancelImageView.addTap { [weak self] (v) in
+            guard let self = self else { return }
+            self.audioRecordIndicator.recognizedTextView.resignFirstResponder()
+            self.delegate?.cancelButtonTapped?()
+        }
+        self.audioRecordIndicator.sendVoiceImageView.addTap { [weak self] (v) in
+            guard let self = self else { return }
+            self.delegate?.sendVoiceButtonTapped?()
+        }
+        self.audioRecordIndicator.sendMsgImageView.addTap { [weak self] (v) in
+            guard let self = self, self.recordPhase != .converterror else { return }
+            self.audioRecordIndicator.recognizedTextView.resignFirstResponder()
+            self.delegate?.sendVoiceMsgTextButtonTapped?()
+        }
+        self.audioRecordIndicator.moreButton.addTap { [weak self] (v) in
+            guard let self = self else { return }
+            self.delegate?.moreLanguageButtonTapped?()
+        }
+    }
 }
 
 extension BaseChatInputView: UITextViewDelegate {
@@ -535,18 +638,6 @@ extension BaseChatInputView: UITextViewDelegate {
         print("text view range : ", range)
         print("select range : ", textView.selectedRange)
         textView.typingAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
-        
-        if text == "\n" {
-            guard var realText = getRealSendText(textView.attributedText) else {
-                return true
-            }
-            if realText.trimmingCharacters(in: .whitespaces).isEmpty {
-                realText = ""
-            }
-            delegate?.sendText(text: realText, attribute: textView.attributedText)
-            textView.text = ""
-            return false
-        }
         
         if textView.attributedText.length == 0, let pasteString = UIPasteboard.general.string, text.count > 0 {
             if pasteString == text {
@@ -609,28 +700,6 @@ extension BaseChatInputView: ChatMoreViewDelegate {
         delegate?.didSelectMoreCell(cell: cell)
     }
 }
-// MARK: 录音 - ChatRecordViewDelegate
-extension BaseChatInputView: ChatRecordViewDelegate {
-    func startRecord() {
-        greyView.isHidden = false
-        delegate?.startRecord()
-    }
-    
-    func moveOutView() {
-        delegate?.moveOutView()
-    }
-    
-    func moveInView() {
-        delegate?.moveInView()
-    }
-    
-    func endRecord(insideView: Bool) {
-        greyView.isHidden = true
-        delegate?.endRecord(insideView: insideView)
-    }
-    
-    
-}
 
 extension BaseChatInputView: InputEmoticonContainerViewDelegate {
     func selectedEmoticon(emoticonID: String, emotCatalogID: String, description: String) {
@@ -678,4 +747,67 @@ extension BaseChatInputView: InputEmoticonContainerViewDelegate {
     }
     
     
+}
+// MARK: 录音
+extension BaseChatInputView: UIGestureRecognizerDelegate {
+    
+    @objc public func panAction(recognizer: UIPanGestureRecognizer) {
+        if  SpeechVoiceDetectManager.shared.isRecordEnd == true {
+            return
+        }
+        let translationPoint: CGPoint = recognizer.translation(in: self.superview)
+        let centerP: CGPoint = recognizer.view?.center ?? CGPoint.zero
+        var pointX = centerP.x + translationPoint.x
+        var pointY = centerP.y + translationPoint.y
+        switch recognizer.state {
+            
+        case  .changed:
+            if pointY > 0 {
+                recordPhase = .recording
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.audioRecordIndicator.cancelImageView.transform = .identity
+                    self.audioRecordIndicator.convertImageView.transform = .identity
+                })
+                return
+            }
+            if pointX < ScreenWidth / 2 {
+                recordPhase = .cancelling
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.audioRecordIndicator.cancelImageView.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.0)
+                })
+            } else {
+                recordPhase = .converting
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.audioRecordIndicator.convertImageView.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.0)
+                })
+            }
+        case .ended:
+            audioRecordIndicator.cancelImageView.transform = .identity
+            audioRecordIndicator.convertImageView.transform = .identity
+        @unknown default:
+            break
+        }
+    }
+    @objc public func longPress(recognizer:UILongPressGestureRecognizer) {
+        
+//        if recognizer.state == .began {
+//            SpeechVoiceDetectManager.shared.isRecordEnd = false
+//            SpeechVoiceDetectManager.shared.hasRecognizedText = false
+//            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) { [weak self] in
+//                self?.recordPhase = .start
+//            }
+//        } else if recognizer.state == .ended {
+//            SpeechVoiceDetectManager.shared.isRecordEnd = true
+//            let isConvert = (recordPhase == .converting || recordPhase == .converted)
+//            if isConvert && self.recognizedText.isEmpty {
+//                //没有识别到任何文字
+//                recordPhase = .converterror
+//            } else {
+//                recordPhase = isConvert == true ? .converted : .end
+//            }
+//        }
+    }
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
 }

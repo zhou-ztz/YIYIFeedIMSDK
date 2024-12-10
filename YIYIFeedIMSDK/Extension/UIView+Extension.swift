@@ -587,6 +587,100 @@ public extension UIView {
     }
 }
 
+extension UIView {
+    
+    public func startShimmering(margin:Bool = false, background:Bool, duration: Double = 2.0) {
+        DispatchQueue.main.async {
+            self.layoutIfNeeded()
+            self.animate(start: true, margin: margin, background: background, duration: duration)
+        }
+    }
+    
+    public func stopShimmering() {
+        if let smartLayers = self.layer.sublayers?.filter({$0.name == "colorLayer" || $0.name == "loaderLayer" ||  $0.name == "shimmerLayer"}) {
+            smartLayers.forEach({$0.removeFromSuperlayer()})
+        }
+        self.layer.mask = nil
+    }
+    
+    private func animate(start: Bool, margin:Bool = false, background:Bool = false, duration: Double = 2.0) {
+        if background {
+            
+            let colorLayer = CALayer()
+            colorLayer.backgroundColor = UIColor(white: 0.90, alpha: 1).cgColor
+            if margin {
+                colorLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height-5)
+            } else {
+                colorLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height)
+            }
+            colorLayer.name = "colorLayer"
+            self.layer.addSublayer(colorLayer)
+            self.autoresizesSubviews = true
+            self.clipsToBounds = true
+            
+            let gradientLayer = CAGradientLayer()
+            gradientLayer.colors = [UIColor(white: 0.90, alpha: 1).cgColor,
+                                    UIColor(white: 0.94, alpha: 1).cgColor,
+                                    UIColor(white: 0.90, alpha: 1).cgColor]
+            gradientLayer.locations = [0,0.4,0.8, 1]
+            gradientLayer.name = "loaderLayer"
+            gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+            gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+            if margin {
+                gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height-5)
+            } else {
+                gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height)
+            }
+            self.layer.addSublayer(gradientLayer)
+            
+            let animation = CABasicAnimation(keyPath: "transform.translation.x")
+            animation.duration = duration
+            animation.fromValue = -self.frame.width
+            animation.toValue = self.frame.width
+            animation.repeatCount = Float.infinity
+            gradientLayer.add(animation, forKey: "smartLoader")
+            
+        } else {
+            
+            let light = UIColor(white: 0, alpha: 0.6).cgColor
+            let dark = UIColor.black.cgColor
+            
+            let gradient: CAGradientLayer = CAGradientLayer()
+            gradient.colors = [dark, light, dark]
+            gradient.frame = CGRect(x: -self.bounds.size.width, y: 0, width: 3*self.bounds.size.width, height: self.bounds.size.height)
+            gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
+            gradient.endPoint = CGPoint(x: 1.0, y: 0.525)
+            gradient.locations = [0.3, 0.5, 0.7]
+            gradient.name = "shimmerLayer"
+            self.layer.mask = gradient
+            
+            let animation: CABasicAnimation = CABasicAnimation(keyPath: "locations")
+            animation.fromValue = [0.0, 0.1, 0.2]
+            animation.toValue = [0.8, 0.9, 1.0]
+            
+            animation.duration = 1.5
+            animation.repeatCount = Float.infinity
+            animation.isRemovedOnCompletion = false
+            
+            gradient.add(animation, forKey: "shimmer")
+        }
+    }
+    
+    func addDashedBorder(_ color: UIColor = UIColor.black, withWidth width: CGFloat = 3, cornerRadius: CGFloat = 0, dashPattern: [NSNumber] = [3,3]) {
+        let shapeLayer = CAShapeLayer()
+        
+        shapeLayer.bounds = bounds
+        shapeLayer.position = CGPoint(x: bounds.width/2, y: bounds.height/2)
+        shapeLayer.fillColor = nil
+        shapeLayer.strokeColor = color.cgColor
+        shapeLayer.lineWidth = width
+        shapeLayer.lineJoin = CAShapeLayerLineJoin.round // Updated in swift 4.2
+        shapeLayer.lineDashPattern = dashPattern
+        shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
+        
+        self.layer.addSublayer(shapeLayer)
+    }
+}
 
 
 

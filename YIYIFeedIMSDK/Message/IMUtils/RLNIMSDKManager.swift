@@ -7,8 +7,9 @@
 
 import UIKit
 import NIMSDK
-
+//cd2ce206e475a58c6d4c13e6931ad8df
 let NIMAppKey: String = "43cf17ab859f4c669349fd68e363d6db"
+//"43cf17ab859f4c669349fd68e363d6db"
 
 class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     
@@ -44,6 +45,10 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         NIMSDK.shared().sceneDict = sceneDict
         
         NIMSDK.shared().v2LoginService.add(self)
+        
+        ///用户信息
+        NIMSDK.shared().v2UserService.add(self)
+    
     }
     
     public func logout() {
@@ -83,4 +88,20 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     func onLoginClientChanged(_ change: V2NIMLoginClientChange, clients: [V2NIMLoginClient]?) {
         
     }
+}
+
+extension RLNIMSDKManager: V2NIMUserListener {
+    func onUserProfileChanged(_ users: [V2NIMUser]) {
+        
+    }
+    
+    func onBlockListAdded(_ user: V2NIMUser) {
+        
+    }
+    
+    func onBlockListRemoved(_ accountId: String) {
+        
+    }
+    
+    
 }

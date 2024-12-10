@@ -37,9 +37,9 @@ class TextMessageCell: BaseMessageCell {
         self.textView.addSubview(timeTickStackView)
     }
     
-    override func setData(model: RLMessageData) {
+    override func setData(model: TGMessageData) {
         super.setData(model: model)
-        let showLeft = model.nimMessageModel?.isReceivedMsg ?? false
+        let showLeft = !(model.nimMessageModel?.isSelf ?? true)
         let attribute = NEEmotionTool.getAttWithStr(
           str: model.nimMessageModel?.text ?? "",
           font: UIFont.systemFont(ofSize: 14),
@@ -83,7 +83,7 @@ class TextMessageCell: BaseMessageCell {
         
     }
     
-    private func timeShowAtBottom(messageModel: RLMessageData) -> Bool {
+    private func timeShowAtBottom(messageModel: TGMessageData) -> Bool {
         let tempContentLabel = contentLabel
         let tempTimeLabel = timeLabel
         tempTimeLabel.text = messageModel.messageTime.messageTimeString()

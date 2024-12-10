@@ -136,14 +136,10 @@ class RLChatViewModel: NSObject {
     func processTimeData(_ datas: [RLMessageData]) -> [RLMessageData] {
     
         let lastTimeMessage = self.messages.filter { $0.type == .time }.last
-        var compareTime: TimeInterval =  lastTimeMessage?.messageTime ?? 0.0
+        var compareTime: TimeInterval =  lastTimeMessage?.messageTime ?? Date().timeIntervalSince1970
         var newDatas: [RLMessageData] = []
         
         datas.forEach { item in
-//            if item.shouldInsertTimestamp(compare: compareTime) && item.disableBeInviteAuthTipsMessage() {
-//                let timeData = RLMessageData(messageTime: item.messageTime, type: .time)
-//                newDatas.append(timeData)
-//            }
             if let message = item.nimMessageModel,  let timeData = self.addTimeMessage(message, lastTs: compareTime){
                 compareTime = item.messageTime
                 newDatas.append(timeData)
@@ -378,7 +374,7 @@ class RLChatViewModel: NSObject {
             ]
         }
         
-        if model?.nimMessageModel?.from == NIMSDK.shared().loginManager.currentAccount(), model?.nimMessageModel?.messageType != .rtcCallRecord {
+        if model?.nimMessageModel?.from == NIMSDK.shared().v2LoginService.getLoginUser(), model?.nimMessageModel?.messageType != .rtcCallRecord {
             items.append(OperationItem.recallItem())
         }
         return items

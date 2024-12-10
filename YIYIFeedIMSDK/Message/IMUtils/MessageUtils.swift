@@ -9,6 +9,159 @@ import UIKit
 import NIMSDK
 
 class MessageUtils: NSObject {
+    ///获取sessionId
+    class func conversationTargetId(_ conversationId: String) -> String {
+        let strs = conversationId.components(separatedBy: "|")
+        return strs.last ?? ""
+    }
+    ///获取sessiontype , conversationType
+    class func conversationTargetType(_ conversationId: String) -> V2NIMConversationType {
+        var type: V2NIMConversationType = .CONVERSATION_TYPE_P2P
+        let strs = conversationId.components(separatedBy: "|")
+        if strs.count > 2 {
+            type = V2NIMConversationType(rawValue: strs[1].toInt()) ?? .CONVERSATION_TYPE_P2P
+        }
+        return type
+    }
+    ///获取用户信息
+    class func getUserInfo(accountIds: [String], completion: @escaping ([V2NIMUser]?, Error?) -> Void){
+        NIMSDK.shared().v2UserService.getUserList(accountIds) { users in
+            completion(users, nil)
+        } failure: { v2error in
+            completion(nil, v2error.nserror)
+        }
+
+    }
+    /// 获取team 信息
+    class func getTeamInfo(teamId: String, teamType: V2NIMTeamType, completion: @escaping (V2NIMTeam?) -> Void){
+        NIMSDK.shared().v2TeamService.getTeamInfo(teamId, teamType: teamType) { team in
+            completion(team)
+        }
+    }
+    
+    //获取展示的用户名字,用户头像
+    class func getUserShowNameAvatar(conversationId: String, completion: @escaping (String, String?) -> Void){
+        let conversationType = MessageUtils.conversationTargetType(conversationId)
+        let sessionId = MessageUtils.conversationTargetId(conversationId)
+        var avatarURL: String?
+        var name = ""
+        if conversationType == .CONVERSATION_TYPE_TEAM {
+            MessageUtils.getTeamInfo(teamId: sessionId, teamType: .TEAM_TYPE_NORMAL) { team in
+                if let team = team {
+                    avatarURL = team.avatar
+                    name = team.name
+                    completion(name, avatarURL)
+                } else{
+                    completion(name, avatarURL)
+                }
+            }
+        }else {
+            MessageUtils.getUserInfo(accountIds: [sessionId]) { users, error in
+                if let user = users?.first {
+                    avatarURL = user.avatar
+                    if let nick = user.name {
+                        name = nick
+                    } else {
+                        name = user.accountId ?? ""
+                    }
+                    completion(name, avatarURL)
+                } else{
+                    completion(name, avatarURL)
+                }
+            }
+            
+        }
+    }
+    /// 获取展示的用户名字，p2p： 备注 > 昵称 > ID  team: 备注 > 群昵称 > 昵称 > ID
+    class func getShowName(conversationId: String, completion: @escaping (String) -> Void){
+        let conversationType = MessageUtils.conversationTargetType(conversationId)
+        let sessionId = MessageUtils.conversationTargetId(conversationId)
+        var name = ""
+        if conversationType == .CONVERSATION_TYPE_TEAM {
+            MessageUtils.getTeamInfo(teamId: sessionId, teamType: .TEAM_TYPE_NORMAL) { team in
+                if let team = team {
+                    name = team.name
+                    completion(name)
+                } else{
+                    completion(name)
+                }
+            }
+        } else {
+            MessageUtils.getUserInfo(accountIds: [sessionId]) { users, error in
+                if let user = users?.first {
+                    if let nick = user.name {
+                        name = nick
+                    } else {
+                        name = user.accountId ?? ""
+                    }
+                    completion(name)
+                } else{
+                    completion(name)
+                }
+            }
+        }
+    }
+    
+    
+    
+    /// V2 云信message
+    class func textV2Message(text: String, remoteExt: [String: Any]?) -> V2NIMMessage {
+        let message = V2NIMMessageCreator.createTextMessage(text)
+        if let remoteExt = remoteExt, let extDict = remoteExt.toJSON{
+            message.serverExtension = extDict
+        }
+        return message
+    }
+    
+    class func imageV2Message(path: String,
+                              name: String?,
+                              sceneName: String?,
+                              width: Int32,
+                              height: Int32) -> V2NIMMessage {
+        let message = V2NIMMessageCreator.createImageMessage(path, name: name, sceneName: sceneName ?? V2NIMStorageSceneConfig.default_IM().sceneName, width: width, height: height)
+        return message
+    }
+    
+    class func audioV2Message(filePath: String,
+                              name: String?,
+                              sceneName: String?,
+                              duration: Int32) -> V2NIMMessage {
+        let message = V2NIMMessageCreator.createAudioMessage(filePath, name: name, sceneName: sceneName ?? V2NIMStorageSceneConfig.default_IM().sceneName, duration: duration)
+        return message
+    }
+    
+    class func videoV2Message(filePath: String,
+                              name: String?,
+                              sceneName: String?,
+                              width: Int32,
+                              height: Int32,
+                              duration: Int32) -> V2NIMMessage {
+        let message = V2NIMMessageCreator.createVideoMessage(filePath, name: name, sceneName: sceneName ?? V2NIMStorageSceneConfig.default_IM().sceneName, duration: duration, width: width, height: height)
+        return message
+    }
+    
+    class func locationV2Message(lat: Double,
+                                 lng: Double,
+                                 address: String) -> V2NIMMessage {
+        V2NIMMessageCreator.createLocationMessage(lat, longitude: lng, address: address)
+    }
+    
+    class func fileV2Message(filePath: String,
+                             displayName: String?,
+                             sceneName: String?) -> V2NIMMessage {
+        V2NIMMessageCreator.createFileMessage(filePath,
+                                              name: displayName,
+                                              sceneName: sceneName ?? V2NIMStorageSceneConfig.default_IM().sceneName)
+    }
+    
+    class func customV2Message(text: String,
+                               rawAttachment: String) -> V2NIMMessage {
+        V2NIMMessageCreator.createCustomMessage(text, rawAttachment: rawAttachment)
+    }
+    
+    class func tipV2Message(text: String) -> V2NIMMessage {
+        V2NIMMessageCreator.createTipsMessage(text)
+    }
     
     public class func textMessage(text: String) -> NIMMessage {
         let message = NIMMessage()
@@ -106,41 +259,6 @@ class MessageUtils: NSObject {
         return setting
     }
     
-    //  获取展示的用户名字，p2p： 备注 > 昵称 > ID  team: 备注 > 群昵称 > 昵称 > ID
-    public class func getShowName(userId: String, teamId: String?, session: NIMSession,  _ showAlias: Bool = true) -> String {
-        
-        let user = NIMSDK.shared().userManager.userInfo(userId)
-        var fullName = userId
-        if let nickName = user?.userInfo?.nickName {
-            fullName = nickName
-        }else {
-            NIMSDK.shared().userManager.fetchUserInfos([userId])
-        }
-        if let tID = teamId, session.sessionType == .team {
-            // team
-            let teamMember = NIMSDK.shared().teamManager.teamMember(userId, inTeam: tID)
-            if let teamNickname = teamMember?.nickname {
-                fullName = teamNickname
-            }
-        }
-        if showAlias, let alias = user?.alias {
-            fullName = alias
-        }
-        return fullName
-    }
-    //获取用户头像
-    public class func getUserAvatar(userId: String, session: NIMSession) ->String?{
-        var avatarURL: String?
-        if session.sessionType == .team {
-            if let team: NIMTeam = NIMSDK.shared().teamManager.team(byId: session.sessionId) {
-                avatarURL = team.thumbAvatarUrl
-            }
-        }else {
-            let user = NIMSDK.shared().userManager.userInfo(userId)
-            avatarURL = user?.userInfo?.avatarUrl
-        }
-        return avatarURL
-    }
     
     
     public class func messagesInSession(session: NIMSession, messageId: [String]) -> [NIMMessage]?{
@@ -152,7 +270,7 @@ class MessageUtils: NSObject {
     public static func textForReplyModel(message: NIMMessage) -> String {
         var nick = ""
         if let session = message.session, let from = message.from {
-            nick = MessageUtils.getShowName(userId: from, teamId: nil, session: session)
+            nick = ""//MessageUtils.getShowName(userId: from, teamId: nil, session: session)
         }
         var text = "|" + nick
         text += ": "

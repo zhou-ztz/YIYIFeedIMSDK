@@ -17,16 +17,12 @@ class RLMapClient: NSObject {
     }
     
     func setupMapSdkConfig(appkey: String) {
-//        QMapServices.shared().setPrivacyAgreement(true)
-//        QMapServices.shared().apiKey = appkey
-//        QMSSearchServices.shared().apiKey = appkey
     }
     
     func getCellMapView() -> MKMapView? {
         
         let mapView = MKMapView(frame: CGRect(x: 0, y: 0, width: 222, height: 100))
         mapView.showsUserLocation = false
-        //mapView.zoomLevel = 15
         mapView.showsCompass = false
         mapView.showsScale = false
         mapView.isZoomEnabled = false
@@ -36,7 +32,14 @@ class RLMapClient: NSObject {
     }
     
     func setMapviewLocation(lat: Double, lng: Double, mapView: MKMapView?){
-        mapView?.setCenter(CLLocationCoordinate2DMake(lat, lng), animated: false)
+        let coor = CLLocationCoordinate2DMake(lat, lng)
+        let coordinateRegion = MKCoordinateRegion(
+            center: coor,
+            latitudinalMeters: 100, // 纬度跨度
+            longitudinalMeters: 100 // 经度跨度
+        )
+       
+        mapView?.setRegion(coordinateRegion, animated: true)
     }
 
 }

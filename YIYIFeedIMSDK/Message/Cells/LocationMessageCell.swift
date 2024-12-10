@@ -83,11 +83,11 @@ class LocationMessageCell: BaseMessageCell {
         }
     }
     
-    override func setData(model: RLMessageData) {
+    override func setData(model: TGMessageData) {
         super.setData(model: model)
-        if let message = model.nimMessageModel, let object = message.messageObject as? NIMLocationObject {
+        if let message = model.nimMessageModel, let object = message.attachment as? V2NIMMessageLocationAttachment {
             titleL.text = message.text
-            contentLabel.text = object.title
+            contentLabel.text = object.address
             RLMapClient.shared.setMapviewLocation(lat: object.latitude, lng: object.longitude, mapView: mapView)
         }
         

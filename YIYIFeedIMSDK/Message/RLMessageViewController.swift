@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class RLMessageViewController: RLViewController {
+public class RLMessageViewController: TGViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()

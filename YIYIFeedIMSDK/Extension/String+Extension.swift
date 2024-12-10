@@ -8,7 +8,7 @@
 import Foundation
 import NaturalLanguage
 import UIKit
-
+import Regex
 extension Character {
     /// A simple emoji is one scalar and presented to the user as an Emoji
     var isSimpleEmoji: Bool {
@@ -457,3 +457,59 @@ extension NSMutableAttributedString {
         }
     }
 }
+
+extension Dictionary {
+    /// 转换字典为 JSON 字符串
+    var toJSON: String? {
+        guard let theJSONData = try? JSONSerialization.data(withJSONObject: self, options: [.prettyPrinted]) else {
+            return nil
+        }
+        return String(data: theJSONData, encoding: .ascii)
+    }
+}
+
+extension String {
+    /// 转换 JSON 字符串为字典
+    var toDictionary: [String: Any]? {
+        if let data = self.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                // 处理错误
+            }
+        }
+        return nil
+    }
+}
+extension String {
+    /// 获取自定义markdown格式的图片正则表达式
+    static func ts_customImageMarkdownRegexString() -> String {
+        // ".*?" 懒惰匹配
+        return "@!\\[(.*?)\\]\\((\\d+)\\)"
+    }
+
+    /// 获取标准markdown格式的图片的正则表达式
+    static func ts_standardImageMarkdownRegexString() -> String {
+        // ".*?" 懒惰匹配
+        return "!\\[(.*?)\\]\\((.*?)\\)"
+    }
+    
+    /// 获取图片的Regex
+    static func ts_customImageMarkdownRegex() -> Regex {
+        return Regex("@!\\[(.*?)\\]\\((\\d+)\\)")
+    }
+
+    static func ts_standardImageMarkdownRegex() -> Regex {
+        return Regex("!\\[(.*?)\\]\\((.*?)\\)")
+    }
+    
+    /// 自定义的markdown格式的内容转展示的内容：将自定义格式的图片转换成 ""
+    /// 比如帖子列表中内容的自定义标签处理
+    func ts_customMarkdownToClearString() -> String {
+        var string: String = self
+        let imgRegex = String.ts_customImageMarkdownRegex()
+        string.replaceAll(matching: imgRegex, with: "")
+        return string
+    }
+}
+

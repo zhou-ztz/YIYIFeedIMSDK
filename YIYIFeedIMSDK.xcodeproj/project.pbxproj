@@ -8,9 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		69A3BD90D88445A37D6CA694 /* Pods_YIYISDKDemo_YIYIFeedIMSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BD6A12FE67EB49C19F3D71 /* Pods_YIYISDKDemo_YIYIFeedIMSDK.framework */; };
+		8A027A512CFD5A38008D1AC7 /* TGReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A502CFD5A38008D1AC7 /* TGReachability.swift */; };
+		8A027A532CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A522CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift */; };
+		8A027A552CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A542CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift */; };
+		8A027A572CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A562CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift */; };
+		8A027A592CFD9AF6008D1AC7 /* TGChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A582CFD9AF6008D1AC7 /* TGChatViewModel.swift */; };
+		8A027A5B2CFDAD76008D1AC7 /* TGMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A5A2CFDAD76008D1AC7 /* TGMessageData.swift */; };
+		8A027A5D2CFDBE29008D1AC7 /* TGChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A027A5C2CFDBE29008D1AC7 /* TGChatViewController.swift */; };
+		8A4BB3122D06D2FB00AAB4B8 /* TGMessageMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3112D06D2FB00AAB4B8 /* TGMessageMapViewController.swift */; };
+		8A4BB3192D0824DC00AAB4B8 /* IMAudioMessageStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3162D0824DB00AAB4B8 /* IMAudioMessageStateView.swift */; };
+		8A4BB31A2D0824DC00AAB4B8 /* IMRecordStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3172D0824DB00AAB4B8 /* IMRecordStateView.swift */; };
+		8A4BB31B2D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3182D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift */; };
+		8A4BB31D2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB31C2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift */; };
+		8A4BB3312D08352B00AAB4B8 /* NMCJSBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = 8A4BB3222D08352B00AAB4B8 /* NMCJSBridge.js */; };
+		8A4BB3322D08352B00AAB4B8 /* NMCMessageDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3232D08352B00AAB4B8 /* NMCMessageDispatcher.swift */; };
+		8A4BB3332D08352B00AAB4B8 /* NMCWebLoginParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3242D08352B00AAB4B8 /* NMCWebLoginParam.swift */; };
+		8A4BB3342D08352B00AAB4B8 /* NMCWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3252D08352B00AAB4B8 /* NMCWebView.swift */; };
+		8A4BB3352D08352B00AAB4B8 /* NMCWhiteBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3262D08352B00AAB4B8 /* NMCWhiteBoardManager.swift */; };
+		8A4BB3362D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3272D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift */; };
 		8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */; };
 		8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8A9F0D362CF0819E0021462C /* RLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D352CF0819E0021462C /* RLViewController.swift */; };
+		8A9F0D362CF0819E0021462C /* TGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D352CF0819E0021462C /* TGViewController.swift */; };
 		8A9F0D3A2CF089410021462C /* RLNIMSDKManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D392CF089410021462C /* RLNIMSDKManager.swift */; };
 		8A9F0D3C2CF0911A0021462C /* RLSDKManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */; };
 		8A9F0D3E2CF093580021462C /* RLLoginParma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D3D2CF093580021462C /* RLLoginParma.swift */; };
@@ -94,7 +112,7 @@
 		8A9F0DFF2CF48B3B0021462C /* speaking.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A9F0DEB2CF48B3B0021462C /* speaking.json */; };
 		8A9F0E002CF48B3B0021462C /* speech_to_text_progress.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A9F0DEC2CF48B3B0021462C /* speech_to_text_progress.json */; };
 		8A9F0E022CF575CC0021462C /* RLMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E012CF575CC0021462C /* RLMessageViewController.swift */; };
-		8A9F0E042CF57E520021462C /* RLNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E032CF57E520021462C /* RLNavigationController.swift */; };
+		8A9F0E042CF57E520021462C /* TGNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E032CF57E520021462C /* TGNavigationController.swift */; };
 		8A9F0E072CF6B6E70021462C /* ChatViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E052CF6B6E60021462C /* ChatViewConfig.swift */; };
 		8A9F0E9A2CF6F5530021462C /* RLAudioVideoCallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E992CF6F5530021462C /* RLAudioVideoCallViewController.swift */; };
 		8A9F0E9C2CF6F5C10021462C /* AudioVideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E9B2CF6F5C10021462C /* AudioVideoViewModel.swift */; };
@@ -103,15 +121,65 @@
 		8A9F0EA22CF6F7D00021462C /* TimerHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0EA12CF6F7D00021462C /* TimerHolder.swift */; };
 		8A9F0EA42CF6F9270021462C /* NetCallChatInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0EA32CF6F9270021462C /* NetCallChatInfo.swift */; };
 		8A9F0EA62CF707820021462C /* RLAudioCallController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0EA52CF707820021462C /* RLAudioCallController.swift */; };
-		8A9F0EA82CF707B70021462C /* RLVideoCallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0EA72CF707B70021462C /* RLVideoCallViewController.swift */; };
+		8ABF5F3C2CF822AF001DC11E /* ExtensionStringCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F3B2CF822AE001DC11E /* ExtensionStringCrypto.swift */; };
+		8ABF5F3E2CF82395001DC11E /* IMNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F3D2CF82395001DC11E /* IMNotificationCenter.swift */; };
+		8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */; };
+		8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */; };
+		8ABF5F4A2CF9CCED001DC11E /* TeamMeetingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */; };
+		F5CD2C5A2CFEB40500EA7C7A /* ServerResponseDataTransforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C582CFEB40500EA7C7A /* ServerResponseDataTransforms.swift */; };
+		F5CD2C5B2CFEB40500EA7C7A /* TGFeedNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */; };
+		F5CD2C5C2CFEB40500EA7C7A /* TGNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */; };
+		F5CD2C702CFEB4C400EA7C7A /* FeedToolBarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6A2CFEB4C400EA7C7A /* FeedToolBarButton.swift */; };
+		F5CD2C712CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6C2CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift */; };
+		F5CD2C722CFEB4C400EA7C7A /* PictureModeler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C602CFEB4C400EA7C7A /* PictureModeler.swift */; };
+		F5CD2C732CFEB4C400EA7C7A /* FeedImageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C692CFEB4C400EA7C7A /* FeedImageSliderView.swift */; };
+		F5CD2C742CFEB4C400EA7C7A /* FeedCommentLabelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentLabelModel.swift */; };
+		F5CD2C752CFEB4C400EA7C7A /* SharedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C612CFEB4C400EA7C7A /* SharedViewModel.swift */; };
+		F5CD2C762CFEB4C400EA7C7A /* FeedListCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5E2CFEB4C400EA7C7A /* FeedListCellModel.swift */; };
+		F5CD2C772CFEB4C400EA7C7A /* TopicListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */; };
+		F5CD2C782CFEB4C400EA7C7A /* AvatarUserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C662CFEB4C400EA7C7A /* AvatarUserNameView.swift */; };
+		F5CD2C792CFEB4C400EA7C7A /* TGDetailCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6B2CFEB4C400EA7C7A /* TGDetailCommentTableViewCell.swift */; };
+		F5CD2C7A2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6E2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift */; };
+		F5CD2C7B2CFEB4C400EA7C7A /* FeedListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */; };
+		F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */; };
+		F5CD2C7D2CFEB4C400EA7C7A /* TGFeedResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */; };
+		F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */; };
+		F5CD2C7F2CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */; };
+		F5CD2C832CFEB51C00EA7C7A /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C802CFEB51C00EA7C7A /* StoreManager.swift */; };
+		F5CD2C842CFEB51C00EA7C7A /* TGAppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C812CFEB51C00EA7C7A /* TGAppTheme.swift */; };
+		F5CD2C8A2CFEB5A800EA7C7A /* UserStatusEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C872CFEB5A800EA7C7A /* UserStatusEnum.swift */; };
+		F5CD2C8B2CFEB5A800EA7C7A /* TGUserInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C852CFEB5A800EA7C7A /* TGUserInfoModel.swift */; };
+		F5CD2C8C2CFEB5A800EA7C7A /* UserInfoType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C862CFEB5A800EA7C7A /* UserInfoType.swift */; };
+		F5CD2C902CFEB5C200EA7C7A /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C8F2CFEB5C200EA7C7A /* View+Extension.swift */; };
+		F5CD2C912CFEB5C200EA7C7A /* NSUserDefault+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C8E2CFEB5C200EA7C7A /* NSUserDefault+Cache.swift */; };
+		F5CD2C922CFEB5C200EA7C7A /* Calendar+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C8D2CFEB5C200EA7C7A /* Calendar+Extension.swift */; };
+		F5CD2C952CFEB76800EA7C7A /* TGAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C942CFEB76800EA7C7A /* TGAvatarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		11DB54BD2D907883BDB15C84 /* Pods-YIYISDKDemo-YIYIFeedIMSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YIYISDKDemo-YIYIFeedIMSDK.debug.xcconfig"; path = "Target Support Files/Pods-YIYISDKDemo-YIYIFeedIMSDK/Pods-YIYISDKDemo-YIYIFeedIMSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		8A027A502CFD5A38008D1AC7 /* TGReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReachability.swift; sourceTree = "<group>"; };
+		8A027A522CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGTeamMeetingCell.swift; sourceTree = "<group>"; };
+		8A027A542CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGTeamMeetingPreviewCell.swift; sourceTree = "<group>"; };
+		8A027A562CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMContactViewLayout.swift; sourceTree = "<group>"; };
+		8A027A582CFD9AF6008D1AC7 /* TGChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGChatViewModel.swift; sourceTree = "<group>"; };
+		8A027A5A2CFDAD76008D1AC7 /* TGMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageData.swift; sourceTree = "<group>"; };
+		8A027A5C2CFDBE29008D1AC7 /* TGChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGChatViewController.swift; sourceTree = "<group>"; };
+		8A4BB3112D06D2FB00AAB4B8 /* TGMessageMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageMapViewController.swift; sourceTree = "<group>"; };
+		8A4BB3162D0824DB00AAB4B8 /* IMAudioMessageStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IMAudioMessageStateView.swift; sourceTree = "<group>"; };
+		8A4BB3172D0824DB00AAB4B8 /* IMRecordStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IMRecordStateView.swift; sourceTree = "<group>"; };
+		8A4BB3182D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechVoiceDetectManager.swift; sourceTree = "<group>"; };
+		8A4BB31C2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputAudioRecordIndicatorView.swift; sourceTree = "<group>"; };
+		8A4BB3222D08352B00AAB4B8 /* NMCJSBridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = NMCJSBridge.js; sourceTree = "<group>"; };
+		8A4BB3232D08352B00AAB4B8 /* NMCMessageDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCMessageDispatcher.swift; sourceTree = "<group>"; };
+		8A4BB3242D08352B00AAB4B8 /* NMCWebLoginParam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWebLoginParam.swift; sourceTree = "<group>"; };
+		8A4BB3252D08352B00AAB4B8 /* NMCWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWebView.swift; sourceTree = "<group>"; };
+		8A4BB3262D08352B00AAB4B8 /* NMCWhiteBoardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWhiteBoardManager.swift; sourceTree = "<group>"; };
+		8A4BB3272D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWhiteBoardViewController.swift; sourceTree = "<group>"; };
 		8A9F0D252CF080790021462C /* YIYIFeedIMSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = YIYIFeedIMSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YIYIFeedIMSDK.h; sourceTree = "<group>"; };
 		8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = YIYIFeedIMSDK.docc; sourceTree = "<group>"; };
-		8A9F0D352CF0819E0021462C /* RLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLViewController.swift; sourceTree = "<group>"; };
+		8A9F0D352CF0819E0021462C /* TGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGViewController.swift; sourceTree = "<group>"; };
 		8A9F0D392CF089410021462C /* RLNIMSDKManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLNIMSDKManager.swift; sourceTree = "<group>"; };
 		8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLSDKManager.swift; sourceTree = "<group>"; };
 		8A9F0D3D2CF093580021462C /* RLLoginParma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLLoginParma.swift; sourceTree = "<group>"; };
@@ -195,7 +263,7 @@
 		8A9F0DEB2CF48B3B0021462C /* speaking.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = speaking.json; sourceTree = "<group>"; };
 		8A9F0DEC2CF48B3B0021462C /* speech_to_text_progress.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = speech_to_text_progress.json; sourceTree = "<group>"; };
 		8A9F0E012CF575CC0021462C /* RLMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLMessageViewController.swift; sourceTree = "<group>"; };
-		8A9F0E032CF57E520021462C /* RLNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RLNavigationController.swift; sourceTree = "<group>"; };
+		8A9F0E032CF57E520021462C /* TGNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNavigationController.swift; sourceTree = "<group>"; };
 		8A9F0E052CF6B6E60021462C /* ChatViewConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewConfig.swift; sourceTree = "<group>"; };
 		8A9F0E992CF6F5530021462C /* RLAudioVideoCallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLAudioVideoCallViewController.swift; sourceTree = "<group>"; };
 		8A9F0E9B2CF6F5C10021462C /* AudioVideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioVideoViewModel.swift; sourceTree = "<group>"; };
@@ -204,9 +272,41 @@
 		8A9F0EA12CF6F7D00021462C /* TimerHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerHolder.swift; sourceTree = "<group>"; };
 		8A9F0EA32CF6F9270021462C /* NetCallChatInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetCallChatInfo.swift; sourceTree = "<group>"; };
 		8A9F0EA52CF707820021462C /* RLAudioCallController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLAudioCallController.swift; sourceTree = "<group>"; };
-		8A9F0EA72CF707B70021462C /* RLVideoCallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLVideoCallViewController.swift; sourceTree = "<group>"; };
+		8ABF5F3B2CF822AE001DC11E /* ExtensionStringCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionStringCrypto.swift; sourceTree = "<group>"; };
+		8ABF5F3D2CF82395001DC11E /* IMNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IMNotificationCenter.swift; sourceTree = "<group>"; };
+		8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMTeamMeetingController.swift; sourceTree = "<group>"; };
+		8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
+		8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMeetingViewModel.swift; sourceTree = "<group>"; };
 		9B7FF8D3AB0A77F6C7BA2655 /* Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; path = "Target Support Files/Pods-YIYISDKDemo-YIYIFeedIMSDK/Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; sourceTree = "<group>"; };
 		C8BD6A12FE67EB49C19F3D71 /* Pods_YIYISDKDemo_YIYIFeedIMSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YIYISDKDemo_YIYIFeedIMSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedNetworkManager.swift; sourceTree = "<group>"; };
+		F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNetworkManager.swift; sourceTree = "<group>"; };
+		F5CD2C582CFEB40500EA7C7A /* ServerResponseDataTransforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponseDataTransforms.swift; sourceTree = "<group>"; };
+		F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentLabelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCommentLabelModel.swift; sourceTree = "<group>"; };
+		F5CD2C5E2CFEB4C400EA7C7A /* FeedListCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListCellModel.swift; sourceTree = "<group>"; };
+		F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListModel.swift; sourceTree = "<group>"; };
+		F5CD2C602CFEB4C400EA7C7A /* PictureModeler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureModeler.swift; sourceTree = "<group>"; };
+		F5CD2C612CFEB4C400EA7C7A /* SharedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViewModel.swift; sourceTree = "<group>"; };
+		F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedResponse.swift; sourceTree = "<group>"; };
+		F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListModel.swift; sourceTree = "<group>"; };
+		F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSPostLocationModel.swift; sourceTree = "<group>"; };
+		F5CD2C662CFEB4C400EA7C7A /* AvatarUserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUserNameView.swift; sourceTree = "<group>"; };
+		F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedDetailCommentTableViewCell.swift; sourceTree = "<group>"; };
+		F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedDetailTableHeaderView.swift; sourceTree = "<group>"; };
+		F5CD2C692CFEB4C400EA7C7A /* FeedImageSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageSliderView.swift; sourceTree = "<group>"; };
+		F5CD2C6A2CFEB4C400EA7C7A /* FeedToolBarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedToolBarButton.swift; sourceTree = "<group>"; };
+		F5CD2C6B2CFEB4C400EA7C7A /* TGDetailCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGDetailCommentTableViewCell.swift; sourceTree = "<group>"; };
+		F5CD2C6C2CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMomentDetailNavTitle.swift; sourceTree = "<group>"; };
+		F5CD2C6E2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedInfoDetailViewController.swift; sourceTree = "<group>"; };
+		F5CD2C802CFEB51C00EA7C7A /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		F5CD2C812CFEB51C00EA7C7A /* TGAppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAppTheme.swift; sourceTree = "<group>"; };
+		F5CD2C852CFEB5A800EA7C7A /* TGUserInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGUserInfoModel.swift; sourceTree = "<group>"; };
+		F5CD2C862CFEB5A800EA7C7A /* UserInfoType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoType.swift; sourceTree = "<group>"; };
+		F5CD2C872CFEB5A800EA7C7A /* UserStatusEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusEnum.swift; sourceTree = "<group>"; };
+		F5CD2C8D2CFEB5C200EA7C7A /* Calendar+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Calendar+Extension.swift"; sourceTree = "<group>"; };
+		F5CD2C8E2CFEB5C200EA7C7A /* NSUserDefault+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSUserDefault+Cache.swift"; sourceTree = "<group>"; };
+		F5CD2C8F2CFEB5C200EA7C7A /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
+		F5CD2C942CFEB76800EA7C7A /* TGAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAvatarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +339,19 @@
 			path = ../Pods;
 			sourceTree = "<group>";
 		};
+		8A4BB32C2D08352B00AAB4B8 /* Whiteboard */ = {
+			isa = PBXGroup;
+			children = (
+				8A4BB3222D08352B00AAB4B8 /* NMCJSBridge.js */,
+				8A4BB3232D08352B00AAB4B8 /* NMCMessageDispatcher.swift */,
+				8A4BB3242D08352B00AAB4B8 /* NMCWebLoginParam.swift */,
+				8A4BB3252D08352B00AAB4B8 /* NMCWebView.swift */,
+				8A4BB3262D08352B00AAB4B8 /* NMCWhiteBoardManager.swift */,
+				8A4BB3272D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift */,
+			);
+			path = Whiteboard;
+			sourceTree = "<group>";
+		};
 		8A9F0D1B2CF080790021462C = {
 			isa = PBXGroup;
 			children = (
@@ -260,6 +373,10 @@
 		8A9F0D272CF080790021462C /* YIYIFeedIMSDK */ = {
 			isa = PBXGroup;
 			children = (
+				F5CD2C892CFEB5A800EA7C7A /* User */,
+				F5CD2C822CFEB51C00EA7C7A /* TogaCore */,
+				F5CD2C6F2CFEB4C400EA7C7A /* Feed */,
+				F5BAEB222CF8085E007977D9 /* NetworkServices */,
 				8A9F0DEA2CF48B3B0021462C /* SDKResource.bundle */,
 				8A9F0DED2CF48B3B0021462C /* Resources */,
 				8A9F0DB32CF451B40021462C /* Units */,
@@ -268,8 +385,8 @@
 				8A9F0D372CF088FA0021462C /* Message */,
 				8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */,
 				8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */,
-				8A9F0D352CF0819E0021462C /* RLViewController.swift */,
-				8A9F0E032CF57E520021462C /* RLNavigationController.swift */,
+				8A9F0D352CF0819E0021462C /* TGViewController.swift */,
+				8A9F0E032CF57E520021462C /* TGNavigationController.swift */,
 				8A9F0D672CF42A290021462C /* RLTableView.swift */,
 				8A9F0D692CF42AC70021462C /* RLCollectionView.swift */,
 				8A9F0D6A2CF42AC70021462C /* RLColor.swift */,
@@ -284,6 +401,7 @@
 		8A9F0D372CF088FA0021462C /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				8A4BB32C2D08352B00AAB4B8 /* Whiteboard */,
 				8A9F0D8B2CF430FE0021462C /* Emoji */,
 				8A9F0D712CF430C20021462C /* Views */,
 				8A9F0D502CF427770021462C /* Cells */,
@@ -292,10 +410,12 @@
 				8A9F0D382CF089120021462C /* IMUtils */,
 				8A9F0D4D2CF427560021462C /* RLConversationListViewController.swift */,
 				8A9F0D6F2CF42D910021462C /* RLBaseChatViewController.swift */,
+				8A027A5C2CFDBE29008D1AC7 /* TGChatViewController.swift */,
 				8A9F0E012CF575CC0021462C /* RLMessageViewController.swift */,
 				8A9F0E992CF6F5530021462C /* RLAudioVideoCallViewController.swift */,
 				8A9F0EA52CF707820021462C /* RLAudioCallController.swift */,
-				8A9F0EA72CF707B70021462C /* RLVideoCallViewController.swift */,
+				8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */,
+				8A4BB3112D06D2FB00AAB4B8 /* TGMessageMapViewController.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -303,6 +423,7 @@
 		8A9F0D382CF089120021462C /* IMUtils */ = {
 			isa = PBXGroup;
 			children = (
+				8ABF5F3D2CF82395001DC11E /* IMNotificationCenter.swift */,
 				8A9F0EA12CF6F7D00021462C /* TimerHolder.swift */,
 				8A9F0E052CF6B6E60021462C /* ChatViewConfig.swift */,
 				8A9F0DAF2CF44FD20021462C /* RLSendFileManager.swift */,
@@ -321,7 +442,9 @@
 			children = (
 				8A9F0D652CF429BE0021462C /* ConversationViewModel.swift */,
 				8A9F0D432CF41BCB0021462C /* RLChatViewModel.swift */,
+				8A027A582CFD9AF6008D1AC7 /* TGChatViewModel.swift */,
 				8A9F0E9B2CF6F5C10021462C /* AudioVideoViewModel.swift */,
+				8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -330,6 +453,7 @@
 			isa = PBXGroup;
 			children = (
 				8A9F0D412CF41ACD0021462C /* RLMessageData.swift */,
+				8A027A5A2CFDAD76008D1AC7 /* TGMessageData.swift */,
 				8A9F0D452CF41D290021462C /* ChatLocaitonModel.swift */,
 				8A9F0D472CF41D4B0021462C /* OperationItem.swift */,
 				8A9F0EA32CF6F9270021462C /* NetCallChatInfo.swift */,
@@ -350,6 +474,8 @@
 				8A9F0D582CF427A90021462C /* TextMessageCell.swift */,
 				8A9F0D572CF427A90021462C /* TipMessageCell.swift */,
 				8A9F0D512CF427A90021462C /* UserInfoMessageCell.swift */,
+				8A027A522CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift */,
+				8A027A542CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -357,6 +483,10 @@
 		8A9F0D712CF430C20021462C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8A4BB31C2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift */,
+				8A4BB3162D0824DB00AAB4B8 /* IMAudioMessageStateView.swift */,
+				8A4BB3172D0824DB00AAB4B8 /* IMRecordStateView.swift */,
+				8A4BB3182D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift */,
 				8A9F0D722CF430E60021462C /* BaseChatInputView.swift */,
 				8A9F0D772CF430E60021462C /* ChatMoreActionView.swift */,
 				8A9F0D742CF430E60021462C /* ChatRecordView.swift */,
@@ -365,6 +495,7 @@
 				8A9F0D792CF430E60021462C /* MessageOperationView.swift */,
 				8A9F0D732CF430E60021462C /* OperationCell.swift */,
 				8A9F0D782CF430E60021462C /* ReplyView.swift */,
+				8A027A562CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -388,6 +519,7 @@
 		8A9F0D952CF444490021462C /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				F5CD2C942CFEB76800EA7C7A /* TGAvatarView.swift */,
 				8A9F0D9A2CF4464F0021462C /* SCCustomNavigationBar.swift */,
 				8A9F0D962CF444A80021462C /* SCRefreshFooter.swift */,
 				8A9F0D972CF444A80021462C /* SCRefreshHeader.swift */,
@@ -398,6 +530,11 @@
 		8A9F0DA02CF44D240021462C /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				F5CD2C8D2CFEB5C200EA7C7A /* Calendar+Extension.swift */,
+				F5CD2C8E2CFEB5C200EA7C7A /* NSUserDefault+Cache.swift */,
+				F5CD2C8F2CFEB5C200EA7C7A /* View+Extension.swift */,
+				8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */,
+				8ABF5F3B2CF822AE001DC11E /* ExtensionStringCrypto.swift */,
 				8A9F0DA22CF44D6F0021462C /* Int+Extension.swift */,
 				8A9F0DA42CF44D6F0021462C /* number+extensions.swift */,
 				8A9F0DA52CF44D6F0021462C /* Optional+Extension.swift */,
@@ -419,6 +556,7 @@
 				8A9F0DB82CF451E80021462C /* LogManager.swift */,
 				8A9F0DB72CF451E80021462C /* Then.swift */,
 				8A9F0DBD2CF451E90021462C /* UIView+Actions.swift */,
+				8A027A502CFD5A38008D1AC7 /* TGReachability.swift */,
 			);
 			path = Units;
 			sourceTree = "<group>";
@@ -454,6 +592,90 @@
 				8A9F0DEC2CF48B3B0021462C /* speech_to_text_progress.json */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		F5BAEB222CF8085E007977D9 /* NetworkServices */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */,
+				F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */,
+				F5CD2C592CFEB40500EA7C7A /* Tool */,
+			);
+			path = NetworkServices;
+			sourceTree = "<group>";
+		};
+		F5CD2C592CFEB40500EA7C7A /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C582CFEB40500EA7C7A /* ServerResponseDataTransforms.swift */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
+		F5CD2C652CFEB4C400EA7C7A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentLabelModel.swift */,
+				F5CD2C5E2CFEB4C400EA7C7A /* FeedListCellModel.swift */,
+				F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */,
+				F5CD2C602CFEB4C400EA7C7A /* PictureModeler.swift */,
+				F5CD2C612CFEB4C400EA7C7A /* SharedViewModel.swift */,
+				F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */,
+				F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */,
+				F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F5CD2C6D2CFEB4C400EA7C7A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C662CFEB4C400EA7C7A /* AvatarUserNameView.swift */,
+				F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */,
+				F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */,
+				F5CD2C692CFEB4C400EA7C7A /* FeedImageSliderView.swift */,
+				F5CD2C6A2CFEB4C400EA7C7A /* FeedToolBarButton.swift */,
+				F5CD2C6B2CFEB4C400EA7C7A /* TGDetailCommentTableViewCell.swift */,
+				F5CD2C6C2CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F5CD2C6F2CFEB4C400EA7C7A /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C652CFEB4C400EA7C7A /* Models */,
+				F5CD2C6D2CFEB4C400EA7C7A /* Views */,
+				F5CD2C6E2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift */,
+			);
+			path = Feed;
+			sourceTree = "<group>";
+		};
+		F5CD2C822CFEB51C00EA7C7A /* TogaCore */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C802CFEB51C00EA7C7A /* StoreManager.swift */,
+				F5CD2C812CFEB51C00EA7C7A /* TGAppTheme.swift */,
+			);
+			path = TogaCore;
+			sourceTree = "<group>";
+		};
+		F5CD2C882CFEB5A800EA7C7A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C852CFEB5A800EA7C7A /* TGUserInfoModel.swift */,
+				F5CD2C862CFEB5A800EA7C7A /* UserInfoType.swift */,
+				F5CD2C872CFEB5A800EA7C7A /* UserStatusEnum.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F5CD2C892CFEB5A800EA7C7A /* User */ = {
+			isa = PBXGroup;
+			children = (
+				F5CD2C882CFEB5A800EA7C7A /* Models */,
+			);
+			path = User;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -537,6 +759,7 @@
 			files = (
 				8A9F0DFD2CF48B3B0021462C /* Localizable.strings in Resources */,
 				8A9F0DF22CF48B3B0021462C /* reaction-love.json in Resources */,
+				8A4BB3312D08352B00AAB4B8 /* NMCJSBridge.js in Resources */,
 				8A9F0DFE2CF48B3B0021462C /* SDKResource.bundle in Resources */,
 				8A9F0DF82CF48B3B0021462C /* Localizable.strings in Resources */,
 				8A9F0DF32CF48B3B0021462C /* reaction-wow.json in Resources */,
@@ -590,37 +813,54 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A027A552CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift in Sources */,
+				8A4BB31A2D0824DC00AAB4B8 /* IMRecordStateView.swift in Sources */,
 				8A9F0D3C2CF0911A0021462C /* RLSDKManager.swift in Sources */,
+				8ABF5F4A2CF9CCED001DC11E /* TeamMeetingViewModel.swift in Sources */,
 				8A9F0E9A2CF6F5530021462C /* RLAudioVideoCallViewController.swift in Sources */,
 				8A9F0D7D2CF430E70021462C /* MapViewSearchView.swift in Sources */,
+				F5CD2C8A2CFEB5A800EA7C7A /* UserStatusEnum.swift in Sources */,
+				F5CD2C8B2CFEB5A800EA7C7A /* TGUserInfoModel.swift in Sources */,
+				F5CD2C8C2CFEB5A800EA7C7A /* UserInfoType.swift in Sources */,
 				8A9F0D992CF444A80021462C /* SCRefreshHeader.swift in Sources */,
 				8A9F0D5D2CF427A90021462C /* ReplyMessageCell.swift in Sources */,
+				F5CD2C5A2CFEB40500EA7C7A /* ServerResponseDataTransforms.swift in Sources */,
+				F5CD2C5B2CFEB40500EA7C7A /* TGFeedNetworkManager.swift in Sources */,
+				F5CD2C5C2CFEB40500EA7C7A /* TGNetworkManager.swift in Sources */,
 				8A9F0EA42CF6F9270021462C /* NetCallChatInfo.swift in Sources */,
 				8A9F0DC12CF451E90021462C /* Then.swift in Sources */,
 				8A9F0D812CF430E70021462C /* MessageOperationView.swift in Sources */,
+				8A4BB31D2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift in Sources */,
 				8A9F0D912CF430FE0021462C /* NIMInputEmoticonButton.swift in Sources */,
 				8A9F0DAB2CF44D6F0021462C /* number+extensions.swift in Sources */,
 				8A9F0D422CF41ACD0021462C /* RLMessageData.swift in Sources */,
 				8A9F0DC72CF451E90021462C /* UIView+Actions.swift in Sources */,
 				8A9F0D3A2CF089410021462C /* RLNIMSDKManager.swift in Sources */,
 				8A9F0D8D2CF430FE0021462C /* InputEmoticonContainerView.swift in Sources */,
+				8A4BB3192D0824DC00AAB4B8 /* IMAudioMessageStateView.swift in Sources */,
 				8A9F0D802CF430E70021462C /* ReplyView.swift in Sources */,
 				8A9F0D4E2CF427560021462C /* RLConversationListViewController.swift in Sources */,
+				F5CD2C902CFEB5C200EA7C7A /* View+Extension.swift in Sources */,
+				F5CD2C912CFEB5C200EA7C7A /* NSUserDefault+Cache.swift in Sources */,
+				F5CD2C922CFEB5C200EA7C7A /* Calendar+Extension.swift in Sources */,
 				8A9F0D7C2CF430E70021462C /* ChatRecordView.swift in Sources */,
-				8A9F0E042CF57E520021462C /* RLNavigationController.swift in Sources */,
+				8A027A512CFD5A38008D1AC7 /* TGReachability.swift in Sources */,
+				8A9F0E042CF57E520021462C /* TGNavigationController.swift in Sources */,
 				8A9F0D642CF429390021462C /* ConversationListCell.swift in Sources */,
+				8A027A532CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift in Sources */,
 				8A9F0D5E2CF427A90021462C /* FileMessageCell.swift in Sources */,
 				8A9F0D9D2CF44A550021462C /* RLMapClient.swift in Sources */,
 				8A9F0D5A2CF427A90021462C /* UserInfoMessageCell.swift in Sources */,
 				8A9F0D3E2CF093580021462C /* RLLoginParma.swift in Sources */,
+				8ABF5F3E2CF82395001DC11E /* IMNotificationCenter.swift in Sources */,
 				8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */,
 				8A9F0D6D2CF42AC70021462C /* RLColor.swift in Sources */,
 				8A9F0D5B2CF427A90021462C /* BaseMessageCell.swift in Sources */,
 				8A9F0D932CF430FE0021462C /* NIMInputEmoticonManager.swift in Sources */,
 				8A9F0D9B2CF4464F0021462C /* SCCustomNavigationBar.swift in Sources */,
-				8A9F0EA82CF707B70021462C /* RLVideoCallViewController.swift in Sources */,
 				8A9F0EA22CF6F7D00021462C /* TimerHolder.swift in Sources */,
 				8A9F0E072CF6B6E70021462C /* ChatViewConfig.swift in Sources */,
+				8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */,
 				8A9F0DAE2CF44D6F0021462C /* UIViewController+Extension.swift in Sources */,
 				8A9F0D702CF42D910021462C /* RLBaseChatViewController.swift in Sources */,
 				8A9F0D902CF430FE0021462C /* NEEmotionTool.swift in Sources */,
@@ -629,16 +869,23 @@
 				8A9F0D5C2CF427A90021462C /* LocationMessageCell.swift in Sources */,
 				8A9F0E9F2CF6F6910021462C /* CustomAttachmentDefines.swift in Sources */,
 				8A9F0DAC2CF44D6F0021462C /* Optional+Extension.swift in Sources */,
+				8A027A5B2CFDAD76008D1AC7 /* TGMessageData.swift in Sources */,
 				8A9F0D602CF427A90021462C /* TipMessageCell.swift in Sources */,
 				8A9F0D982CF444A80021462C /* SCRefreshFooter.swift in Sources */,
 				8A9F0DC22CF451E90021462C /* LogManager.swift in Sources */,
+				8A4BB3122D06D2FB00AAB4B8 /* TGMessageMapViewController.swift in Sources */,
+				8ABF5F3C2CF822AF001DC11E /* ExtensionStringCrypto.swift in Sources */,
+				8A027A5D2CFDBE29008D1AC7 /* TGChatViewController.swift in Sources */,
+				8A027A572CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift in Sources */,
+				8A4BB3342D08352B00AAB4B8 /* NMCWebView.swift in Sources */,
 				8A9F0D7E2CF430E70021462C /* InputMoreCell.swift in Sources */,
 				8A9F0D442CF41BCB0021462C /* RLChatViewModel.swift in Sources */,
 				8A9F0E9C2CF6F5C10021462C /* AudioVideoViewModel.swift in Sources */,
 				8A9F0D6C2CF42AC70021462C /* RLCollectionView.swift in Sources */,
 				8A9F0D482CF41D4B0021462C /* OperationItem.swift in Sources */,
 				8A9F0D5F2CF427A90021462C /* AudioMessageCell.swift in Sources */,
-				8A9F0D362CF0819E0021462C /* RLViewController.swift in Sources */,
+				F5CD2C952CFEB76800EA7C7A /* TGAvatarView.swift in Sources */,
+				8A9F0D362CF0819E0021462C /* TGViewController.swift in Sources */,
 				8A9F0DC02CF451E90021462C /* FileUtils.swift in Sources */,
 				8A9F0D662CF429BE0021462C /* ConversationViewModel.swift in Sources */,
 				8A9F0DA92CF44D6F0021462C /* Int+Extension.swift in Sources */,
@@ -648,23 +895,48 @@
 				8A9F0DB22CF44FEE0021462C /* RLAuthManager.swift in Sources */,
 				8A9F0D612CF427A90021462C /* TextMessageCell.swift in Sources */,
 				8A9F0D622CF427A90021462C /* ImageMessageCell.swift in Sources */,
+				8A027A592CFD9AF6008D1AC7 /* TGChatViewModel.swift in Sources */,
 				8A9F0D8C2CF430FE0021462C /* EmojiPageView.swift in Sources */,
 				8A9F0D7A2CF430E60021462C /* BaseChatInputView.swift in Sources */,
 				8A9F0D7B2CF430E70021462C /* OperationCell.swift in Sources */,
+				F5CD2C702CFEB4C400EA7C7A /* FeedToolBarButton.swift in Sources */,
+				F5CD2C712CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift in Sources */,
+				F5CD2C722CFEB4C400EA7C7A /* PictureModeler.swift in Sources */,
+				F5CD2C732CFEB4C400EA7C7A /* FeedImageSliderView.swift in Sources */,
+				F5CD2C742CFEB4C400EA7C7A /* FeedCommentLabelModel.swift in Sources */,
+				F5CD2C752CFEB4C400EA7C7A /* SharedViewModel.swift in Sources */,
+				F5CD2C762CFEB4C400EA7C7A /* FeedListCellModel.swift in Sources */,
+				F5CD2C772CFEB4C400EA7C7A /* TopicListModel.swift in Sources */,
+				F5CD2C782CFEB4C400EA7C7A /* AvatarUserNameView.swift in Sources */,
+				F5CD2C792CFEB4C400EA7C7A /* TGDetailCommentTableViewCell.swift in Sources */,
+				F5CD2C7A2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift in Sources */,
+				F5CD2C7B2CFEB4C400EA7C7A /* FeedListModel.swift in Sources */,
+				F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */,
+				F5CD2C7D2CFEB4C400EA7C7A /* TGFeedResponse.swift in Sources */,
+				F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */,
+				F5CD2C7F2CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift in Sources */,
 				8A9F0DC52CF451E90021462C /* Action.swift in Sources */,
 				8A9F0DAD2CF44D6F0021462C /* String+Extension.swift in Sources */,
 				8A9F0DBE2CF451E90021462C /* ImageCompress.swift in Sources */,
 				8A9F0D8F2CF430FE0021462C /* NEEmotionAttachment.swift in Sources */,
 				8A9F0D682CF42A290021462C /* RLTableView.swift in Sources */,
 				8A9F0D922CF430FE0021462C /* NIMInputEmoticonDefine.swift in Sources */,
+				8A4BB3362D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift in Sources */,
 				8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */,
 				8A9F0D4A2CF41D610021462C /* MessageUtils.swift in Sources */,
 				8A9F0EA62CF707820021462C /* RLAudioCallController.swift in Sources */,
 				8A9F0DB02CF44FD20021462C /* RLSendFileManager.swift in Sources */,
+				F5CD2C832CFEB51C00EA7C7A /* StoreManager.swift in Sources */,
+				F5CD2C842CFEB51C00EA7C7A /* TGAppTheme.swift in Sources */,
 				8A9F0E022CF575CC0021462C /* RLMessageViewController.swift in Sources */,
 				8A9F0D9F2CF44CD20021462C /* RLCurrentUserInfo.swift in Sources */,
+				8A4BB3352D08352B00AAB4B8 /* NMCWhiteBoardManager.swift in Sources */,
+				8A4BB31B2D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift in Sources */,
 				8A9F0D8E2CF430FE0021462C /* InputEmoticonTabView.swift in Sources */,
+				8A4BB3332D08352B00AAB4B8 /* NMCWebLoginParam.swift in Sources */,
 				8A9F0EA02CF6F6910021462C /* CustomAttachmentDecoder.swift in Sources */,
+				8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */,
+				8A4BB3322D08352B00AAB4B8 /* NMCMessageDispatcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

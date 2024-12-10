@@ -9,12 +9,12 @@ import UIKit
 import NIMSDK
 import AVFoundation
 
-// 发送文件大小限制(单位：MB)
-let fileSizeLimit: Double = 200
-//录音时长
-let record_duration: TimeInterval = 60.0
+//// 发送文件大小限制(单位：MB)
+//let fileSizeLimit: Double = 200
+////录音时长
+//let record_duration: TimeInterval = 60.0
 
-class RLBaseChatViewController: RLViewController {
+class RLBaseChatViewController: TGViewController {
 
     var viewmodel: RLChatViewModel
     
@@ -109,10 +109,10 @@ class RLBaseChatViewController: RLViewController {
     }
     
     func commonUI(){
-        viewmodel.delegate = self
+       // viewmodel.delegate = self
         backBaseView.addSubview(tableView)
         backBaseView.addSubview(chatInputView)
-        chatInputView.delegate = self
+       // chatInputView.delegate = self
         tableView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: ScreenHeight - chatInputView.menuHeight - TSNavigationBarHeight - TSBottomSafeAreaHeight)
         tableView.register(TextMessageCell.self, forCellReuseIdentifier: "TextMessageCell")
         tableView.register(ImageMessageCell.self, forCellReuseIdentifier: "ImageMessageCell")
@@ -177,16 +177,18 @@ class RLBaseChatViewController: RLViewController {
         case .P2P:
             let voiceCall = UIAlertAction(title: "msg_type_voice_call".localized, style: .default, handler: { [weak self] _ in
                 guard let self = self else { return }
-                let vc = RLAudioCallController(callee: self.session.sessionId)
-                self.navigationController?.pushViewController(vc, animated: true)
+                let vc = RLAudioCallController(callee: self.session.sessionId, callType: .SIGNALLING_CHANNEL_TYPE_AUDIO)
+                let nav = TGNavigationController(rootViewController: vc)
+                self.present(nav.fullScreenRepresentation, animated: true)
             })
             voiceCall.setValue(voiceImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
 
             let videoImage = UIImage.set_image(named: "videoCallTop")
             let videoCall = UIAlertAction(title: "msg_type_video_call".localized, style: .default, handler: { [weak self] _ in
                 guard let self = self else { return }
-                let vc = RLVideoCallViewController(callee: self.session.sessionId)
-                self.navigationController?.pushViewController(vc, animated: true)
+                let vc = RLAudioCallController(callee: self.session.sessionId, callType: .SIGNALLING_CHANNEL_TYPE_VIDEO)
+                let nav = TGNavigationController(rootViewController: vc)
+                self.present(nav.fullScreenRepresentation, animated: true)
             })
             videoCall.setValue(videoImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
             
@@ -570,149 +572,149 @@ extension RLBaseChatViewController: MessageOperationViewDelegate{
     }
 }
 // MARK: BaseMessageCellDelegate
-extension RLBaseChatViewController: BaseMessageCellDelegate{
-    ///点击用户头像
-    func tapUserAvatar(cell: BaseMessageCell?, model: RLMessageData?) {
-        
-    }
-    
-    func tapItemMessage(cell: BaseMessageCell?, model: RLMessageData?) {
-        operationView?.removeFromSuperview()
-        guard let model = model, let cell = cell else { return }
-        switch model.messageType {
-        case .audio:
-            startPlay(cell: cell as? AudioMessageCell, model: model)
-        case .video:
-            stopPlay()
-            if let message = model.nimMessageModel, let object = message.messageObject as? NIMVideoObject, let path = object.path , let urlString = object.url{
-                if FileManager.default.fileExists(atPath: path) == true {
-                    let url = URL(fileURLWithPath: path)
-                    let coverUrl = URL(fileURLWithPath: object.coverPath ?? "")
-//                    let vc = FeedFullVideoViewController()
-//                    self.navigationController?.pushViewController(vc, animated: true)
-//                    vc.setVideoUrl(url: url, coverUrl: coverUrl)
-                    
-                }else{
-                    viewmodel.downLoad(urlString, path) { progress in
-                        // TODO: 处理下载中...
-                    } _: { error in
-                        
-                    }
-
-                }
-                
-            }
-
-        case .file:
-            guard let object = model.nimMessageModel?.messageObject as? NIMFileObject,
-                  let path = object.path else {
-                return
-            }
-            if !FileManager.default.fileExists(atPath: path) {
-                viewmodel.downLoadFile(object: object)
-            }else{
-                let url = URL(fileURLWithPath: path)
-                let interactionController = UIDocumentInteractionController()
-                interactionController.url = url
-                interactionController.delegate = self
-                if interactionController.presentPreview(animated: true) {}
-                else {
-                  interactionController.presentOptionsMenu(from: view.bounds, in: view, animated: true)
-                }
-            }
-        case .image:
-            if let imageObject = model.nimMessageModel?.messageObject as? NIMImageObject {
-                var imageUrl = ""
-                if let url = imageObject.url {
-                    imageUrl = url
-                } else {
-                    if let path = imageObject.path, FileManager.default.fileExists(atPath: path) {
-                        imageUrl = path
-                    }
-                }
-                if imageUrl.count > 0, let cell = cell as? ImageMessageCell {
-                    let urls = viewmodel.getUrls()
-                    
-                    let index = urls.firstIndex { str in
-                        str == imageUrl
-                    }
-//                    var images: [ImageBrowserModel] = []
-//                    for url in urls {
-//                        if let urlT = URL(string: url) {
-//                            let imageModel = ImageBrowserModel(url: urlT, image: nil, toView: cell.displayImage)
-//                            images.append(imageModel)
-//                        }
+//extension RLBaseChatViewController: BaseMessageCellDelegate{
+//    ///点击用户头像
+//    func tapUserAvatar(cell: BaseMessageCell?, model: TGMessageData?) {
+//        
+//    }
+//    
+//    func tapItemMessage(cell: BaseMessageCell?, model: TGMessageData?) {
+//        operationView?.removeFromSuperview()
+//        guard let model = model, let cell = cell else { return }
+//        switch model.messageType {
+//        case .audio:
+//            startPlay(cell: cell as? AudioMessageCell, model: model)
+//        case .video:
+//            stopPlay()
+//            if let message = model.nimMessageModel, let object = message.messageObject as? NIMVideoObject, let path = object.path , let urlString = object.url{
+//                if FileManager.default.fileExists(atPath: path) == true {
+//                    let url = URL(fileURLWithPath: path)
+//                    let coverUrl = URL(fileURLWithPath: object.coverPath ?? "")
+////                    let vc = FeedFullVideoViewController()
+////                    self.navigationController?.pushViewController(vc, animated: true)
+////                    vc.setVideoUrl(url: url, coverUrl: coverUrl)
+//                    
+//                }else{
+//                    viewmodel.downLoad(urlString, path) { progress in
+//                        // TODO: 处理下载中...
+//                    } _: { error in
+//                        
 //                    }
-//                    let vc = SCImageBrowserController()
-//                    vc.images = images
-//                    vc.index = index ?? 0
-//                    vc.modalPresentationStyle = .overFullScreen
-//                    present(vc, animated: false, completion: nil)
-
-                }
-            }
-        case .location :
-//            let vc = ShowMapViewController(model: model)
-//            self.navigationController?.pushViewController(vc, animated: true)
-            break
-        default:
-            break
-        }
-        
-    }
-    func handleBaseMessageCellLongPress(cell: BaseMessageCell, model: RLMessageData?) {
-        guard let model = model else { return }
-        // 底部收起
-        chatInputView.textView.resignFirstResponder()
-        //layoutInputView(offset: 0)
-        operationView?.removeFromSuperview()
-        // operations
-        guard let items = viewmodel.avalibleOperationsForMessage(model) else {
-          return
-        }
-        viewmodel.operationModel = model
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: DispatchWorkItem(block: { [self] in
-            // size
-            let w = items.count <= 5 ? 60.0 * Double(items.count) + 16.0 : 60.0 * 5 + 16.0
-            let h = items.count <= 5 ? 56.0 + 16.0 : 56.0 * 2 + 16.0
-            
-            if let index = tableView.indexPath(for: cell) {
-                let rectInTableView = tableView.rectForRow(at: index)
-                let rectInView = tableView.convert(rectInTableView, to: view)
-                let topOffset = 10.0
-                var operationY = 0.0
-               
-                if topOffset + h  > rectInView.origin.y {
-                    // under the cell
-                    if rectInView.origin.y + rectInView.size.height > self.backBaseView.bounds.height - normalInputHeight {
-                        operationY = self.backBaseView.bounds.height - normalInputHeight - h
-                    }else{
-                        operationY = rectInView.origin.y + rectInView.size.height
-                    }
-                } else {
-                    operationY = rectInView.origin.y - h
-                }
-                var frameX = 10.0
-                if let msg = model.nimMessageModel,
-                   msg.isOutgoingMsg {
-                    frameX = ScreenWidth - w - frameX
-                }
-                var frame = CGRect(x: frameX, y: operationY, width: w, height: h)
-                if frame.origin.y + h < tableView.frame.origin.y {
-                    frame.origin.y = tableView.frame.origin.y
-                } else if frame.origin.y + h > view.frame.size.height {
-                    frame.origin.y = tableView.frame.origin.y + tableView.frame.size.height - h
-                }
-                
-                operationView = MessageOperationView(frame: frame, model: model)
-                operationView!.delegate = self
-                operationView!.items = items
-                backBaseView.addSubview(operationView!)
-            }
-        }))
-                                      
-    }
-}
+//
+//                }
+//                
+//            }
+//
+//        case .file:
+//            guard let object = model.nimMessageModel?.messageObject as? NIMFileObject,
+//                  let path = object.path else {
+//                return
+//            }
+//            if !FileManager.default.fileExists(atPath: path) {
+//                viewmodel.downLoadFile(object: object)
+//            }else{
+//                let url = URL(fileURLWithPath: path)
+//                let interactionController = UIDocumentInteractionController()
+//                interactionController.url = url
+//                interactionController.delegate = self
+//                if interactionController.presentPreview(animated: true) {}
+//                else {
+//                  interactionController.presentOptionsMenu(from: view.bounds, in: view, animated: true)
+//                }
+//            }
+//        case .image:
+//            if let imageObject = model.nimMessageModel?.messageObject as? NIMImageObject {
+//                var imageUrl = ""
+//                if let url = imageObject.url {
+//                    imageUrl = url
+//                } else {
+//                    if let path = imageObject.path, FileManager.default.fileExists(atPath: path) {
+//                        imageUrl = path
+//                    }
+//                }
+//                if imageUrl.count > 0, let cell = cell as? ImageMessageCell {
+//                    let urls = viewmodel.getUrls()
+//                    
+//                    let index = urls.firstIndex { str in
+//                        str == imageUrl
+//                    }
+////                    var images: [ImageBrowserModel] = []
+////                    for url in urls {
+////                        if let urlT = URL(string: url) {
+////                            let imageModel = ImageBrowserModel(url: urlT, image: nil, toView: cell.displayImage)
+////                            images.append(imageModel)
+////                        }
+////                    }
+////                    let vc = SCImageBrowserController()
+////                    vc.images = images
+////                    vc.index = index ?? 0
+////                    vc.modalPresentationStyle = .overFullScreen
+////                    present(vc, animated: false, completion: nil)
+//
+//                }
+//            }
+//        case .location :
+////            let vc = ShowMapViewController(model: model)
+////            self.navigationController?.pushViewController(vc, animated: true)
+//            break
+//        default:
+//            break
+//        }
+//        
+//    }
+//    func handleBaseMessageCellLongPress(cell: BaseMessageCell, model: TGMessageData?) {
+//        guard let model = model else { return }
+//        // 底部收起
+//        chatInputView.textView.resignFirstResponder()
+//        //layoutInputView(offset: 0)
+//        operationView?.removeFromSuperview()
+//        // operations
+//        guard let items = viewmodel.avalibleOperationsForMessage(model) else {
+//          return
+//        }
+//        viewmodel.operationModel = model
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: DispatchWorkItem(block: { [self] in
+//            // size
+//            let w = items.count <= 5 ? 60.0 * Double(items.count) + 16.0 : 60.0 * 5 + 16.0
+//            let h = items.count <= 5 ? 56.0 + 16.0 : 56.0 * 2 + 16.0
+//            
+//            if let index = tableView.indexPath(for: cell) {
+//                let rectInTableView = tableView.rectForRow(at: index)
+//                let rectInView = tableView.convert(rectInTableView, to: view)
+//                let topOffset = 10.0
+//                var operationY = 0.0
+//               
+//                if topOffset + h  > rectInView.origin.y {
+//                    // under the cell
+//                    if rectInView.origin.y + rectInView.size.height > self.backBaseView.bounds.height - normalInputHeight {
+//                        operationY = self.backBaseView.bounds.height - normalInputHeight - h
+//                    }else{
+//                        operationY = rectInView.origin.y + rectInView.size.height
+//                    }
+//                } else {
+//                    operationY = rectInView.origin.y - h
+//                }
+//                var frameX = 10.0
+//                if let msg = model.nimMessageModel,
+//                   msg.isOutgoingMsg {
+//                    frameX = ScreenWidth - w - frameX
+//                }
+//                var frame = CGRect(x: frameX, y: operationY, width: w, height: h)
+//                if frame.origin.y + h < tableView.frame.origin.y {
+//                    frame.origin.y = tableView.frame.origin.y
+//                } else if frame.origin.y + h > view.frame.size.height {
+//                    frame.origin.y = tableView.frame.origin.y + tableView.frame.size.height - h
+//                }
+//                
+//                operationView = MessageOperationView(frame: frame, model: model)
+//                operationView!.delegate = self
+//                operationView!.items = items
+//                backBaseView.addSubview(operationView!)
+//            }
+//        }))
+//                                      
+//    }
+//}
 // MARK: UITableViewDelegate, UITableViewDataSource
 extension RLBaseChatViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -720,66 +722,66 @@ extension RLBaseChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let model = viewmodel.messages[indexPath.row]
-        //插入的时间类
-        if model.type == .time {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TipMessageCell", for: indexPath) as! TipMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            return cell
-        }
-        // 回复消息
-        if model.type == .reply {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ReplyMessageCell", for: indexPath) as! ReplyMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            cell.delegate = self
-            return cell
-        }
-        switch model.messageType {
-        case .text:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            cell.delegate = self
-            return cell
-        case .image, .video:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ImageMessageCell", for: indexPath) as! ImageMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            cell.delegate = self
-            return cell
-        case .tip, .notification:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TipMessageCell", for: indexPath) as! TipMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            return cell
-        case .audio:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "AudioMessageCell", for: indexPath) as! AudioMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            cell.delegate = self
-            return cell
-        case .file:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FileMessageCell", for: indexPath) as! FileMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            cell.delegate = self
-            return cell
-        case .location:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LocationMessageCell", for: indexPath) as! LocationMessageCell
-            cell.selectionStyle = .none
-            cell.setData(model: model)
-            cell.delegate = self
-            return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
-            cell.selectionStyle = .none
-            cell.contentLabel.text = "未知消息类型"
-            cell.delegate = self
-            return cell
-        }
+         return UITableViewCell()
+//        let model = viewmodel.messages[indexPath.row]
+//        //插入的时间类
+//        if model.type == .time {
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "TipMessageCell", for: indexPath) as! TipMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            return cell
+//        }
+//        // 回复消息
+//        if model.type == .reply {
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "ReplyMessageCell", for: indexPath) as! ReplyMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            cell.delegate = self
+//            return cell
+//        }
+//        switch model.messageType {
+//        case .text:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            cell.delegate = self
+//            return cell
+//        case .image, .video:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "ImageMessageCell", for: indexPath) as! ImageMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            cell.delegate = self
+//            return cell
+//        case .tip, .notification:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "TipMessageCell", for: indexPath) as! TipMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            return cell
+//        case .audio:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "AudioMessageCell", for: indexPath) as! AudioMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            cell.delegate = self
+//            return cell
+//        case .file:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "FileMessageCell", for: indexPath) as! FileMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            cell.delegate = self
+//            return cell
+//        case .location:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "LocationMessageCell", for: indexPath) as! LocationMessageCell
+//            cell.selectionStyle = .none
+//            cell.setData(model: model)
+//            cell.delegate = self
+//            return cell
+//        default:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
+//            cell.selectionStyle = .none
+//            cell.contentLabel.text = "未知消息类型"
+//            cell.delegate = self
+//            return cell
+//        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -793,178 +795,178 @@ extension RLBaseChatViewController: UITableViewDelegate, UITableViewDataSource {
     
 }
 //    MARK: ChatInputViewDelegate
-extension RLBaseChatViewController: ChatInputViewDelegate {
-    func didSelectMoreCell(cell: InputMoreCell) {
-        guard let item = cell.cellData else {
-            return
-        }
-        switch item {
-        case .album:
-            openPhotoLibrary()
-        case .file:
-            openFile()
-        case .sendLocation:
-            openLocation()
-        case .sendCard:
-            break
-        case .camera:
-            openCamera()
-        case .redpacket:
-            break
-        case .videoCall:
-            break
-        case .voiceCall:
-            break
-        case .whiteBoard:
-            break
-        case .voiceToText:
-            break
-        case .rps:
-            break
-        case .collectMessage:
-            break
-        default:
-            break
-        }
-    }
-    
-    func sendText(text: String?, attribute: NSAttributedString?) {
-        guard let content = text, content.count > 0 else {
-          return
-        }
-        let remoteExt = chatInputView.getRemoteExtension(attribute)
-        
-        if viewmodel.isReplying, let msg = viewmodel.operationModel?.nimMessageModel {
-            self.closeReply()
-            viewmodel.replyMessageWithoutThread(message: MessageUtils.textMessage(text: content, remoteExt: remoteExt), target: msg) { [weak self] error in
-                if error != nil {
-                   // self?.showTips(message: error?.localizedDescription ?? "")
-                } else {
-                    self?.closeReply()
-                }
-            }
-
-        }else {
-            
-            viewmodel.sendTextMessage(text: content, remoteExt: remoteExt) {[weak self] error in
-                if let error = error {
-                   // self?.showTips(message: error.localizedDescription)
-                }
-            }
-        }
-        
-    }
-    
-    func willSelectItem(show: Bool) {
-        if show {
-            self.layoutInputView(offset: self.bottomExanpndHeight)
-        }else{
-            self.layoutInputView(offset: TSBottomSafeAreaHeight)
-        }
-    }
-    
-    func textChanged(text: String) -> Bool {
-        return true
-    }
-    
-    func textDelete(range: NSRange, text: String) -> Bool {
-        return true
-    }
-    
-    func startRecord() {
-        if RLAuthManager.shared.checkRecordPermission() {
-            NIMSDK.shared().mediaManager.record(forDuration: record_duration)
-        }
-    }
-    
-    func moveOutView() {
-    }
-    
-    func moveInView() {
-    }
-    
-    func endRecord(insideView: Bool) {
-        if insideView {
-          //            send
-          NIMSDK.shared().mediaManager.stopRecord()
-        } else {
-          //            cancel
-          NIMSDK.shared().mediaManager.cancelRecord()
-        }
-    }
-    
-    func textFieldDidChange(_ textField: UITextView) {
-        
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextView) {
-        
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextView) {
-        
-    }
-    
-    
-}
-//    MARK: ChatViewModelDelegate
-extension RLBaseChatViewController: ChatViewModelDelegate{
-    
-    func onRecvMessages(_ messages: [NIMMessage]) {
-        operationView?.removeFromSuperview()
-        self.tableView.reloadData()
-        self.scrollTableViewToBottom()
-    }
-    
-    func willSend(_ message: NIMMessage) {
-        if message.session != session { return }
-        self.tableView.reloadData()
-        self.scrollTableViewToBottom()
-    }
-    
-    func send(_ message: NIMMessage, didCompleteWithError error: Error?) {
-        if let error = error {
-            //self.showTips(message: "send msg error = \(error.localizedDescription)")
-        }
-        DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
-            self?.scrollTableViewToBottom()
-        }
-        
-    }
-    
-    func send(_ message: NIMMessage, progress: Float) {
-        
-    }
-    
-    func didReadedMessageIndexs() {
-        DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
-        }
-    }
-    
-    func onDeleteMessage(_ message: NIMMessage, atIndexs: [IndexPath], reloadIndex: [IndexPath]) {
-        if atIndexs.isEmpty {
-          return
-        }
-        operationView?.removeFromSuperview()
-        self.tableView.deleteRows(at: atIndexs, with: .none)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: DispatchWorkItem(block: { [weak self] in
-            self?.tableView.reloadRows(at: reloadIndex, with: .none)
-        }))
-    }
-    
-    func onRevokeMessage(_ message: NIMMessage, atIndexs: [IndexPath]) {
-        if atIndexs.isEmpty {
-          return
-        }
-        DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
-        }
-        
-    }
-    
-}
+//extension RLBaseChatViewController: ChatInputViewDelegate {
+//    func didSelectMoreCell(cell: InputMoreCell) {
+//        guard let item = cell.cellData else {
+//            return
+//        }
+//        switch item {
+//        case .album:
+//            openPhotoLibrary()
+//        case .file:
+//            openFile()
+//        case .sendLocation:
+//            openLocation()
+//        case .sendCard:
+//            break
+//        case .camera:
+//            openCamera()
+//        case .redpacket:
+//            break
+//        case .videoCall:
+//            break
+//        case .voiceCall:
+//            break
+//        case .whiteBoard:
+//            break
+//        case .voiceToText:
+//            break
+//        case .rps:
+//            break
+//        case .collectMessage:
+//            break
+//        default:
+//            break
+//        }
+//    }
+//    
+//    func sendText(text: String?, attribute: NSAttributedString?) {
+//        guard let content = text, content.count > 0 else {
+//          return
+//        }
+//        let remoteExt = chatInputView.getRemoteExtension(attribute)
+//        
+//        if viewmodel.isReplying, let msg = viewmodel.operationModel?.nimMessageModel {
+//            self.closeReply()
+//            viewmodel.replyMessageWithoutThread(message: MessageUtils.textMessage(text: content, remoteExt: remoteExt), target: msg) { [weak self] error in
+//                if error != nil {
+//                   // self?.showTips(message: error?.localizedDescription ?? "")
+//                } else {
+//                    self?.closeReply()
+//                }
+//            }
+//
+//        }else {
+//            
+//            viewmodel.sendTextMessage(text: content, remoteExt: remoteExt) {[weak self] error in
+//                if let error = error {
+//                   // self?.showTips(message: error.localizedDescription)
+//                }
+//            }
+//        }
+//        
+//    }
+//    
+//    func willSelectItem(show: Bool) {
+//        if show {
+//            self.layoutInputView(offset: self.bottomExanpndHeight)
+//        }else{
+//            self.layoutInputView(offset: TSBottomSafeAreaHeight)
+//        }
+//    }
+//    
+//    func textChanged(text: String) -> Bool {
+//        return true
+//    }
+//    
+//    func textDelete(range: NSRange, text: String) -> Bool {
+//        return true
+//    }
+//    
+//    func startRecord() {
+//        if RLAuthManager.shared.checkRecordPermission() {
+//            NIMSDK.shared().mediaManager.record(forDuration: record_duration)
+//        }
+//    }
+//    
+//    func moveOutView() {
+//    }
+//    
+//    func moveInView() {
+//    }
+//    
+//    func endRecord(insideView: Bool) {
+//        if insideView {
+//          //            send
+//          NIMSDK.shared().mediaManager.stopRecord()
+//        } else {
+//          //            cancel
+//          NIMSDK.shared().mediaManager.cancelRecord()
+//        }
+//    }
+//    
+//    func textFieldDidChange(_ textField: UITextView) {
+//        
+//    }
+//    
+//    func textFieldDidEndEditing(_ textField: UITextView) {
+//        
+//    }
+//    
+//    func textFieldDidBeginEditing(_ textField: UITextView) {
+//        
+//    }
+//    
+//    
+//}
+////    MARK: ChatViewModelDelegate
+//extension RLBaseChatViewController: ChatViewModelDelegate{
+//    
+//    func onRecvMessages(_ messages: [NIMMessage]) {
+//        operationView?.removeFromSuperview()
+//        self.tableView.reloadData()
+//        self.scrollTableViewToBottom()
+//    }
+//    
+//    func willSend(_ message: NIMMessage) {
+//        if message.session != session { return }
+//        self.tableView.reloadData()
+//        self.scrollTableViewToBottom()
+//    }
+//    
+//    func send(_ message: NIMMessage, didCompleteWithError error: Error?) {
+//        if let error = error {
+//            //self.showTips(message: "send msg error = \(error.localizedDescription)")
+//        }
+//        DispatchQueue.main.async { [weak self] in
+//            self?.tableView.reloadData()
+//            self?.scrollTableViewToBottom()
+//        }
+//        
+//    }
+//    
+//    func send(_ message: NIMMessage, progress: Float) {
+//        
+//    }
+//    
+//    func didReadedMessageIndexs() {
+//        DispatchQueue.main.async { [weak self] in
+//            self?.tableView.reloadData()
+//        }
+//    }
+//    
+//    func onDeleteMessage(_ message: NIMMessage, atIndexs: [IndexPath], reloadIndex: [IndexPath]) {
+//        if atIndexs.isEmpty {
+//          return
+//        }
+//        operationView?.removeFromSuperview()
+//        self.tableView.deleteRows(at: atIndexs, with: .none)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: DispatchWorkItem(block: { [weak self] in
+//            self?.tableView.reloadRows(at: reloadIndex, with: .none)
+//        }))
+//    }
+//    
+//    func onRevokeMessage(_ message: NIMMessage, atIndexs: [IndexPath]) {
+//        if atIndexs.isEmpty {
+//          return
+//        }
+//        DispatchQueue.main.async { [weak self] in
+//            self?.tableView.reloadData()
+//        }
+//        
+//    }
+//    
+//}
 //    MARK: UIImagePickerControllerDelegate
 extension RLBaseChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     // 处理选择的照片

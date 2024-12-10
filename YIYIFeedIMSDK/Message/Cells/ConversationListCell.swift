@@ -9,7 +9,7 @@ import UIKit
 import NIMSDK
 
 protocol ConversationListCellDelegate: AnyObject {
-    func handleLongPress(cell: ConversationListCell, session: NIMRecentSession?)
+    func handleLongPress(cell: ConversationListCell, conversation: V2NIMConversation?)
 }
 
 class ConversationListCell: UITableViewCell {
@@ -71,7 +71,7 @@ class ConversationListCell: UITableViewCell {
         return lab
     }()
     
-    var session: NIMRecentSession?
+    var conversation: V2NIMConversation?
 
     static let cellIdentifier = "ConversationListCell"
     class func nib() -> UINib {
@@ -131,41 +131,41 @@ class ConversationListCell: UITableViewCell {
         
     }
     
-    func setData(session: NIMRecentSession){
-        self.session = session
-        
-        if let sessions = session.session {
-            titleL.text = MessageUtils.getShowName(userId: sessions.sessionId , teamId: sessions.sessionId, session: sessions)
-            let url = MessageUtils.getUserAvatar(userId: sessions.sessionId, session: sessions)
-            headImage.sd_setImage(with: URL(string: url ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
-        }
-        redPiont.text = "\(session.unreadCount)"
-        redPiont.isHidden = session.unreadCount == 0 ? true : false
-        timeL.text = "\(session.lastMessage?.timestamp ?? 0)".convertDateFromString(timeType: 0)
-        guard let messageType = session.lastMessage?.messageType else { return }
-        switch messageType {
-        case .text:
-            contentL.text = session.lastMessage?.text ?? ""
-        case .image:
-            contentL.text = "[图片消息]"
-        case .location:
-            contentL.text = "[位置消息]"
-        case .video:
-            contentL.text = "[视频消息]"
-        case .file:
-            contentL.text = "[文件消息]"
-        case .audio:
-            contentL.text = "[语音消息]"
-        case .notification:
-            contentL.text = "[通知消息]"
-        case .tip:
-            var nick = "对方"
-            if session.lastMessage?.from == RLCurrentUserInfo.shared.accid {
-                nick = "你"
+    func setData(conversation: V2NIMConversation){
+        self.conversation = conversation
+        MessageUtils.getUserShowNameAvatar(conversationId: conversation.conversationId) {[weak self] name, avatar in
+            DispatchQueue.main.async {
+                self?.titleL.text = name
+                self?.headImage.sd_setImage(with: URL(string: avatar ?? ""), placeholderImage: UIImage.set_image(named: "defaultProfile"))
             }
-            contentL.text = nick + "\(session.lastMessage?.text ?? "")"
+        }
+        redPiont.text = "\(conversation.unreadCount)"
+        redPiont.isHidden = conversation.unreadCount == 0 ? true : false
+        timeL.text = "\(conversation.updateTime)".convertDateFromString(timeType: 0)
+        guard let messageType = conversation.lastMessage?.messageType else { return }
+        switch messageType {
+        case .MESSAGE_TYPE_TEXT:
+            contentL.text = conversation.lastMessage?.text ?? ""
+        case .MESSAGE_TYPE_IMAGE:
+            contentL.text = "[图片消息]".localized
+        case .MESSAGE_TYPE_LOCATION:
+            contentL.text = "[位置消息]".localized
+        case .MESSAGE_TYPE_VIDEO:
+            contentL.text = "[视频消息]".localized
+        case .MESSAGE_TYPE_FILE:
+            contentL.text = "[文件消息]".localized
+        case .MESSAGE_TYPE_AUDIO:
+            contentL.text = "[语音消息]".localized
+        case .MESSAGE_TYPE_NOTIFICATION:
+            contentL.text = "[通知消息]".localized
+        case .MESSAGE_TYPE_TIP:
+            var nick = "对方".localized
+            if conversation.lastMessage?.senderName == RLCurrentUserInfo.shared.accid {
+                nick = "你".localized
+            }
+            contentL.text = nick + "\(conversation.lastMessage?.text ?? "")"
         default:
-            contentL.text = "[未知消息]"
+            contentL.text = "[未知消息]".localized
         }
     }
     
@@ -177,7 +177,7 @@ class ConversationListCell: UITableViewCell {
     
     @objc private func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            self.delegate?.handleLongPress(cell: self, session: session)
+            self.delegate?.handleLongPress(cell: self, conversation: conversation)
         }
     }
 

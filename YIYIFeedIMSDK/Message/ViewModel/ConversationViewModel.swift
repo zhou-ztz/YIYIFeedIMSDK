@@ -22,47 +22,67 @@ public protocol ConversationViewModelDelegate: NSObjectProtocol {
 class ConversationViewModel: NSObject {
     
     weak var delegate: ConversationViewModelDelegate?
-    var conversationList: [NIMRecentSession] = []
+    var conversationList: [V2NIMConversation] = []
     
+    var offset: Int64 = 0
+    var limit: Int = 100
+    var finished: Bool = false
     override init() {
         super.init()
-        NIMSDK.shared().conversationManager.add(self)
-        NIMSDK.shared().chatManager.add(self)
+        NIMSDK.shared().v2ConversationService.add(self)
     }
     
     deinit {
-        NIMSDK.shared().conversationManager.remove(self)
-        NIMSDK.shared().chatManager.remove(self)
+        NIMSDK.shared().v2ConversationService.remove(self)
     }
     
-    func getConversationList(_ completion: @escaping (Bool) -> Void) {
-        if let recentSessions = NIMSDK.shared().conversationManager.allRecentSessions(){
-            conversationList = recentSessions
-            completion(true)
-        }else{
-            completion(false)
+    func getConversationList(isRefresh: Bool = true , _ completion: @escaping ([V2NIMConversation]?, V2NIMError?) -> Void) {
+        if isRefresh {
+            offset = 0
         }
-        
+        NIMSDK.shared().v2ConversationService.getConversationList(offset, limit: limit) {[weak self] result in
+            self?.offset = result.offset
+            self?.finished = result.finished
+            if isRefresh {
+                self?.conversationList = result.conversationList ?? []
+            } else {
+                self?.conversationList = (self?.conversationList ?? []) + (result.conversationList ?? [])
+            }
+            if result.conversationList?.count == 0 {
+                self?.createConversation(completion: {
+                    completion(result.conversationList, nil)
+                })
+            } else {
+                completion(result.conversationList, nil)
+            }
+        }failure: { error in
+            completion(nil, error)
+        }
     }
     
-    func deleteRecentSession(recentSession: NIMRecentSession) {
-        
+    func  createConversation(completion: @escaping () -> Void){
+        let cId = "azizistg22|1|zhouztz"
+        NIMSDK.shared().v2ConversationService.createConversation(cId) {[weak self] conversation in
+            self?.conversationList.append(conversation)
+            completion()
+        } failure: { error in
+            print("\(error.code)")
+            completion()
+        }
+    }
+    
+    
+    func deleteRecentSession(recentSession: V2NIMConversation) {
         weak var weakSelf = self
-        let option = NIMDeleteRecentSessionOption()
-        option.isDeleteRoamMessage = true
-        option.shouldMarkAllMessagesReadInSessions = true
-        NIMSDK.shared().conversationManager.delete(recentSession, option: option) { error in
-            if let error = error {
-                print("\(error.localizedDescription)")
-            }else{
-               if let index = weakSelf?.conversationList.firstIndex(where: { session in
-                    session == recentSession
-               }){
-                   weakSelf?.conversationList.remove(at: index)
-                   weakSelf?.delegate?.didRemoveRecentSession(index: index)
-               }
-            
+        NIMSDK.shared().v2ConversationService.deleteConversation(recentSession.conversationId, clearMessage: true) {
+            if let index = weakSelf?.conversationList.firstIndex(where: { session in
+                session == recentSession
+            }){
+                weakSelf?.conversationList.remove(at: index)
+                weakSelf?.delegate?.didRemoveRecentSession(index: index)
             }
+        } failure: { error in
+            
         }
 
     }
@@ -73,6 +93,15 @@ class ConversationViewModel: NSObject {
     }
 
 }
+extension ConversationViewModel: V2NIMConversationListener {
+    func onConversationChanged(_ conversations: [V2NIMConversation]) {
+        
+    }
+    func onTotalUnreadCountChanged(_ unreadCount: Int) {
+        
+    }
+}
+
 // MARK: NIMConversationManagerDelegate
 extension ConversationViewModel: NIMConversationManagerDelegate{
     func didAdd(_ recentSession: NIMRecentSession, totalUnreadCount: Int) {
@@ -88,15 +117,15 @@ extension ConversationViewModel: NIMChatManagerDelegate{
     //收到消息回执
     func onRecvMessageReceipts(_ receipts: [NIMMessageReceipt]) {
         receipts.forEach { receipt in
-            if receipt.session?.sessionType == .P2P {
-                for (i, conver) in self.conversationList.enumerated() {
-                    if conver.session?.sessionType == .P2P,
-                       receipt.session?.sessionId == conver.session?.sessionId {
-                        delegate?.didUpdateRecentSession(index: i)
-                    }
-                }
-                
-            }
+//            if receipt.session?.sessionType == .P2P {
+//                for (i, conver) in self.conversationList.enumerated() {
+//                    if conver.session?.sessionType == .P2P,
+//                       receipt.session?.sessionId == conver.session?.sessionId {
+//                        delegate?.didUpdateRecentSession(index: i)
+//                    }
+//                }
+//                
+//            }
         }
     }
 }
