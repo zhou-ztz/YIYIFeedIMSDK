@@ -110,19 +110,23 @@ class RLAudioVideoCallViewController: TGViewController {
     
     func joinChannel(){
         viewmodel.joinChannel {[weak self] in
-            if !(self?.viewmodel.callInfo.isCaller ?? false) {
-                if self?.viewmodel.callInfo.callType == .SIGNALLING_CHANNEL_TYPE_VIDEO {
-                    self?.viewmodel.stopPreview()
+            DispatchQueue.main.async {
+                if !(self?.viewmodel.callInfo.isCaller ?? false) {
+                    if self?.viewmodel.callInfo.callType == .SIGNALLING_CHANNEL_TYPE_VIDEO {
+                        self?.viewmodel.stopPreview()
+                    }
+                    self?.meetingSeconds = 0
+                    self?.timer = TimerHolder()
+                    self?.timer?.startTimer(seconds: 1, delegate: self!, repeats: true)
+                    self?.onCalling()
                 }
-                self?.meetingSeconds = 0
-                self?.timer = TimerHolder()
-                self?.timer?.startTimer(seconds: 1, delegate: self!, repeats: true)
-                self?.onCalling()
+            }
+        } failure: { [weak self] in
+            DispatchQueue.main.async {
+                self?.closeChannel()
+                self?.dismiss(animated: true)
             }
             
-        } failure: { [weak self] in
-            self?.closeChannel()
-            self?.dismiss(animated: true)
         }
     }
     
@@ -270,7 +274,7 @@ extension RLAudioVideoCallViewController: AudioVideoViewModelDelegate {
             self.timer?.startTimer(seconds: 1, delegate: self, repeats: true)
             self.onCalling()
         case .SIGNALLING_EVENT_TYPE_CONTROL:
-            if let data = event.channelInfo.channelExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+            if let data = event.serverExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
                 if let type = customInfo["type"] as? String {
                     switch NERtChangeType(rawValue: type) {
                     case .toAudio:

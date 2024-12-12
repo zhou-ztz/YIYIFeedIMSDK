@@ -51,12 +51,12 @@ class ReplyMessageCell: BaseMessageCell {
     
     override func setData(model: TGMessageData) {
         super.setData(model: model)
-        let attribute = NEEmotionTool.getAttWithStr(
+        let attribute = TGNEEmotionTool.getAttWithStr(
             str: model.nimMessageModel?.text ?? "",
           font: UIFont.systemFont(ofSize: 15),
           CGPoint(x: 0, y: -4)
         )
-        let attribute1 = NEEmotionTool.getAttWithStr(
+        let attribute1 = TGNEEmotionTool.getAttWithStr(
           str: model.replyText,
           font: UIFont.systemFont(ofSize: 13),
           CGPoint(x: 0, y: -4),

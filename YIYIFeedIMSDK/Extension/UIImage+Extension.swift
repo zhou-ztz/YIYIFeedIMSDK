@@ -23,7 +23,7 @@ extension UIImage {
 //            return kUTTypeJPEG as String
 //        }
 //    }
-    public class func gif(data: Data, speedMultiplier: Double = 0.0) -> UIImage? {
+    class func gif(data: Data, speedMultiplier: Double = 0.0) -> UIImage? {
         // Create source from data
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
             return nil

@@ -53,7 +53,8 @@ public class TGFeedInfoDetailViewController: TGViewController {
     public var afterTime: String = ""
     
     private var commentModel: FeedCommentListCellModel?
-    private var commentDatas: [FeedCommentListCellModel] = [FeedCommentListCellModel]()
+    private var commentDatas: [TGFeedCommentListModel] = [TGFeedCommentListModel]()
+    
     private var sendText: String?
     private var isTapMore = false
     private var isClickCommentButton = false
@@ -102,6 +103,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
         
         setupTableView()
         loadFeedDetailInfo()
+        loadFeedContentList()
     }
     
 
@@ -137,9 +139,23 @@ public class TGFeedInfoDetailViewController: TGViewController {
 //        self.navigationItem.rightBarButtonItems = [moreView, space ,followView]
 //    }
     private func loadFeedDetailInfo() {
-        TGFeedNetworkManager.shared.fetchFeedDetailInfo(with: "\(feedId)") { feedInfo, error in
+        TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") { feedInfo, error in
             guard let feedInfo = feedInfo else { return }
             self.headerView.setData(data: feedInfo)
+        }
+    }
+    private func loadFeedContentList() {
+        TGFeedNetworkManager.shared.fetchFeedCommentsList(withFeedId: "\(feedId)", afterId: nil, limit: 20) { contentListResponse, error in
+            guard let feedIcontentListResponsenfo = contentListResponse else { return }
+            
+            // 将topCommentList中的置顶标识修正
+            for var topComment in feedIcontentListResponsenfo.pinneds ?? [] {
+                topComment.pinned = true
+                self.commentDatas.append(topComment)
+            }
+            self.commentDatas = self.commentDatas + (feedIcontentListResponsenfo.comments ?? [])
+            self.tableView.reloadData()
+          
         }
     }
     private func setupTableView() {
@@ -192,9 +208,8 @@ extension TGFeedInfoDetailViewController: UITableViewDelegate, UITableViewDataSo
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FeedDetailCommentTableViewCell.cellIdentifier, for: indexPath) as! FeedDetailCommentTableViewCell
         cell.selectionStyle = .none
-//        let feedCommentModel = self.dataSource[indexPath.row]
-//        
-//        cell.setData(data: feedCommentModel)
+        let feedCommentModel = self.commentDatas[indexPath.row]
+        cell.setData(data: feedCommentModel)
 //        
 //        cell.likeButtonClickCall = {[weak self] in
 //            guard let self = self else {return}
@@ -211,7 +226,7 @@ extension TGFeedInfoDetailViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return self.commentDatas.count
     }
     
     public func numberOfSections(in tableView: UITableView) -> Int {

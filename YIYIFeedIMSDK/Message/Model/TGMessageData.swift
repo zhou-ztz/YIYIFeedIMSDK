@@ -28,6 +28,9 @@ class TGMessageData: NSObject {
     var replyText: String = ""
     var isRevokedText: Bool = false
     var isRevoked: Bool = false
+    ///处理自定义消息
+    var customType: CustomMessageType?
+    var customDict: NSDictionary?
     //modifyTime
     init(nimMessageModel: V2NIMMessage? = nil, showName: Bool? = nil, messageType: V2NIMMessageType = .MESSAGE_TYPE_TEXT, messageTime: TimeInterval = 0, type: TGChatMessageType, replyText: String = "") {
         self.nimMessageModel = nimMessageModel
@@ -36,6 +39,12 @@ class TGMessageData: NSObject {
         self.messageTime = messageTime
         self.type = type
         self.replyText = replyText
+        if messageType == .MESSAGE_TYPE_CUSTOM, let attach = nimMessageModel?.attachment {
+            let (attachmentType, dict) = CustomAttachment.decodeAttachment(attach.raw)
+            self.customType = attachmentType
+            self.customDict = dict
+        }
+        
     }
     
     convenience init(_ messageModel: V2NIMMessage) {

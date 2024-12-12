@@ -244,7 +244,7 @@ extension UIView {
 
 // MARK: - 四周线条的简便添加
 
-public enum LineViewSide {
+enum LineViewSide {
     // in 内侧
     case inBottom   // 内底(线条在view内的底部)
     case inTop      // 内顶
@@ -257,7 +257,7 @@ public enum LineViewSide {
     case outRight   // 外右
 }
 
-public extension UIView {
+extension UIView {
     /**
      给视图添加线条
      
@@ -376,7 +376,7 @@ public extension UIView {
     }
 }
 
-public extension UIStackView {
+extension UIStackView {
     
     func removeAllArrangedSubviews() {
         self.subviews.forEach { (view) in
@@ -400,7 +400,7 @@ public extension UIStackView {
     
 }
 
-public extension UIView {
+extension UIView {
     
     /// duration in seconds
     func pauseInteraction(for duration: Double) {
@@ -589,14 +589,14 @@ public extension UIView {
 
 extension UIView {
     
-    public func startShimmering(margin:Bool = false, background:Bool, duration: Double = 2.0) {
+    func startShimmering(margin:Bool = false, background:Bool, duration: Double = 2.0) {
         DispatchQueue.main.async {
             self.layoutIfNeeded()
             self.animate(start: true, margin: margin, background: background, duration: duration)
         }
     }
     
-    public func stopShimmering() {
+    func stopShimmering() {
         if let smartLayers = self.layer.sublayers?.filter({$0.name == "colorLayer" || $0.name == "loaderLayer" ||  $0.name == "shimmerLayer"}) {
             smartLayers.forEach({$0.removeFromSuperlayer()})
         }

@@ -93,35 +93,21 @@ class NMCWhiteBoardManager: NSObject, WKUIDelegate, WKNavigationDelegate, WKScri
     
     func callWebSendAuth(with appKey: String, channelName: String, userId: UInt, complete: @escaping (Error?) -> Void) {
         complete(nil)
-//        TSIMNetworkManager.getwhiteboardAuth {resultModel, error in
-//        
-//            if let model = resultModel {
-//                var params = [String: Any]()
-//                params["code"] = 200
-//                params["nonce"] = model.nonce
-//                params["curTime"] = model.curTime
-//                params["checksum"] = model.checksum
-//                
-//                NMCMessageDispatcher.shared.nativeCallWeb(with: self.webView, action: NMCMethodActionSendAuth, param: params)
-//            }
-//            complete(error)
-//        }
+        TGIMNetworkManager.getwhiteboardAuth { resultModel, error in
+            if let model = resultModel {
+                var params = [String: Any]()
+                params["code"] = 200
+                params["nonce"] = model.nonce
+                params["curTime"] = model.curTime
+                params["checksum"] = model.checksum
+                
+                NMCMessageDispatcher.shared.nativeCallWeb(with: self.webView, action: NMCMethodActionSendAuth, param: params)
+            }
+        }
     }
 
     func callWebSendAntiLeechInfo(with appKey: String, bucketName: String, objectKey: String, url: String, seqId: Int, timeStamp: String) {
-//        let requester = NMCWhiteBoardRequester()
-//        requester.requestAntiLeechInfo(withAppKey: appKey, bucketName: bucketName, objectKey: objectKey, timeStamp: timeStamp) { error, info in
-//            var params = [String: Any]()
-//            
-//            params["code"] = info.code
-//            if info.code == 200 {
-//                params["seqId"] = seqId
-//                let targetUrl = "\(url)?wsSecret=\(info.secret)&wsTime=\(timeStamp)"
-//                params["url"] = targetUrl
-//            }
-//            
-//            NMCMessageDispatcher.shared.nativeCallWeb(with: self.webView, action: NMCMethodActionSendAntiLeechInfo, param: params)
-//        }
+
     }
     
     // MARK: - Private
@@ -265,7 +251,7 @@ class NMCWhiteBoardManager: NSObject, WKUIDelegate, WKNavigationDelegate, WKScri
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         NSLog("[WKNavigationDelegate] didCommitNavigation")
     }
-
+    
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         NSLog("[WKNavigationDelegate] didFinishNavigation")
         

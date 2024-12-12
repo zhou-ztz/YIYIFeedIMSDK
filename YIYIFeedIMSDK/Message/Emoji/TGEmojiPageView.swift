@@ -5,28 +5,28 @@
 
 import UIKit
 
-@objc public protocol EmojiPageViewDataSource: NSObjectProtocol {
-    @objc optional func numberOfPages(pageView: EmojiPageView?) -> NSInteger
-    @objc optional func pageView(pageView: EmojiPageView?, index: NSInteger) -> UIView
+@objc protocol TGEmojiPageViewDataSource: NSObjectProtocol {
+    @objc optional func numberOfPages(pageView: TGEmojiPageView?) -> NSInteger
+    @objc optional func pageView(pageView: TGEmojiPageView?, index: NSInteger) -> UIView
 }
 
-@objc public protocol EmojiPageViewDelegate: NSObjectProtocol {
-    @objc optional func pageViewScrollEnd(_ pageView: EmojiPageView?,
+@objc protocol TGEmojiPageViewDelegate: NSObjectProtocol {
+    @objc optional func pageViewScrollEnd(_ pageView: TGEmojiPageView?,
                                           currentIndex: Int,
                                           totolPages: Int)
     
-    @objc optional func pageViewDidScroll(_ pageView: EmojiPageView?)
+    @objc optional func pageViewDidScroll(_ pageView: TGEmojiPageView?)
     @objc optional func needScrollAnimation() -> Bool
 }
 
-public class EmojiPageView: UIView {
-    public weak var dataSource: EmojiPageViewDataSource?
-    public weak var pageViewDelegate: EmojiPageViewDelegate?
+class TGEmojiPageView: UIView {
+    weak var dataSource: TGEmojiPageViewDataSource?
+    weak var pageViewDelegate: TGEmojiPageViewDelegate?
     private var currentPage: NSInteger = 0
     private var pages = [AnyObject]()
-    private let className = "EmojiPageView"
+    private let className = "TGEmojiPageView"
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setupControls()
     }
@@ -35,7 +35,7 @@ public class EmojiPageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override public var frame: CGRect {
+    override var frame: CGRect {
         set {
             let originalWidth = self.bounds.width
             super.frame = newValue
@@ -52,14 +52,14 @@ public class EmojiPageView: UIView {
         addSubview(scrollView)
     }
     
-    public func scrollToPage(page: NSInteger) {
+    func scrollToPage(page: NSInteger) {
         if currentPage != page || page == 0 {
             currentPage = page
             reloadData()
         }
     }
     
-    public func reloadData() {
+    func reloadData() {
         calculatePageNumbers()
         setupInit()
         //       reloadPage()
@@ -187,7 +187,7 @@ public class EmojiPageView: UIView {
         }
     }
     
-    override public func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         let size = bounds.size
         scrollView.contentSize = CGSize(
@@ -247,8 +247,8 @@ public class EmojiPageView: UIView {
     }
 }
 
-extension EmojiPageView: UIScrollViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+extension TGEmojiPageView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let width = scrollView.bounds.size.width
         let offsetX = scrollView.contentOffset.x
         let page = Int(abs(offsetX / width))
@@ -263,7 +263,7 @@ extension EmojiPageView: UIScrollViewDelegate {
         pageViewDelegate?.pageViewDidScroll?(self)
     }
     
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         pageViewDelegate?.pageViewScrollEnd?(
             self,
             currentIndex: currentPage,

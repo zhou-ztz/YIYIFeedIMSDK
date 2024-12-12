@@ -4,13 +4,13 @@
 // found in the LICENSE file.
 
 import UIKit
-public enum NIMEmoticonType: NSInteger {
+enum NIMEmoticonType: NSInteger {
     case file = 0
     case unicode
 }
 
-public class NIMInputEmoticon: NSObject {
-    public var type: NIMEmoticonType {
+class NIMInputEmoticon: NSObject {
+    var type: NIMEmoticonType {
         if let ucode = unicode, ucode.count > 0 {
             return .unicode
         } else {
@@ -18,23 +18,23 @@ public class NIMInputEmoticon: NSObject {
         }
     }
     
-    public var emoticonID: String?
-    public var tag: String?
-    public var fileName: String?
-    public var unicode: String?
+    var emoticonID: String?
+    var tag: String?
+    var fileName: String?
+    var unicode: String?
 }
 
-public class NIMInputEmoticonLayout: NSObject {
-    public var rows: NSInteger = 0 // 行数
-    public var columes: NSInteger = 0 // 列数
-    public var itemCountInPage: NSInteger = 0 // 每页显示几项
-    public var cellWidth: CGFloat = 0 // 单个单元格宽
-    public var cellHeight: CGFloat = 0 // 单个单元格高
-    public var imageWidth: CGFloat = 0 // 显示图片的宽
-    public var imageHeight: CGFloat = 0 // 显示图片的高
-    public var emoji: Bool?
+class NIMInputEmoticonLayout: NSObject {
+    var rows: NSInteger = 0 // 行数
+    var columes: NSInteger = 0 // 列数
+    var itemCountInPage: NSInteger = 0 // 每页显示几项
+    var cellWidth: CGFloat = 0 // 单个单元格宽
+    var cellHeight: CGFloat = 0 // 单个单元格高
+    var imageWidth: CGFloat = 0 // 显示图片的宽
+    var imageHeight: CGFloat = 0 // 显示图片的高
+    var emoji: Bool?
     
-    public init(width: CGFloat) {
+    init(width: CGFloat) {
         rows = NIMKit_EmojRows
         columes =
         ((Int(width) - NIMKit_EmojiLeftMargin - NIMKit_EmojiRightMargin) /
@@ -49,27 +49,27 @@ public class NIMInputEmoticonLayout: NSObject {
     }
 }
 
-public class NIMInputEmoticonCatalog: NSObject {
-    public var layout: NIMInputEmoticonLayout?
-    public var catalogID: String?
-    public var title: String?
-    public var id2Emoticons: [String: NIMInputEmoticon]?
-    public var tag2Emoticons: [String: NIMInputEmoticon]?
-    public var emoticons: [NIMInputEmoticon]?
+class NIMInputEmoticonCatalog: NSObject {
+    var layout: NIMInputEmoticonLayout?
+    var catalogID: String?
+    var title: String?
+    var id2Emoticons: [String: NIMInputEmoticon]?
+    var tag2Emoticons: [String: NIMInputEmoticon]?
+    var emoticons: [NIMInputEmoticon]?
     /// 图标
-    public var icon: String?
+    var icon: String?
     /// 小图标按下效果
-    public var iconPressed: String?
+    var iconPressed: String?
     /// 分页数
-    public var pagesCount: NSInteger = 0
+    var pagesCount: NSInteger = 0
 }
 
-public class NIMInputEmoticonManager: NSObject {
-    public static let shared = NIMInputEmoticonManager()
+class TGNIMInputEmoticonManager: NSObject {
+    static let shared = TGNIMInputEmoticonManager()
     private var catalogs: [NIMInputEmoticonCatalog]?
-    private var classTag = "NIMInputEmoticonManager"
+    private var classTag = "TGNIMInputEmoticonManager"
     
-    override public init() {
+    override init() {
         super.init()
         parsePlist()
         preloadEmoticonResource()
@@ -134,7 +134,7 @@ public class NIMInputEmoticonManager: NSObject {
     
     func preloadEmoticonResource() {}
     
-    public func emoticonCatalog(catalogID: String) -> NIMInputEmoticonCatalog? {
+    func emoticonCatalog(catalogID: String) -> NIMInputEmoticonCatalog? {
         guard let infos = catalogs else { return nil }
         
         for catalog in infos {
@@ -145,7 +145,7 @@ public class NIMInputEmoticonManager: NSObject {
         return nil
     }
     
-    public func emoticonByTag(tag: String) -> NIMInputEmoticon? {
+    func emoticonByTag(tag: String) -> NIMInputEmoticon? {
         var emotion: NIMInputEmoticon?
         
         guard let clogs = catalogs else {
@@ -165,7 +165,7 @@ public class NIMInputEmoticonManager: NSObject {
         return emotion
     }
     
-    public func emoticonByID(emoticonID: String) -> NIMInputEmoticon? {
+    func emoticonByID(emoticonID: String) -> NIMInputEmoticon? {
         var emotion: NIMInputEmoticon?
         guard let clogs = catalogs else {
             return emotion
@@ -184,7 +184,7 @@ public class NIMInputEmoticonManager: NSObject {
         return emotion
     }
     
-    public func emoticonByCatalogID(catalogID: String, emoticonID: String) -> NIMInputEmoticon? {
+    func emoticonByCatalogID(catalogID: String, emoticonID: String) -> NIMInputEmoticon? {
         var emotion: NIMInputEmoticon?
         guard let clogs = catalogs else {
             return emotion
@@ -206,7 +206,7 @@ public class NIMInputEmoticonManager: NSObject {
 
 extension Bundle {
     class func nim_defaultEmojiBundle() -> Bundle? {
-        let bundle = Bundle(for: NIMInputEmoticonManager.self)
+        let bundle = Bundle(for: TGNIMInputEmoticonManager.self)
         let url = bundle.url(forResource: "NIMKitEmoticon", withExtension: "bundle")
         var emojiBundle: Bundle?
         if let url = url {

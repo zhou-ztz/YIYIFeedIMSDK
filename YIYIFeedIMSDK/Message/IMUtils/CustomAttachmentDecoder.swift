@@ -9,7 +9,8 @@
 import UIKit
 import NIMSDK
 
-class CustomAttachmentDecoder: NSObject, NIMCustomAttachmentCoding {
+class CustomAttachmentDecoder: NSObject {
+ 
     func decodeAttachment(_ content: String?) -> NIMCustomAttachment? {
       /*  guard let _content = content, let data = _content.data(using: .utf8) else { return nil }
         

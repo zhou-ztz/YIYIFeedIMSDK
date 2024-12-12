@@ -12,7 +12,7 @@ import ObjectiveC
 /**
  Protocol used to convert Swift closures into ObjC selectors
  */
-@objc public protocol Action {
+@objc protocol Action {
     // The key used to store the `Action`. Must be unique.
     var key: String { get }
     

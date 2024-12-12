@@ -5,10 +5,10 @@
 
 import UIKit
 
-public class NEEmotionAttachment: NSTextAttachment {
+class TGNEEmotionAttachment: NSTextAttachment {
     private var _emotion: NIMInputEmoticon?
     
-    public var emotion: NIMInputEmoticon? {
+    var emotion: NIMInputEmoticon? {
         set {
             _emotion = newValue
             image = UIImage.ne_bundleImage(name: emotion?.fileName ?? "")

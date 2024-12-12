@@ -166,30 +166,30 @@ class RLChatViewModel: NSObject {
         if text.count <= 0 {
             return
         }
-        NIMSDK.shared().chatManager.send(MessageUtils.textMessage(text: text, remoteExt: remoteExt), to: session) { error in
-            completion(error)
-        }
+//        NIMSDK.shared().chatManager.send(MessageUtils.textMessage(text: text, remoteExt: remoteExt), to: session) { error in
+//            completion(error)
+//        }
     }
     
     func sendAudioMessage(filePath: String, _ completion: @escaping (Error?) -> Void) {
-        NIMSDK.shared().chatManager.send(MessageUtils.audioMessage(filePath: filePath), to: session) { error in
-            completion(error)
-        }
+//        NIMSDK.shared().chatManager.send(MessageUtils.audioMessage(filePath: filePath), to: session) { error in
+//            completion(error)
+//        }
     }
 
     func sendImageMessage(image: UIImage, _ completion: @escaping (Error?) -> Void) {
-        NIMSDK.shared().chatManager.send(MessageUtils.imageMessage(image: image), to: session) { error in
-            completion(error)
-        }
+//        NIMSDK.shared().chatManager.send(MessageUtils.imageMessage(image: image), to: session) { error in
+//            completion(error)
+//        }
     }
 
     func sendVideoMessage(url: URL, _ completion: @escaping (Error?) -> Void) {
         weak var weakSelf = self
         convertVideoToMP4(inputURL: url) { path, error in
             if let path = path , let session = weakSelf?.session {
-                NIMSDK.shared().chatManager.send(MessageUtils.videoMessage(filePath: path), to: session) { error in
-                    completion(error)
-                }
+//                NIMSDK.shared().chatManager.send(MessageUtils.videoMessage(filePath: path), to: session) { error in
+//                    completion(error)
+//                }
                 
             
             }
@@ -197,22 +197,22 @@ class RLChatViewModel: NSObject {
     }
 
     func sendLocationMessage(_ model: ChatLocaitonModel, _ completion: @escaping (Error?) -> Void) {
-        let message = MessageUtils.locationMessage(model.lat, model.lng, model.title, model.address)
-        NIMSDK.shared().chatManager.send(message, to: session){ error in
-            completion(error)
-        }
+//        let message = MessageUtils.locationMessage(model.lat, model.lng, model.title, model.address)
+//        NIMSDK.shared().chatManager.send(message, to: session){ error in
+//            completion(error)
+//        }
     }
 
     func sendFileMessage(filePath: String, displayName: String?, _ completion: @escaping (Error?) -> Void) {
-        NIMSDK.shared().chatManager.send(MessageUtils.fileMessage(filePath: filePath, displayName: displayName), to: session) { error in
-            completion(error)
-        }
+//        NIMSDK.shared().chatManager.send(MessageUtils.fileMessage(filePath: filePath, displayName: displayName), to: session) { error in
+//            completion(error)
+//        }
     }
 
     func sendFileMessage(data: Data, displayName: String?, _ completion: @escaping (Error?) -> Void) {
-        NIMSDK.shared().chatManager.send(MessageUtils.fileMessage(data: data, displayName: displayName), to: session) { error in
-            completion(error)
-        }
+//        NIMSDK.shared().chatManager.send(MessageUtils.fileMessage(data: data, displayName: displayName), to: session) { error in
+//            completion(error)
+//        }
     }
     
     func convertVideoToMP4(inputURL: URL, completion: @escaping (String?, Error?) -> Void) {
@@ -402,12 +402,12 @@ class RLChatViewModel: NSObject {
             return nil
         }
         
-        if let m = MessageUtils.messagesInSession(session: session, messageId: [id])?
-            .first {
-            let model = RLMessageData(m)
-            model.isReplay = true
-            return model
-        }
+//        if let m = MessageUtils.messagesInSession(session: session, messageId: [id])?
+//            .first {
+//            let model = RLMessageData(m)
+//            model.isReplay = true
+//            return model
+//        }
         let message = NIMMessage()
         let model = RLMessageData(message)
         model.isReplay = true

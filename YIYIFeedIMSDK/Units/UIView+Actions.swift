@@ -33,7 +33,7 @@ private class CustomParametizedAction<T: NSObject>: Action {
 /**
  The gestures that can be used to trigger actions in `UIView`
  */
-public enum Gesture {
+enum Gesture {
     
     /// A tap gesture with a single finger and the given number of touches
     case tap(Int)
@@ -85,7 +85,7 @@ extension UIView {
      - returns: The gesture recognizer that has been added
      */
     @discardableResult
-    public func add<T: UIView>(gesture: Gesture, action: @escaping (T) -> Void) -> UIGestureRecognizer {
+    func add<T: UIView>(gesture: Gesture, action: @escaping (T) -> Void) -> UIGestureRecognizer {
         let action = CustomParametizedAction(parameter: (self as! T), action: action)
         return add(gesture: gesture, action: action)
     }
@@ -97,7 +97,7 @@ extension UIView {
      - returns: The gesture recognizer that has been added
      */
     @discardableResult
-    public func add(gesture: Gesture, action: @escaping () -> Void) -> UIGestureRecognizer {
+    func add(gesture: Gesture, action: @escaping () -> Void) -> UIGestureRecognizer {
         let action = VoidAction(action: action)
         return add(gesture: gesture, action: action)
     }
@@ -109,7 +109,7 @@ extension UIView {
      - returns: The gesture recognizer that has been added
      */
     @discardableResult
-    public func addTap<T: UIView>(action: @escaping (T) -> Void) -> UIGestureRecognizer {
+    func addTap<T: UIView>(action: @escaping (T) -> Void) -> UIGestureRecognizer {
         let action = CustomParametizedAction(parameter: (self as! T), action: action)
         return add(gesture: .tap(1), action: action)
     }
@@ -121,7 +121,7 @@ extension UIView {
      - returns: The gesture recognizer that has been added
      */
     @discardableResult
-    public func addAction(action: @escaping () -> Void) -> UIGestureRecognizer {
+    func addAction(action: @escaping () -> Void) -> UIGestureRecognizer {
         let action = VoidAction(action: action)
         return add(gesture: .tap(1), action: action)
     }

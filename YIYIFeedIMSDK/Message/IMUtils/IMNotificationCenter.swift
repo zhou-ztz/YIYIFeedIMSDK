@@ -124,14 +124,14 @@ class IMNotificationCenter: NSObject {
         switch (types) {
         case .SIGNALLING_CHANNEL_TYPE_VIDEO:
             DispatchQueue.main.async {
-                let vc = RLAudioCallController(callee: caller, callType: .SIGNALLING_CHANNEL_TYPE_VIDEO)
+                let vc = RLAudioCallController(caller: caller, channelId: channelId, channelName: channelName, requestId: requestId, callType: types)
                 let nav = TGNavigationController(rootViewController: vc)
                 topVC.present(nav.fullScreenRepresentation, animated: true)
                 
             }
         case .SIGNALLING_CHANNEL_TYPE_AUDIO:
             DispatchQueue.main.async {
-                let vc = RLAudioCallController(callee: caller, callType: .SIGNALLING_CHANNEL_TYPE_AUDIO)
+                let vc = RLAudioCallController(caller: caller, channelId: channelId, channelName: channelName, requestId: requestId, callType: types)
                 let nav = TGNavigationController(rootViewController: vc)
                 topVC.present(nav.fullScreenRepresentation, animated: true)
             }
@@ -202,120 +202,30 @@ extension IMNotificationCenter: V2NIMSignallingListener {
         guard let eventOne = event.first else {
             return
         }
-        switch eventOne.eventType {
-        case .SIGNALLING_EVENT_TYPE_INVITE:
-            if self.shouldResponseBusy() || self.shouldAutoRejectCall() {
-                self.unAcceptInvited(channelId: eventOne.channelInfo.channelId, caller: eventOne.inviterAccountId ?? "", requestId: eventOne.requestId)
-                return
-            }
-            if let data = eventOne.channelInfo.channelExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-                if let type = customInfo["type"] as? String {
-                    switch NERtCallingType(rawValue: type) {
-                    case .team:
-                        if let data = customInfo["data"] as? [String : Any] {
-                            self.presentTeamCall(data: data, event: eventOne)
-                        }
-                    case .p2p:
-                        self.presentCalls(types: eventOne.channelInfo.channelType, caller: eventOne.inviterAccountId ?? "", channelId: eventOne.channelInfo.channelId, channelName: eventOne.channelInfo.channelName ?? "", requestId: eventOne.requestId)
-
-                    default:
-                        break
-                    }
-                    
-                }
-            }
-        default:
-            break
-        }
-    }
-}
-
-extension IMNotificationCenter: NIMSignalManagerDelegate{
-    
-    func nimSignalingOfflineNotify(_ notifyResponse: [NIMSignalingNotifyInfo]) {
-        
-//        if let notifyResponse = notifyResponse.first {
-//            
-//            switch notifyResponse.eventType {
-//            case .invite:
-//                guard let notifyResponse = notifyResponse as? NIMSignalingInviteNotifyInfo else {
-//                    return
-//                }
-//                if self.shouldResponseBusy() || self.shouldAutoRejectCall() {
-//                    self.unAcceptInvited(channelId: notifyResponse.channelInfo.channelId, caller: notifyResponse.fromAccountId, requestId: notifyResponse.requestId)
-//                    return
-//                }
-//                if let data = notifyResponse.customInfo.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-//                    if let type = customInfo["type"] as? String {
-//                        switch NERtCallingType(rawValue: type) {
-//                        case .team:
-//                            if let data = customInfo["data"] as? [String : Any] {
-//                                self.presentTeamCall(data: data, notifyResponse: notifyResponse)
-//                            }
-//                            
-//                            
-//                        case .p2p:
-//                            self.presentCalls(types: notifyResponse.channelInfo.channelType, caller: notifyResponse.fromAccountId, channelId: notifyResponse.channelInfo.channelId, channelName: notifyResponse.channelInfo.channelName, requestId: notifyResponse.requestId)
-//
-//                        default:
-//                            break
-//                        }
-//                        
-//                    }
-//                }
-//            default:
-//                break
-//            }
-//        }
-//        
-//        
-        
-    }
-    func nimSignalingMembersSyncNotify(_ notifyResponse: NIMSignalingChannelDetailedInfo) {
-        
-    }
-    func nimSignalingChannelsSyncNotify(_ notifyResponse: [NIMSignalingChannelDetailedInfo]) {
-        
-    }
-    func nimSignalingOnlineNotify(_ eventType: NIMSignalingEventType, response notifyResponse: NIMSignalingNotifyInfo) {
-        
-//        switch eventType {
-//        case .invite:
-//        
-//            guard let notifyResponse = notifyResponse as? NIMSignalingInviteNotifyInfo else {
-//                return
-//            }
+//        switch eventOne.eventType {
+//        case .SIGNALLING_EVENT_TYPE_INVITE:
 //            if self.shouldResponseBusy() || self.shouldAutoRejectCall() {
-//                self.unAcceptInvited(channelId: notifyResponse.channelInfo.channelId, caller: notifyResponse.fromAccountId, requestId: notifyResponse.requestId)
+//                self.unAcceptInvited(channelId: eventOne.channelInfo.channelId, caller: eventOne.inviterAccountId ?? "", requestId: eventOne.requestId)
 //                return
-//                
 //            }
-//            if let data = notifyResponse.customInfo.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+//            if let data = eventOne.channelInfo.channelExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
 //                if let type = customInfo["type"] as? String {
 //                    switch NERtCallingType(rawValue: type) {
 //                    case .team:
-//                        print("notifyResponse = \(notifyResponse)")
 //                        if let data = customInfo["data"] as? [String : Any] {
-//                            self.presentTeamCall(data: data, notifyResponse: notifyResponse)
+//                            self.presentTeamCall(data: data, event: eventOne)
 //                        }
 //                    case .p2p:
-//                        self.presentCalls(types: notifyResponse.channelInfo.channelType, caller: notifyResponse.fromAccountId, channelId: notifyResponse.channelInfo.channelId, channelName: notifyResponse.channelInfo.channelName, requestId: notifyResponse.requestId)
+//                        self.presentCalls(types: eventOne.channelInfo.channelType, caller: eventOne.inviterAccountId ?? "", channelId: eventOne.channelInfo.channelId, channelName: eventOne.channelInfo.channelName ?? "", requestId: eventOne.requestId)
+//
 //                    default:
 //                        break
 //                    }
 //                    
 //                }
 //            }
-//            
-//    
-//            
 //        default:
 //            break
 //        }
-        
     }
-    func nimSignalingMultiClientSyncNotify(_ eventType: NIMSignalingEventType, response notifyResponse: NIMSignalingNotifyInfo) {
-        
-    }
-    
 }

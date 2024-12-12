@@ -113,9 +113,10 @@ public class RLConversationListViewController: TGViewController, ConversationLis
             self.tableView.mj_footer.isHidden = false
             if let list = list, list.count < self.viewmodel.limit {
                 self.tableView.mj_footer.endRefreshingWithNoMoreData()
-                if list.count == 0 {
+                if list.count < 10 {
                     DispatchQueue.main.async {
-                        let vc = TGChatViewController(conversationId: "azizistg22|1|zhouztz", conversationType: .CONVERSATION_TYPE_P2P)
+                        // newmee azizistg22|1|zhouztz   azizistg60|1|azizistg22
+                        let vc = TGChatViewController(conversationId: "azizistg22|1|azizistg60", conversationType: .CONVERSATION_TYPE_P2P)
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                     

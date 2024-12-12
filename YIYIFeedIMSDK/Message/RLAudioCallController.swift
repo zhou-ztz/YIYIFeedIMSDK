@@ -235,7 +235,7 @@ class RLAudioCallController: RLAudioVideoCallViewController {
         }
         
         
-        refuseBtn.isHidden = true
+        refuseBtn.isHidden = viewmodel.callInfo.isCaller
         durationLabel.isHidden = true
         
         muteLabel.text = "mute".localized
@@ -438,7 +438,6 @@ class RLAudioCallController: RLAudioVideoCallViewController {
         }
     }
     
-    
     // MARK: Call Life
     override func startByCaller() {
         super.startByCaller()
@@ -475,7 +474,6 @@ class RLAudioCallController: RLAudioVideoCallViewController {
         acceptBtn.isHidden = true
         refuseBtn.isHidden = true
         hangUpBtn.isHidden = false
-
         smallVideoView.isHidden = true
         switchVideoBtn.isHidden = true
 
@@ -508,14 +506,13 @@ class RLAudioCallController: RLAudioVideoCallViewController {
       
         hangUpBtn.isHidden = true
         smallVideoView.isHidden = true
-        muteBtn.isHidden = true
-        disableCameraBtn.isHidden = true
         switchVideoBtn.isHidden = true
 
         muteLabel.isHidden = false
 
         muteBtn.isHidden = false
         disableCameraBtn.isHidden = false
+        
         acceptBtn.isHidden = false
         refuseBtn.isHidden = false
 
@@ -582,7 +579,6 @@ class RLAudioCallController: RLAudioVideoCallViewController {
     override func videoCallingInterface () {
         userProfileImageView.isHidden = viewmodel.callInfo.callType == .SIGNALLING_CHANNEL_TYPE_VIDEO
         usernameLabel.isHidden = viewmodel.callInfo.callType == .SIGNALLING_CHANNEL_TYPE_VIDEO
-
         videoCallLabel.isHidden = viewmodel.callInfo.callType == .SIGNALLING_CHANNEL_TYPE_VIDEO
         acceptBtn.isHidden = true
         refuseBtn.isHidden = true
@@ -664,8 +660,6 @@ class RLAudioCallController: RLAudioVideoCallViewController {
             } failure: { error in
                 
             }
-
-            
         }))
         alert.addAction(UIAlertAction(title: "accept_session".localized, style: .default, handler: { (action) in
             let data: [String: Any] = [:]

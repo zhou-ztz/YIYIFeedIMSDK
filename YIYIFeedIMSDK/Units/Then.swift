@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol Then {}
+protocol Then {}
 
 extension Then {
     @discardableResult

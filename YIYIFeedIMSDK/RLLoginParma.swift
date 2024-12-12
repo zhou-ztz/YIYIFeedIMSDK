@@ -22,4 +22,6 @@ public class RLLoginParma: NSObject {
     public var imAccid: String!
     // imToken
     public var imToken: String!
+    // 用户id
+    public var uid: UInt!
 }

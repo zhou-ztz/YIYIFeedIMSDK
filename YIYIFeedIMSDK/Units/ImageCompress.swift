@@ -9,7 +9,7 @@
 import Foundation
 import ImageIO
 
-public enum ColorConfig{
+enum ColorConfig{
     case alpha8
     case rgb565
     case argb8888
@@ -17,14 +17,14 @@ public enum ColorConfig{
     case unknown // 其余色彩配置
 }
 
-public class ImageCompress {
+class ImageCompress {
     /// 改变图片到指定的色彩配置
     ///
     /// - Parameters:
     ///   - rawData: 原始图片数据
     ///   - config: 色彩配置
     /// - Returns: 处理后数据
-    public static func changeColorWithImageData(_ rawData:Data, config:ColorConfig) -> Data?{
+    static func changeColorWithImageData(_ rawData:Data, config:ColorConfig) -> Data?{
         guard let imageConfig = config.imageConfig else {
             return rawData
         }
@@ -59,7 +59,7 @@ public class ImageCompress {
     ///
     /// - Parameter rawData: 原始图片数据
     /// - Returns: 色彩配置
-    public static func getColorConfigWithImageData(_ rawData:Data) -> ColorConfig{
+    static func getColorConfigWithImageData(_ rawData:Data) -> ColorConfig{
         guard let imageSource = CGImageSourceCreateWithData(rawData as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
             let imageFrame = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
                 return .unknown
@@ -74,7 +74,7 @@ public class ImageCompress {
     ///   - rawData: 原始图片数据
     ///   - limitLongWidth: 长边限制
     /// - Returns: 处理后数据
-    public static func compressImageData(_ rawData:Data, limitLongWidth:CGFloat) -> Data?{
+    static func compressImageData(_ rawData:Data, limitLongWidth:CGFloat) -> Data?{
         guard max(rawData.imageSize.height, rawData.imageSize.width) > limitLongWidth else {
             return rawData
         }
@@ -128,7 +128,7 @@ public class ImageCompress {
     ///   - rawData: 原始图片数据
     ///   - limitDataSize: 限制文件大小，单位字节
     /// - Returns: 处理后数据
-    public static func compressImageData(_ rawData:Data, limitDataSize:Int) -> Data?{
+    static func compressImageData(_ rawData:Data, limitDataSize:Int) -> Data?{
         guard rawData.count > limitDataSize else {
             return rawData
         }

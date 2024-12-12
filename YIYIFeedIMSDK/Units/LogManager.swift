@@ -8,18 +8,18 @@
 
 import Foundation
 
-public enum LoggingType {
+enum LoggingType {
     case exception, networkError, apiRequestData, apiResponseData, others
 }
 
 @objcMembers
-public class LogManager: NSObject  {
+class LogManager: NSObject  {
     static let shared = LogManager()
     private override init() { }
 
     private var data: [String:Any] = [:]
 
-    public class func LogError(name: String, file: String = #file, line: Int = #line,
+    class func LogError(name: String, file: String = #file, line: Int = #line,
                                funName: String = #function, reason: String?) {
         
         _ = UserDefaults.standard.object(forKey: "TSCurrentUserInfoModel.uid") as? Int
@@ -31,7 +31,7 @@ public class LogManager: NSObject  {
         #endif
     }
 
-    public class func BFLogError(name: String, file: String = #file, line: Int = #line,
+    class func BFLogError(name: String, file: String = #file, line: Int = #line,
                                  funName: String = #function, code: Int, description: String?) {
         _ = UserDefaults.standard.object(forKey: "TSCurrentUserInfoModel.uid") as? Int
 
@@ -44,7 +44,7 @@ public class LogManager: NSObject  {
         #endif
     }
 
-    public class func Log(_ object: Any..., name: String = "", file: String = #file, line: Int = #line,
+    class func Log(_ object: Any..., name: String = "", file: String = #file, line: Int = #line,
                           funName: String = #function, loggingType: LoggingType) {
         
         _ = [name, file, "\(line)", funName].joined(separator: ", ")
@@ -69,7 +69,7 @@ public class LogManager: NSObject  {
         }
     }
 
-    public class func setDeviceString(_ string:String, forKey key:String) {
+    class func setDeviceString(_ string:String, forKey key:String) {
         shared.data[key] = string
     }
 }

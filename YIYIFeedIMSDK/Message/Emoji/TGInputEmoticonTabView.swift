@@ -4,17 +4,17 @@
 // found in the LICENSE file.
 
 import UIKit
-@objc public protocol InputEmoticonTabViewDelegate: NSObjectProtocol {
-    @objc optional func tabView(_ tabView: InputEmoticonTabView?, didSelectTabIndex index: Int)
+@objc protocol InputEmoticonTabViewDelegate: NSObjectProtocol {
+    @objc optional func tabView(_ tabView: TGInputEmoticonTabView?, didSelectTabIndex index: Int)
 }
 
-public class InputEmoticonTabView: UIControl {
-    public weak var delegate: InputEmoticonTabViewDelegate?
+class TGInputEmoticonTabView: UIControl {
+    weak var delegate: InputEmoticonTabViewDelegate?
     private var tabs = [UIButton]()
     private var seps = [UIView]()
-    private var className = "InputEmoticonTabView"
+    private var className = "TGInputEmoticonTabView"
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setUpSubViews()
     }
@@ -34,14 +34,14 @@ public class InputEmoticonTabView: UIControl {
         ])
     }
     
-    public func selectTabIndex(_ index: Int) {
+    func selectTabIndex(_ index: Int) {
         for i in 0 ..< tabs.count {
             let btn = tabs[i]
             btn.isSelected = i == index
         }
     }
     
-    public func loadCatalogs(_ emoticonCatalogs: [NIMInputEmoticonCatalog]?) {
+    func loadCatalogs(_ emoticonCatalogs: [NIMInputEmoticonCatalog]?) {
         tabs.forEach { btn in
             btn.removeFromSuperview()
         }
@@ -77,7 +77,7 @@ public class InputEmoticonTabView: UIControl {
     
     // MARK: lazy method
     
-    public lazy var sendButton: UIButton = {
+    lazy var sendButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("发送", for: .normal)

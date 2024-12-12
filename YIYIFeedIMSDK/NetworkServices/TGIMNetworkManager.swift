@@ -1,23 +1,17 @@
 //
-//  TGFeedNetworkManager.swift
+//  TGIMNetworkManager.swift
 //  YIYIFeedIMSDK
 //
-//  Created by dong on 2024/11/29.
+//  Created by 深圳壹艺科技有限公司-zhi on 2024/12/10.
 //
 
 import UIKit
 
-class TGFeedNetworkManager: NSObject {
-    static let shared = TGFeedNetworkManager()
-    private override init() {}
+class TGIMNetworkManager: NSObject {
     
-    /// 获取动态详情
-      /// - Parameters:
-      ///   - feedId: Feed ID
-      ///   - completion: 回调，返回动态详情模型
-    func fetchFeedDetailInfo(withFeedId feedId: String, completion: @escaping (TGFeedResponse?, Error?) -> Void) {
-        
-        let path = "/api/v2/feeds/\(feedId)"
+    ///创建白板房间
+    class func createWhiteboard(roomName: String, completion: @escaping ((_ resultModel: WhiteBoardModel?, _ error: Error?) ->Void)) {
+        let path = "api/v2/whiteboard/g2"
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .GET,
@@ -30,9 +24,9 @@ class TGFeedNetworkManager: NSObject {
             }
             do {
                 let decoder = JSONDecoder()
-                let feedResponse = try decoder.decode(TGFeedResponse.self, from: data)
+                let response = try decoder.decode(WhiteBoardModel.self, from: data)
                 DispatchQueue.main.async {
-                    completion(feedResponse, nil)
+                    completion(response, nil)
                 }
             } catch {
                 // 解析失败，返回错误
@@ -44,18 +38,13 @@ class TGFeedNetworkManager: NSObject {
         }
     }
     
-    func fetchFeedCommentsList(withFeedId feedId: String, afterId: Int?, limit: Int, completion: @escaping (TGFeedContentResponse?, Error?) -> Void) {
-        
-        let path = "/api/v2/feeds/\(feedId)/comments"
-        var params: [String: Any] = [:]
-        params.updateValue(limit, forKey: "limit")
-        if let afterId = afterId {
-            params.updateValue(afterId, forKey: "after")
-        }
+    ///获取白板房间鉴权
+    class func getwhiteboardAuth(completion: @escaping ((_ resultModel: WhiteBoardAuth?, _ error: Error?) ->Void)) {
+        let path = "api/v2/auth/whiteboard"
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .GET,
-            params: params,
+            params: nil,
             headers: nil
         ) { data, _, error in
             guard let data = data, error == nil else {
@@ -64,10 +53,9 @@ class TGFeedNetworkManager: NSObject {
             }
             do {
                 let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let feedContentResponse = try decoder.decode(TGFeedContentResponse.self, from: data)
+                let response = try decoder.decode(WhiteBoardAuth.self, from: data)
                 DispatchQueue.main.async {
-                    completion(feedContentResponse, nil)
+                    completion(response, nil)
                 }
             } catch {
                 // 解析失败，返回错误

@@ -73,20 +73,14 @@ class AudioVideoViewModel: NSObject {
     }
     
     func sendCallMessage(callType: V2NIMSignallingChannelType , eventType: CallingEventType, duration: TimeInterval = 0){
-        let nick = ""
-        let message = NIMMessage()
-        let customObject = NIMCustomObject()
-        //        let attachment = IMCallingAttachment()
-        //        attachment.callType = callType
-        //        attachment.eventType = eventType
-        //        attachment.duration = duration
-        //        customObject.attachment = attachment
-        //        message.messageObject = customObject
-        let setting = NIMMessageSetting()
-        setting.apnsEnabled = false
-        message.setting = setting
-        let session = NIMSession(self.callInfo.callee ?? "", type: .P2P)
-        try? NIMSDK.shared().chatManager.send(message, to: session)
+        let attact = CustomAttachment.audioVideoEncode(callType: callType, eventType: eventType, duration: duration)
+        let message = MessageUtils.customV2Message(text: "", rawAttachment: attact)
+        let convasationId = (callInfo.caller ?? "") + "|1|" + (callInfo.callee ?? "")
+        NIMSDK.shared().v2MessageService.send(message, conversationId: convasationId, params: nil) { _ in
+            
+        } failure: { _ in
+            
+        }
     }
     
     func getChannelName(caller: String, callee: String = "")-> String{
@@ -152,13 +146,16 @@ class AudioVideoViewModel: NSObject {
         v2parma.channelId = channelId
         v2parma.callerAccountId = self.callInfo.callee ?? ""
         v2parma.requestId = requestId
+
         NIMSDK.shared().v2SignallingService.callSetup(v2parma) {[weak self] callSetupResult in
             self?.channelInfo = callSetupResult.roomInfo
+            self?.V2NIMSignalCalleeInfo = callSetupResult
             self?.callInfo.channelId = self?.channelInfo?.channelInfo.channelId
             success(self?.channelInfo)
         } failure: { error in
             failure(error)
         }
+        
         
     }
     /// 取消邀请

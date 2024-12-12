@@ -4,14 +4,14 @@
 // found in the LICENSE file.
 
 import UIKit
-@objc public protocol InputEmoticonContainerViewDelegate: NSObjectProtocol {
+@objc protocol TGInputEmoticonContainerViewDelegate: NSObjectProtocol {
     func selectedEmoticon(emoticonID: String, emotCatalogID: String, description: String)
     func didPressSend(sender: UIButton)
 }
 
-public class InputEmoticonContainerView: UIView {
-    private let classTag = "InputEmoticonContainerView"
-    public weak var delegate: InputEmoticonContainerViewDelegate?
+class TGInputEmoticonContainerView: UIView {
+    private let classTag = "TGInputEmoticonContainerView"
+    weak var delegate: TGInputEmoticonContainerViewDelegate?
     
     private var _totalCatalogData: [NIMInputEmoticonCatalog]?
     private var totalCatalogData: [NIMInputEmoticonCatalog]? {
@@ -29,8 +29,8 @@ public class InputEmoticonContainerView: UIView {
         set {
             _currentCatalogData = newValue
             if let currentData = newValue {
-                emoticonPageView
-                    .scrollToPage(page: pageIndexWithEmoticon(emoticonCatalog: currentData))
+              //  emoticonPageView
+               //     .scrollToPage(page: pageIndexWithEmoticon(emoticonCatalog: currentData))
             }
         }
         get {
@@ -38,7 +38,7 @@ public class InputEmoticonContainerView: UIView {
         }
     }
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setUpSubViews()
         loadEmojiData()
@@ -49,15 +49,15 @@ public class InputEmoticonContainerView: UIView {
     }
     
     func setUpSubViews() {
-        addSubview(emoticonPageView)
+        //addSubview(emoticonPageView)
         addSubview(tabView)
         
-        NSLayoutConstraint.activate([
-            emoticonPageView.topAnchor.constraint(equalTo: topAnchor),
-            emoticonPageView.rightAnchor.constraint(equalTo: rightAnchor),
-            emoticonPageView.leftAnchor.constraint(equalTo: leftAnchor),
-            emoticonPageView.heightAnchor.constraint(equalToConstant: 159),
-        ])
+//        NSLayoutConstraint.activate([
+//            emoticonPageView.topAnchor.constraint(equalTo: topAnchor),
+//            emoticonPageView.rightAnchor.constraint(equalTo: rightAnchor),
+//            emoticonPageView.leftAnchor.constraint(equalTo: leftAnchor),
+//            emoticonPageView.heightAnchor.constraint(equalToConstant: 159),
+//        ])
         
         NSLayoutConstraint.activate([
             tabView.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -83,7 +83,7 @@ public class InputEmoticonContainerView: UIView {
     
     // 加载默认emoji
     func loadDefaultCatalog() -> NIMInputEmoticonCatalog? {
-        let emoticonCatalog = NIMInputEmoticonManager.shared
+        let emoticonCatalog = TGNIMInputEmoticonManager.shared
             .emoticonCatalog(catalogID: NIMKit_EmojiCatalog)
         let layout = NIMInputEmoticonLayout(width: self.bounds.width)
         emoticonCatalog?.layout = layout
@@ -145,16 +145,16 @@ public class InputEmoticonContainerView: UIView {
     }
     
     // MAKR: lazy method
-    private lazy var emoticonPageView: EmojiPageView = {
-        let pageView = EmojiPageView(frame: self.bounds)
-        pageView.translatesAutoresizingMaskIntoConstraints = false
-        pageView.dataSource = self
-        pageView.pageViewDelegate = self
-        return pageView
-    }()
+//    private lazy var emoticonPageView: TGEmojiPageView = {
+//        let pageView = TGEmojiPageView(frame: self.bounds)
+//        pageView.translatesAutoresizingMaskIntoConstraints = false
+//        pageView.dataSource = self
+//        pageView.pageViewDelegate = self
+//        return pageView
+//    }()
     
-    private lazy var tabView: InputEmoticonTabView = {
-        let pageView = InputEmoticonTabView(frame: CGRect.zero)
+    private lazy var tabView: TGInputEmoticonTabView = {
+        let pageView = TGInputEmoticonTabView(frame: CGRect.zero)
         pageView.translatesAutoresizingMaskIntoConstraints = false
         pageView.delegate = self
         pageView.sendButton.addTarget(self, action: #selector(didPressSend), for: .touchUpInside)
@@ -164,7 +164,7 @@ public class InputEmoticonContainerView: UIView {
 
 // MARK: ================= config data ==================
 
-extension InputEmoticonContainerView {
+extension TGInputEmoticonContainerView {
     func sumPages() -> NSInteger {
         var pagesCount = 0
         
@@ -177,7 +177,7 @@ extension InputEmoticonContainerView {
         return pagesCount
     }
     
-    func emojiPageView(pageView: EmojiPageView, emoticon: NIMInputEmoticonCatalog,
+    func TGEmojiPageView(pageView: TGEmojiPageView, emoticon: NIMInputEmoticonCatalog,
                        page: NSInteger) -> UIView {
         let subView = UIView()
         guard let layout = emoticon.layout else {
@@ -201,7 +201,7 @@ extension InputEmoticonContainerView {
         for i in begin ..< end {
             let data = emotions[i]
             if let id = emoticon.catalogID {
-                let button = NIMInputEmoticonButton.iconButtonWithData(
+                let button = TGNIMInputEmoticonButton.iconButtonWithData(
                     data: data,
                     catalogID: id,
                     delegate: self
@@ -249,7 +249,7 @@ extension InputEmoticonContainerView {
             return
         }
         
-        let deleteIcon = NIMInputEmoticonButton()
+        let deleteIcon = TGNIMInputEmoticonButton()
         deleteIcon.isUserInteractionEnabled = true
         deleteIcon.isExclusiveTouch = true
         deleteIcon.contentMode = .center
@@ -269,7 +269,7 @@ extension InputEmoticonContainerView {
         view.addSubview(deleteIcon)
     }
     
-    @objc func onIconSelected(sender: NIMInputEmoticonButton) {
+    @objc func onIconSelected(sender: TGNIMInputEmoticonButton) {
         delegate?.selectedEmoticon(emoticonID: "", emotCatalogID: "", description: "")
     }
     
@@ -281,12 +281,12 @@ extension InputEmoticonContainerView {
 
 // MARK: ====== EmojiPageViewDelegate,EmojiPageViewDataSource ==============
 
-extension InputEmoticonContainerView: EmojiPageViewDelegate, EmojiPageViewDataSource {
-    public func numberOfPages(pageView: EmojiPageView?) -> NSInteger {
+extension TGInputEmoticonContainerView: TGEmojiPageViewDelegate, TGEmojiPageViewDataSource {
+    func numberOfPages(pageView: TGEmojiPageView?) -> NSInteger {
         sumPages()
     }
     
-    public func pageView(pageView: EmojiPageView?, index: NSInteger) -> UIView {
+    func pageView(pageView: TGEmojiPageView?, index: NSInteger) -> UIView {
         var page = 0
         var resultEmotion = NIMInputEmoticonCatalog()
         
@@ -302,16 +302,16 @@ extension InputEmoticonContainerView: EmojiPageViewDelegate, EmojiPageViewDataSo
             }
             page = newPage
         }
-        return emojiPageView(pageView: targetView, emoticon: resultEmotion, page: index - page)
+        return TGEmojiPageView(pageView: targetView, emoticon: resultEmotion, page: index - page)
     }
     
-    public func needScrollAnimation() -> Bool {
+    func needScrollAnimation() -> Bool {
         true
     }
     
-    public func pageViewDidScroll(_ pageView: EmojiPageView?) {}
+    func pageViewDidScroll(_ pageView: TGEmojiPageView?) {}
     
-    public func pageViewScrollEnd(_ pageView: EmojiPageView?, currentIndex: Int, totolPages: Int) {
+    func pageViewScrollEnd(_ pageView: TGEmojiPageView?, currentIndex: Int, totolPages: Int) {
         //        let emticon = emoticonWithIndex(index: currentIndex)
         // 补充pageController逻辑
     }
@@ -319,14 +319,14 @@ extension InputEmoticonContainerView: EmojiPageViewDelegate, EmojiPageViewDataSo
 
 // MARK: =============== InputEmoticonTabViewDelegate ===============
 
-extension InputEmoticonContainerView: InputEmoticonTabViewDelegate {
-    public func tabView(_ tabView: InputEmoticonTabView?, didSelectTabIndex index: Int) {}
+extension TGInputEmoticonContainerView: InputEmoticonTabViewDelegate {
+    func tabView(_ tabView: TGInputEmoticonTabView?, didSelectTabIndex index: Int) {}
 }
 
 // MARK: =============== InputEmoticonTabViewDelegate ===============
 
-extension InputEmoticonContainerView: NIMInputEmoticonButtonDelegate {
-    public func selectedEmoticon(emotion: NIMInputEmoticon, catalogID: String) {
+extension TGInputEmoticonContainerView: TGNIMInputEmoticonButtonDelegate {
+    func selectedEmoticon(emotion: NIMInputEmoticon, catalogID: String) {
         guard let emotionId = emotion.emoticonID else {
             return
         }

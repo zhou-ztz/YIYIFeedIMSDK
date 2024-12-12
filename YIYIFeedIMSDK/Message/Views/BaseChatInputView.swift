@@ -417,7 +417,7 @@ class BaseChatInputView: UIView {
     
     public lazy var emojiView: UIView = {
         let backView = UIView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 200))
-        let view = InputEmoticonContainerView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 200))
+        let view = TGInputEmoticonContainerView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 200))
         view.delegate = self
         backView.isHidden = true
         
@@ -485,7 +485,7 @@ class BaseChatInputView: UIView {
             options: NSAttributedString.EnumerationOptions(rawValue: 0)
         ) { dics, range, stop in
             
-            if let neAttachment = dics[NSAttributedString.Key.attachment] as? NEEmotionAttachment,
+            if let neAttachment = dics[NSAttributedString.Key.attachment] as? TGNEEmotionAttachment,
                let des = neAttachment.emotion?.tag {
                 muta.append(des)
             } else {
@@ -701,14 +701,14 @@ extension BaseChatInputView: ChatMoreViewDelegate {
     }
 }
 
-extension BaseChatInputView: InputEmoticonContainerViewDelegate {
+extension BaseChatInputView: TGInputEmoticonContainerViewDelegate {
     func selectedEmoticon(emoticonID: String, emotCatalogID: String, description: String) {
         if emoticonID.isEmpty { // 删除键
             textView.deleteBackward()
             print("delete ward")
         } else {
             if let font = textView.font {
-                let attribute = NEEmotionTool.getAttWithStr(
+                let attribute = TGNEEmotionTool.getAttWithStr(
                     str: description,
                     font: font,
                     CGPoint(x: 0, y: -4)
@@ -722,7 +722,7 @@ extension BaseChatInputView: InputEmoticonContainerViewDelegate {
                     NSAttributedString.Key.attachment,
                     in: NSMakeRange(0, attribute.length)
                 ) { value, range, stop in
-                    if let neAttachment = value as? NEEmotionAttachment {
+                    if let neAttachment = value as? TGNEEmotionAttachment {
                         print("ne attachment bounds ", neAttachment.bounds)
                     }
                 }

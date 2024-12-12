@@ -23,7 +23,7 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
     
     lazy var nameLabel: UILabel = {
         let lab = UILabel()
-        lab.textColor = .lightGray
+        lab.textColor = RLColor.share.black3
         lab.font = UIFont.systemFont(ofSize: 14)
         lab.numberOfLines = 1
         lab.text = "-"
@@ -33,7 +33,7 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
     
     lazy var contentLabel: UILabel = {
         let lab = UILabel()
-        lab.textColor = .black
+        lab.textColor = MainColor.normal.minor
         lab.font = UIFont.systemFont(ofSize: 14)
         lab.numberOfLines = 0
         lab.text = "-"
@@ -118,18 +118,18 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
         }
     }
     
-//    public func setData(data: FeedCommentDataList){
-//        
-//        avatarView.sd_setImage(with: URL(string: data.author?.avatar ?? ""), placeholderImage: UIImage(named: "defaultProfile"))
-//        nameLabel.text = data.author?.nickname ?? ""
-//        contentLabel.text = data.content ?? ""
-//        dateLabel.text = data.createTime ?? ""
-//        
+    public func setData(data: TGFeedCommentListModel){
+        
+        avatarView.sd_setImage(with: URL(string: data.user?.avatar?.url ?? ""), placeholderImage: UIImage(named: "IMG_pic_default_secret"))
+        nameLabel.text = data.user?.name ?? ""
+        contentLabel.text = data.body ?? ""
+        dateLabel.text = data.updatedAt ?? ""
+        
 //        likeBtn.titleLabel.text = data.countStart.stringValue
-//        
+        
 //        likeBtn.imageView.image = data.relevanceId > 0 ? UIImage(named: "heart")! :  UIImage(named: "IMG_home_ico_love")!
-//        
-//    }
+        
+    }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

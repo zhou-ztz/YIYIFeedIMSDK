@@ -72,6 +72,8 @@ class TGChatViewController: TGViewController {
     var isRecognitionInProgress = false
     //记录当前录制的语音
     private var saveAudioMessage: V2NIMMessage?
+    //白板房间id
+    var whiteboardRoomId: Int = 0
   
     init(conversationId: String, conversationType: V2NIMConversationType) {
         self.viewmodel = TGChatViewModel(conversationId: conversationId, conversationType: conversationType)
@@ -176,6 +178,9 @@ class TGChatViewController: TGViewController {
         tableView.register(FileMessageCell.self, forCellReuseIdentifier: "FileMessageCell")
         tableView.register(LocationMessageCell.self, forCellReuseIdentifier: "LocationMessageCell")
         tableView.register(ReplyMessageCell.self, forCellReuseIdentifier: "ReplyMessageCell")
+        tableView.register(WhiteBoardMessageCell.self, forCellReuseIdentifier: "WhiteBoardMessageCell")
+        tableView.register(VideoCallingCell.self, forCellReuseIdentifier: "VideoCallingCell")
+
         chatInputView.frame = CGRect(x: 0, y: ScreenHeight - chatInputView.menuHeight - TSNavigationBarHeight - TSBottomSafeAreaHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
         
         self.customNavigationBar.title = viewmodel.sessionId//viewmodel.getShowName(userId: viewmodel.sessionId, teamId: nil)
@@ -337,6 +342,39 @@ class TGChatViewController: TGViewController {
         }
     }
     
+    func openWhiteBoard(){
+        let timeStamp = Date().timeIntervalSince1970
+        let baseUrl: String = RLSDKManager.shared.loginParma?.apiBaseURL ?? "https://preprod-api-rewardslink.getyippi.cn/"
+        TGIMNetworkManager.createWhiteboard(roomName: viewmodel.sessionId + timeStamp.toString()) {[weak self] model, error in
+            guard let self = self else {return}
+            if let error = error {
+               // self.showError(message: error.localizedDescription)
+            } else {
+                self.whiteboardRoomId = model?.data?.cid ?? 0
+                let param = NMCWhiteBoardParam()
+                param.uid = RLSDKManager.shared.loginParma?.uid ?? 0
+                param.appKey = NIMAppKey
+                param.channelName = self.whiteboardRoomId.stringValue
+                param.webViewUrl = baseUrl + kwebViewUrl
+
+                DispatchQueue.main.async {
+                    let vc = NMCWhiteBoardViewController(whiteBoardParam: param)
+                    self.present(TGNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true)
+                }
+                self.sendWhiteboardMessage(channel: self.whiteboardRoomId.stringValue)
+            }
+        }
+       
+    }
+    
+    func sendWhiteboardMessage(channel: String) {
+        let creator = NIMSDK.shared().v2LoginService.getLoginUser()
+        let rawAttachment = CustomAttachment.WhiteBoardEncode(channel: channel, creator: creator ?? "")
+        viewmodel.sendCustomMessage(text: "", rawAttachment: rawAttachment, conversationId: viewmodel.conversationId) { _ in
+            
+        }
+    }
+    
     // MARK: audio play
     func startPlaying(audio: NIMAudioObject, isSend: Bool) {
         playingCell?.startAnimation(byRight: isSend)
@@ -435,7 +473,6 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       
         let model = viewmodel.messages[indexPath.row]
         //插入的时间类
         if model.type == .time {
@@ -488,11 +525,32 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
             cell.setData(model: model)
             cell.delegate = self
             return cell
+        case .MESSAGE_TYPE_CUSTOM:
+            if let type = model.customType {
+                switch type {
+                case .WhiteBoard:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "WhiteBoardMessageCell", for: indexPath) as! WhiteBoardMessageCell
+                    cell.selectionStyle = .none
+                    cell.setData(model: model)
+                    cell.delegate = self
+                    return cell
+                case .VideoCall:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "VideoCallingCell", for: indexPath) as! VideoCallingCell
+                    cell.selectionStyle = .none
+                    cell.setData(model: model)
+                    cell.delegate = self
+                    return cell
+                default:
+                    break
+                }
+            }
+            return UITableViewCell()
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
             cell.selectionStyle = .none
             cell.contentLabel.text = "未知消息类型"
             cell.delegate = self
+           
             return cell
         }
     }
@@ -607,7 +665,7 @@ extension TGChatViewController: NIMMediaManagerDelegate{
         
         if let message = viewmodel.operationModel?.nimMessageModel {
             if isReEdit {
-                replyView.textLabel.attributedText = NEEmotionTool.getAttWithStr(str: viewmodel.operationModel?.replyText ?? "", font: replyView.textLabel.font, CGPoint(x: 0, y: -4), color: replyView.textLabel.textColor)
+                replyView.textLabel.attributedText = TGNEEmotionTool.getAttWithStr(str: viewmodel.operationModel?.replyText ?? "", font: replyView.textLabel.font, CGPoint(x: 0, y: -4), color: replyView.textLabel.textColor)
                 
                 //              if let replyMessage = viewmodel.getReplyMessageWithoutThread(message: message) {
                 //              viewmodel.operationModel = replyMessage
@@ -647,7 +705,7 @@ extension TGChatViewController: NIMMediaManagerDelegate{
                 default:
                     text += "[未知消息]"
                 }
-                replyView.textLabel.attributedText = NEEmotionTool.getAttWithStr(str: text,
+                replyView.textLabel.attributedText = TGNEEmotionTool.getAttWithStr(str: text,
                                                                                  font: replyView.textLabel.font,
                                                                                  CGPoint(x: 0, y: -4),
                                                                                  color: replyView.textLabel.textColor)
@@ -964,7 +1022,7 @@ extension TGChatViewController: ChatInputViewDelegate {
         case .voiceCall:
             break
         case .whiteBoard:
-            break
+            openWhiteBoard()
         case .voiceToText:
             break
         case .rps:

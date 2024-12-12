@@ -9,7 +9,7 @@ import SwiftDate
 
 private let gregorianCalendar = Calendar(identifier: .gregorian)
 
-public extension Calendar {
+extension Calendar {
     
     static func startDayOfMonth(in month: Int, year: Int) -> Int {
         let dateComponents = DateComponents(calendar: gregorianCalendar,

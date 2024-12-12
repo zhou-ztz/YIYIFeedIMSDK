@@ -26,6 +26,11 @@
 		8A4BB3342D08352B00AAB4B8 /* NMCWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3252D08352B00AAB4B8 /* NMCWebView.swift */; };
 		8A4BB3352D08352B00AAB4B8 /* NMCWhiteBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3262D08352B00AAB4B8 /* NMCWhiteBoardManager.swift */; };
 		8A4BB3362D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3272D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift */; };
+		8A4BB3402D084FDC00AAB4B8 /* TGIMNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB33F2D084FDC00AAB4B8 /* TGIMNetworkManager.swift */; };
+		8A4BB3422D0850C000AAB4B8 /* WhiteBoardAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3412D0850C000AAB4B8 /* WhiteBoardAuth.swift */; };
+		8A4BB3452D093BD300AAB4B8 /* WhiteBoardMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3442D093BD300AAB4B8 /* WhiteBoardMessageCell.swift */; };
+		8A4BB3482D09446600AAB4B8 /* CustomAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3472D09446600AAB4B8 /* CustomAttachment.swift */; };
+		8A4BB34D2D0A92A900AAB4B8 /* VideoCallingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB34C2D0A92A900AAB4B8 /* VideoCallingCell.swift */; };
 		8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */; };
 		8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A9F0D362CF0819E0021462C /* TGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D352CF0819E0021462C /* TGViewController.swift */; };
@@ -62,14 +67,14 @@
 		8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D772CF430E60021462C /* ChatMoreActionView.swift */; };
 		8A9F0D802CF430E70021462C /* ReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D782CF430E60021462C /* ReplyView.swift */; };
 		8A9F0D812CF430E70021462C /* MessageOperationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D792CF430E60021462C /* MessageOperationView.swift */; };
-		8A9F0D8C2CF430FE0021462C /* EmojiPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D822CF430FE0021462C /* EmojiPageView.swift */; };
-		8A9F0D8D2CF430FE0021462C /* InputEmoticonContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D832CF430FE0021462C /* InputEmoticonContainerView.swift */; };
-		8A9F0D8E2CF430FE0021462C /* InputEmoticonTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D842CF430FE0021462C /* InputEmoticonTabView.swift */; };
-		8A9F0D8F2CF430FE0021462C /* NEEmotionAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D852CF430FE0021462C /* NEEmotionAttachment.swift */; };
-		8A9F0D902CF430FE0021462C /* NEEmotionTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D862CF430FE0021462C /* NEEmotionTool.swift */; };
-		8A9F0D912CF430FE0021462C /* NIMInputEmoticonButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D872CF430FE0021462C /* NIMInputEmoticonButton.swift */; };
-		8A9F0D922CF430FE0021462C /* NIMInputEmoticonDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D882CF430FE0021462C /* NIMInputEmoticonDefine.swift */; };
-		8A9F0D932CF430FE0021462C /* NIMInputEmoticonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D892CF430FE0021462C /* NIMInputEmoticonManager.swift */; };
+		8A9F0D8C2CF430FE0021462C /* TGEmojiPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D822CF430FE0021462C /* TGEmojiPageView.swift */; };
+		8A9F0D8D2CF430FE0021462C /* TGInputEmoticonContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D832CF430FE0021462C /* TGInputEmoticonContainerView.swift */; };
+		8A9F0D8E2CF430FE0021462C /* TGInputEmoticonTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D842CF430FE0021462C /* TGInputEmoticonTabView.swift */; };
+		8A9F0D8F2CF430FE0021462C /* TGNEEmotionAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D852CF430FE0021462C /* TGNEEmotionAttachment.swift */; };
+		8A9F0D902CF430FE0021462C /* TGNEEmotionTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D862CF430FE0021462C /* TGNEEmotionTool.swift */; };
+		8A9F0D912CF430FE0021462C /* TGNIMInputEmoticonButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D872CF430FE0021462C /* TGNIMInputEmoticonButton.swift */; };
+		8A9F0D922CF430FE0021462C /* TGNIMInputEmoticonDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D882CF430FE0021462C /* TGNIMInputEmoticonDefine.swift */; };
+		8A9F0D932CF430FE0021462C /* TGNIMInputEmoticonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D892CF430FE0021462C /* TGNIMInputEmoticonManager.swift */; };
 		8A9F0D942CF430FE0021462C /* NIMKitEmoticon.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A9F0D8A2CF430FE0021462C /* NIMKitEmoticon.bundle */; };
 		8A9F0D982CF444A80021462C /* SCRefreshFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D962CF444A80021462C /* SCRefreshFooter.swift */; };
 		8A9F0D992CF444A80021462C /* SCRefreshHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D972CF444A80021462C /* SCRefreshHeader.swift */; };
@@ -126,6 +131,7 @@
 		8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */; };
 		8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */; };
 		8ABF5F4A2CF9CCED001DC11E /* TeamMeetingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */; };
+		F57A36F02D004FBD00159F31 /* TGFeedCommentListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57A36EF2D004FBD00159F31 /* TGFeedCommentListModel.swift */; };
 		F5CD2C5A2CFEB40500EA7C7A /* ServerResponseDataTransforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C582CFEB40500EA7C7A /* ServerResponseDataTransforms.swift */; };
 		F5CD2C5B2CFEB40500EA7C7A /* TGFeedNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */; };
 		F5CD2C5C2CFEB40500EA7C7A /* TGNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */; };
@@ -176,6 +182,11 @@
 		8A4BB3252D08352B00AAB4B8 /* NMCWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWebView.swift; sourceTree = "<group>"; };
 		8A4BB3262D08352B00AAB4B8 /* NMCWhiteBoardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWhiteBoardManager.swift; sourceTree = "<group>"; };
 		8A4BB3272D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMCWhiteBoardViewController.swift; sourceTree = "<group>"; };
+		8A4BB33F2D084FDC00AAB4B8 /* TGIMNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMNetworkManager.swift; sourceTree = "<group>"; };
+		8A4BB3412D0850C000AAB4B8 /* WhiteBoardAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoardAuth.swift; sourceTree = "<group>"; };
+		8A4BB3442D093BD300AAB4B8 /* WhiteBoardMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoardMessageCell.swift; sourceTree = "<group>"; };
+		8A4BB3472D09446600AAB4B8 /* CustomAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAttachment.swift; sourceTree = "<group>"; };
+		8A4BB34C2D0A92A900AAB4B8 /* VideoCallingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallingCell.swift; sourceTree = "<group>"; };
 		8A9F0D252CF080790021462C /* YIYIFeedIMSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = YIYIFeedIMSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YIYIFeedIMSDK.h; sourceTree = "<group>"; };
 		8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = YIYIFeedIMSDK.docc; sourceTree = "<group>"; };
@@ -213,14 +224,14 @@
 		8A9F0D772CF430E60021462C /* ChatMoreActionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMoreActionView.swift; sourceTree = "<group>"; };
 		8A9F0D782CF430E60021462C /* ReplyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplyView.swift; sourceTree = "<group>"; };
 		8A9F0D792CF430E60021462C /* MessageOperationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOperationView.swift; sourceTree = "<group>"; };
-		8A9F0D822CF430FE0021462C /* EmojiPageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiPageView.swift; sourceTree = "<group>"; };
-		8A9F0D832CF430FE0021462C /* InputEmoticonContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputEmoticonContainerView.swift; sourceTree = "<group>"; };
-		8A9F0D842CF430FE0021462C /* InputEmoticonTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputEmoticonTabView.swift; sourceTree = "<group>"; };
-		8A9F0D852CF430FE0021462C /* NEEmotionAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEEmotionAttachment.swift; sourceTree = "<group>"; };
-		8A9F0D862CF430FE0021462C /* NEEmotionTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NEEmotionTool.swift; sourceTree = "<group>"; };
-		8A9F0D872CF430FE0021462C /* NIMInputEmoticonButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIMInputEmoticonButton.swift; sourceTree = "<group>"; };
-		8A9F0D882CF430FE0021462C /* NIMInputEmoticonDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIMInputEmoticonDefine.swift; sourceTree = "<group>"; };
-		8A9F0D892CF430FE0021462C /* NIMInputEmoticonManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIMInputEmoticonManager.swift; sourceTree = "<group>"; };
+		8A9F0D822CF430FE0021462C /* TGEmojiPageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGEmojiPageView.swift; sourceTree = "<group>"; };
+		8A9F0D832CF430FE0021462C /* TGInputEmoticonContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGInputEmoticonContainerView.swift; sourceTree = "<group>"; };
+		8A9F0D842CF430FE0021462C /* TGInputEmoticonTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGInputEmoticonTabView.swift; sourceTree = "<group>"; };
+		8A9F0D852CF430FE0021462C /* TGNEEmotionAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNEEmotionAttachment.swift; sourceTree = "<group>"; };
+		8A9F0D862CF430FE0021462C /* TGNEEmotionTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNEEmotionTool.swift; sourceTree = "<group>"; };
+		8A9F0D872CF430FE0021462C /* TGNIMInputEmoticonButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNIMInputEmoticonButton.swift; sourceTree = "<group>"; };
+		8A9F0D882CF430FE0021462C /* TGNIMInputEmoticonDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNIMInputEmoticonDefine.swift; sourceTree = "<group>"; };
+		8A9F0D892CF430FE0021462C /* TGNIMInputEmoticonManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNIMInputEmoticonManager.swift; sourceTree = "<group>"; };
 		8A9F0D8A2CF430FE0021462C /* NIMKitEmoticon.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = NIMKitEmoticon.bundle; sourceTree = "<group>"; };
 		8A9F0D962CF444A80021462C /* SCRefreshFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCRefreshFooter.swift; sourceTree = "<group>"; };
 		8A9F0D972CF444A80021462C /* SCRefreshHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCRefreshHeader.swift; sourceTree = "<group>"; };
@@ -279,6 +290,7 @@
 		8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMeetingViewModel.swift; sourceTree = "<group>"; };
 		9B7FF8D3AB0A77F6C7BA2655 /* Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; path = "Target Support Files/Pods-YIYISDKDemo-YIYIFeedIMSDK/Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; sourceTree = "<group>"; };
 		C8BD6A12FE67EB49C19F3D71 /* Pods_YIYISDKDemo_YIYIFeedIMSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YIYISDKDemo_YIYIFeedIMSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F57A36EF2D004FBD00159F31 /* TGFeedCommentListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedCommentListModel.swift; sourceTree = "<group>"; };
 		F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedNetworkManager.swift; sourceTree = "<group>"; };
 		F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNetworkManager.swift; sourceTree = "<group>"; };
 		F5CD2C582CFEB40500EA7C7A /* ServerResponseDataTransforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponseDataTransforms.swift; sourceTree = "<group>"; };
@@ -352,6 +364,14 @@
 			path = Whiteboard;
 			sourceTree = "<group>";
 		};
+		8A4BB3462D09442100AAB4B8 /* CustomAttachment */ = {
+			isa = PBXGroup;
+			children = (
+				8A4BB3472D09446600AAB4B8 /* CustomAttachment.swift */,
+			);
+			path = CustomAttachment;
+			sourceTree = "<group>";
+		};
 		8A9F0D1B2CF080790021462C = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +421,7 @@
 		8A9F0D372CF088FA0021462C /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				8A4BB3462D09442100AAB4B8 /* CustomAttachment */,
 				8A4BB32C2D08352B00AAB4B8 /* Whiteboard */,
 				8A9F0D8B2CF430FE0021462C /* Emoji */,
 				8A9F0D712CF430C20021462C /* Views */,
@@ -457,6 +478,7 @@
 				8A9F0D452CF41D290021462C /* ChatLocaitonModel.swift */,
 				8A9F0D472CF41D4B0021462C /* OperationItem.swift */,
 				8A9F0EA32CF6F9270021462C /* NetCallChatInfo.swift */,
+				8A4BB3412D0850C000AAB4B8 /* WhiteBoardAuth.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -472,7 +494,9 @@
 				8A9F0D532CF427A90021462C /* LocationMessageCell.swift */,
 				8A9F0D542CF427A90021462C /* ReplyMessageCell.swift */,
 				8A9F0D582CF427A90021462C /* TextMessageCell.swift */,
+				8A4BB3442D093BD300AAB4B8 /* WhiteBoardMessageCell.swift */,
 				8A9F0D572CF427A90021462C /* TipMessageCell.swift */,
+				8A4BB34C2D0A92A900AAB4B8 /* VideoCallingCell.swift */,
 				8A9F0D512CF427A90021462C /* UserInfoMessageCell.swift */,
 				8A027A522CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift */,
 				8A027A542CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift */,
@@ -503,14 +527,14 @@
 		8A9F0D8B2CF430FE0021462C /* Emoji */ = {
 			isa = PBXGroup;
 			children = (
-				8A9F0D822CF430FE0021462C /* EmojiPageView.swift */,
-				8A9F0D832CF430FE0021462C /* InputEmoticonContainerView.swift */,
-				8A9F0D842CF430FE0021462C /* InputEmoticonTabView.swift */,
-				8A9F0D852CF430FE0021462C /* NEEmotionAttachment.swift */,
-				8A9F0D862CF430FE0021462C /* NEEmotionTool.swift */,
-				8A9F0D872CF430FE0021462C /* NIMInputEmoticonButton.swift */,
-				8A9F0D882CF430FE0021462C /* NIMInputEmoticonDefine.swift */,
-				8A9F0D892CF430FE0021462C /* NIMInputEmoticonManager.swift */,
+				8A9F0D822CF430FE0021462C /* TGEmojiPageView.swift */,
+				8A9F0D832CF430FE0021462C /* TGInputEmoticonContainerView.swift */,
+				8A9F0D842CF430FE0021462C /* TGInputEmoticonTabView.swift */,
+				8A9F0D852CF430FE0021462C /* TGNEEmotionAttachment.swift */,
+				8A9F0D862CF430FE0021462C /* TGNEEmotionTool.swift */,
+				8A9F0D872CF430FE0021462C /* TGNIMInputEmoticonButton.swift */,
+				8A9F0D882CF430FE0021462C /* TGNIMInputEmoticonDefine.swift */,
+				8A9F0D892CF430FE0021462C /* TGNIMInputEmoticonManager.swift */,
 				8A9F0D8A2CF430FE0021462C /* NIMKitEmoticon.bundle */,
 			);
 			path = Emoji;
@@ -597,6 +621,7 @@
 		F5BAEB222CF8085E007977D9 /* NetworkServices */ = {
 			isa = PBXGroup;
 			children = (
+				8A4BB33F2D084FDC00AAB4B8 /* TGIMNetworkManager.swift */,
 				F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */,
 				F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */,
 				F5CD2C592CFEB40500EA7C7A /* Tool */,
@@ -623,6 +648,7 @@
 				F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */,
 				F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */,
 				F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */,
+				F57A36EF2D004FBD00159F31 /* TGFeedCommentListModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -817,26 +843,29 @@
 				8A4BB31A2D0824DC00AAB4B8 /* IMRecordStateView.swift in Sources */,
 				8A9F0D3C2CF0911A0021462C /* RLSDKManager.swift in Sources */,
 				8ABF5F4A2CF9CCED001DC11E /* TeamMeetingViewModel.swift in Sources */,
+				8A4BB3402D084FDC00AAB4B8 /* TGIMNetworkManager.swift in Sources */,
 				8A9F0E9A2CF6F5530021462C /* RLAudioVideoCallViewController.swift in Sources */,
 				8A9F0D7D2CF430E70021462C /* MapViewSearchView.swift in Sources */,
+				8A4BB3482D09446600AAB4B8 /* CustomAttachment.swift in Sources */,
 				F5CD2C8A2CFEB5A800EA7C7A /* UserStatusEnum.swift in Sources */,
 				F5CD2C8B2CFEB5A800EA7C7A /* TGUserInfoModel.swift in Sources */,
 				F5CD2C8C2CFEB5A800EA7C7A /* UserInfoType.swift in Sources */,
 				8A9F0D992CF444A80021462C /* SCRefreshHeader.swift in Sources */,
 				8A9F0D5D2CF427A90021462C /* ReplyMessageCell.swift in Sources */,
 				F5CD2C5A2CFEB40500EA7C7A /* ServerResponseDataTransforms.swift in Sources */,
+				8A4BB34D2D0A92A900AAB4B8 /* VideoCallingCell.swift in Sources */,
 				F5CD2C5B2CFEB40500EA7C7A /* TGFeedNetworkManager.swift in Sources */,
 				F5CD2C5C2CFEB40500EA7C7A /* TGNetworkManager.swift in Sources */,
 				8A9F0EA42CF6F9270021462C /* NetCallChatInfo.swift in Sources */,
 				8A9F0DC12CF451E90021462C /* Then.swift in Sources */,
 				8A9F0D812CF430E70021462C /* MessageOperationView.swift in Sources */,
 				8A4BB31D2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift in Sources */,
-				8A9F0D912CF430FE0021462C /* NIMInputEmoticonButton.swift in Sources */,
+				8A9F0D912CF430FE0021462C /* TGNIMInputEmoticonButton.swift in Sources */,
 				8A9F0DAB2CF44D6F0021462C /* number+extensions.swift in Sources */,
 				8A9F0D422CF41ACD0021462C /* RLMessageData.swift in Sources */,
 				8A9F0DC72CF451E90021462C /* UIView+Actions.swift in Sources */,
 				8A9F0D3A2CF089410021462C /* RLNIMSDKManager.swift in Sources */,
-				8A9F0D8D2CF430FE0021462C /* InputEmoticonContainerView.swift in Sources */,
+				8A9F0D8D2CF430FE0021462C /* TGInputEmoticonContainerView.swift in Sources */,
 				8A4BB3192D0824DC00AAB4B8 /* IMAudioMessageStateView.swift in Sources */,
 				8A9F0D802CF430E70021462C /* ReplyView.swift in Sources */,
 				8A9F0D4E2CF427560021462C /* RLConversationListViewController.swift in Sources */,
@@ -856,14 +885,15 @@
 				8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */,
 				8A9F0D6D2CF42AC70021462C /* RLColor.swift in Sources */,
 				8A9F0D5B2CF427A90021462C /* BaseMessageCell.swift in Sources */,
-				8A9F0D932CF430FE0021462C /* NIMInputEmoticonManager.swift in Sources */,
+				8A9F0D932CF430FE0021462C /* TGNIMInputEmoticonManager.swift in Sources */,
 				8A9F0D9B2CF4464F0021462C /* SCCustomNavigationBar.swift in Sources */,
 				8A9F0EA22CF6F7D00021462C /* TimerHolder.swift in Sources */,
 				8A9F0E072CF6B6E70021462C /* ChatViewConfig.swift in Sources */,
 				8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */,
 				8A9F0DAE2CF44D6F0021462C /* UIViewController+Extension.swift in Sources */,
+				F57A36F02D004FBD00159F31 /* TGFeedCommentListModel.swift in Sources */,
 				8A9F0D702CF42D910021462C /* RLBaseChatViewController.swift in Sources */,
-				8A9F0D902CF430FE0021462C /* NEEmotionTool.swift in Sources */,
+				8A9F0D902CF430FE0021462C /* TGNEEmotionTool.swift in Sources */,
 				8A9F0DAA2CF44D6F0021462C /* UIView+Extension.swift in Sources */,
 				8A9F0D462CF41D290021462C /* ChatLocaitonModel.swift in Sources */,
 				8A9F0D5C2CF427A90021462C /* LocationMessageCell.swift in Sources */,
@@ -896,7 +926,7 @@
 				8A9F0D612CF427A90021462C /* TextMessageCell.swift in Sources */,
 				8A9F0D622CF427A90021462C /* ImageMessageCell.swift in Sources */,
 				8A027A592CFD9AF6008D1AC7 /* TGChatViewModel.swift in Sources */,
-				8A9F0D8C2CF430FE0021462C /* EmojiPageView.swift in Sources */,
+				8A9F0D8C2CF430FE0021462C /* TGEmojiPageView.swift in Sources */,
 				8A9F0D7A2CF430E60021462C /* BaseChatInputView.swift in Sources */,
 				8A9F0D7B2CF430E70021462C /* OperationCell.swift in Sources */,
 				F5CD2C702CFEB4C400EA7C7A /* FeedToolBarButton.swift in Sources */,
@@ -918,10 +948,11 @@
 				8A9F0DC52CF451E90021462C /* Action.swift in Sources */,
 				8A9F0DAD2CF44D6F0021462C /* String+Extension.swift in Sources */,
 				8A9F0DBE2CF451E90021462C /* ImageCompress.swift in Sources */,
-				8A9F0D8F2CF430FE0021462C /* NEEmotionAttachment.swift in Sources */,
+				8A9F0D8F2CF430FE0021462C /* TGNEEmotionAttachment.swift in Sources */,
 				8A9F0D682CF42A290021462C /* RLTableView.swift in Sources */,
-				8A9F0D922CF430FE0021462C /* NIMInputEmoticonDefine.swift in Sources */,
+				8A9F0D922CF430FE0021462C /* TGNIMInputEmoticonDefine.swift in Sources */,
 				8A4BB3362D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift in Sources */,
+				8A4BB3422D0850C000AAB4B8 /* WhiteBoardAuth.swift in Sources */,
 				8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */,
 				8A9F0D4A2CF41D610021462C /* MessageUtils.swift in Sources */,
 				8A9F0EA62CF707820021462C /* RLAudioCallController.swift in Sources */,
@@ -932,8 +963,9 @@
 				8A9F0D9F2CF44CD20021462C /* RLCurrentUserInfo.swift in Sources */,
 				8A4BB3352D08352B00AAB4B8 /* NMCWhiteBoardManager.swift in Sources */,
 				8A4BB31B2D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift in Sources */,
-				8A9F0D8E2CF430FE0021462C /* InputEmoticonTabView.swift in Sources */,
+				8A9F0D8E2CF430FE0021462C /* TGInputEmoticonTabView.swift in Sources */,
 				8A4BB3332D08352B00AAB4B8 /* NMCWebLoginParam.swift in Sources */,
+				8A4BB3452D093BD300AAB4B8 /* WhiteBoardMessageCell.swift in Sources */,
 				8A9F0EA02CF6F6910021462C /* CustomAttachmentDecoder.swift in Sources */,
 				8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */,
 				8A4BB3322D08352B00AAB4B8 /* NMCMessageDispatcher.swift in Sources */,

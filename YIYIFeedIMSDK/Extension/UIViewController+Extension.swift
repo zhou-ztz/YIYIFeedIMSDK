@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import Photos
 
-public typealias EmptyClosure = () -> Void
+typealias EmptyClosure = () -> Void
 
 
 extension UIViewController {

@@ -5,7 +5,7 @@
 
 import UIKit
 
-public class NEEmotionTool: NSObject {
+class TGNEEmotionTool: NSObject {
     class func getAttWithStr(str: String, font: UIFont,
                              _ offset: CGPoint = CGPoint(x: 0, y: -3), color: UIColor = RLColor.share.black3) -> NSMutableAttributedString {
         let regular = "\\[[^\\[|^\\]]+\\]"
@@ -21,7 +21,7 @@ public class NEEmotionTool: NSObject {
             range: NSRange(location: 0, length: str.utf16.count)
         )
         
-        let emoticons = NIMInputEmoticonManager.shared
+        let emoticons = TGNIMInputEmoticonManager.shared
             .emoticonCatalog(catalogID: NIMKit_EmojiCatalog)?.emoticons
         let attStr = NSMutableAttributedString(string: str, attributes: [
             NSAttributedString.Key.font: font,
@@ -55,7 +55,7 @@ public class NEEmotionTool: NSObject {
     
     class func getAttWithEmotion(emotion: NIMInputEmoticon, font: UIFont,
                                  offset: CGPoint) -> NSAttributedString {
-        let textAttachment = NEEmotionAttachment()
+        let textAttachment = TGNEEmotionAttachment()
         textAttachment.emotion = emotion
         let height = font.lineHeight
         textAttachment.bounds = CGRect(x: offset.x, y: offset.y, width: height, height: height)

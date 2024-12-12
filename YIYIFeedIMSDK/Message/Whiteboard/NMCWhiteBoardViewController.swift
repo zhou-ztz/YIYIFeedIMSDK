@@ -47,7 +47,7 @@ class NMCWhiteBoardViewController: UIViewController, NMCWhiteboardManagerDelegat
         
         let closeWhiteboardBtnItem = UIBarButtonItem(customView: closeWhiteboard)
         self.navigationItem.leftBarButtonItem = closeWhiteboardBtnItem
-        
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         if #available(iOS 11.0, *) {
             
         } else {

@@ -4,20 +4,20 @@
 // found in the LICENSE file.
 
 import UIKit
-public protocol NIMInputEmoticonButtonDelegate: NSObjectProtocol {
+protocol TGNIMInputEmoticonButtonDelegate: NSObjectProtocol {
     func selectedEmoticon(emotion: NIMInputEmoticon, catalogID: String)
 }
 
-public class NIMInputEmoticonButton: UIButton {
-    public var emotionData: NIMInputEmoticon?
-    public var catalogID: String?
-    public weak var delegate: NIMInputEmoticonButtonDelegate?
-    private let classsTag = "NIMInputEmoticonButton"
+class TGNIMInputEmoticonButton: UIButton {
+    var emotionData: NIMInputEmoticon?
+    var catalogID: String?
+    weak var delegate: TGNIMInputEmoticonButtonDelegate?
+    private let classsTag = "TGNIMInputEmoticonButton"
     
-    public class func iconButtonWithData(data: NIMInputEmoticon, catalogID: String,
-                                         delegate: NIMInputEmoticonButtonDelegate)
-    -> NIMInputEmoticonButton {
-        let icon = NIMInputEmoticonButton()
+    class func iconButtonWithData(data: NIMInputEmoticon, catalogID: String,
+                                         delegate: TGNIMInputEmoticonButtonDelegate)
+    -> TGNIMInputEmoticonButton {
+        let icon = TGNIMInputEmoticonButton()
         icon.addTarget(icon, action: #selector(onIconSelected), for: .touchUpInside)
         icon.emotionData = data
         icon.catalogID = catalogID
@@ -38,7 +38,7 @@ public class NIMInputEmoticonButton: UIButton {
         return icon
     }
     
-    @objc func onIconSelected(sender: NIMInputEmoticonButton) {
+    @objc func onIconSelected(sender: TGNIMInputEmoticonButton) {
         guard let data = emotionData, let id = catalogID else {
             //NELog.errorLog(classsTag, desc: "emotionData or catalogID maybe nil")
             return

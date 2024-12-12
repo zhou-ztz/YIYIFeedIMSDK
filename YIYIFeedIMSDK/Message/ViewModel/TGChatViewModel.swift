@@ -166,8 +166,8 @@ class TGChatViewModel: NSObject {
         let curTs = message.createTime
         let dur = curTs - lastTs
         if (dur / 60) > 5 {
-            let timeData = TGMessageData(messageTime: message.createTime, type: .time)
-            messages.append(timeData)
+            let timeData = TGMessageData(nimMessageModel: message,  messageTime: message.createTime, type: .time)
+//            messages.append(timeData)
             return timeData
         }
         return nil

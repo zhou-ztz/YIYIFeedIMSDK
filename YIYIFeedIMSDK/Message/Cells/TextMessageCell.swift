@@ -40,7 +40,7 @@ class TextMessageCell: BaseMessageCell {
     override func setData(model: TGMessageData) {
         super.setData(model: model)
         let showLeft = !(model.nimMessageModel?.isSelf ?? true)
-        let attribute = NEEmotionTool.getAttWithStr(
+        let attribute = TGNEEmotionTool.getAttWithStr(
           str: model.nimMessageModel?.text ?? "",
           font: UIFont.systemFont(ofSize: 14),
           CGPoint(x: 0, y: -4)

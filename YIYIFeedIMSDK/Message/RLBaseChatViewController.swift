@@ -443,7 +443,7 @@ class RLBaseChatViewController: TGViewController {
         
         if let message = viewmodel.operationModel?.nimMessageModel {
           if isReEdit {
-              replyView.textLabel.attributedText = NEEmotionTool.getAttWithStr(str: viewmodel.operationModel?.replyText ?? "", font: replyView.textLabel.font, CGPoint(x: 0, y: -4), color: replyView.textLabel.textColor)
+              replyView.textLabel.attributedText = TGNEEmotionTool.getAttWithStr(str: viewmodel.operationModel?.replyText ?? "", font: replyView.textLabel.font, CGPoint(x: 0, y: -4), color: replyView.textLabel.textColor)
              
               if let replyMessage = viewmodel.getReplyMessageWithoutThread(message: message) {
               viewmodel.operationModel = replyMessage
@@ -483,7 +483,7 @@ class RLBaseChatViewController: TGViewController {
             default:
               text += "[未知消息]"
             }
-            replyView.textLabel.attributedText = NEEmotionTool.getAttWithStr(str: text,
+            replyView.textLabel.attributedText = TGNEEmotionTool.getAttWithStr(str: text,
                                                                              font: replyView.textLabel.font,
                                                                              CGPoint(x: 0, y: -4),
                                                                              color: replyView.textLabel.textColor)
