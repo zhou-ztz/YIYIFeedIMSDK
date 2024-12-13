@@ -44,10 +44,13 @@ class TGChatViewModel: NSObject {
     
     //长按cell model
     var operationModel: TGMessageData?
-
     var isHistoryChat = false
 
     var deletingMsgDic = Set<String>()
+    
+    //记录播放语音的cell
+    var playingCell: AudioMessageCell?
+    var playingModel: RLMessageData?
     
     init(conversationId: String, conversationType: V2NIMConversationType) {
         self.conversationId = conversationId
@@ -67,10 +70,12 @@ class TGChatViewModel: NSObject {
 
     func addObserver() {
         NIMSDK.shared().v2MessageService.add(self)
+        NIMSDK.shared().mediaManager.add(self)
     }
     
     deinit {
         NIMSDK.shared().v2MessageService.remove(self)
+        NIMSDK.shared().mediaManager.remove(self)
     }
     
     func clearUnreadCount() {
@@ -474,9 +479,70 @@ extension TGChatViewModel: V2NIMMessageListener {
     func onClearHistoryNotifications(_ clearHistoryNotification: [V2NIMClearHistoryNotification]) {
         
     }
+
+}
+// MARK: NIMMediaManagerDelegate
+extension TGChatViewModel: NIMMediaManagerDelegate {
+    func playAudio(_ filePath: String, didBeganWithError error: Error?) {
+        if let e = error {
+            //showTips(message: e.localizedDescription)
+            // stop
+            playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
+            playingModel?.isPlaying = false
+        }
+    }
+    func playAudio(_ filePath: String, didCompletedWithError error: Error?) {
+        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
+        playingModel?.isPlaying = false
+    }
+    func stopPlayAudio(_ filePath: String, didCompletedWithError error: Error?) {
+        if let e = error {
+            // showTips(message: e.localizedDescription)
+        }
+        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
+        playingModel?.isPlaying = false
+    }
     
+    func playAudio(_ filePath: String, progress value: Float) {}
+    
+    func playAudioInterruptionEnd() {
+        print(#function)
+        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
+        playingModel?.isPlaying = false
+    }
+    
+    func playAudioInterruptionBegin() {
+        print(#function)
+        // stop play
+        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
+        playingModel?.isPlaying = false
+    }
+    
+    func recordAudio(_ filePath: String?, didBeganWithError error: Error?) {
+        
+    }
+    func recordAudio(_ filePath: String?, didCompletedWithError error: Error?) {
+//        chatInputView.stopRecordAnimation()
+//        guard let fp = filePath else {
+//            // showTips(message: error?.localizedDescription ?? "")
+//            return
+//        }
+//        let dur = recordDuration(filePath: fp)
+//        
+//        print("dur:\(dur)")
+//        if dur > 1 {
+//            //            viewmodel.sendAudioMessage(filePath: fp) { error in
+//            //                if let e = error {
+//            //                  //  self.showTips(message: e.localizedDescription)
+//            //                } else {}
+//            //            }
+//        } else {
+//            // showTips(message: "录音时间太短！")
+//        }
+    }
     
 }
+
 
 extension Array {
     // 数组去重

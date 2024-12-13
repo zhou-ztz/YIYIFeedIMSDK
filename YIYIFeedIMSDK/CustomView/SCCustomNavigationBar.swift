@@ -45,7 +45,7 @@ class SCCustomNavigationBar: UIView {
         let item = UIButton()
         item.setImage(UIImage.set_image(named: "iconsArrowCaretleftBlack")?.withRenderingMode(.alwaysOriginal), for: .normal)
         item.setTitleColor(.black, for: .normal)
-        item.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        item.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         return item
     }()
     

@@ -8,7 +8,13 @@
 import UIKit
 import NIMSDK
 
+protocol RLConversationListViewControllerDelegate: AnyObject {
+    func didTapItem(conversationId: String, conversationType: Int)
+}
+
 public class RLConversationListViewController: TGViewController, ConversationListCellDelegate {
+    
+    weak var delegate: RLConversationListViewControllerDelegate?
 
     lazy var stackView: UIStackView = {
         let stack = UIStackView()
@@ -39,6 +45,8 @@ public class RLConversationListViewController: TGViewController, ConversationLis
         ad.clipsToBounds = true
         return ad
     }()
+    
+    var isWebLoggedIn: Bool = false
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,7 +55,7 @@ public class RLConversationListViewController: TGViewController, ConversationLis
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        customNavigationBar.backItem.isHidden = true
+        customNavigationBar.isHidden = true
         stackView.addArrangedSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
@@ -116,7 +124,7 @@ public class RLConversationListViewController: TGViewController, ConversationLis
                 if list.count < 10 {
                     DispatchQueue.main.async {
                         // newmee azizistg22|1|zhouztz   azizistg60|1|azizistg22
-                        let vc = TGChatViewController(conversationId: "azizistg22|1|azizistg60", conversationType: .CONVERSATION_TYPE_P2P)
+                        let vc = TGChatViewController(conversationId: "azizistg22|1|azizistg60", conversationType: 1)
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                     
@@ -161,8 +169,7 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let conversationId = viewmodel.conversationList[indexPath.row].conversationId
         let conversationType = viewmodel.conversationList[indexPath.row].type
-        let vc = TGChatViewController(conversationId: conversationId, conversationType: conversationType)
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.delegate?.didTapItem(conversationId: conversationId, conversationType: conversationType.rawValue)
     }
     
 }

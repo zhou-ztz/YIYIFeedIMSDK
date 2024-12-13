@@ -31,6 +31,12 @@
 		8A4BB3452D093BD300AAB4B8 /* WhiteBoardMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3442D093BD300AAB4B8 /* WhiteBoardMessageCell.swift */; };
 		8A4BB3482D09446600AAB4B8 /* CustomAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3472D09446600AAB4B8 /* CustomAttachment.swift */; };
 		8A4BB34D2D0A92A900AAB4B8 /* VideoCallingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB34C2D0A92A900AAB4B8 /* VideoCallingCell.swift */; };
+		8A4BB3632D0BE47D00AAB4B8 /* TGMessageRequestListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3622D0BE47D00AAB4B8 /* TGMessageRequestListController.swift */; };
+		8A4BB3652D0BE7A400AAB4B8 /* TGMessageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3642D0BE7A400AAB4B8 /* TGMessageSliderView.swift */; };
+		8A4BB3672D0C0F5900AAB4B8 /* TGToolChoose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3662D0C0F5900AAB4B8 /* TGToolChoose.swift */; };
+		8A4BB36B2D0C118000AAB4B8 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3682D0C118000AAB4B8 /* Extensions.swift */; };
+		8A4BB36C2D0C118000AAB4B8 /* MKToolTip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB3692D0C118000AAB4B8 /* MKToolTip.swift */; };
+		8A4BB36E2D0C128F00AAB4B8 /* TGChooseViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB36D2D0C128F00AAB4B8 /* TGChooseViewCell.swift */; };
 		8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */; };
 		8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A9F0D362CF0819E0021462C /* TGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D352CF0819E0021462C /* TGViewController.swift */; };
@@ -116,7 +122,7 @@
 		8A9F0DFE2CF48B3B0021462C /* SDKResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A9F0DEA2CF48B3B0021462C /* SDKResource.bundle */; };
 		8A9F0DFF2CF48B3B0021462C /* speaking.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A9F0DEB2CF48B3B0021462C /* speaking.json */; };
 		8A9F0E002CF48B3B0021462C /* speech_to_text_progress.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A9F0DEC2CF48B3B0021462C /* speech_to_text_progress.json */; };
-		8A9F0E022CF575CC0021462C /* RLMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E012CF575CC0021462C /* RLMessageViewController.swift */; };
+		8A9F0E022CF575CC0021462C /* TGMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E012CF575CC0021462C /* TGMessageViewController.swift */; };
 		8A9F0E042CF57E520021462C /* TGNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E032CF57E520021462C /* TGNavigationController.swift */; };
 		8A9F0E072CF6B6E70021462C /* ChatViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E052CF6B6E60021462C /* ChatViewConfig.swift */; };
 		8A9F0E9A2CF6F5530021462C /* RLAudioVideoCallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0E992CF6F5530021462C /* RLAudioVideoCallViewController.swift */; };
@@ -187,6 +193,12 @@
 		8A4BB3442D093BD300AAB4B8 /* WhiteBoardMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoardMessageCell.swift; sourceTree = "<group>"; };
 		8A4BB3472D09446600AAB4B8 /* CustomAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAttachment.swift; sourceTree = "<group>"; };
 		8A4BB34C2D0A92A900AAB4B8 /* VideoCallingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallingCell.swift; sourceTree = "<group>"; };
+		8A4BB3622D0BE47D00AAB4B8 /* TGMessageRequestListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestListController.swift; sourceTree = "<group>"; };
+		8A4BB3642D0BE7A400AAB4B8 /* TGMessageSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageSliderView.swift; sourceTree = "<group>"; };
+		8A4BB3662D0C0F5900AAB4B8 /* TGToolChoose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGToolChoose.swift; sourceTree = "<group>"; };
+		8A4BB3682D0C118000AAB4B8 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		8A4BB3692D0C118000AAB4B8 /* MKToolTip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MKToolTip.swift; sourceTree = "<group>"; };
+		8A4BB36D2D0C128F00AAB4B8 /* TGChooseViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGChooseViewCell.swift; sourceTree = "<group>"; };
 		8A9F0D252CF080790021462C /* YIYIFeedIMSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = YIYIFeedIMSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YIYIFeedIMSDK.h; sourceTree = "<group>"; };
 		8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = YIYIFeedIMSDK.docc; sourceTree = "<group>"; };
@@ -273,7 +285,7 @@
 		8A9F0DEA2CF48B3B0021462C /* SDKResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SDKResource.bundle; sourceTree = "<group>"; };
 		8A9F0DEB2CF48B3B0021462C /* speaking.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = speaking.json; sourceTree = "<group>"; };
 		8A9F0DEC2CF48B3B0021462C /* speech_to_text_progress.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = speech_to_text_progress.json; sourceTree = "<group>"; };
-		8A9F0E012CF575CC0021462C /* RLMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLMessageViewController.swift; sourceTree = "<group>"; };
+		8A9F0E012CF575CC0021462C /* TGMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageViewController.swift; sourceTree = "<group>"; };
 		8A9F0E032CF57E520021462C /* TGNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNavigationController.swift; sourceTree = "<group>"; };
 		8A9F0E052CF6B6E60021462C /* ChatViewConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewConfig.swift; sourceTree = "<group>"; };
 		8A9F0E992CF6F5530021462C /* RLAudioVideoCallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLAudioVideoCallViewController.swift; sourceTree = "<group>"; };
@@ -372,6 +384,15 @@
 			path = CustomAttachment;
 			sourceTree = "<group>";
 		};
+		8A4BB36A2D0C118000AAB4B8 /* MKToolTip */ = {
+			isa = PBXGroup;
+			children = (
+				8A4BB3682D0C118000AAB4B8 /* Extensions.swift */,
+				8A4BB3692D0C118000AAB4B8 /* MKToolTip.swift */,
+			);
+			path = MKToolTip;
+			sourceTree = "<group>";
+		};
 		8A9F0D1B2CF080790021462C = {
 			isa = PBXGroup;
 			children = (
@@ -432,11 +453,12 @@
 				8A9F0D4D2CF427560021462C /* RLConversationListViewController.swift */,
 				8A9F0D6F2CF42D910021462C /* RLBaseChatViewController.swift */,
 				8A027A5C2CFDBE29008D1AC7 /* TGChatViewController.swift */,
-				8A9F0E012CF575CC0021462C /* RLMessageViewController.swift */,
+				8A9F0E012CF575CC0021462C /* TGMessageViewController.swift */,
 				8A9F0E992CF6F5530021462C /* RLAudioVideoCallViewController.swift */,
 				8A9F0EA52CF707820021462C /* RLAudioCallController.swift */,
 				8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */,
 				8A4BB3112D06D2FB00AAB4B8 /* TGMessageMapViewController.swift */,
+				8A4BB3622D0BE47D00AAB4B8 /* TGMessageRequestListController.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -520,6 +542,7 @@
 				8A9F0D732CF430E60021462C /* OperationCell.swift */,
 				8A9F0D782CF430E60021462C /* ReplyView.swift */,
 				8A027A562CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift */,
+				8A4BB3642D0BE7A400AAB4B8 /* TGMessageSliderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -543,10 +566,13 @@
 		8A9F0D952CF444490021462C /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				8A4BB36A2D0C118000AAB4B8 /* MKToolTip */,
 				F5CD2C942CFEB76800EA7C7A /* TGAvatarView.swift */,
 				8A9F0D9A2CF4464F0021462C /* SCCustomNavigationBar.swift */,
 				8A9F0D962CF444A80021462C /* SCRefreshFooter.swift */,
 				8A9F0D972CF444A80021462C /* SCRefreshHeader.swift */,
+				8A4BB3662D0C0F5900AAB4B8 /* TGToolChoose.swift */,
+				8A4BB36D2D0C128F00AAB4B8 /* TGChooseViewCell.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -849,6 +875,7 @@
 				8A4BB3482D09446600AAB4B8 /* CustomAttachment.swift in Sources */,
 				F5CD2C8A2CFEB5A800EA7C7A /* UserStatusEnum.swift in Sources */,
 				F5CD2C8B2CFEB5A800EA7C7A /* TGUserInfoModel.swift in Sources */,
+				8A4BB36C2D0C118000AAB4B8 /* MKToolTip.swift in Sources */,
 				F5CD2C8C2CFEB5A800EA7C7A /* UserInfoType.swift in Sources */,
 				8A9F0D992CF444A80021462C /* SCRefreshHeader.swift in Sources */,
 				8A9F0D5D2CF427A90021462C /* ReplyMessageCell.swift in Sources */,
@@ -870,10 +897,12 @@
 				8A9F0D802CF430E70021462C /* ReplyView.swift in Sources */,
 				8A9F0D4E2CF427560021462C /* RLConversationListViewController.swift in Sources */,
 				F5CD2C902CFEB5C200EA7C7A /* View+Extension.swift in Sources */,
+				8A4BB3632D0BE47D00AAB4B8 /* TGMessageRequestListController.swift in Sources */,
 				F5CD2C912CFEB5C200EA7C7A /* NSUserDefault+Cache.swift in Sources */,
 				F5CD2C922CFEB5C200EA7C7A /* Calendar+Extension.swift in Sources */,
 				8A9F0D7C2CF430E70021462C /* ChatRecordView.swift in Sources */,
 				8A027A512CFD5A38008D1AC7 /* TGReachability.swift in Sources */,
+				8A4BB3672D0C0F5900AAB4B8 /* TGToolChoose.swift in Sources */,
 				8A9F0E042CF57E520021462C /* TGNavigationController.swift in Sources */,
 				8A9F0D642CF429390021462C /* ConversationListCell.swift in Sources */,
 				8A027A532CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift in Sources */,
@@ -892,6 +921,7 @@
 				8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */,
 				8A9F0DAE2CF44D6F0021462C /* UIViewController+Extension.swift in Sources */,
 				F57A36F02D004FBD00159F31 /* TGFeedCommentListModel.swift in Sources */,
+				8A4BB3652D0BE7A400AAB4B8 /* TGMessageSliderView.swift in Sources */,
 				8A9F0D702CF42D910021462C /* RLBaseChatViewController.swift in Sources */,
 				8A9F0D902CF430FE0021462C /* TGNEEmotionTool.swift in Sources */,
 				8A9F0DAA2CF44D6F0021462C /* UIView+Extension.swift in Sources */,
@@ -941,6 +971,7 @@
 				F5CD2C792CFEB4C400EA7C7A /* TGDetailCommentTableViewCell.swift in Sources */,
 				F5CD2C7A2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift in Sources */,
 				F5CD2C7B2CFEB4C400EA7C7A /* FeedListModel.swift in Sources */,
+				8A4BB36B2D0C118000AAB4B8 /* Extensions.swift in Sources */,
 				F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */,
 				F5CD2C7D2CFEB4C400EA7C7A /* TGFeedResponse.swift in Sources */,
 				F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */,
@@ -954,12 +985,13 @@
 				8A4BB3362D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift in Sources */,
 				8A4BB3422D0850C000AAB4B8 /* WhiteBoardAuth.swift in Sources */,
 				8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */,
+				8A4BB36E2D0C128F00AAB4B8 /* TGChooseViewCell.swift in Sources */,
 				8A9F0D4A2CF41D610021462C /* MessageUtils.swift in Sources */,
 				8A9F0EA62CF707820021462C /* RLAudioCallController.swift in Sources */,
 				8A9F0DB02CF44FD20021462C /* RLSendFileManager.swift in Sources */,
 				F5CD2C832CFEB51C00EA7C7A /* StoreManager.swift in Sources */,
 				F5CD2C842CFEB51C00EA7C7A /* TGAppTheme.swift in Sources */,
-				8A9F0E022CF575CC0021462C /* RLMessageViewController.swift in Sources */,
+				8A9F0E022CF575CC0021462C /* TGMessageViewController.swift in Sources */,
 				8A9F0D9F2CF44CD20021462C /* RLCurrentUserInfo.swift in Sources */,
 				8A4BB3352D08352B00AAB4B8 /* NMCWhiteBoardManager.swift in Sources */,
 				8A4BB31B2D0824DC00AAB4B8 /* SpeechVoiceDetectManager.swift in Sources */,

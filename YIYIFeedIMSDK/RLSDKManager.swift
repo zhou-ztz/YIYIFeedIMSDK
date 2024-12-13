@@ -13,13 +13,13 @@ public class RLSDKManager: NSObject {
     
     var loginParma: RLLoginParma?
     
-    public func initSDK(parma: RLLoginParma){
-        self.loginParma = parma
+    public func initSDK(){
         RLNIMSDKManager.shared.setupNIMSDK()
         IMNotificationCenter.sharedCenter.start()
     }
     
-    public func loginIM(success: @escaping ()->Void, failure: @escaping ()->Void){
+    public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping ()->Void){
+        self.loginParma = parma
         RLNIMSDKManager.shared.imLogin(with: self.loginParma?.imAccid ?? "", imToken: self.loginParma?.imToken ?? "") {
             success()
         } failure: {

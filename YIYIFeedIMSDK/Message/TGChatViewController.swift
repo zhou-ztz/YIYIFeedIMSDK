@@ -15,11 +15,11 @@ let fileSizeLimit: Double = 200
 //录音时长
 let record_duration: TimeInterval = 60.0
 
-class TGChatViewController: TGViewController {
+public class TGChatViewController: TGViewController {
 
     var viewmodel: TGChatViewModel
     
-    lazy var tableView: UITableView = {
+    lazy var tableView: RLTableView = {
         let tableView = RLTableView(frame: .zero, style: .plain)
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
@@ -37,9 +37,6 @@ class TGChatViewController: TGViewController {
     let chatInputView = BaseChatInputView(frame: .zero)
     var bottomExanpndHeight: CGFloat = 204 + TSBottomSafeAreaHeight // 底部展开高度
     var normalInputHeight: CGFloat = 50.0
-    //记录播放语音的cell
-    private var playingCell: AudioMessageCell?
-    private var playingModel: RLMessageData?
     
     let ges = UITapGestureRecognizer()
 
@@ -75,8 +72,9 @@ class TGChatViewController: TGViewController {
     //白板房间id
     var whiteboardRoomId: Int = 0
   
-    init(conversationId: String, conversationType: V2NIMConversationType) {
-        self.viewmodel = TGChatViewModel(conversationId: conversationId, conversationType: conversationType)
+    public init(conversationId: String, conversationType: Int) {
+        let type = V2NIMConversationType(rawValue: conversationType) ?? .CONVERSATION_TYPE_P2P
+        self.viewmodel = TGChatViewModel(conversationId: conversationId, conversationType: type)
         super.init(nibName: nil, bundle: nil)
     }
     init(conversationId: String, conversationType: V2NIMConversationType, anchor: V2NIMMessage?) {
@@ -88,24 +86,23 @@ class TGChatViewController: TGViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         addObserve()
         commonUI()
         loadData()
     }
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
        
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         operationView?.removeFromSuperview()
     }
 
     func addObserve() {
-        NIMSDK.shared().mediaManager.add(self)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyBoardWillShow(_:)),
                                                name: UIResponder.keyboardWillShowNotification,
@@ -263,7 +260,7 @@ class TGChatViewController: TGViewController {
     }
     
     deinit {
-        NIMSDK.shared().mediaManager.remove(self)
+        
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -377,7 +374,7 @@ class TGChatViewController: TGViewController {
     
     // MARK: audio play
     func startPlaying(audio: NIMAudioObject, isSend: Bool) {
-        playingCell?.startAnimation(byRight: isSend)
+        viewmodel.playingCell?.startAnimation(byRight: isSend)
         if let url = audio.path {
             if RLAuthManager.shared.checkAudioOutputRoute(){
                 NIMSDK.shared().mediaManager.switch(.speaker)
@@ -393,7 +390,7 @@ class TGChatViewController: TGViewController {
               let isSend = model?.nimMessageModel?.isOutgoingMsg else {
             return
         }
-        if playingModel == model {
+        if viewmodel.playingModel == model {
             if NIMSDK.shared().mediaManager.isPlaying() {
                 stopPlay()
             } else {
@@ -401,15 +398,15 @@ class TGChatViewController: TGViewController {
             }
         } else {
             stopPlay()
-            playingCell = cell
-            playingModel = model
+            viewmodel.playingCell = cell
+            viewmodel.playingModel = model
             startPlaying(audio: audio, isSend: isSend)
         }
     }
     
     public func stopPlay() {
         if NIMSDK.shared().mediaManager.isPlaying() {
-            playingCell?.startAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
+            viewmodel.playingCell?.startAnimation(byRight: viewmodel.playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
             NIMSDK.shared().mediaManager.stopPlay()
         }
     }
@@ -468,11 +465,11 @@ class TGChatViewController: TGViewController {
 
 // MARK: UITableViewDelegate, UITableViewDataSource
 extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewmodel.messages.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let model = viewmodel.messages[indexPath.row]
         //插入的时间类
         if model.type == .time {
@@ -555,11 +552,11 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         operationView?.removeFromSuperview()
 
     }
@@ -582,66 +579,8 @@ extension TGChatViewController: BaseMessageCellDelegate {
     
 }
 
-//    MARK: NIMMediaManagerDelegate
-extension TGChatViewController: NIMMediaManagerDelegate{
-    
-    func playAudio(_ filePath: String, didBeganWithError error: Error?) {
-        if let e = error {
-            //showTips(message: e.localizedDescription)
-            // stop
-            playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
-            playingModel?.isPlaying = false
-        }
-    }
-    func playAudio(_ filePath: String, didCompletedWithError error: Error?) {
-        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
-        playingModel?.isPlaying = false
-    }
-    func stopPlayAudio(_ filePath: String, didCompletedWithError error: Error?) {
-        if let e = error {
-            // showTips(message: e.localizedDescription)
-        }
-        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
-        playingModel?.isPlaying = false
-    }
-    
-    func playAudio(_ filePath: String, progress value: Float) {}
-    
-    open func playAudioInterruptionEnd() {
-        print(#function)
-        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
-        playingModel?.isPlaying = false
-    }
-    
-    func playAudioInterruptionBegin() {
-        print(#function)
-        // stop play
-        playingCell?.stopAnimation(byRight: playingModel?.nimMessageModel?.isOutgoingMsg ?? true)
-        playingModel?.isPlaying = false
-    }
-    
-    func recordAudio(_ filePath: String?, didBeganWithError error: Error?) {
-        
-    }
-    func recordAudio(_ filePath: String?, didCompletedWithError error: Error?) {
-        chatInputView.stopRecordAnimation()
-        guard let fp = filePath else {
-            // showTips(message: error?.localizedDescription ?? "")
-            return
-        }
-        let dur = recordDuration(filePath: fp)
-        
-        print("dur:\(dur)")
-        if dur > 1 {
-            //            viewmodel.sendAudioMessage(filePath: fp) { error in
-            //                if let e = error {
-            //                  //  self.showTips(message: e.localizedDescription)
-            //                } else {}
-            //            }
-        } else {
-            // showTips(message: "录音时间太短！")
-        }
-    }
+
+extension TGChatViewController{
     
     // MARK: UIScrollViewDelegate
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -941,11 +880,11 @@ extension TGChatViewController: NIMMediaManagerDelegate{
 }
 
 extension TGChatViewController: UIDocumentInteractionControllerDelegate{
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+    public func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         return self
     }
     
-    func documentInteractionControllerWillBeginPreview(_ controller: UIDocumentInteractionController) {
+    public func documentInteractionControllerWillBeginPreview(_ controller: UIDocumentInteractionController) {
         controller.dismissPreview(animated: true)
     }
 }
@@ -1110,7 +1049,6 @@ extension TGChatViewController: ChatInputViewDelegate {
         chatInputView.recognizedText = ""
         chatInputView.recording = true
 
-        NIMSDK.shared().mediaManager.add(self)
         NIMSDK.shared().mediaManager.record(NIMAudioType.AMR, duration: 65)
         //保存识别结果
         SpeechVoiceDetectManager.shared.state = .recording
@@ -1254,13 +1192,13 @@ extension TGChatViewController: ChatInputViewDelegate {
 //    MARK: UIImagePickerControllerDelegate
 extension TGChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     // 处理选择的照片
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         sendMediaMessage(didFinishPickingMediaWithInfo: info)
         picker.dismiss(animated: true, completion: nil)
     }
     
     // 取消选择时调用
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
 

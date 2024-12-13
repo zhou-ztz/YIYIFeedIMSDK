@@ -1,6 +1,6 @@
 //
 //  RLColor.swift
-//  yiyisc
+//
 //
 //  Created by 深圳壹艺科技有限公司-zhi on 2023/12/11.
 //
@@ -12,7 +12,7 @@ class RLColor {
     static let share = RLColor()
     //主题色  136 64 242
     var theme: UIColor {
-        return UIColor(red: 136, green: 64, blue: 242)
+        return UIColor(hex: 0xED1A3B)
     }
     
     var lightGray: UIColor {

@@ -39,9 +39,6 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         v2Option.useV1Login = false
         NIMSDK.shared().register(withOptionV2: option, v2Option: v2Option)
         
-        //注册自定义消息的解析器
-        //V2NIMMessageCustomAttachment.parse(<#T##self: V2NIMMessageCustomAttachment##V2NIMMessageCustomAttachment#>)
-      //  NIMCustomObject.registerCustomDecoder(CustomAttachmentDecoder() as! NIMCustomAttachmentCoding)
         
         NIMSDKConfig.shared().teamReceiptEnabled = false
         
