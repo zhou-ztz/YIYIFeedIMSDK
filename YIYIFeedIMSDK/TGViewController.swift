@@ -15,7 +15,7 @@ import IQKeyboardManagerSwift
 
 public class TGViewController: UIViewController {
 
-    var customNavigationBar :SCCustomNavigationBar!
+    let customNavigationBar: SCCustomNavigationBar = SCCustomNavigationBar(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: TSNavigationBarHeight))
     var backBaseView = UIView()
     lazy var allStackView: UIStackView = {
         let stack = UIStackView()
@@ -37,7 +37,7 @@ public class TGViewController: UIViewController {
     }
     
     func setNavigationBar(){
-        customNavigationBar = SCCustomNavigationBar(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: TSNavigationBarHeight))
+        
         view.addSubview(allStackView)
         allStackView.bindToEdges()
         allStackView.addArrangedSubview(customNavigationBar)

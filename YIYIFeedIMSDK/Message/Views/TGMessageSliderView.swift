@@ -29,8 +29,9 @@ class TGMessageSliderView: UIView {
     
     var selectCallBack: ((Int)->Void)?
     
-    override init(frame: CGRect) {
+    init(frame: CGRect, tabs: [TabHeaderdModal]) {
         super.init(frame: frame)
+        self.tabs = tabs
         commitUI()
     }
     
@@ -44,7 +45,6 @@ class TGMessageSliderView: UIView {
             make.center.equalToSuperview()
             make.height.equalTo(30)
         }
-        tabs = [TabHeaderdModal(titleString: "rw_text_chats".localized, messageCount: 0, bubbleColor: RLColor.share.theme, isSelected: true), TabHeaderdModal(titleString: "title_requests".localized, messageCount: 0, bubbleColor: RLColor.share.theme, isSelected: false)]
         for (index, tab) in tabs.enumerated() {
             let sub = TGMessageSliderItemView()
             
@@ -80,7 +80,14 @@ class TGMessageSliderView: UIView {
         selectCallBack?(index)
     }
     
-    
+    func updateUnreadCount(count: Int, index: Int) {
+        if self.tabs.count > index {
+            let tab = self.tabs[index]
+            tab.messageCount = count
+            self.tabs[index] = tab
+            updateUI(index: index)
+        }
+    }
     
 }
 
@@ -95,8 +102,9 @@ class TGMessageSliderItemView: UIView {
     let countView: UIView = UIView()
     lazy var countLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15)
-        label.textColor = UIColor(hex: "#808080")
+        label.font = UIFont.systemFont(ofSize: 9)
+       // label.textColor = UIColor(hex: "#808080")
+        label.textAlignment = .center
         return label
     }()
     let selectedView: UIView = UIView()
@@ -147,8 +155,8 @@ class TGMessageSliderItemView: UIView {
         }
         
         countLabel.snp.makeConstraints { make in
-            make.height.equalTo(16)
-            make.left.right.equalToSuperview().inset(5)
+            make.height.width.equalTo(18)
+            make.left.right.equalToSuperview().inset(4)
             make.centerY.equalToSuperview()
         }
         
@@ -173,7 +181,7 @@ class TGMessageSliderItemView: UIView {
             countLabel.backgroundColor = tab.bubbleColor
             
             countLabel.text = countString
-            countLabel.roundCorner(8)
+            countLabel.roundCorner(9)
         } else {
             countView.isHidden = true
         }
@@ -198,6 +206,7 @@ class TGMessageSliderItemView: UIView {
             make.height.equalTo(4)
         }
     }
+    
     
 }
 

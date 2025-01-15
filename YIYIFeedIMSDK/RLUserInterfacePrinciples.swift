@@ -11,6 +11,15 @@ struct ScreenSize {
 public let fengeLineHeight: CGFloat = 0.5
 public let ScreenWidth: CGFloat = UIScreen.main.bounds.size.width
 public let ScreenHeight: CGFloat = UIScreen.main.bounds.size.height
+public let stickerPerPage: Int = 8
+public let emojiPerPage: Int = 32
+public let stickerThumbHeight: Int = 40
+public let stickerThumbWidth: Int = 45
+public let stickerSize: Int = 115
+public let emojiContainerHeight: CGFloat = 260
+public let textToolbarHeight: CGFloat = 52
+public let voucherHeight: CGFloat = 44
+
 /// 状态栏高度
 public var TSStatusBarHeight: CGFloat { return RLUserInterfacePrinciples.share.getTSStatusBarHeight() }
 /// 刘海高度

@@ -30,7 +30,12 @@ class TGMessageData: NSObject {
     var isRevoked: Bool = false
     ///处理自定义消息
     var customType: CustomMessageType?
-    var customDict: NSDictionary?
+    var customAttachment: CustomAttachment?
+    //是否置顶
+    var isPinned: Bool = false
+    // 文本是否在 底部
+   // var atBottom: Bool = true
+    
     //modifyTime
     init(nimMessageModel: V2NIMMessage? = nil, showName: Bool? = nil, messageType: V2NIMMessageType = .MESSAGE_TYPE_TEXT, messageTime: TimeInterval = 0, type: TGChatMessageType, replyText: String = "") {
         self.nimMessageModel = nimMessageModel
@@ -40,11 +45,13 @@ class TGMessageData: NSObject {
         self.type = type
         self.replyText = replyText
         if messageType == .MESSAGE_TYPE_CUSTOM, let attach = nimMessageModel?.attachment {
-            let (attachmentType, dict) = CustomAttachment.decodeAttachment(attach.raw)
+            let (attachmentType, attachment) = CustomAttachmentDecoder.decodeAttachment(attach.raw)
             self.customType = attachmentType
-            self.customDict = dict
+            self.customAttachment = attachment
         }
-        
+//        if let message = nimMessageModel , message.messageType == .MESSAGE_TYPE_TEXT {
+//            atBottom = MessageUtils.timeShowAtBottom(messageModel: message)
+//        }
     }
     
     convenience init(_ messageModel: V2NIMMessage) {
@@ -61,4 +68,6 @@ class TGMessageData: NSObject {
 //        }
         self.init(nimMessageModel: messageModel, showName: nil, messageType: messageModel.messageType, messageTime: messageModel.createTime, type: msgType, replyText: replyText)
     }
+    
+    
 }

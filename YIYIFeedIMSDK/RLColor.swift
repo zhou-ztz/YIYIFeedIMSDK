@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 
+let rl_defalut_placeholder_image = UIImage.set_image(named: "rl_placeholder")
+
 class RLColor {
     static let share = RLColor()
     //主题色  136 64 242
@@ -50,6 +52,35 @@ class RLColor {
     //淡淡的主题色
     var lightTheme: UIColor {
         return UIColor(hex: 0xF8F7FC)
+    }
+    
+    class var headerTitleGrey: UIColor {
+        return UIColor(red: 128, green: 128, blue: 128)
+    }
+    
+    /// 主要颜色
+    class var main: MainColor {
+        return MainColor()
+    }
+    /// 常规颜色
+    class var normal: NormalColor {
+        return NormalColor()
+    }
+    /// 角落色
+    class var inconspicuous: InconspicuousColor {
+        return InconspicuousColor()
+    }
+    /// 特殊色 (非常少使用)
+    class var small: SmallColor {
+        return SmallColor()
+    }
+    /// 按钮相关颜色
+    class var button: ButtonColor {
+        return ButtonColor()
+    }
+    
+    class var theme: ThemeColor {
+        return ThemeColor()
     }
 }
 

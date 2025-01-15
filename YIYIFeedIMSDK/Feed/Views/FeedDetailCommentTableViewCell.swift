@@ -11,13 +11,8 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
 
     var likeButtonClickCall: (() -> ())?
     
-    lazy var avatarView: UIImageView = {
-        let img = UIImageView()
-        img.image = UIImage(named: "defaultProfile")
-        img.contentMode = .scaleAspectFit
-        img.backgroundColor = .gray
-        img.layer.cornerRadius = 20
-        img.layer.masksToBounds = true
+    lazy var avatarView: TGAvatarView = {
+        let img = TGAvatarView()
         return img
     }()
     
@@ -49,14 +44,23 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
         return lab
     }()
     
-    private lazy var likeBtn: FeedToolBarButton = {
-        let button = FeedToolBarButton()
-        button.imageView.image = UIImage(named: "IMG_home_ico_love")
-        button.imageView.contentMode = .scaleAspectFit
-        button.addAction { [weak self] in
-
-        }
-        return button
+    lazy var pinnedContainer: UIView = {
+        let pinnedContainer = UIView()
+        return pinnedContainer
+    }()
+   
+    lazy var pinnedIcon: UIImageView = {
+        let pinnedIcon = UIImageView()
+        pinnedIcon.image = UIImage(named: "icPinnedWhite")
+        return pinnedIcon
+    }()
+    
+    lazy var pinnedLabel: UILabel = {
+        let lab = UILabel()
+        lab.textColor = .lightGray
+        lab.font = UIFont.systemFont(ofSize: 12)
+        lab.text = "feed_live_comment_pinned_text".localized
+        return lab
     }()
     
     
@@ -79,7 +83,7 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
     }
     
     func setUI(){
-        
+
         contentView.addSubview(avatarView)
         avatarView.snp.makeConstraints { make in
             make.left.top.equalToSuperview().inset(10)
@@ -93,44 +97,72 @@ class FeedDetailCommentTableViewCell: UITableViewCell {
             
         }
         
+        contentView.addSubview(pinnedContainer)
+        pinnedContainer.snp.makeConstraints { make in
+            make.left.equalTo(nameLabel.snp.right).offset(10)
+            make.centerY.equalTo(nameLabel)
+            make.height.equalTo(20)
+        }
+        pinnedContainer.addSubview(pinnedIcon)
+        pinnedContainer.addSubview(pinnedLabel)
+        pinnedIcon.snp.makeConstraints { make in
+            make.left.equalTo(4)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(CGSizeMake(15, 15))
+        }
+        pinnedLabel.snp.makeConstraints { make in
+            make.left.equalTo(pinnedIcon.snp.right).offset(4)
+            make.centerY.equalToSuperview()
+        }
         contentView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints { make in
             make.left.equalTo(nameLabel.snp.left)
             make.right.equalToSuperview().inset(50)
-            make.top.equalTo(nameLabel.snp.bottom).offset(3)
+            make.top.equalTo(nameLabel.snp.bottom).offset(6)
         }
+        
+      
         
         contentView.addSubview(dateLabel)
         dateLabel.snp.makeConstraints { make in
-            make.left.equalTo(nameLabel.snp.left)
-            make.top.equalTo(contentLabel.snp.bottom).offset(3)
-            make.bottom.equalToSuperview()
+            make.right.equalToSuperview().inset(16)
+            make.centerY.equalTo(nameLabel)
         }
         
-        
-        contentView.addSubview(likeBtn)
-        likeBtn.snp.makeConstraints { make in
-            make.centerY.equalTo(contentLabel)
-            make.right.equalToSuperview().inset(10)
-        }
-        likeBtn.addAction {
-            self.likeButtonClickCall?()
-        }
+        // 添加底部分割线
+         let separatorLine = UIView()
+        separatorLine.backgroundColor = UIColor(hex: 0xf9f9f9)
+         contentView.addSubview(separatorLine)
+         separatorLine.snp.makeConstraints { make in
+             make.top.equalTo(contentLabel.snp.bottom).offset(10)
+             make.left.right.bottom.equalToSuperview()
+             make.height.equalTo(1) // 设置分割线高度
+         }
     }
     
     public func setData(data: TGFeedCommentListModel){
-        
-        avatarView.sd_setImage(with: URL(string: data.user?.avatar?.url ?? ""), placeholderImage: UIImage(named: "IMG_pic_default_secret"))
+        let avatarInfo = AvatarInfo()
+        avatarInfo.type = AvatarInfo.UserAvatarType.normal(userId: data.userId)
+        avatarInfo.avatarURL = data.user?.avatar?.url
+        avatarInfo.verifiedIcon = (data.user?.verified?.icon).orEmpty
+        avatarInfo.verifiedType = (data.user?.verified?.type).orEmpty
+        avatarView.avatarInfo = avatarInfo
         nameLabel.text = data.user?.name ?? ""
         contentLabel.text = data.body ?? ""
-        dateLabel.text = data.updatedAt ?? ""
         
-//        likeBtn.titleLabel.text = data.countStart.stringValue
-        
-//        likeBtn.imageView.image = data.relevanceId > 0 ? UIImage(named: "heart")! :  UIImage(named: "IMG_home_ico_love")!
+        if let timeModel = data.createdAt?.toBdayDate(by: "yyyy-MM-dd HH:mm:ss") {
+            dateLabel.text =  TGDate().dateString(.normal, nDate: timeModel)
+        }
         
     }
-    
+    public func setAsPinned(pinned: Bool?, isDarkMode: Bool) {
+        pinnedContainer.backgroundColor = isDarkMode ? UIColor(red: 51.0/255.0, green: 51.0/255.0, blue: 51.0/255.0, alpha: 1.0) : UIColor(red: 242.0/255.0, green: 242.0/255.0, blue: 242.0/255.0, alpha: 1.0)
+        pinnedIcon.image = isDarkMode ? UIImage(named: "icPinnedWhite") : UIImage(named: "icPinned")
+        pinnedLabel.textColor = isDarkMode ? UIColor(red: 184.0/255.0, green: 184.0/255.0, blue: 184.0/255.0, alpha: 1.0) : UIColor(red: 102.0/255.0, green: 102.0/255.0, blue: 102.0/255.0, alpha: 1.0)
+        if let pinned = pinned {
+            pinnedContainer.isHidden = !pinned
+        }
+    }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

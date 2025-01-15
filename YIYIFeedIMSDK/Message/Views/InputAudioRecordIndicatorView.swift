@@ -24,6 +24,47 @@ let NIMInputEmoticonTabViewHeight: CGFloat = 35
 let NIMInputEmoticonSendButtonWidth: CGFloat = 50
 
 let NIMInputLineBoarder: CGFloat = 0.5
+class Constants: NSObject {
+    //Sticker Container Contants
+    public static let watermarkSize: CGFloat = 70.0
+    static let stickerPerPage: Int = 8
+    static let emojiPerPage: Int = 32
+    static let stickerThumbHeight: Int = 40
+    static let stickerThumbWidth: Int = 45
+    static let stickerSize: Int = 115
+    static let emojiContainerHeight: CGFloat = 260
+    static let textToolbarHeight: CGFloat = 52
+    static let voucherHeight: CGFloat = 44
+    
+    public static var bestPixelRatio: CGFloat {
+        let zoomRatio1 = 1920.0 / UIScreen.main.bounds.height
+        let zoomRatio2 = 1080.0 / UIScreen.main.bounds.width
+        
+        let bestZoom = max(zoomRatio1, zoomRatio2)
+        
+        return bestZoom
+    }
+    
+    //Downloaded Sticker Path
+    public static let USER_DOWNLOADED_STICKER_BUNDLE_PLIST="USER_DOWNLOADED_STICKER_BUNDLE_PLIST"
+    public static let USER_DOWNLOADED_STICKER_BUNDLE_PREFIX="USER_DOWNLOADED_STICKER_BUNDLE_PLIST_"
+    public static let USER_DOWNLOADED_FU_BUNDLE_PLIST="USER_DOWNLOADED_FU_BUNDLE_PLIST"
+    
+    public static let VoiceOrVideoMuteNotificationKey = "yippi.app.MuteVoiceAndVideo"
+    public static let ShowFrontOrBackCameraKey = "yippi.app.showFrontOrBackCamera"
+    public static let GlobalChatWallpaperImageKey = "yippi.app.globalChatWallpaperImage"
+    public static let ChatDraftKey = "yippi.app.ChatDraft"
+    public static let UserStickerDefaultKey = "com.save.usersticker"
+    public static let secretMessageTimerKey = "yippi.app.SecretMessageTimer"
+    public static let energyUrls = "yippi.app.energyUrls"
+    public static let trtEnergyUrls = "yippi.app.trtEnergyUrls"
+    public static let socialSignedInUserID = "yippi.app.SocialSignedInId"
+    public static let baseUserDefaultKey = "yippiusersh:"
+    
+    public static let supportEmail = "yippisupport@togalimited.com"
+    public static let schemeAuthentication = "yippiapp"
+    public static let hostAuthenticationCs = "CS"
+}
 
 enum AudioRecordPhase : Int {
     case start
@@ -88,8 +129,8 @@ class InputAudioRecordIndicatorView: UIView {
     
    // private var currentSelectedLangCode: SupportedLanguage = SupportedLanguage(code: "en", name: "English")
   
-    let defaultBubbleImage = UIImage(named: "ic_nim_bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
-    let errorBubbleImage = UIImage(named: "ic_nim_bubble_red")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
+    let defaultBubbleImage = UIImage.set_image(named: "ic_nim_bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
+    let errorBubbleImage = UIImage.set_image(named: "ic_nim_bubble_red")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
     
     var phase: AudioRecordPhase? {
         didSet {
@@ -124,10 +165,10 @@ class InputAudioRecordIndicatorView: UIView {
             convertLangNameLabel.text = langCode
             
             convertErrorView.isHidden = (phase != AudioRecordPhase.converterror)
-            sendMsgImageView.image = UIImage(named: "ic_nim_audio_circlebg_sel")
+            sendMsgImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg_sel")
             if phase == AudioRecordPhase.start {
                 
-                bubbleArrowImageView.image = UIImage(named: "ic_nim_bubble_arrow")
+                bubbleArrowImageView.image = UIImage.set_image(named: "ic_nim_bubble_arrow")
                 //每次重新录制清除掉识别结果
                 recognizedTextView.text = "..."
                 centerBubbleView.isHidden = countDownNumber <= maxCountDownReminderNum
@@ -148,8 +189,8 @@ class InputAudioRecordIndicatorView: UIView {
                 recognizedTextView.isUserInteractionEnabled = false
                 centerBubbleView.isHidden = false
                 bubbleArrowImageView.isHidden = false
-                bubbleArrowImageView.image = UIImage(named: "ic_nim_bubble_arrow")
-                convertImageView.image = UIImage(named: "ic_nim_audio_circlebg_sel")
+                bubbleArrowImageView.image = UIImage.set_image(named: "ic_nim_bubble_arrow")
+                convertImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg_sel")
 
             }else if phase == AudioRecordPhase.converterror {
                 
@@ -167,7 +208,7 @@ class InputAudioRecordIndicatorView: UIView {
                 convertTipLabel.isHidden = true
                 //显示发送按钮
                 sendMsgImageView.isHidden = false
-                sendMsgImageView.image = UIImage(named: "ic_nim_audio_circlebg_disabled")
+                sendMsgImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg_disabled")
                 sendMsgIconImageView.isHidden = true
                 //显示更多语言按钮
                 moreButton.isHidden = !SpeechVoiceDetectManager.shared.hasRecognizedText
@@ -202,14 +243,14 @@ class InputAudioRecordIndicatorView: UIView {
                 recognizedTextView.text = recognizedStr
              
             } else {
-                bubbleArrowImageView.image = UIImage(named: "ic_nim_bubble_arrow")
+                bubbleArrowImageView.image = UIImage.set_image(named: "ic_nim_bubble_arrow")
             }
             //设置气泡颜色
             bubbleImageView.image = (phase == AudioRecordPhase.converterror || phase == AudioRecordPhase.cancelling) ? errorBubbleImage : defaultBubbleImage
-            bubbleArrowImageView.image = UIImage(named: (phase == AudioRecordPhase.converterror || phase == AudioRecordPhase.cancelling) ? "ic_nim_bubble_arrow_red" : "ic_nim_bubble_arrow")
+            bubbleArrowImageView.image = UIImage.set_image(named: (phase == AudioRecordPhase.converterror || phase == AudioRecordPhase.cancelling) ? "ic_nim_bubble_arrow_red" : "ic_nim_bubble_arrow")
             
             countDownBubbleImageView.image = (phase == AudioRecordPhase.converterror || phase == AudioRecordPhase.cancelling) ? errorBubbleImage : defaultBubbleImage
-            countDownBubbleArrowImageView.image = UIImage(named: (phase == AudioRecordPhase.converterror || phase == AudioRecordPhase.cancelling) ? "ic_nim_bubble_arrow_red" : "ic_nim_bubble_arrow")
+            countDownBubbleArrowImageView.image = UIImage.set_image(named: (phase == AudioRecordPhase.converterror || phase == AudioRecordPhase.cancelling) ? "ic_nim_bubble_arrow_red" : "ic_nim_bubble_arrow")
             
             //设置箭头位置
             self.bubbleArrowImageView.snp.updateConstraints { make in
@@ -222,9 +263,9 @@ class InputAudioRecordIndicatorView: UIView {
                 make.width.equalTo((phase == AudioRecordPhase.cancelling || phase == AudioRecordPhase.recording) ?  bubble_width : large_bubble_width)
             }
             //设置取消状态
-            cancelImageView.image = phase == AudioRecordPhase.cancelling ?  UIImage(named: "ic_nim_audio_circlebg_sel") : UIImage(named: "ic_nim_audio_circlebg")
-            cancelIconImageView.image = phase == AudioRecordPhase.cancelling ?  UIImage(named: "ic_nim_audio_cancel_sel") : UIImage(named: "ic_nim_audio_cancel")
-            convertImageView.image = phase == AudioRecordPhase.converting ?  UIImage(named: "ic_nim_audio_circlebg_sel") : UIImage(named: "ic_nim_audio_circlebg")
+            cancelImageView.image = phase == AudioRecordPhase.cancelling ?  UIImage.set_image(named: "ic_nim_audio_circlebg_sel") : UIImage.set_image(named: "ic_nim_audio_circlebg")
+            cancelIconImageView.image = phase == AudioRecordPhase.cancelling ?  UIImage.set_image(named: "ic_nim_audio_cancel_sel") : UIImage.set_image(named: "ic_nim_audio_cancel")
+            convertImageView.image = phase == AudioRecordPhase.converting ?  UIImage.set_image(named: "ic_nim_audio_circlebg_sel") : UIImage.set_image(named: "ic_nim_audio_circlebg")
             
             convertLangNameLabel.font = UIFont.boldSystemFont(ofSize: (phase == AudioRecordPhase.converting) ? 31 : 18)
             convertLangNameLabel.textColor = (phase == AudioRecordPhase.converting) ? UIColor(hex: 0x34C759) : .white
@@ -268,7 +309,7 @@ class InputAudioRecordIndicatorView: UIView {
         addKeyboardObserver()
         self.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         //底部椭圆视图
-        backgroundView = UIImageView(image: UIImage(named: "ic_nim_audio_bottom"))
+        backgroundView = UIImageView(image: UIImage.set_image(named: "ic_nim_audio_bottom"))
         backgroundView.contentMode = .scaleAspectFit
         addSubview(backgroundView)
         backgroundView.snp.makeConstraints { make in
@@ -292,7 +333,7 @@ class InputAudioRecordIndicatorView: UIView {
         audioTipLabel.text = "im_release_to_send".localized
         
         audioIconImageView = UIImageView(frame: CGRectMake(0, 0, 18, 25))
-        audioIconImageView.image = UIImage(named: "ic_nim_audio_icon")
+        audioIconImageView.image = UIImage.set_image(named: "ic_nim_audio_icon")
         
         bottomStackView.addArrangedSubview(audioTipLabel)
         bottomStackView.addArrangedSubview(audioIconImageView)
@@ -323,11 +364,11 @@ class InputAudioRecordIndicatorView: UIView {
         
         //取消
         cancelImageView = UIImageView(frame: CGRectMake(x_cancel, y_view, frameSideLength, frameSideLength))
-        cancelImageView.image = UIImage(named: "ic_nim_audio_circlebg")
+        cancelImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg")
         sectionView.addSubview(cancelImageView)
         
         cancelIconImageView = UIImageView(frame: .zero)
-        cancelIconImageView.image = UIImage(named: "ic_nim_audio_cancel")
+        cancelIconImageView.image = UIImage.set_image(named: "ic_nim_audio_cancel")
         sectionView.addSubview(cancelIconImageView)
         cancelIconImageView.snp.makeConstraints { make in
             make.center.equalTo(cancelImageView)
@@ -345,7 +386,7 @@ class InputAudioRecordIndicatorView: UIView {
         
         //发送原语音
         sendVoiceImageView = UIImageView(frame: .zero)
-        sendVoiceImageView.image = UIImage(named: "ic_nim_audio_circlebg")
+        sendVoiceImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg")
         sendVoiceImageView.isHidden = true
         sectionView.addSubview(sendVoiceImageView)
         sendVoiceImageView.snp.makeConstraints { make in
@@ -353,7 +394,7 @@ class InputAudioRecordIndicatorView: UIView {
             make.top.equalToSuperview().offset(y_view)
         }
         sendVoiceIconImageView = UIImageView(frame: .zero)
-        sendVoiceIconImageView.image = UIImage(named: "ic_nim_voice_icon")
+        sendVoiceIconImageView.image = UIImage.set_image(named: "ic_nim_voice_icon")
         sectionView.addSubview(sendVoiceIconImageView)
         sendVoiceIconImageView.isHidden = true
         sendVoiceIconImageView.snp.makeConstraints { make in
@@ -376,7 +417,7 @@ class InputAudioRecordIndicatorView: UIView {
         
         //转换
         convertImageView = UIImageView(frame: CGRectMake(x_convert, y_view, frameSideLength, frameSideLength))
-        convertImageView.image = UIImage(named: "ic_nim_audio_circlebg")
+        convertImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg")
         sectionView.addSubview(convertImageView)
         
         convertLangNameLabel = UILabel(frame: CGRect.zero)
@@ -410,7 +451,7 @@ class InputAudioRecordIndicatorView: UIView {
         
         //确认发送转换文字
         sendMsgImageView = UIImageView(frame: .zero)
-        sendMsgImageView.image = UIImage(named: "ic_nim_audio_circlebg_sel")
+        sendMsgImageView.image = UIImage.set_image(named: "ic_nim_audio_circlebg_sel")
         sendMsgImageView.isHidden = true
         
         sectionView.addSubview(sendMsgImageView)
@@ -420,7 +461,7 @@ class InputAudioRecordIndicatorView: UIView {
         }
         
         sendMsgIconImageView = UIImageView(frame: .zero)
-        sendMsgIconImageView.image = UIImage(named: "ic_nim_audio_confirm")
+        sendMsgIconImageView.image = UIImage.set_image(named: "ic_nim_audio_confirm")
         sectionView.addSubview(sendMsgIconImageView)
         sendMsgIconImageView.isHidden = true
         sendMsgIconImageView.snp.makeConstraints { make in
@@ -436,7 +477,7 @@ class InputAudioRecordIndicatorView: UIView {
             make.height.equalTo(100)
         }
         //倒计时气泡图片
-        countDownBubbleImageView = UIImageView(image: UIImage(named:  "ic_nim_bubble"))
+        countDownBubbleImageView = UIImageView(image: UIImage.set_image(named:  "ic_nim_bubble"))
         countDownBubbleView.addSubview(countDownBubbleImageView)
         countDownBubbleImageView.snp.makeConstraints { make in
             make.leading.trailing.top.equalToSuperview()
@@ -455,7 +496,7 @@ class InputAudioRecordIndicatorView: UIView {
             make.height.equalTo(25)
         }
         //倒计时箭头
-        countDownBubbleArrowImageView = UIImageView(image: UIImage(named:  "ic_nim_bubble_arrow"))
+        countDownBubbleArrowImageView = UIImageView(image: UIImage.set_image(named:  "ic_nim_bubble_arrow"))
         countDownBubbleView.addSubview(countDownBubbleArrowImageView)
         countDownBubbleArrowImageView.isHidden = true
         countDownBubbleArrowImageView.snp.makeConstraints { make in
@@ -474,7 +515,7 @@ class InputAudioRecordIndicatorView: UIView {
             make.height.greaterThanOrEqualTo(60).priority(.high)
         }
         //气泡背景图片
-        bubbleImageView = UIImageView(image: UIImage(named:  "ic_nim_bubble"))
+        bubbleImageView = UIImageView(image: UIImage.set_image(named:  "ic_nim_bubble"))
         centerBubbleView.addSubview(bubbleImageView)
         bubbleImageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -501,7 +542,7 @@ class InputAudioRecordIndicatorView: UIView {
             make.height.equalTo(bubbleHeight)
         }
         //识别错误icon
-        convertErrorIconImageView = UIImageView(image: UIImage(named:  "ic_nim_audio_error_icon"))
+        convertErrorIconImageView = UIImageView(image: UIImage.set_image(named:  "ic_nim_audio_error_icon"))
         convertErrorView.addSubview(convertErrorIconImageView)
         convertErrorIconImageView.snp.makeConstraints { make in
             make.left.equalTo(25)
@@ -521,7 +562,7 @@ class InputAudioRecordIndicatorView: UIView {
             make.centerY.equalToSuperview()
         }
         //气泡箭头
-        bubbleArrowImageView = UIImageView(image: UIImage(named:  "ic_nim_bubble_arrow"))
+        bubbleArrowImageView = UIImageView(image: UIImage.set_image(named:  "ic_nim_bubble_arrow"))
         centerBubbleView.addSubview(bubbleArrowImageView)
         bubbleArrowImageView.snp.makeConstraints { make in
             make.centerX.equalTo(centerBubbleView)

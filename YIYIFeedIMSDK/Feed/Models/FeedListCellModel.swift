@@ -26,7 +26,7 @@ enum SendStatus: Int {
     case shared
 }
 
-public class FeedListCellModel {
+class FeedListCellModel {
     
     // 数据 id 类型
     enum IdType {
@@ -144,7 +144,7 @@ public class FeedListCellModel {
     /// 转发的ID
     var repostId: Int = 0
     /// 转发信息
-//    var repostModel: TSRepostModel? = nil
+    var repostModel: TGRepostModel? = nil
     /// 热门标识
     var hot: Int = 0
     /// 分享信息
@@ -154,7 +154,7 @@ public class FeedListCellModel {
     
     var userInfo: UserInfoModel? = nil
     
-//    var liveModel: LiveEntityModel? = nil
+    var liveModel: LiveEntityModel? = nil
 
     //商户列表信息
     var rewardsMerchantUsers: [TSRewardsLinkMerchantUserModel] = []

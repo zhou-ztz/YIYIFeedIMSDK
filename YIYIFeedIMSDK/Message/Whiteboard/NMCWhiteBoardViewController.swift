@@ -9,7 +9,7 @@
 import UIKit
 import WebKit
 
-class NMCWhiteBoardViewController: UIViewController, NMCWhiteboardManagerDelegate, NMCWhiteboardManagerWKDelegate {
+class NMCWhiteBoardViewController: TGViewController, NMCWhiteboardManagerDelegate, NMCWhiteboardManagerWKDelegate {
     
     var whiteBoardParam: NMCWhiteBoardParam
     
@@ -42,18 +42,16 @@ class NMCWhiteBoardViewController: UIViewController, NMCWhiteboardManagerDelegat
         
         let closeWhiteboard = UIButton()
         closeWhiteboard.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        closeWhiteboard.setImage(UIImage(named: "iconsArrowCaretleftBlack"), for: .normal)
+        closeWhiteboard.setImage(UIImage.set_image(named: "iconsArrowCaretleftBlack"), for: .normal)
         closeWhiteboard.addTarget(self, action: #selector(onBack), for: .touchUpInside)
         
-        let closeWhiteboardBtnItem = UIBarButtonItem(customView: closeWhiteboard)
-        self.navigationItem.leftBarButtonItem = closeWhiteboardBtnItem
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        self.customNavigationBar.setLeftViews(views: [closeWhiteboard])
         if #available(iOS 11.0, *) {
             
         } else {
             automaticallyAdjustsScrollViewInsets = false
         }
-        view.addSubview(webView)
+        backBaseView.addSubview(webView)
         webView.bindToEdges()
       
         webView.load(URLRequest(url: URL(string: whiteBoardParam.webViewUrl)!))
@@ -64,18 +62,18 @@ class NMCWhiteBoardViewController: UIViewController, NMCWhiteboardManagerDelegat
     
     @objc func onBack(){
         
-//        let alert = TSAlertController(title: "text_quit_whiteboard_sharing".localized, message: "text_quit_whiteboard_msg".localized, style: .alert, animateView: false)
-//        let action = TSAlertAction(title: "quit".localized, style: TSAlertActionStyle.default) { [weak self] (action) in
-//            guard let self = self else {return}
-//            self.leaveRoom()
-//            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1){
-//                self.dismiss(animated: true)
-//            }
-//        }
-//        let actionCancel = TSAlertAction(title: "cancel".localized, style: TSAlertActionStyle.default) { [weak self] (action) in
-//            
-//        }
-//        self.presentPopup(alert: alert, actions: [action, actionCancel])
+        let alert = TGAlertController(title: "text_quit_whiteboard_sharing".localized, message: "text_quit_whiteboard_msg".localized, style: .alert, animateView: false)
+        let action = TGAlertAction(title: "quit".localized, style: TGAlertActionStyle.default) { [weak self] (action) in
+            guard let self = self else {return}
+            self.leaveRoom()
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1){
+                self.dismiss(animated: true)
+            }
+        }
+        let actionCancel = TGAlertAction(title: "cancel".localized, style: TGAlertActionStyle.default) { [weak self] (action) in
+            
+        }
+        self.presentPopup(alert: alert, actions: [action, actionCancel])
 
     }
     

@@ -198,7 +198,11 @@ class FeedDetailTableHeaderView: UIView {
         
         contentView.addArrangedSubview(commentCountWrapperView)
         commentCountWrapperView.addArrangedSubview(commentLabel)
-        
+        let bottomMarginview = UIView()
+        bottomMarginview.snp.makeConstraints { make in
+            make.height.equalTo(10)
+        }
+        commentCountWrapperView.addArrangedSubview(bottomMarginview)
         self.followButton.addAction {
             self.followStatusClickCall?()
         }
@@ -253,4 +257,15 @@ class FeedDetailTableHeaderView: UIView {
 //            self.deleteButton.isHidden = false
 //        }
     }
+    func setCommentLabel(count: Int?, isCommentDisabled: Bool) {
+        if let count = count, count > 0 && isCommentDisabled == false {
+            commentCountWrapperView.makeVisible()
+            commentLabel.text = count.abbreviated + "comment_counts".localized
+        } else {
+            commentCountWrapperView.makeHidden()
+        }
+        contentView.setNeedsLayout()
+        contentView.layoutIfNeeded()
+    }
+    
 }

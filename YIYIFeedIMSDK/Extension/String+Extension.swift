@@ -22,7 +22,7 @@ extension Character {
     var isEmoji: Bool { isSimpleEmoji || isCombinedIntoEmoji }
 }
 
-public extension String {
+extension String {
     init(deviceToken: Data) {
         self = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
     }
@@ -57,7 +57,7 @@ public extension String {
     func toBdayDate(by format:String) -> Date {
         let dateFormatterGet = DateFormatter()
         dateFormatterGet.dateFormat = format
-        
+        dateFormatterGet.timeZone = TimeZone(abbreviation: "UTC")
         let dateFormatterPrint = DateFormatter()
         dateFormatterPrint.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
@@ -364,7 +364,13 @@ extension String {
         }
         return NSLocalizedString(self, tableName: nil, bundle: enBundle, value: "", comment: "")
     }
-    
+    /// 截取字符串
+    func subString(with range: NSRange) -> String {
+        guard let swiftRange = Range(range, in: self) else {
+            return ""
+        }
+        return String(self[swiftRange])
+    }
     /// 将字符串数组转为 数组
     /// 例如 "1,2,3" -> [1, 2, 3]
     @available(*, deprecated, message: "服务器提供的时间格式不允许再使用该方式转换,查看 TransformType")
@@ -446,7 +452,7 @@ extension NSMutableAttributedString {
         attString.addAttributes([NSAttributedString.Key.font: font], range: allRange)
         return attString
     }
-    public convenience init(str: String, font: UIFont?, color: UIColor?) {
+    convenience init(str: String, font: UIFont?, color: UIColor?) {
         self.init(string: str)
         let allRange = NSRange(location: 0, length: self.length)
         if let font = font {
@@ -456,6 +462,73 @@ extension NSMutableAttributedString {
             self.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: allRange)
         }
     }
+    
+    /// 设置全部文字字体
+    ///
+    /// - Parameter font: 字体
+    /// - Returns: 富文本
+    func setAllTextFont(font: UIFont) -> NSMutableAttributedString {
+        let attributeString = self
+        attributeString.addAttributes([NSAttributedString.Key.font: font], range: NSRange(location: 0, length: attributeString.length))
+        return attributeString
+    }
+    /// 设置文字字体大小
+    ///
+    /// - Parameter font: 字体大小
+    /// - Returns: 文字
+    func setTextFont(_ font: CGFloat, isFeed: Bool = false) -> NSMutableAttributedString {
+        let attributeString = self
+        if isFeed {
+            attributeString.addAttributes([NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: font)], range: NSRange(location: 0, length: attributeString.length))
+        } else {
+            attributeString.addAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: font)], range: NSRange(location: 0, length: attributeString.length))
+        }
+        return attributeString
+    }
+
+    /// 给文字添加行间距
+    ///
+    /// - Parameters:
+    ///   - lineSpacing: 行间距
+    /// - Returns: 格式后的文字
+    func setlineSpacing(_ lineSpacing: CGFloat) -> NSMutableAttributedString {
+        let attributeString = self
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byWordWrapping
+        paragraphStyle.alignment = .left
+        paragraphStyle.lineSpacing = lineSpacing
+        paragraphStyle.paragraphSpacing = lineSpacing / 2.0
+        paragraphStyle.headIndent = 0.000_1
+        paragraphStyle.tailIndent = -0.000_1
+        paragraphStyle.alignment = .left
+        attributeString.addAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: attributeString.length))
+        return attributeString
+    }
+
+    /// 给文字添加字间距
+    ///
+    /// - Parameter kerning: 字间距
+    /// - Returns: 文字
+    func setKerning(_ kerning: CGFloat) -> NSMutableAttributedString {
+        let attributeString = self
+        attributeString.addAttributes([NSAttributedString.Key.kern: kerning], range: NSRange(location: 0, length: attributeString.length))
+        return attributeString
+    }
+    
+    func attributedKeyDictionry(with stringKeyDictionary: [String: Any]) -> [NSAttributedString.Key: Any] {
+        var attributes: [NSAttributedString.Key: Any] = [:]
+        for (key, value) in stringKeyDictionary {
+            attributes[NSAttributedString.Key(key)] = value
+        }
+        return attributes
+    }
+    
+    func setUnderlinedAttributedText() -> NSMutableAttributedString {
+        let attributeString = self
+        let textRange = NSMakeRange(0, self.length)
+        attributeString.addAttribute(NSAttributedString.Key.underlineStyle , value: NSUnderlineStyle.single.rawValue, range: textRange)
+        return attributeString
+    }
 }
 
 extension Dictionary {
@@ -464,7 +537,7 @@ extension Dictionary {
         guard let theJSONData = try? JSONSerialization.data(withJSONObject: self, options: [.prettyPrinted]) else {
             return nil
         }
-        return String(data: theJSONData, encoding: .ascii)
+        return String(data: theJSONData, encoding: .utf8)
     }
 }
 
@@ -511,5 +584,104 @@ extension String {
         string.replaceAll(matching: imgRegex, with: "")
         return string
     }
+    
+    func removeNewLineChar() -> String? {
+        return self.replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "\n\r", with: "\n").replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\n", with: "                                                                                            ")
+    }
+    
+    func isValidURL() -> Bool {
+        var escapedString = self.removingPercentEncoding
+        
+        let head = "((http|https)://)?([(w|W)]{3}+\\.)?"
+        let tail = "\\.+[A-Za-z]{2,3}+(\\.)?+(/(.)*)?"
+        let urlRegEx = head + "+(.)+" + tail
+        
+        let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[urlRegEx])
+        return predicate.evaluate(with: escapedString)
+    }
 }
 
+extension String {
+    func attributonString() -> NSMutableAttributedString {
+        return NSMutableAttributedString(string: self)
+    }
+}
+
+extension String {
+    
+    func transformToPinYin() ->String {
+        let mutableString = NSMutableString(string: self)
+        CFStringTransform(mutableString, nil, kCFStringTransformToLatin, false)
+        CFStringTransform(mutableString, nil, kCFStringTransformStripDiacritics, false)
+        let string = String(mutableString)
+        return string.replacingOccurrences(of: " ", with: "").uppercased()
+    }
+    
+    func isNotLetter()-> Bool {
+        if self.count == 0 {
+            return false
+        }
+        let upperCaseStr: String = self.uppercased()
+        let c = Character(upperCaseStr)
+        if  c >= "A", c <= "Z"{
+            return false
+        } else {
+            return true
+        }
+    }
+}
+
+extension String {
+    //给html string 添加<span style="font-family: -apple-system; font-size: 18.0px; color: #000000;">Hello, <b>World</b>!</span>
+    func toHTMLString(size: String, color: String = "#000000") -> NSMutableAttributedString?{
+        
+        let text = "<span style=\"font-family: -apple-system; font-size: \(size)px; color: \(color);\">" + self + "</span>"
+        print("HTMLString = \(text)")
+        if let data = text.data(using: .utf8) {
+            let attributedString = try? NSMutableAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: NSNumber(value: String.Encoding.utf8.rawValue)], documentAttributes: nil)
+                return attributedString
+        }else{
+            return nil
+        }
+    }
+    
+    //移除<b> <\b>
+    func toRemoveHTMLString(size: CGFloat, color: String = "#000000") -> NSMutableAttributedString?{
+        // 设置字体、字体颜色和大小
+        let font = UIFont.systemFont(ofSize: size)
+        let fontColor = UIColor(hex: color, alpha: 1)
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: fontColor
+        ]
+        if let data = self.data(using: .utf8) {
+            let attributedString = try? NSMutableAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: NSNumber(value: String.Encoding.utf8.rawValue)], documentAttributes: nil)
+            attributedString?.addAttributes(attributes,range: NSRange(location: 0, length: attributedString?.length ?? 0))
+            return attributedString
+        }else{
+            return nil
+        }
+    }
+    
+    /// 将 HTML 字符串转换为富文本
+    func htmlStringToAttributedString() -> NSAttributedString? {
+        guard let data = self.data(using: .utf8) else { return nil }
+        
+        do {
+            let attributedString = try NSAttributedString(
+                data: data,
+                options: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue
+                ],
+                documentAttributes: nil
+            )
+            return attributedString
+        } catch {
+            print("加载 HTML 富文本失败: \(error)")
+            return nil
+        }
+    }
+
+}

@@ -141,3 +141,21 @@ extension UIView {
     
 }
 
+extension UIToolbar {
+    func setToolbarHidden(_ hidden: Bool) {
+        if hidden == false {
+            self.isHidden = hidden
+            UIView.animate(withDuration: 0.5, animations: {
+                self.alpha = 1.0
+            }) { finished in
+            }
+        } else {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.alpha = 0.0
+            }) { finished in
+                self.isHidden = hidden
+            }
+        }
+    }
+}
+

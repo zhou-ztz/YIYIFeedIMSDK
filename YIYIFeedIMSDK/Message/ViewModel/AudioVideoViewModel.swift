@@ -73,7 +73,7 @@ class AudioVideoViewModel: NSObject {
     }
     
     func sendCallMessage(callType: V2NIMSignallingChannelType , eventType: CallingEventType, duration: TimeInterval = 0){
-        let attact = CustomAttachment.audioVideoEncode(callType: callType, eventType: eventType, duration: duration)
+        let attact = CustomAttachmentDecoder.audioVideoEncode(callType: callType, eventType: eventType, duration: duration)
         let message = MessageUtils.customV2Message(text: "", rawAttachment: attact)
         let convasationId = (callInfo.caller ?? "") + "|1|" + (callInfo.callee ?? "")
         NIMSDK.shared().v2MessageService.send(message, conversationId: convasationId, params: nil) { _ in

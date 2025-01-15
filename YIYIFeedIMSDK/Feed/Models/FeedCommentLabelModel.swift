@@ -7,11 +7,6 @@
 
 import UIKit
 
-enum CommentContentType: String {
-    case sticker = "sticker"
-    case text = "text"
-}
-
 class FeedCommentLabelModel {
 
     /// 评论 id 的类型

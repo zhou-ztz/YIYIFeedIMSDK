@@ -33,9 +33,6 @@ class TGAvatarView: UIView {
 
         case unknown = "IMG_pic_default_secret"
         case group = "ic_rl_default_group"
-        case system = "ic_notification_default"
-        case liveAvatar = "icLiveAvatarPlaceholder"
-        case camera = "ic_rl_camera"
         
         init(sexNumber: Int?) {
             guard let number = sexNumber else {
@@ -86,7 +83,7 @@ class TGAvatarView: UIView {
     var avatarPlaceholderType = PlaceholderType.unknown
     /// 头像占位图
     var avatarPlaceholderImage: UIImage {
-        return UIImage(named: avatarPlaceholderType.rawValue)!
+        return UIImage.set_image(named: avatarPlaceholderType.rawValue)!
     }
     /// able to custom placeholder image
     var customAvatarPlaceholderImage: UIImage?
@@ -145,20 +142,20 @@ class TGAvatarView: UIView {
         addSubview(buttonForVerified)
         addSubview(liveIcon)
         liveIcon.isHidden = !showLiveIcon
-        liveIcon.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(-8)
-            $0.width.equalToSuperview()
-            $0.height.equalTo(bounds.height * 0.4)
+        liveIcon.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(-8)
+            make.width.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.4)
         }
         
-        buttonForAvatar.snp.makeConstraints {
-            $0.width.height.equalTo(frame.width)
-            $0.edges.equalToSuperview()
+        buttonForAvatar.snp.makeConstraints { (make) in
+            make.width.height.equalToSuperview()
+            make.edges.equalToSuperview()
         }
         
         buttonForVerified.snp.makeConstraints { (make) in
-            make.width.height.equalTo(frame.height * 0.35)
+            make.width.height.equalToSuperview().multipliedBy(0.35)
             make.right.bottom.equalToSuperview().offset(1.5)
         }
         
@@ -304,7 +301,6 @@ extension TGAvatarView {
         }
         
         if let color = avatarInfo.frameColor {
-            let halfSize = min(self.bounds.width, self.bounds.height)/2
             let lineWidth:CGFloat = 1.0
             let shapeLayer = CAShapeLayer()
             shapeLayer.path = UIBezierPath(ovalIn: self.bounds).cgPath

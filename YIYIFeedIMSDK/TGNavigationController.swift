@@ -16,14 +16,14 @@ public class TGNavigationController: UINavigationController {
         let navigationBarTitleAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)]
         navigationBar.setBackgroundImage(UIImage(), for: UIBarPosition.any, barMetrics: UIBarMetrics.default)
         navigationBar.titleTextAttributes = navigationBarTitleAttributes
-        navigationBar.barTintColor = UIColor.white
+        navigationBar.barTintColor = UIColor.yellow
         navigationBar.tintColor = .blue
         navigationBar.isTranslucent = false
         
         if #available(iOS 15, *) {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = .white
+            appearance.backgroundColor = .yellow
             appearance.shadowColor = .clear
             appearance.shadowImage = UIImage()
             UINavigationBar.appearance().standardAppearance = appearance
@@ -39,7 +39,7 @@ public class TGNavigationController: UINavigationController {
     public override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         
         if self.viewControllers.isEmpty == false {
-            let backBarItem = UIBarButtonItem(image: UIImage(named: "iconleftBlack")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(popBack))
+            let backBarItem = UIBarButtonItem(image: UIImage.set_image(named: "iconleftBlack")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(popBack))
             viewController.navigationItem.leftBarButtonItem = backBarItem
             viewController.hidesBottomBarWhenPushed = true
         }

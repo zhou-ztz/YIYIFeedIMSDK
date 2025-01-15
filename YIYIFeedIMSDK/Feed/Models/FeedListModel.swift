@@ -117,9 +117,9 @@ class FeedListModel: Mappable, Entity {
     /// 动态评论 列表中返回五条
     // objectbox: convert = { "dbType": "String", "converter": "FeedListCommentModel" }
     var comments: [FeedListCommentModel]? = nil
-//    /// 直播
-//    // objectbox: convert = { "dbType": "String", "converter": "LiveEntityModel" }
-//    var liveModel: LiveEntityModel? = nil
+    /// 直播
+    // objectbox: convert = { "dbType": "String", "converter": "LiveEntityModel" }
+    var liveModel: LiveEntityModel? = nil
     /// 商户信息
     // objectbox: convert = { "dbType": "String", "converter": "TSRewardsLinkMerchantUserModel" }
     var rewardsMerchantUsers: [TSRewardsLinkMerchantUserModel]? = nil
@@ -497,3 +497,32 @@ class FeedStoreModel: Mappable, Entity {
        
     }
 }
+
+class TagVoucherModel: Mappable {
+
+    var taggedVoucherId: Int = 0
+    var taggedVoucherTitle: String = ""
+    
+    init(taggedVoucherId: Int, taggedVoucherTitle: String) {
+        self.taggedVoucherTitle = taggedVoucherTitle
+        self.taggedVoucherId = taggedVoucherId
+    }
+    
+    required init?(map: Map) {}
+
+    func mapping(map: Map) {
+        taggedVoucherId <- map["tagged_voucher_id"]
+        taggedVoucherTitle <- map["tagged_voucher_title"]
+    }
+    
+    static func convert(_ object: TagVoucherModel?) -> String? {
+        guard let object = object else { return nil }
+        return object.toJSONString()
+    }
+    
+    static func convert(_ json: String?) -> TagVoucherModel? {
+        guard let json = json else { return nil }
+        return TagVoucherModel(JSONString: json)
+    }
+}
+

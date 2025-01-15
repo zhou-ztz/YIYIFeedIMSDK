@@ -14,7 +14,7 @@ class SCCustomNavigationBar: UIView {
         let label = UILabel()
         label.text = ""
         label.textColor = .black // 设置文本颜色
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.boldSystemFont(ofSize: 17)
         label.textAlignment = .center
         return label
     }()
@@ -45,7 +45,7 @@ class SCCustomNavigationBar: UIView {
         let item = UIButton()
         item.setImage(UIImage.set_image(named: "iconsArrowCaretleftBlack")?.withRenderingMode(.alwaysOriginal), for: .normal)
         item.setTitleColor(.black, for: .normal)
-        item.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        item.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         return item
     }()
     

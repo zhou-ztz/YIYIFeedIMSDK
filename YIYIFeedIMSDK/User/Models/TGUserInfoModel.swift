@@ -19,8 +19,7 @@ struct UserInfoModel: UserInfoType, Mappable, Entity {
     // objectbox: transient
     var name: String {
         get {
-//            return LocalRemarkName.getRemarkName(userId: userIdentity.stringValue, username: username, originalName: displayName, label: nil)
-            return  ""
+            return TGLocalRemarkName.getRemarkName(userId: userIdentity.stringValue, username: username, originalName: displayName, label: nil)
         }
         set {
             displayName = newValue
@@ -502,3 +501,39 @@ extension UserInfoModel {
 //    }
 }
 
+
+
+struct TGNIMUserInfo: Codable {
+    var id : Int?
+    var name : String?
+    var avatar : IMAvatar?
+    var verified : IMVerified?
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case name = "name"
+        case avatar = "avatar"
+        case verified
+    }
+}
+// MARK: - Avatar
+struct IMAvatar: Codable {
+    let url : String?
+    
+    enum CodingKeys: String, CodingKey {
+        case url = "url"
+    }
+}
+
+// MARK: - Verified
+struct IMVerified: Codable {
+    let type : String?
+    let icon : String?
+    let description : String?
+    
+    enum CodingKeys: String, CodingKey {
+        case type = "type"
+        case icon = "icon"
+        case description = "description"
+    }
+}

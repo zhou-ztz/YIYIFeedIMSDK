@@ -87,7 +87,8 @@ class NMCWebView: WKWebView {
     
     func configureWithScriptMessageHandler(_ scriptMessageHandler: WKScriptMessageHandler?) {
         // 注入 JS
-        if let scriptPath = Bundle.main.path(forResource: "NMCJSBridge", ofType: "js"),
+        let bundle = Bundle(identifier: "com.yiyi.feedimsdk") ?? Bundle.main
+        if let scriptPath = bundle.path(forResource: "NMCJSBridge", ofType: "js"),
            let scriptString = try? String(contentsOfFile: scriptPath, encoding: .utf8) {
             let userScript = WKUserScript(source: scriptString, injectionTime: .atDocumentStart, forMainFrameOnly: false)
             configuration.userContentController.addUserScript(userScript)

@@ -9,19 +9,19 @@ import UIKit
 import MobileCoreServices
 
 class RLSendFileManager: NSObject, UIDocumentPickerDelegate {
-    public static let shared = RLSendFileManager()
+    static let shared = RLSendFileManager()
     
     private var types: [String] = [(kUTTypeContent as String), (kUTTypeItem as String)]
-    public var completion: (([URL]) -> Void)?
+    var completion: (([URL]) -> Void)?
     
-    @objc public func presentView(owner: UIViewController) {
+    @objc func presentView(owner: UIViewController) {
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .import)
         picker.delegate = self
         picker.modalPresentationStyle = .fullScreen
         owner.present(picker, animated: true, completion: nil)
     }
     
-    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         defer { controller.dismiss(animated: true, completion: nil) }
         
         let newUrls = urls.compactMap { url -> URL? in
@@ -58,11 +58,11 @@ class RLSendFileManager: NSObject, UIDocumentPickerDelegate {
         completion?(newUrls)
     }
     
-    public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
    
-    public static func fileIcon(with fileExtension: String) -> (icon: UIImage?, type: String) {
+    static func fileIcon(with fileExtension: String) -> (icon: UIImage?, type: String) {
         var image = UIImage.set_image(named: "ic_unknown")
         var text = "msg_tips_file"
         
@@ -150,7 +150,7 @@ class RLSendFileManager: NSObject, UIDocumentPickerDelegate {
     }
     
     
-    @objc public func covertToFileString(path: String) -> Bool {
+    @objc func covertToFileString(path: String) -> Bool {
         let properties = try! FileManager.default.attributesOfItem(atPath: path)
         let fileSize = properties[FileAttributeKey.size] as! UInt64
         let convertedValue: Double = Double(fileSize)

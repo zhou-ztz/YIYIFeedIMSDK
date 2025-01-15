@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Apollo
 
 enum HTTPMethod: String {
     case GET = "GET"
@@ -27,6 +28,8 @@ class TGNetworkManager {
             "X-Device-Language": "zh-CN",
             "Accept": "application/json",
             "X-Client-Version": "2.0.4",
+            "Content-Type": "application/json",
+            "Accept-Language": "zh-CN"
         ]
     }()
     
@@ -86,11 +89,31 @@ class TGNetworkManager {
                 return
             }
             
+            // 检查响应并获取状态码
+            if let httpResponse = response as? HTTPURLResponse {
+                let statusCode = httpResponse.statusCode
+                print("Status Code: \(statusCode)")
+                
+                if (200...299).contains(statusCode) {
+                    print("Request was successful")
+                } else {
+                    print("Request failed with status code: \(statusCode)")
+                }
+            }
+            
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    print("response json = \(json)")
                     DispatchQueue.main.async {
                         completion(data, response, nil)
                     }
+                    
+                } else if let jsonArr = try JSONSerialization.jsonObject(with: data, options: []) as? [Any] {
+                    print("response jsonArr = \(jsonArr)")
+                    DispatchQueue.main.async {
+                        completion(data, response, nil)
+                    }
+                    
                 } else {
                     throw NSError(domain: "TGNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON format"])
                 }
@@ -102,4 +125,20 @@ class TGNetworkManager {
         }
         dataTask.resume()
     }
+}
+
+var YPApolloClient: ApolloClient {
+    let configuration = URLSessionConfiguration.default
+    configuration.timeoutIntervalForRequest = 20.0
+    configuration.timeoutIntervalForResource = 20.0
+
+    let headers = YPCustomHeaders
+    configuration.httpAdditionalHeaders = headers
+    let url = URL(string: (RLSDKManager.shared.loginParma?.apiBaseURL ?? "") + "graphql/v1")!
+    
+    return ApolloClient(networkTransport: HTTPNetworkTransport(url: url, configuration: configuration))
+}
+
+var YPCustomHeaders: [String: String] {
+    return TGNetworkManager.shared.defaultHeaders
 }

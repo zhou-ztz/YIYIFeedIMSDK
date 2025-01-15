@@ -10,4 +10,7 @@ import UIKit
 class RLTableView: UITableView {
 
 
+    func removePlaceholderViews() {
+        
+    }
 }

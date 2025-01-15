@@ -31,3 +31,14 @@ extension Int64 {
         return byteCountFormatter.string(fromByteCount: self)
     }
 }
+
+extension Int {
+    func imageUrl() -> String {
+        return (RLSDKManager.shared.loginParma?.apiBaseURL ?? "") + TGURLPathV2.path.rawValue + TGURLPathV2.Download.files.rawValue + "/\(self)"
+    }
+    
+    func imageUrlThumbnail() -> String {
+        return (RLSDKManager.shared.loginParma?.apiBaseURL ?? "") + TGURLPathV2.path.rawValue + TGURLPathV2.Download.files.rawValue + "/\(self)?w=500q=70"
+    }
+
+}

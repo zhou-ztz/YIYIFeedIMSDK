@@ -193,7 +193,7 @@ extension Data {
 }
 
 // Helper extension to get bytes from Data
-private extension Data {
+extension Data {
     var bytes: [UInt8] {
         return [UInt8](self)
     }

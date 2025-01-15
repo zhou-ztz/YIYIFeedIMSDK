@@ -40,9 +40,9 @@ class IMAudioMessageStateView: UIView {
     }
     
     // MARK: - 更新level 播放颜色
-    public func updateLevelColor(_ progressValue: CGFloat) {
+    func updateLevelColor(_ progressValue: CGFloat) {
         
-        var progress  = (CGFloat(self.levelViews.count) / CGFloat(duration)) * progressValue
+        let progress  = (CGFloat(self.levelViews.count) / CGFloat(duration)) * progressValue
         if progress.isNaN || progress.isInfinite {
             return
         }
@@ -52,19 +52,19 @@ class IMAudioMessageStateView: UIView {
             let view = self.levelViews[self.levelProgressIndex]
             view.backgroundColor = RLColor.share.theme
         }
-        if isFirstLoad{
-            isFirstLoad = false
-            updateLevelView()
-        }
+        updateLevelView()
+//        if isFirstLoad{
+//            isFirstLoad = false
+//            updateLevelView()
+//        }
     }
     // MARK: - 播放结束，还原所有进度条颜色
-    public func resetLevelColor() {
+    func resetLevelColor() {
         self.levelViews.forEach { $0.backgroundColor = .clear }
         self.levelProgressIndex = 0
     }
     // MARK: - 加载level进度条views
     func setupLevelView() {
-        
         levelViews = []
         let height = CGRectGetHeight(self.frame)
         for (index,level) in self.currentLevels.enumerated() {
@@ -104,14 +104,11 @@ class IMAudioMessageStateView: UIView {
         }
 
     }
-    
-    
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
 
+    func clearAllView() {
+        self.removeAllSubViews()
+        levelViews = []
+        levelProgressIndex = 0
+        isFirstLoad = false
+    }
 }

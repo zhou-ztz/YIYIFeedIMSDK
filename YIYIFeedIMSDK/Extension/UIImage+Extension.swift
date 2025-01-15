@@ -10,19 +10,21 @@ import UIKit
 import CoreServices
 import ObjectiveC
 
+var MomentPHAssetPayInfoKey = 100_000
+var MomentUIImageGIFKey = 100_001
 extension UIImage {
     // 默认设置为kUTTypeJPEG
-//    var TSImageMIMEType: String {
-//        set {
-//            objc_setAssociatedObject(self, &MomentUIImageGIFKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY_NONATOMIC)
-//        }
-//        get {
-//            if let rs = objc_getAssociatedObject(self, &MomentUIImageGIFKey) as? String {
-//                return rs
-//            }
-//            return kUTTypeJPEG as String
-//        }
-//    }
+    var TGImageMIMEType: String {
+        set {
+            objc_setAssociatedObject(self, &MomentUIImageGIFKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY_NONATOMIC)
+        }
+        get {
+            if let rs = objc_getAssociatedObject(self, &MomentUIImageGIFKey) as? String {
+                return rs
+            }
+            return kUTTypeJPEG as String
+        }
+    }
     class func gif(data: Data, speedMultiplier: Double = 0.0) -> UIImage? {
         // Create source from data
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
@@ -186,6 +188,21 @@ extension UIImage {
 
         return nil
     }
+    
+    class func imageWithColor(_ color: UIColor!, cornerRadius: Double!) -> UIImage {
+        let minEdgeSize: Double = cornerRadius * 2.0 + 1.0
+        let rect = CGRect(x: 0.0, y: 0.0, width: minEdgeSize, height: minEdgeSize)
+        let roundedRect = UIBezierPath(roundedRect: rect, cornerRadius: CGFloat(cornerRadius))
+        roundedRect.lineWidth = 0
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        color.setFill()
+        roundedRect.fill()
+        roundedRect.stroke()
+        roundedRect.addClip()
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return (image?.resizableImage(withCapInsets: UIEdgeInsets(top: CGFloat(cornerRadius), left: CGFloat(cornerRadius), bottom: CGFloat(cornerRadius), right: CGFloat(cornerRadius))))!
+    }
 
 }
 
@@ -250,5 +267,47 @@ extension UIImage {
         let img = UIImage(cgImage: cgimg)
         
         return img
+    }
+}
+
+extension UIImage {
+    // MARK: - 替换 UIImage(named:) 方法
+    public static let swizzleImageNamed: Void = {
+        let originalSelector = #selector(UIImage.init(named:))
+        let swizzledSelector = #selector(UIImage.customImageNamed(_:))
+        
+        if let originalMethod = class_getClassMethod(UIImage.self, originalSelector),
+           let swizzledMethod = class_getClassMethod(UIImage.self, swizzledSelector) {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+    }()
+    
+    @objc private class func customImageNamed(_ name: String) -> UIImage? {
+        // 获取框架的 Bundle
+        let frameworkBundle = Bundle(identifier: "com.yiyi.feedimsdk") ?? Bundle.main
+        if let resourceBundleURL = frameworkBundle.url(forResource: "SDKResource", withExtension: "bundle"),
+           let resourceBundle = Bundle(url: resourceBundleURL) {
+            // 尝试从自定义 Bundle 中加载图片
+            if let image = UIImage(named: name, in: resourceBundle, compatibleWith: nil) {
+                return image
+            }
+        }
+        // 如果自定义 Bundle 中没有找到图片，调用原始的 UIImage(named:) 方法
+        return customImageNamed(name)
+    }
+    func addWatermark () -> UIImage? {
+        guard let watermarkImage = UIImage(named: "ic_rl_watermark") else {
+            return nil
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(self.size, _: false, _: 0.0)
+        self.draw(in: CGRect(origin: .zero, size: self.size))
+        watermarkImage.draw(in: CGRect(x: 16 * Constants.bestPixelRatio,
+                                       y: self.size.height - (Constants.watermarkSize + 16) * Constants.bestPixelRatio,
+                                       width: Constants.watermarkSize * Constants.bestPixelRatio,
+                                       height: Constants.watermarkSize * Constants.bestPixelRatio))
+        let resultImage: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return resultImage
     }
 }

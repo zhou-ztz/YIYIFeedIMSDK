@@ -27,23 +27,6 @@ class TGNEEmotionTool: NSObject {
             NSAttributedString.Key.font: font,
             .foregroundColor: color,
         ])
-        
-        if let regArr = regularArr, regArr.count > 0, let targetEmotions = emoticons {
-            for i in (0 ... regArr.count - 1).reversed() {
-                let result = regArr[i]
-                
-                for (_, obj) in targetEmotions.enumerated() {
-                    let ocStr = str as NSString
-                    if ocStr.substring(with: result.range) == obj.tag {
-                        attStr.replaceCharacters(
-                            in: result.range,
-                            with: getAttWithEmotion(emotion: obj, font: font, offset: offset)
-                        )
-                        break
-                    }
-                }
-            }
-        }
         return attStr
     }
     
@@ -53,12 +36,5 @@ class TGNEEmotionTool: NSObject {
         return att
     }
     
-    class func getAttWithEmotion(emotion: NIMInputEmoticon, font: UIFont,
-                                 offset: CGPoint) -> NSAttributedString {
-        let textAttachment = TGNEEmotionAttachment()
-        textAttachment.emotion = emotion
-        let height = font.lineHeight
-        textAttachment.bounds = CGRect(x: offset.x, y: offset.y, width: height, height: height)
-        return NSAttributedString(attachment: textAttachment)
-    }
+    
 }

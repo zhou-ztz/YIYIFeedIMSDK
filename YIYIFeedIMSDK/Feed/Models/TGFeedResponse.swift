@@ -28,7 +28,7 @@ struct TGFeedResponse: Codable {
     let hasReward: Bool?
     let live: String?
     let user: FeedUser?
-    let reactionType: String?
+    let reactType: String?
     let topReactions: [String]?
     let feedViewCount: Int?
     let feedCommentCount: Int?
@@ -53,7 +53,8 @@ struct TGFeedResponse: Codable {
     let feedRewardCount: Int?
     let rewardsLinkMerchantYippiUsers: [String]?
     let hasCollect: Bool?
-    let pinnedComments: [String]?
+    /// 活动动态是否可以编辑
+    let campaignIsEdite: Bool?
     
     enum CodingKeys: String, CodingKey {
         case createdAt = "created_at"
@@ -75,7 +76,7 @@ struct TGFeedResponse: Codable {
         case hasReward = "has_reward"
         case live
         case user
-        case reactionType = "reaction_type"
+        case reactType = "reaction_type"
         case topReactions = "top_reactions"
         case feedViewCount = "feed_view_count"
         case feedCommentCount = "feed_comment_count"
@@ -100,7 +101,8 @@ struct TGFeedResponse: Codable {
         case feedRewardCount = "feed_reward_count"
         case rewardsLinkMerchantYippiUsers = "rewards_link_merchant_yippi_users"
         case hasCollect = "has_collect"
-        case pinnedComments = "pinned_comments"
+        case campaignIsEdite = "is_edit"
+//        case pinnedComments = "pinned_comments"
     }
 }
 
@@ -109,7 +111,7 @@ struct FeedUser: Codable {
     let avatar: Avatar?
     let id: Int?
     let extra: UserExtra?
-    let verified: String?
+    let verified: Verified?
     let username: String?
     let profileFrame: String?
     let name: String?
@@ -128,6 +130,12 @@ struct Avatar: Codable {
 struct Dimension: Codable {
     let width: Int?
     let height: Int?
+}
+
+struct Verified: Codable {
+    var type: String?
+    var icon: String?
+    var description: String?
 }
 
 // 嵌套的 UserExtra 对象
@@ -164,5 +172,22 @@ struct FeedImage: Codable {
     let size: String?
 }
 
-// TagVoucher 对象（为空的字段可以暂时定义为空对象）
-struct TagVoucher: Codable {}
+
+struct TagVoucher: Codable {
+    
+    var taggedVoucherId: Int?
+    var taggedVoucherTitle: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case taggedVoucherId = "tagged_voucher_id"
+        case taggedVoucherTitle = "tagged_voucher_title"
+    }
+    
+    
+}
+extension TGFeedResponse {
+    
+    var reactionType: ReactionTypes? {
+        return ReactionTypes.initialize(with: reactType.orEmpty)
+    }
+}

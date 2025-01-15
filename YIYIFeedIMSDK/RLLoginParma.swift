@@ -12,7 +12,7 @@ public class RLLoginParma: NSObject {
     public var themeColor: Int = 0xED1A3B
 
     public var apiBaseURL: String!
-    //文件上传url
+    // 文件上传url
     public var uploadFileURL: String!
     // LokaliseProjectID
     public var lokaliseProjectID: String!
@@ -24,4 +24,6 @@ public class RLLoginParma: NSObject {
     public var imToken: String!
     // 用户id
     public var uid: UInt!
+    // 用户 Token
+    public var xToken: String!
 }
