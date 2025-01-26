@@ -369,7 +369,6 @@
 		D7AD6A962D38EED8006A3A1F /* TGErrorCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AD6A952D38EED8006A3A1F /* TGErrorCenter.swift */; };
 		D7AD6A992D38F4A4006A3A1F /* TGFeedReleaseModelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AD6A982D38F4A4006A3A1F /* TGFeedReleaseModelResponse.swift */; };
 		D7AD6A9B2D38FED7006A3A1F /* TGUploadNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AD6A9A2D38FED7006A3A1F /* TGUploadNetworkManager.swift */; };
-		D7AD6A9D2D390D2D006A3A1F /* OBS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7AD6A9C2D390D2D006A3A1F /* OBS.framework */; };
 		D7AD6A9F2D390EBF006A3A1F /* TGOBSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AD6A9E2D390EBF006A3A1F /* TGOBSManager.swift */; };
 		D7B0BF0D2D1D09BA00021E87 /* TGCommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B0BF0C2D1D09BA00021E87 /* TGCommentModel.swift */; };
 		D7B5866F2D27915600A52F1E /* PhotoEditor+Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586572D27915600A52F1E /* PhotoEditor+Drawing.swift */; };
@@ -841,7 +840,6 @@
 		D7AD6A952D38EED8006A3A1F /* TGErrorCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGErrorCenter.swift; sourceTree = "<group>"; };
 		D7AD6A982D38F4A4006A3A1F /* TGFeedReleaseModelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedReleaseModelResponse.swift; sourceTree = "<group>"; };
 		D7AD6A9A2D38FED7006A3A1F /* TGUploadNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGUploadNetworkManager.swift; sourceTree = "<group>"; };
-		D7AD6A9C2D390D2D006A3A1F /* OBS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OBS.framework; path = YIYIFeedIMSDK/OBS.framework; sourceTree = "<group>"; };
 		D7AD6A9E2D390EBF006A3A1F /* TGOBSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGOBSManager.swift; sourceTree = "<group>"; };
 		D7B0BF0C2D1D09BA00021E87 /* TGCommentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentModel.swift; sourceTree = "<group>"; };
 		D7B586432D27915600A52F1E /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -951,7 +949,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7AD6A9D2D390D2D006A3A1F /* OBS.framework in Frameworks */,
 				69A3BD90D88445A37D6CA694 /* Pods_YIYISDKDemo_YIYIFeedIMSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -962,7 +959,6 @@
 		1D75CF0F2CA8AE5B48E0A191 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D7AD6A9C2D390D2D006A3A1F /* OBS.framework */,
 				C8BD6A12FE67EB49C19F3D71 /* Pods_YIYISDKDemo_YIYIFeedIMSDK.framework */,
 			);
 			name = Frameworks;
