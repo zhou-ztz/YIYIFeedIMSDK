@@ -7,7 +7,7 @@
 
 import Foundation
 //import OBS
-import KeychainAccess
+//import KeychainAccess
 
 let bundleIdentifier: String = Bundle.main.bundleIdentifier ?? "com.togl.rewardslink"
 
@@ -44,33 +44,34 @@ class OBSHelper: NSObject {
     static let shared = OBSHelper()
     
     func setOBSKey(data: Data){
-        let keychain = Keychain(service: bundleIdentifier)
-        do {
-            try keychain.set(data, key: OBS_KEY)
-        } catch let error {
-            print("Error saving to keychain: \(error)")
-        }
+//        let keychain = Keychain(service: bundleIdentifier)
+//        do {
+//            try keychain.set(data, key: OBS_KEY)
+//        } catch let error {
+//            print("Error saving to keychain: \(error)")
+//        }
     }
     
     func getOBSKey() ->Data? {
-        let keychain = Keychain(service: bundleIdentifier)
-        do {
-            let data = try keychain.getData(OBS_KEY)
-            return data
-        } catch let error {
-            print("Error saving to keychain: \(error)")
-            return nil
-        }
+//        let keychain = Keychain(service: bundleIdentifier)
+//        do {
+//            let data = try keychain.getData(OBS_KEY)
+//            return data
+//        } catch let error {
+//            print("Error saving to keychain: \(error)")
+//            return nil
+//        }
+        return nil
     }
     
     func removeOBSKey(){
-        let keychain = Keychain(service: bundleIdentifier)
-        do {
-            try keychain.remove(OBS_KEY)
-
-        } catch let error {
-            print("Error saving to keychain: \(error)")
-        }
+//        let keychain = Keychain(service: bundleIdentifier)
+//        do {
+//            try keychain.remove(OBS_KEY)
+//
+//        } catch let error {
+//            print("Error saving to keychain: \(error)")
+//        }
     }
     
     func aesDecrypt(value: String) ->String{
