@@ -48,13 +48,13 @@ class RLMessageData: NSObject {
         
         var replyText = ""
         
-        if let yxReplyMsg = messageModel.remoteExt?[keyReplyMsgKey] as? [String: Any], let replyId = yxReplyMsg["idClient"] as? String, let session = messageModel.session  {
+    //    if let yxReplyMsg = messageModel.remoteExt?[keyReplyMsgKey] as? [String: Any], let replyId = yxReplyMsg["idClient"] as? String, let session = messageModel.session  {
             
 //            if let message = MessageUtils.messagesInSession(session: session, messageId: [replyId])?.first {
 //                replyText = MessageUtils.textForReplyModel(message: message)
 //                msgType = .reply
 //            }
-        }
+   //     }
         self.init(nimMessageModel: messageModel, showName: showName, messageType: messageModel.messageType, messageTime: messageModel.timestamp, type: msgType, replyText: replyText)
     }
 

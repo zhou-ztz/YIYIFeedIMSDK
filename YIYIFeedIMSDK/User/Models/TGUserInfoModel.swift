@@ -431,18 +431,18 @@ extension UserInfoModel {
     }
 
     // objectbox: transient
-//    var followStatus: FollowStatus {
-//        guard userIdentity != CurrentUser?.userIdentity else {
-//            return .oneself
-//        }
-//        if follower && following {
-//            return .eachOther
-//        }
-//        if follower {
-//            return .follow
-//        }
-//        return .unfollow
-//    }
+    var followStatus: FollowStatus {
+        guard userIdentity != (RLSDKManager.shared.loginParma?.uid ?? 0) else {
+            return .oneself
+        }
+        if follower && following {
+            return .eachOther
+        }
+        if follower {
+            return .follow
+        }
+        return .unfollow
+    }
 
     // objectbox: transient
     var isOfficial: Bool {

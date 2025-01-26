@@ -670,6 +670,7 @@ extension MsgCollectionViewController: BaseCollectViewDelegate {
             let url = URL(fileURLWithPath: path)
             //url: url, type: .defaultType, title: model.name
             let vc = TGWebViewController()
+            vc.urlString = url.absoluteString
             self.navigationController?.pushViewController(vc, animated: true)
         } else {
             let vc: CollectionFileMsgViewController = CollectionFileMsgViewController(model: model)

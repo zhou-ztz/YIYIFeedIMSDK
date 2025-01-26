@@ -401,6 +401,26 @@ class TGAppUtil: NSObject {
         return vc
     }
     
+    func createResourceID() -> Int {
+//        let timestamp = Int(Date().timeIntervalSince1970)
+//
+//        let failMoments = TSDatabaseMoment().getFaildSendMoments()
+//        guard let uid = self.userInfo?.userIdentity else {
+//            assertionFailure()
+//            return 0
+//        }
+//
+//        var failResource = 0
+//        if failMoments.isEmpty == false {
+//            for item in failMoments {
+//                failResource += item.pictures.count
+//                failResource += 1
+//            }
+//        }
+//
+//        return Int([uid, timestamp].map(String.init).joined()) ?? 0
+        return Int(Date().timeIntervalSince1970)
+    }
     
     // Check Valid Url String
     class func matchUrlInString (urlString: String) -> URL? {

@@ -20,7 +20,7 @@ class TGCustomActionsheetView: UIView, UITableViewDelegate, UITableViewDataSourc
     var finishBlock: ((TGCustomActionsheetView, String, Int) -> Void)?
 
     weak var delegate: TGCustomAcionSheetDelegate? = nil
-    private weak var superView: UIView!
+    private weak var superView: UIView?
     private var yAxisOffset: CGFloat?
     private var titles: Array<String>?
     private var yAxis: CGFloat?
@@ -40,15 +40,7 @@ class TGCustomActionsheetView: UIView, UITableViewDelegate, UITableViewDataSourc
     init(titles: Array<String>!, cancelText: String? = nil) {
         super.init(frame: CGRect.zero)
         self.titles = titles
-        if #available(iOS 13.0, *) {
-            if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-                let window = windowScene.windows.first(where: { $0.isKeyWindow })
-                // 使用 window
-            }
-        } else {
-            let window = UIApplication.shared.keyWindow
-            // 使用 window
-        }
+        let window = UIApplication.shared.keyWindow
         self.frame = (window?.bounds) ?? CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight)
         self.superView = window
         self.backgroundColor = UIColor(hex: 0x000000, alpha: 0.0)
@@ -93,13 +85,13 @@ class TGCustomActionsheetView: UIView, UITableViewDelegate, UITableViewDataSourc
 
     private func setUI() {
         yAxis = CGFloat(self.titles!.count + 1) * acionSheetCellHeight
-        actionSheetTableView = UITableView(frame: CGRect(x: 0, y: self.bounds.size.height, width: self.superView.bounds.size.width, height: yAxis!), style: .plain)
+        actionSheetTableView = UITableView(frame: CGRect(x: 0, y: self.bounds.size.height, width: self.superView?.bounds.size.width ?? 0, height: yAxis!), style: .plain)
         actionSheetTableView.delegate = self
         actionSheetTableView.dataSource = self
         actionSheetTableView.isScrollEnabled = false
         actionSheetTableView.tableFooterView = self.setFootView()
         actionSheetTableView.separatorColor = RLColor.inconspicuous.disabled
-        actionSheetTableView.register(UINib(nibName: "TGCustomActionsheetTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        actionSheetTableView.register(TGCustomActionsheetTableViewCell.self, forCellReuseIdentifier: "TGCustomActionsheetTableViewCell")
         actionSheetTableView.backgroundColor = RLColor.inconspicuous.background
         self.addSubview(actionSheetTableView)
         self.selfRemove(isShowTableView: true)
@@ -115,7 +107,7 @@ class TGCustomActionsheetView: UIView, UITableViewDelegate, UITableViewDataSourc
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? TGCustomActionsheetTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TGCustomActionsheetTableViewCell", for: indexPath) as? TGCustomActionsheetTableViewCell
         if colors.count > 0 {
             for item in colors {
                 if indexPath.row == item.0 {

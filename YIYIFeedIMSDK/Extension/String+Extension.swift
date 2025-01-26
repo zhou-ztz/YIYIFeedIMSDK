@@ -599,6 +599,51 @@ extension String {
         let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[urlRegEx])
         return predicate.evaluate(with: escapedString)
     }
+    
+    func detectLanguages() -> [String] {
+        var detectedLanguages: [String:Int] = [:]
+        let tokenizer = NLTokenizer(unit: .word)
+        tokenizer.string = self
+        
+        tokenizer.enumerateTokens(in: self.startIndex..<self.endIndex) { tokenRange, _ in
+            let token = self[tokenRange]
+            let languageRecognizer = NLLanguageRecognizer()
+            languageRecognizer.processString(String(token))
+            print("\(String(token)) - \(languageRecognizer.languageHypotheses(withMaximum: 1))")
+            if let confidence = languageRecognizer.languageHypotheses(withMaximum: 1).first?.value , confidence >= 0.85 ,  confidence <= 1.15 {
+                if let dominantLanguage = languageRecognizer.dominantLanguage {
+                    if let value = detectedLanguages[dominantLanguage.rawValue] {
+                        detectedLanguages[dominantLanguage.rawValue] = value + 1
+                    } else {
+                        detectedLanguages[dominantLanguage.rawValue] = 1
+                    }
+                }
+            }
+            return true
+        }
+        //处理马来语和印尼语的混淆问题
+        if let malayCount = detectedLanguages["ms"], detectedLanguages["id"] == nil {
+            detectedLanguages["id"] = malayCount
+        }
+        if let indonesianCount = detectedLanguages["id"], detectedLanguages["ms"] == nil {
+            detectedLanguages["ms"] = indonesianCount
+        }
+        print("detectedLanguages : \(detectedLanguages)")
+        return detectedLanguages.keys.sorted()
+        
+    }
+    func removingSpecialCharacters() -> String {
+        return self.replacingOccurrences(of: "[^\\x00-\\x7F]", with: "", options: .regularExpression, range: nil)
+    }
+    func rangesOfString(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [Range<Index>] {
+        var ranges: [Range<Index>] = []
+        while ranges.last.map({ $0.upperBound < self.endIndex }) ?? true,
+              let range = self.range(of: substring, options: options, range: (ranges.last?.upperBound ?? self.startIndex)..<self.endIndex, locale: locale)
+        {
+            ranges.append(range)
+        }
+        return ranges
+    }
 }
 
 extension String {
@@ -684,4 +729,47 @@ extension String {
         }
     }
 
+}
+extension String {
+
+    func smallPicUrl(oss: String? = "", showingSize: CGSize, quality: CGFloat = 90) -> String {
+        /// 文档 https://slimkit.github.io/docs/api-v2-core-file-storage.html
+        /*
+         名称    描述
+         w    可选，指定图片宽度
+         h    可选，指定图片高度
+         q    可选，指定图片质量，0 - 90
+         b    可选，指定图片高斯模糊程度，0 - 100
+         */
+        // 尺寸设置为 CGSize.zero，获取原图
+        if showingSize == CGSize.zero {
+            let imageUrl = self
+            return imageUrl
+        }
+        
+        let height = floor(showingSize.width * 2.0)
+        let width = floor(showingSize.height * 2.0)
+        
+        
+        if let component = URLComponents(string: self), let index = self.range(of: component.host.orEmpty)?.upperBound, component.host?.hasPrefix("cdn.yiartkeji") ?? false {
+            var imageUrl = self
+            let heightBool = height > (UIScreen.main.bounds.height * UIScreen.main.scale)
+            let widthBool = width > (UIScreen.main.bounds.width * UIScreen.main.scale)
+
+            let stringContent = component.path.contains("cdn-cgi") ? "image/width=\(heightBool || widthBool ? UIScreen.main.bounds.height : height),quality=\(quality)/" : "/cdn-cgi/image/width=\(heightBool || widthBool ? UIScreen.main.bounds.height : height),quality=\(quality)"
+            
+            imageUrl.insert(contentsOf: stringContent , at: index)
+            
+            return imageUrl
+        }
+        
+        /// 特别大的图片直接获取原图不要传递宽高参数，会导致无法显示
+        if height > (UIScreen.main.bounds.height * UIScreen.main.scale) || width > (UIScreen.main.bounds.width * UIScreen.main.scale) {
+            let imageUrl = self + "?w=\(UIScreen.main.bounds.height)&h=\(UIScreen.main.bounds.width)&q=\(quality)"
+            return imageUrl
+        }
+        
+        let imageUrl = self + "?w=\(height)&h=\(width)&q=\(quality)"
+        return imageUrl
+    }
 }

@@ -105,23 +105,23 @@ extension UserDefaults {
         UserDefaults.standard.set(hasUnread, forKey: "mobile-top-up-has-unread-\(region)")
         UserDefaults.standard.synchronize()
     }
-//    
-//    static var biometricEnabled: Bool {
-//        get {
-//            guard let username = CurrentUserSessionInfo?.username else {
-//                return false
-//            }
-//            return UserDefaults.standard.bool(forKey: "biometric-enabled-\(username)")
-//        }
-//        
-//        set {
-//            guard let username = CurrentUserSessionInfo?.username else {
-//                return
-//            }
-//            UserDefaults.standard.set(newValue, forKey: "biometric-enabled-\(username)")
-//            UserDefaults.standard.synchronize()
-//        }
-//    }
+    
+    static var biometricEnabled: Bool {
+        get {
+            guard let username = RLSDKManager.shared.loginParma?.imAccid else {
+                return false
+            }
+            return UserDefaults.standard.bool(forKey: "biometric-enabled-\(username)")
+        }
+        
+        set {
+            guard let username = RLSDKManager.shared.loginParma?.imAccid  else {
+                return
+            }
+            UserDefaults.standard.set(newValue, forKey: "biometric-enabled-\(username)")
+            UserDefaults.standard.synchronize()
+        }
+    }
     
     static var sponsoredEnabled: Bool {
         get {
