@@ -6,7 +6,7 @@
 //
 import Foundation
 import SwiftDate
-import Kronos
+#import Kronos
 
 private let gregorianCalendar = Calendar(identifier: .gregorian)
 
@@ -75,15 +75,15 @@ extension NSDate {
     }
 
 }
-
-public extension Date {
+extension Date {
 
     static func getCurrentTime() -> Date {
-        if let now = Clock.now {
-            return now
-        } else {
-            return Date()
-        }
+//        if let now = Clock.now {
+//            return now
+//        } else {
+//            return Date()
+//        }
+        return Date()
     }
     
     /// 格式化输出时间  使用UTC时区表示时间  如：yyyy-MM-dd HH:mm:ss
