@@ -58,14 +58,14 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
     }()
     
     
-    lazy var contentLabel: TGCommentLabel = {
-        let lab = TGCommentLabel()
+    lazy var contentLabel: UILabel = {
+        let lab = UILabel()
         lab.textColor = MainColor.normal.minor
         lab.font = UIFont.systemFont(ofSize: 14)
         lab.text = "-"
-        lab.showType = .detail
-        lab.labelDelegate = self
-        lab.linesSpacing = 4.0
+       // lab.showType = .detail
+//        lab.labelDelegate = self
+//        lab.linesSpacing = 4.0
         return lab
     }()
     
@@ -199,11 +199,11 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         if let timeModel = data.createdAt?.toBdayDate(by: "yyyy-MM-dd HH:mm:ss") {
             dateLabel.text =  TGDate().dateString(.normal, nDate: timeModel)
         }
-        contentLabel.tgCommentModel = commnetModel
-        let height = CGFloat(contentLabel.getSizeWithWidth(width - 10 - 40 - 10 - 15).height)
-        contentLabel.snp.updateConstraints { make in
-            make.height.equalTo(height).priority(.high) // 设置优先级
-        }
+//        contentLabel.tgCommentModel = commnetModel
+//        let height = CGFloat(contentLabel.getSizeWithWidth(width - 10 - 40 - 10 - 15).height)
+//        contentLabel.snp.updateConstraints { make in
+//            make.height.equalTo(height).priority(.high) // 设置优先级
+//        }
         
     }
     public func setAsPinned(pinned: Bool?, isDarkMode: Bool) {

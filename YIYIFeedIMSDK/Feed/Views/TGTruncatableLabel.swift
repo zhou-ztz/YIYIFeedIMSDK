@@ -7,7 +7,7 @@
 
 import UIKit
 //import YYText
-import TYAttributedLabel
+//import TYAttributedLabel
 
 enum TruncatableLabelShowStyle {
     case TruncatableLabelShowLess
@@ -105,7 +105,7 @@ class TGTruncatableLabel: UIView {
 
     func setText(text: String, textColor: UIColor = .white, allowTruncation: Bool = false) {
         customText = NSMutableAttributedString(string: text)
-        customText.addAttributeTextColor(label.textColor, range: NSRange(text.startIndex..<text.endIndex, in: text))
+     //   customText.addAttributeTextColor(label.textColor, range: NSRange(text.startIndex..<text.endIndex, in: text))
 //        customText.yy_font = self.label.font.withSize(14)
 //        customText.yy_color = textColor
 //
@@ -124,7 +124,7 @@ class TGTruncatableLabel: UIView {
     
     func setAttributeText(attString: NSMutableAttributedString, textColor: UIColor = .white, allowTruncation: Bool = false) {
         customText = attString
-        customText.addAttributeTextColor(textColor, range: NSRange(attString.string.startIndex..<attString.string.endIndex, in: attString.string))
+    //    customText.addAttributeTextColor(textColor, range: NSRange(attString.string.startIndex..<attString.string.endIndex, in: attString.string))
 //        customText.yy_font = self.label.font.withSize(14)
 //        customText.yy_color = textColor
 //        
