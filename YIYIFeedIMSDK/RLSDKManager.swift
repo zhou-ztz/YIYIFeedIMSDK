@@ -11,17 +11,6 @@ public enum TGQRType {
     case group, user, transfer, web, merchant, restNGo
 }
 
-public enum TGAuthMessageType {
-    case egg, purchase
-    
-    var text: String {
-        switch self {
-        case .egg: return "text_send_egg_bio_auth".localized
-        case .purchase: return "text_purchase_with_bio_auth".localized
-        }
-    }
-}
-
 public protocol TGMessageDelegate: AnyObject {
     /// 跳转贴纸主页
     func didPressAdd(_ sender: Any?)
@@ -31,7 +20,6 @@ public protocol TGMessageDelegate: AnyObject {
     func didPressStickerDetail(bundleId: String)
     /// 跳转个人中心
     func didPressNameCard(memberId: String)
-    func didPressUerProfile(uid: Int)
     /// 跳转扫一扫
     func didPressQRScan()
     /// 跳转通讯录
@@ -48,12 +36,6 @@ public protocol TGMessageDelegate: AnyObject {
     func didPressSocialPost(urlString: String)
     /// 跳转小程序
     func didPressMiniProgrom(appId: String, path: String)
-    ///  打开支付密码弹窗
-    func showPin(type: TGAuthMessageType, _ completion: ((String) -> Void)?, cancel: (() -> Void)?, needDisplayError: Bool)
-    /// 关键支付密码弹窗
-    func dismissPin()
-    ///  显示支付message
-    func showPinError(message: String)
 }
 
 public class RLSDKManager: NSObject {
@@ -73,9 +55,6 @@ public class RLSDKManager: NSObject {
     public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping ()->Void){
         self.loginParma = parma
         RLNIMSDKManager.shared.imLogin(with: self.loginParma?.imAccid ?? "", imToken: self.loginParma?.imToken ?? "") {
-            if let xToken = self.loginParma?.xToken {
-                UserDefaults.standard.setValue(xToken , forKey: "TG_ACCESS_TOKEN")
-            }
             success()
         } failure: {
             failure()
@@ -101,10 +80,4 @@ public class RLSDKManager: NSObject {
         return TGIMUnreadCountManager.shared.getConversationAllUnreadCount()
     }
     
-    /// 获取所有Request未读数
-    public func getRequestlistCountAllUnreadCount(completion: @escaping (_ count: Int) ->Void) {
-        TGIMUnreadCountManager.shared.getRequestlistCountAllUnreadCount { count in
-            completion(count)
-        }
-    }
 }

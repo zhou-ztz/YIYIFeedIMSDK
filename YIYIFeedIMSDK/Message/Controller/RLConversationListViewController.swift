@@ -211,19 +211,6 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
             
             let isMute = recentSession.mute
             let mute = UIContextualAction(style: .normal, title: "") { [weak self] (action, sourceView, completionHandler) in
-                
-//                NIMSDK.shared().v2ConversationService.muteConversation(recentSession.conversationId, mute: isMute) {[weak self] in
-//                    DispatchQueue.main.async {
-//                        self?.tableView.setEditing(false, animated: true)
-//                        self?.tableView.reloadRow(at: indexPath, with: .none)
-//                    }
-//                    completionHandler(true)
-//                } failure: {[weak self] error in
-//                    DispatchQueue.main.async {
-//                        self?.tableView.setEditing(false, animated: true)
-//                    }
-//                }
-                
                 if recentSession.type == .CONVERSATION_TYPE_TEAM {
                     let teamId = MessageUtils.conversationTargetId(recentSession.conversationId)
                     let muteMode: V2NIMTeamMessageMuteMode = isMute ? .TEAM_MESSAGE_MUTE_MODE_OFF : .TEAM_MESSAGE_MUTE_MODE_ON

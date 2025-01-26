@@ -21,7 +21,7 @@ class TipMessageCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = .clear
+        self.backgroundColor = .white
         self.setUI()
     }
   
@@ -44,13 +44,11 @@ class TipMessageCell: UITableViewCell {
         }
         tipLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.height.equalTo(14)
             make.top.bottom.equalToSuperview().inset(4)
             make.left.right.equalToSuperview().inset(8)
         }
         
         bgView.roundCorner(7.5)
-
     }
     
     func setData(model: TGMessageData){
@@ -64,12 +62,24 @@ class TipMessageCell: UITableViewCell {
             ///群通知处理
             if let _ = model.nimMessageModel?.attachment as? V2NIMMessageNotificationAttachment  {
                 MessageUtils.teamNotificationFormatedMessage(message) { text in
-                    DispatchQueue.main.async {
-                        self.tipLabel.text = text
-                    }
+                    self.tipLabel.text = text
                 }
-            } else {
-                self.tipLabel.text = message.text
+            } else { /// 撤回消息处理
+                
+                var nick = "opponent".localized
+                if message.isSelf {
+                    nick = "you".localized
+                }
+                if message.conversationType == .CONVERSATION_TYPE_TEAM, let accoundId = message.senderId , !message.isSelf {
+                    MessageUtils.getUserInfo(accountIds: [accoundId]) { [weak self] users, _ in
+                        if let user = users?.first {
+                            nick = TGLocalRemarkName.getRemarkName(userId: nil, username: user.accountId, originalName: user.name, label: nil)
+                            self?.tipLabel.text = String(format: "revoke_msg".localized, nick)
+                        }
+                    }
+                } else {
+                    tipLabel.text = String(format: "revoke_msg".localized, nick)
+                }
  
             }
 

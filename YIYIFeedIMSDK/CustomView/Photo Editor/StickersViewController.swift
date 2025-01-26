@@ -6,195 +6,219 @@
 //  Copyright © 2017 Mohamed Hamed. All rights reserved.
 //  Credit https://github.com/AhmedElassuty/IOS-BottomSheet
 
-
 import UIKit
 import SDWebImage
 
 @objcMembers class StickersViewController: UIViewController, UIGestureRecognizerDelegate {
-
-    var headerView: UIView!
-    var holdView: UIView!
-    var scrollView: UIScrollView!
-    var pageControl: UIPageControl!
+    @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var holdView: UIView!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var pageControl: UIPageControl!
     
-    var collectionView: UICollectionView!
-    var emojisCollectionView: UICollectionView!
+    var collectioView: UICollectionView!
+    var emojisCollectioView: UICollectionView!
     
     var emojisDelegate: EmojisCollectionViewDelegate!
     
     var stickers: [Any] = []
-    weak var stickersViewControllerDelegate: StickersViewControllerDelegate?
+    weak var stickersViewControllerDelegate : StickersViewControllerDelegate?
     
     let screenSize = UIScreen.main.bounds.size
-    let fullView: CGFloat = 100 // Top position when fully expanded
+    
+    let fullView: CGFloat = 100 // remainder of screen height
     var partialView: CGFloat {
-        return UIScreen.main.bounds.height - 380 // Position when partially shown
+        return UIScreen.main.bounds.height - 380
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupViews()
         configureCollectionViews()
+        scrollView.contentSize = CGSize(width: 2.0 * screenSize.width,
+                                        height: scrollView.frame.size.height)
         
-        scrollView.contentSize = CGSize(width: 2.0 * screenSize.width, height: scrollView.frame.size.height)
         scrollView.isPagingEnabled = true
         scrollView.delegate = self
-        
         pageControl.numberOfPages = 2
         
-        let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture(_:)))
+        holdView.layer.cornerRadius = 3
+        let gesture = UIPanGestureRecognizer.init(target: self, action: #selector(StickersViewController.panGesture))
         gesture.delegate = self
         view.addGestureRecognizer(gesture)
     }
     
-    func setupViews() {
-        // Background Blur
-        let blurEffect = UIBlurEffect(style: .light)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        view.addSubview(blurView)
-        blurView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        
-        // Header View
-        headerView = UIView()
-        view.addSubview(headerView)
-        headerView.backgroundColor = UIColor.clear
-        headerView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(40)
-        }
-        
-        // Hold View
-        holdView = UIView()
-        headerView.addSubview(holdView)
-        holdView.backgroundColor = UIColor.lightGray
-        holdView.layer.cornerRadius = 3
-        holdView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(8)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(50)
-            make.height.equalTo(5)
-        }
-        
-        // Page Control
-        pageControl = UIPageControl()
-        headerView.addSubview(pageControl)
-        pageControl.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(holdView.snp.bottom).offset(8)
-        }
-        
-        // Scroll View
-        scrollView = UIScrollView()
-        view.addSubview(scrollView)
-        scrollView.clipsToBounds = true
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp.bottom)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-    }
-    
     func configureCollectionViews() {
-        // Stickers Collection View
-        let stickerLayout = UICollectionViewFlowLayout()
-        stickerLayout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
-        stickerLayout.itemSize = CGSize(width: (screenSize.width - 30) / 3.0, height: 100)
         
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: stickerLayout)
-        collectionView.backgroundColor = .clear
-        scrollView.addSubview(collectionView)
+        let frame = CGRect(x: 0,
+                           y: 0,
+                           width: UIScreen.main.bounds.width,
+                           height: view.frame.height - 40)
         
-        collectionView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
-            make.width.equalTo(screenSize.width)
-            make.height.equalToSuperview()
-        }
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
+        let width = (CGFloat) ((screenSize.width - 30) / 3.0)
+        layout.itemSize = CGSize(width: width, height: 100)
         
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(StickerCollectionViewCell.self, forCellWithReuseIdentifier: "StickerCollectionViewCell")
+        collectioView = UICollectionView(frame: frame, collectionViewLayout: layout)
+        collectioView.backgroundColor = .clear
+        scrollView.addSubview(collectioView)
         
-        // Emojis Collection View
-        let emojiLayout = UICollectionViewFlowLayout()
-        emojiLayout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
-        emojiLayout.itemSize = CGSize(width: 70, height: 70)
+        collectioView.delegate = self
+        collectioView.dataSource = self
         
-        emojisCollectionView = UICollectionView(frame: .zero, collectionViewLayout: emojiLayout)
-        emojisCollectionView.backgroundColor = .clear
-        scrollView.addSubview(emojisCollectionView)
+        collectioView.register(
+            UINib(nibName: "StickerCollectionViewCell", bundle: Bundle(for: StickerCollectionViewCell.self)),
+            forCellWithReuseIdentifier: "StickerCollectionViewCell")
         
-        emojisCollectionView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalTo(collectionView.snp.trailing)
-            make.width.equalTo(screenSize.width)
-            make.height.equalToSuperview()
-        }
+        //-----------------------------------
         
+        let emojisFrame = CGRect(x: scrollView.frame.size.width,
+                                 y: 0,
+                                 width: UIScreen.main.bounds.width,
+                                 height: view.frame.height - 40)
+        
+        let emojislayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        emojislayout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
+        emojislayout.itemSize = CGSize(width: 70, height: 70)
+        
+        emojisCollectioView = UICollectionView(frame: emojisFrame, collectionViewLayout: emojislayout)
+        emojisCollectioView.backgroundColor = .clear
+        scrollView.addSubview(emojisCollectioView)
         emojisDelegate = EmojisCollectionViewDelegate()
         emojisDelegate.stickersViewControllerDelegate = stickersViewControllerDelegate
-        emojisCollectionView.delegate = emojisDelegate
-        emojisCollectionView.dataSource = emojisDelegate
+        emojisCollectioView.delegate = emojisDelegate
+        emojisCollectioView.dataSource = emojisDelegate
         
-        emojisCollectionView.register(
+        emojisCollectioView.register(
             UINib(nibName: "EmojiCollectionViewCell", bundle: Bundle(for: EmojiCollectionViewCell.self)),
-            forCellWithReuseIdentifier: "EmojiCollectionViewCell"
-        )
+            forCellWithReuseIdentifier: "EmojiCollectionViewCell")
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        prepareBackgroundView()
     }
     
-    @objc func panGesture(_ recognizer: UIPanGestureRecognizer) {
-        let translation = recognizer.translation(in: view)
-        let velocity = recognizer.velocity(in: view)
-        let y = view.frame.minY
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
+        UIView.animate(withDuration: 0.6) { [weak self] in
+            guard let `self` = self else { return }
+            let frame = self.view.frame
+            let yComponent = self.partialView
+            self.view.frame = CGRect(x: 0,
+                                     y: yComponent,
+                                     width: frame.width,
+                                     height: UIScreen.main.bounds.height - self.partialView)
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectioView.frame = CGRect(x: 0,
+                                     y: 0,
+                                     width: UIScreen.main.bounds.width,
+                                     height: view.frame.height - 40)
+        
+        emojisCollectioView.frame = CGRect(x: scrollView.frame.size.width,
+                                           y: 0,
+                                           width: UIScreen.main.bounds.width,
+                                           height: view.frame.height - 40)
+        
+        scrollView.contentSize = CGSize(width: 2.0 * screenSize.width,
+                                        height: scrollView.frame.size.height)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    //MARK: Pan Gesture
+    
+    @objc func panGesture(_ recognizer: UIPanGestureRecognizer) {
+        
+        let translation = recognizer.translation(in: self.view)
+        let velocity = recognizer.velocity(in: self.view)
+        
+        let y = self.view.frame.minY
         if y + translation.y >= fullView {
-            view.frame = CGRect(
-                x: 0,
-                y: y + translation.y,
-                width: view.frame.width,
-                height: UIScreen.main.bounds.height - (y + translation.y)
-            )
-            recognizer.setTranslation(.zero, in: view)
+            let newMinY = y + translation.y
+            self.view.frame = CGRect(x: 0, y: newMinY, width: view.frame.width, height: UIScreen.main.bounds.height - newMinY )
+            self.view.layoutIfNeeded()
+            recognizer.setTranslation(CGPoint.zero, in: self.view)
         }
         
         if recognizer.state == .ended {
-            let duration = velocity.y < 0
-                ? Double((y - fullView) / -velocity.y)
-                : Double((partialView - y) / velocity.y)
-            
-            UIView.animate(withDuration: min(duration, 1.0), delay: 0, options: .allowUserInteraction) {
-                if velocity.y >= 0 {
-                    self.view.frame.origin.y = self.partialView
+            var duration =  velocity.y < 0 ? Double((y - fullView) / -velocity.y) : Double((partialView - y) / velocity.y )
+            duration = duration > 1.3 ? 1 : duration
+            //velocity is direction of gesture
+            UIView.animate(withDuration: duration, delay: 0.0, options: [.allowUserInteraction], animations: {
+                if  velocity.y >= 0 {
+                    if y + translation.y >= self.partialView  {
+                        self.removeBottomSheetView()
+                    } else {
+                        self.view.frame = CGRect(x: 0, y: self.partialView, width: self.view.frame.width, height: UIScreen.main.bounds.height - self.partialView)
+                        self.view.layoutIfNeeded()
+                    }
                 } else {
-                    self.view.frame.origin.y = self.fullView
+                    if y + translation.y >= self.partialView  {
+                        self.view.frame = CGRect(x: 0, y: self.partialView, width: self.view.frame.width, height: UIScreen.main.bounds.height - self.partialView)
+                        self.view.layoutIfNeeded()
+                    } else {
+                        self.view.frame = CGRect(x: 0, y: self.fullView, width: self.view.frame.width, height: UIScreen.main.bounds.height - self.fullView)
+                        self.view.layoutIfNeeded()
+                    }
                 }
-            }
+                
+            }, completion: nil)
         }
     }
+    
+    func removeBottomSheetView() {
+        UIView.animate(withDuration: 0.3,
+                       delay: 0,
+                       options: UIView.AnimationOptions.curveEaseIn,
+                       animations: { () -> Void in
+                        var frame = self.view.frame
+                        frame.origin.y = UIScreen.main.bounds.maxY
+                        self.view.frame = frame
+                        
+        }, completion: { (finished) -> Void in
+            self.view.removeFromSuperview()
+            self.removeFromParent()
+            self.stickersViewControllerDelegate?.stickersViewDidDisappear()
+        })
+    }
+    
+    func prepareBackgroundView(){
+        let blurEffect = UIBlurEffect.init(style: .light)
+        let visualEffect = UIVisualEffectView.init(effect: blurEffect)
+        let bluredView = UIVisualEffectView.init(effect: blurEffect)
+        bluredView.contentView.addSubview(visualEffect)
+        visualEffect.frame = UIScreen.main.bounds
+        bluredView.frame = UIScreen.main.bounds
+        view.insertSubview(bluredView, at: 0)
+    }
+    
+    
+    
 }
 
-// MARK: - UIScrollViewDelegate
 extension StickersViewController: UIScrollViewDelegate {
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageWidth = scrollView.bounds.width
         let pageFraction = scrollView.contentOffset.x / pageWidth
-        pageControl.currentPage = Int(round(pageFraction))
+        self.pageControl.currentPage = Int(round(pageFraction))
     }
 }
 
-// MARK: - UICollectionViewDataSource & Delegate
+// MARK: - UICollectionViewDataSource
 extension StickersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return stickers.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerCollectionViewCell", for: indexPath) as! StickerCollectionViewCell
-        if let stickerURL = stickers[indexPath.item] as? String {
-            cell.stickerImage.sd_setImage(with: URL(string: stickerURL), completed: nil)
-        } else if let sticker = stickers[indexPath.item] as? UIImage {
-            cell.stickerImage.image = sticker
-        }
-        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -203,7 +227,25 @@ extension StickersViewController: UICollectionViewDataSource, UICollectionViewDe
         } else if let sticker = stickers[indexPath.item] as? UIImage {
             stickersViewControllerDelegate?.didSelectImage(image: sticker)
         }
+
     }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let identifier = "StickerCollectionViewCell"
+        let cell  = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! StickerCollectionViewCell
+        if let stickerURL = stickers[indexPath.item] as? String {
+            cell.stickerImage.sd_setImage(with: URL(string: stickerURL), completed: nil)
+        } else if let sticker = stickers[indexPath.item] as? UIImage {
+            cell.stickerImage.image = sticker
+        }
+
+        return cell
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 4
     }
@@ -211,4 +253,6 @@ extension StickersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
+    
 }
+

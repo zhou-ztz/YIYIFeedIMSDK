@@ -12,6 +12,6 @@ struct TGCommentModelResponse: Codable {
     
     var message: String?
     var comment: TGFeedCommentListModel?
-    var code: Int?
+    
     
 }

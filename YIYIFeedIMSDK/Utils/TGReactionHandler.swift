@@ -89,7 +89,7 @@ class TGReactionHandler {
     }()
 
     var feedId: Int
-    var feedItem: FeedListCellModel?
+    var feedItem: TGFeedResponse?
     weak var reactionView: UIView?
     weak var view: UIView?
     var apiInProgress = false
@@ -117,7 +117,7 @@ class TGReactionHandler {
         return bg
     }()
 
-    init(reactionView: UIView, toAppearIn view: UIView, currentReaction: ReactionTypes?, feedId: Int, feedItem: FeedListCellModel?, shouldBlockInteraction: Bool = true, theme: Theme = .white, reactions :[ReactionTypes] = ReactionTypes.allCases, isForCollectionCell: Bool = false) {
+    init(reactionView: UIView, toAppearIn view: UIView, currentReaction: ReactionTypes?, feedId: Int, feedItem: TGFeedResponse?, shouldBlockInteraction: Bool = true, theme: Theme = .white, reactions :[ReactionTypes] = ReactionTypes.allCases, isForCollectionCell: Bool = false) {
         self.reactionView = reactionView
         self.view = view
         self.feedId = feedId

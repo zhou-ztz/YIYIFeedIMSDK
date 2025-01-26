@@ -26,9 +26,4 @@ public class RLLoginParma: NSObject {
     public var uid: UInt!
     // 用户 Token
     public var xToken: String!
-    
-    public var countryCode: String = ""
-    
-    public var languageCode: String = ""
-    
 }

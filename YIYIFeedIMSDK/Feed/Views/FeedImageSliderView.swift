@@ -74,7 +74,7 @@ extension FeedImageSliderView: UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedScrollChildImageCell.identifier, for: indexPath) as! FeedScrollChildImageCell
            let imageUrl = imageUrls[indexPath.item]
-           cell.imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: UIImage.set_image(named: "rl_placeholder@2x"))
+           cell.imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: UIImage.set_image(named: "placeholder_empty"))
            
            return cell
     }

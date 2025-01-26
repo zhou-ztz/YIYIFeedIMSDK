@@ -264,8 +264,7 @@ extension TGAvatarView {
         guard let userId = avatarInfo.type.userId else {
             return
         }
-        RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: userId)
-
+//        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": userId, "isFromReactionList": isFromReactionList])
     }
 }
 
@@ -461,21 +460,21 @@ class AvatarInfo {
     init() {
     }
 
-    /// 初始化
-    init(userModel model: UserInfoModel) {
-        avatarURL =  model.avatarUrl.orEmpty.smallPicUrl(showingSize: CGSize(width: 150, height: 150))
-        verifiedType = model.verificationIcon.orEmpty
-        verifiedIcon = model.verificationIcon.orEmpty
-        sex = model.sex
-        avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: sex)
-        type = .normal(userId: model.userIdentity)
-        username = model.username
-        nickname = model.name
-        frameIcon = model.profileFrameIcon
-        frameColor = model.profileFrameColorHex
-        liveId = model.liveFeedId
-    }
-
+//    /// 初始化
+//    init(userModel model: UserInfoModel) {
+//        avatarURL =  model.avatarUrl.orEmpty.smallPicUrl(showingSize: CGSize(width: 150, height: 150))
+//        verifiedType = model.verificationIcon.orEmpty
+//        verifiedIcon = model.verificationIcon.orEmpty
+//        sex = model.sex
+//        avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: sex)
+//        type = .normal(userId: model.userIdentity)
+//        username = model.username
+//        nickname = model.name
+//        frameIcon = model.profileFrameIcon
+//        frameColor = model.profileFrameColorHex
+//        liveId = model.liveFeedId
+//    }
+//
 //    init(avatarURL: String, verifiedInfo: TSUserVerifiedModel?) {
 //        self.avatarURL = avatarURL
 //        verifiedType = verifiedInfo?.type ?? ""

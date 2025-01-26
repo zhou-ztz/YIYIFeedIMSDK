@@ -8,7 +8,6 @@
 import UIKit
 import NIMSDK
 import AVFoundation
-import NEMeetingKit
 
 enum IMActionItem: Equatable {
     case reply
@@ -414,6 +413,11 @@ class MessageUtils: NSObject {
                 attachment.message = voucher.title
                 attachment.videoURL = ""
             }
+            //            else if let voucher = object.attachment as? IMReferralAttachment {
+            //                attachment.image = voucher.imageURL
+            //                attachment.message = voucher.title
+            //                attachment.videoURL = ""
+            //            }
             else {
                 attachment.image = ""
                 attachment.videoURL = ""
@@ -972,39 +976,4 @@ class MessageUtils: NSObject {
         return jsonStr
     }
     
-    //自定义更多菜单的子按钮
-    class func configMoreMenus(options: NEMeetingOptions) {
-        // 1. 创建更多菜单列表构建类，列表默认包含："邀请"、"聊天"
-        var moreMenus = NEMenuItems.defaultMoreMenuItems() as! [NEMeetingMenuItem]
-        
-        // 2. 添加一个多选菜单项
-        let newItem = NESingleStateMenuItem()
-        newItem.itemId = 1000
-        newItem.visibility = .VISIBLE_TO_HOST_ONLY
-        newItem.singleStateItem = NEMenuItemInfo()
-        newItem.singleStateItem.icon = "private-invite"
-        newItem.singleStateItem.text = "meeting_private".localized
-    
-        moreMenus.append(newItem)
-        // 3. 配置完成，设置参数字段
-        options.fullMoreMenuItems = moreMenus
-    }
-    
-    //获取群成员userId
-    class func fetchMembersTeam(teamId: String, completed: @escaping (([String])-> Void)){
-        let option = V2NIMTeamMemberQueryOption()
-        option.limit = 1000
-        option.nextToken = ""
-        option.roleQueryType = .TEAM_MEMBER_ROLE_QUERY_TYPE_ALL
-        NIMSDK.shared().v2TeamService.getTeamMemberList(teamId, teamType: .TEAM_TYPE_NORMAL, queryOption: option) { listResult in
-            if let members = listResult.memberList {
-                var memberIds = [String]()
-                for member in members{
-                    memberIds.append(member.accountId)
-                }
-                completed(memberIds)
-            }
-        }
-        
-    }
 }

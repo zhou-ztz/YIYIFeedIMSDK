@@ -1,6 +1,0 @@
-framework module OBS {
-  umbrella header "OBS.h"
-
-  export *
-  module * { export * }
-}

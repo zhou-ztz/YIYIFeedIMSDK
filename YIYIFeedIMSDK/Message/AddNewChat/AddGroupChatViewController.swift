@@ -266,21 +266,19 @@ class AddGroupChatViewController: TGViewController {
             }
 
             if success {
-                let task = V2NIMUploadFileTask()
-                let uploadParams = V2NIMUploadFileParams()
-                uploadParams.filePath = filePath
-                uploadParams.sceneName = NIMNOSSceneTypeAvatar
-                task.uploadParams = uploadParams
-                task.taskId = Date().timeIntervalSince1970.toString()
-                NIMSDK.shared().v2StorageService.uploadFile(task) {[weak self] urlString in
-                    guard let strongSelf = self else { return }
-                    option.avatar = urlString
-                    strongSelf.createTeam(option: option)
-                } failure: {[weak self] error in
-                    self?.showFail(text: "group_avatar_upload_fail".localized)
-                } progress: { progress in
-                   
-                }
+                NIMSDK.shared().resourceManager.upload(filePath, scene: NIMNOSSceneTypeAvatar, progress: nil, completion: { [weak self] (urlString, error) in
+                    DispatchQueue.main.async {
+                        guard let strongSelf = self else { return }
+                        if(error == nil) {
+                            option.avatar = urlString
+                            strongSelf.createTeam(option: option)
+                        }
+                        else {
+                           // self?.loader.dismiss()
+                            strongSelf.showFail(text: "group_avatar_upload_fail".localized)
+                        }
+                    }
+                })
             } else if let data = data, data.bytes.count == 0 {
                 createTeam(option: option)
             } else {
@@ -297,26 +295,13 @@ class AddGroupChatViewController: TGViewController {
     func createTeam(option: V2NIMCreateTeamParams) {
         
         NIMSDK.shared().v2TeamService.createTeam(option, inviteeAccountIds: settingVC?.members ?? [], postscript: "text_invite_to_group".localized, antispamConfig: nil) {[weak self] teamResult in
-            
-            if let teamId = teamResult.team?.teamId {
-                self?.settingVC?.headImageView.image = nil
-                self?.settingVC?.cameraImageView.isHidden = false
-                self?.settingVC?.nameT.text = ""
-                self?.createBtn.isEnabled = false
-                self?.createBtn.setTitleColor(UIColor(hex: "#D9D9D9"), for: .normal)
-                let me: String = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
-                let conversationId = "\(me)|2|\(teamId)"
-                let tip = String(format: "%@ %@", option.name,"created".localized)
-                let message = MessageUtils.tipV2Message(text: tip)
-                NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: nil) {  _ in
-                    DispatchQueue.main.async {
-                        let vc = TGChatViewController(conversationId: conversationId, conversationType: 2)
-                        self?.navigationController?.pushViewController(vc, animated: true)
-                    }
-                } failure: { _ in
-                    
+            DispatchQueue.main.async {
+                if let teamId = teamResult.team?.teamId {
+                    let me: String = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
+                    let conversationId = "\(me)|2|\(teamId)"
+                    let vc = TGChatViewController(conversationId: conversationId, conversationType: 2)
+                    self?.navigationController?.pushViewController(vc, animated: true)
                 }
-                
             }
             
         } failure: { error in
@@ -348,27 +333,97 @@ class AddGroupChatViewController: TGViewController {
     
     
     func openAblum(){
-        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: { [weak self] in
+        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: {
             DispatchQueue.main.async {
-                let picker = UIImagePickerController()
-                picker.delegate = self
-                picker.sourceType = .photoLibrary
-                picker.allowsEditing = true
-                self?.present(picker, animated: true, completion: nil)
+//                let imagePicker: TZImagePickerController = TZImagePickerController(maxImagesCount: 1, delegate: self, mainColor: TSColor.main.red)
+//                imagePicker.allowTakePicture = false
+//                imagePicker.allowPickingMultipleVideo = false
+//                imagePicker.autoDismiss = true
+//                imagePicker.naviBgColor = .white
+//                imagePicker.naviTitleColor = .black
+//                imagePicker.barItemTextColor = .black
+//                imagePicker.navigationBar.barStyle = .default
+//                imagePicker.statusBarStyle = .default
+//                imagePicker.allowPickingVideo = false
+//                imagePicker.pickerDelegate = self
+//                imagePicker.allowPickingGif = true
+//                imagePicker.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
+//                imagePicker.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
+//                imagePicker.allowCrop = true
+//                imagePicker.allowPreview = false
+//                self.present(imagePicker.fullScreenRepresentation, animated: true, completion: nil)
             }
         })
         
     }
     
     func openCamera() {
-        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: {[weak self] in
+//        if VideoPlayer.shared.isPlaying {
+//            VideoPlayer.shared.stop()
+//        }
+//                
+        
+        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: {
             DispatchQueue.main.async {
-                let picker = UIImagePickerController()
-                picker.delegate = self
-                picker.sourceType = .camera
-                picker.allowsEditing = true
-                self?.present(picker, animated: true, completion: nil)
+//                let camera = CameraViewController()
+//                camera.allowPickingVideo = false
+//                camera.enableMultiplePhoto = false
+//                camera.allowEdit = true
+//                camera.onSelectPhoto = { [weak self] (assetss, image, videoPath, isGif, isSelOriImage) in
+//                    if let path = videoPath {
+//                        
+//                    } else {
+//                        for asset in assetss {
+//                            let manager = PHImageManager.default()
+//                            let option = PHImageRequestOptions()
+//                            option.isSynchronous = false
+//                            manager.requestImageData(for: asset, options: option) { (imageData, type, orientation, info) in
+//                                guard let imageData = imageData else {
+//                                    return
+//                                }
+//                                DispatchQueue.main.async {
+//                                    var image: UIImage!
+//                                    if type == kUTTypeGIF as String {
+//                                        image = UIImage.gif(data: imageData)
+//
+//                                    } else {
+//                                        image = UIImage.init(data: imageData)
+//
+//                                    }
+//                                    
+//                                    let lzImage = LZImageCropping()
+//                                    lzImage.cropSize = CGSize(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+//                                    lzImage.image = image
+//                                    lzImage.isRound = true
+//                                    lzImage.titleLabel.text = "Move and Scale".localized
+//                                    lzImage.didFinishPickingImage = { [weak self] image in
+//                                        guard let self = self, let image = image else {
+//                                            return
+//                                        }
+//                                        
+//                                        DispatchQueue.main.async {
+//                                            self.settingVC?.headImageView.image = image
+//                                            self.settingVC?.cameraImageView.isHidden = true
+//                                        }
+//                                    }
+//                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+//                                        self?.navigationController?.present(lzImage.fullScreenRepresentation, animated: true, completion: nil)
+//                                    }
+//
+//                                  
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                let nav = UINavigationController(rootViewController: camera)
+//                nav.modalPresentationStyle = .fullScreen
+//                self.present(nav, animated: true, completion: nil)
+//                nav.didMove(toParent: self)
             }
+            
+           
         })
     }
 
@@ -408,18 +463,6 @@ extension AddGroupChatViewController: TGCustomCameraSheetViewDelegate {
             break
         default:
             break
-        }
-    }
-}
-
-extension AddGroupChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            settingVC?.headImageView.image = image
-            self.settingVC?.cameraImageView.isHidden = true
-            picker.dismiss(animated: true) {
-                
-            }
         }
     }
 }
