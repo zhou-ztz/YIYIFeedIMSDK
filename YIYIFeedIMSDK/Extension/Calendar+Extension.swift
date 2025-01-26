@@ -6,7 +6,7 @@
 //
 import Foundation
 import SwiftDate
-#import Kronos
+//import Kronos
 
 private let gregorianCalendar = Calendar(identifier: .gregorian)
 
