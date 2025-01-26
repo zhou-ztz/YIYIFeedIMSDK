@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 //import OBS
 
 class TGUploadNetworkManager {
@@ -66,30 +67,30 @@ class TGUploadNetworkManager {
                             dict["height"] = "\(Int(videoSize.height))"
                         }
                         fileList.append(dict)
-                        let request = OBSUploadFileRequest(bucketName: "yippi-social", objectKey: objectKey, uploadFilePath: filePath1)
-                        // 分段大小为5MB
-                        request?.partSize = NSNumber(integerLiteral: 5 * 1024 * 1024)
-                        // 开启断点续传模式
-                        request?.enableCheckpoint = true
-                        // 指定checkpoint文件路径
-                        request?.checkpointFilePath = ""
-                        // 开启MD5校验
-                        request?.enableMD5Check = true
-                        // 访问策略
-                        request?.objectACLPolicy = .publicRead
-                        //contentType
-                        request?.contentType = (isImage ? OBSContentType.JPEG : OBSContentType.MP4)
-                        
-                        request?.uploadProgressBlock = { [weak self]  bytesSent, totalBytesSent, totalBytesExpectedToSend in
-                            guard let self = self else { return  }
-                            let progress = floor(Double(totalBytesSent * 10000 / totalBytesExpectedToSend)) / 100
-                            if !isImage {
-                                let spro = Progress(totalUnitCount: totalBytesSent * 10000)
-                                spro.completedUnitCount = totalBytesExpectedToSend
-                                progressHandler?(spro)
-                            }
-                            print(String(format: "%.1f%%", progress))
-                        }
+//                        let request = OBSUploadFileRequest(bucketName: "yippi-social", objectKey: objectKey, uploadFilePath: filePath1)
+//                        // 分段大小为5MB
+//                        request?.partSize = NSNumber(integerLiteral: 5 * 1024 * 1024)
+//                        // 开启断点续传模式
+//                        request?.enableCheckpoint = true
+//                        // 指定checkpoint文件路径
+//                        request?.checkpointFilePath = ""
+//                        // 开启MD5校验
+//                        request?.enableMD5Check = true
+//                        // 访问策略
+//                        request?.objectACLPolicy = .publicRead
+//                        //contentType
+//                        request?.contentType = (isImage ? OBSContentType.JPEG : OBSContentType.MP4)
+//                        
+//                        request?.uploadProgressBlock = { [weak self]  bytesSent, totalBytesSent, totalBytesExpectedToSend in
+//                            guard let self = self else { return  }
+//                            let progress = floor(Double(totalBytesSent * 10000 / totalBytesExpectedToSend)) / 100
+//                            if !isImage {
+//                                let spro = Progress(totalUnitCount: totalBytesSent * 10000)
+//                                spro.completedUnitCount = totalBytesExpectedToSend
+//                                progressHandler?(spro)
+//                            }
+//                            print(String(format: "%.1f%%", progress))
+//                        }
 //                        group.enter()
 //                        DispatchQueue.global(qos: .background).async {
 //                            
