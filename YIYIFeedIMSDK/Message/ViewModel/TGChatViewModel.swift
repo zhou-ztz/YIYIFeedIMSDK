@@ -8,6 +8,7 @@
 import UIKit
 import NIMSDK
 import AVFoundation
+import NEMeetingKit
 
 protocol TGChatViewModelDelegate: AnyObject {
     func onSend(_ message: V2NIMMessage, succeeded: Bool)
