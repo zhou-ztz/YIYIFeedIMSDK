@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftDate
+import Kronos
 
 private let gregorianCalendar = Calendar(identifier: .gregorian)
 
@@ -42,7 +43,7 @@ extension Calendar {
 private let dateFormatter = DateFormatter()
 
 extension Date {
-    func timeAgoDisplay() -> String {
+    func timeAgoDisplay(dateFormat: String = "MM-dd") -> String {
         let secondsAgo = Int(Date().timeIntervalSince(self))
         
         let minute = 60
@@ -60,7 +61,39 @@ extension Date {
             return "\(secondsAgo / day) \("days_ago".localized)"
         }
         
-        dateFormatter.dateFormat = "MM-dd"
+        dateFormatter.dateFormat = dateFormat
         return dateFormatter.string(from: date)
+    }
+}
+extension NSDate {
+    func convertToSecond() -> Int {
+        return Int(self.timeIntervalSince1970)
+    }
+
+    func convertToMillisecond() -> Int {
+        return Int(self.timeIntervalSince1970 * 1_000)
+    }
+
+}
+
+public extension Date {
+
+    static func getCurrentTime() -> Date {
+        if let now = Clock.now {
+            return now
+        } else {
+            return Date()
+        }
+    }
+    
+    /// 格式化输出时间  使用UTC时区表示时间  如：yyyy-MM-dd HH:mm:ss
+    func string(format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone? = TimeZone.current) -> String {
+        let dateFormatter = DateFormatter()
+        // 设置 格式化样式
+        dateFormatter.dateFormat = format
+        // 设置时区
+        dateFormatter.timeZone = timeZone
+        let strDate = dateFormatter.string(from: self)
+        return strDate
     }
 }

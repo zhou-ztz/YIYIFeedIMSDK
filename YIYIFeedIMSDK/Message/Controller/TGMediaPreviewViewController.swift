@@ -141,14 +141,14 @@ class MediaPreviewViewCell: UICollectionViewCell {
 
 }
 
-class TGMediaPreviewViewController: TGViewController {
+class TGMediaPreviewViewController: UIViewController {
     
     var galleryImageView: UIImageView!
     var scrollView: UIScrollView!
 
     var objects: [MediaPreviewObject]?
     var focusObject: MediaPreviewObject?
-    var sessionId: String?
+    var conversationId: String
     var collectionView: UICollectionView?
     var itemCountPerLine:CGFloat = 0
     var minimumInteritemSpacing: CGFloat = 0.0
@@ -159,11 +159,11 @@ class TGMediaPreviewViewController: TGViewController {
     var titles: [String]?
     var contents: [String : Any]?
     
-    init (objects: [MediaPreviewObject], focusObject: MediaPreviewObject, sessionId: String) {
+    init (objects: [MediaPreviewObject], focusObject: MediaPreviewObject, conversationId: String) {
         
         self.objects = objects
         self.focusObject = focusObject
-        self.sessionId = sessionId
+        self.conversationId = conversationId
         itemCountPerLine = 3
         minimumInteritemSpacing = 1
         minimumLineSpacing = 1
@@ -181,7 +181,7 @@ class TGMediaPreviewViewController: TGViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.customNavigationBar.title = "pic_video".localized
+       //self.customNavigationBar.title = "pic_video".localized
         
         self.sort()
         
@@ -221,7 +221,7 @@ class TGMediaPreviewViewController: TGViewController {
         guard let array = contents![key] as? [MediaPreviewObject] else { return  IndexPath(row: 0, section: 0) }
         //let array = contents![key] as! [MediaPreviewObject]
         
-        var section = titles!.index(of: key)!
+        var section = titles!.firstIndex(of: key)!
         section = (section != NSNotFound ? section : 0)
         var row = array.firstIndex(of: object) ?? NSNotFound
         row = row != NSNotFound ? row : 0
@@ -311,8 +311,8 @@ extension TGMediaPreviewViewController: UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let focusObject:MediaPreviewObject = self.objectAtIndex(indexPath: indexPath)
         
-//        let vc = TGMediaGalleryPageViewController(objects: self.objects!, focusObject: focusObject, session: self.session!, showMore: false)
-//        self.navigationController?.pushViewController(vc, animated: true)
+        let vc = TGMediaGalleryPageViewController(objects: self.objects!, focusObject: focusObject, conversationId: self.conversationId, showMore: false)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

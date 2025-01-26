@@ -31,7 +31,7 @@ class TGLocationPOISearchViewController: TGViewController {
     }
     
     var hasMore = false
-    var onLocationSelected: ((TGPostLocationObject) -> Void)?
+    var onLocationSelected: ((TGLocationModel) -> Void)?
     var throttler = TGThrottler(time: .seconds(1.0), mode: .deferred, immediateFire: true, nil)
     
     fileprivate var locationPermissionStatus: CLAuthorizationStatus = .notDetermined {
@@ -67,7 +67,7 @@ class TGLocationPOISearchViewController: TGViewController {
         }
     }
     
-    private var datasource: [TGPostLocationObject] = [] {
+    private var datasource: [TGLocationModel] = [] {
         willSet {
             guard newValue.isEmpty == true else {
 //                self.tableview.removePlaceholderViews()
@@ -129,13 +129,12 @@ class TGLocationPOISearchViewController: TGViewController {
         }
     }
     
-    /// combines 2 sets of location without duplicate location id
-    private func jointLocationSet(set: [TGPostLocationObject], newSet: [TGPostLocationObject]) -> [TGPostLocationObject] {
+    private func jointLocationSet(set: [TGLocationModel], newSet: [TGLocationModel]) -> [TGLocationModel] {
         var uniqueIds = Set<String>()
         set.forEach { (object) in
             uniqueIds.insert(object.locationID)
         }
-        let filtered: [TGPostLocationObject] = newSet.compactMap {
+        let filtered: [TGLocationModel] = newSet.compactMap {
             guard uniqueIds.contains($0.locationID) == false else { return nil }
             
             uniqueIds.insert($0.locationID)
@@ -157,9 +156,11 @@ class TGLocationPOISearchViewController: TGViewController {
         setupTable()
         setupSearch()
         
+
         view.backgroundColor = RLColor.inconspicuous.background
-//        setCloseButton(backImage: true, titleStr: "check_in".localized)
+        setCloseButton(backImage: true, titleStr: "check_in".localized)
         navigationController?.automaticallyAdjustsScrollViewInsets = false
+     
     }
     
     
@@ -167,6 +168,7 @@ class TGLocationPOISearchViewController: TGViewController {
         super.viewWillAppear(animated)
         
         self.view.isUserInteractionEnabled = false
+        self.navigationController?.navigationBar.isHidden = false
 //        updatingLocationIndicator.show()
         locationManager.requestWhenInUseAuthorization()
         
@@ -191,19 +193,41 @@ class TGLocationPOISearchViewController: TGViewController {
     private func setupTable() {
         tableview.delegate = self
         tableview.dataSource = self
-        
+        tableview.register(TGLocationPOICell.self, forCellReuseIdentifier: "TGLocationPOICell")
         tableview.separatorInset = UIEdgeInsets.zero
         tableview.tableFooterView = UIView()
         tableview.mj_footer = SCRefreshFooter(refreshingTarget: self, refreshingAction: #selector(loadMore))
-        tableview.mj_header.makeHidden()
+//        tableview.mj_header.makeHidden()
         tableview.keyboardDismissMode = .onDrag
     }
     
     private func search(with keyword: String,
                         coordinate: (CLLocationDegrees, CLLocationDegrees) = (0.0, 0.0),
-                        complete: (([TGPostLocationObject]) -> Void)? = nil) {
+                        complete: (([TGLocationModel]) -> Void)? = nil) {
         
         let (lat, lng) = coordinate
+        
+        TGIMNetworkManager.locationSearchList(queryString: keyword, lat: lat, lng: lng) { [weak self] locations, error in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                defer {
+                    //                                self.updatingLocationIndicator.dismiss()
+                    self.view.isUserInteractionEnabled = true
+                }
+                
+                guard let locations = locations else {
+                    if let _ = locations {
+                        //                                    self.tableview.show(placeholderView: .network)
+                    } else {
+                        //                                    self.tableview.show(placeholderView: .emptyResult)
+                    }
+                    return
+                }
+                
+                complete?(locations)
+                
+            }
+        }
         
 //        TSLocationsSearchNetworkManager().searchLocations(queryString: keyword, lat: lat, lng: lng) { [weak self] (locations, message) in
 //            guard let self = self else { return }
@@ -228,7 +252,7 @@ class TGLocationPOISearchViewController: TGViewController {
 //        }
     }
     
-    private func searchGlobal(with keyword: String, complete: (([TGPostLocationObject]) -> Void)? = nil) {
+    private func searchGlobal(with keyword: String, complete: (([TGLocationModel]) -> Void)? = nil) {
         search(with: keyword, complete: complete)
     }
     
@@ -273,8 +297,8 @@ class TGLocationPOISearchViewController: TGViewController {
         
         searchContainerView.backgroundColor = .white
         
-        view.addSubview(searchContainerView)
-        view.addSubview(tableview)
+        self.backBaseView.addSubview(searchContainerView)
+        self.backBaseView.addSubview(tableview)
         
         searchContainerView.snp.makeConstraints {
             $0.top.left.right.equalToSuperview()
