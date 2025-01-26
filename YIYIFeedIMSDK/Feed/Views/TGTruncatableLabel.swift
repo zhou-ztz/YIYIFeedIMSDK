@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import YYText
+//import YYText
 import TYAttributedLabel
 
 enum TruncatableLabelShowStyle {
@@ -28,7 +28,7 @@ class TGTruncatableLabel: UIView {
         v.alignment = .fill
         v.translatesAutoresizingMaskIntoConstraints = false
     }
-    let label = YYLabel()
+    let label = UILabel()
     let collapseViewWrapper = UIView()
     let collapsingLabel = UILabel()
     private(set) var customText = NSMutableAttributedString()
@@ -69,7 +69,7 @@ class TGTruncatableLabel: UIView {
         }
     
         label.setContentHuggingPriority(.required, for: .vertical)
-        label.numberOfLines = self.numberOfLines
+        label.numberOfLines = Int(self.numberOfLines)
         
         stack.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -88,7 +88,7 @@ class TGTruncatableLabel: UIView {
         collapsingLabel.font = UIFont.boldSystemFont(ofSize: 12)
 
         collapsingLabel.addTap { [unowned self] (_) in
-            self.label.numberOfLines = self.numberOfLines
+            self.label.numberOfLines = Int(self.numberOfLines)
             self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
             self.setAllowTruncation()
             self.layoutScrollView()
@@ -106,10 +106,10 @@ class TGTruncatableLabel: UIView {
     func setText(text: String, textColor: UIColor = .white, allowTruncation: Bool = false) {
         customText = NSMutableAttributedString(string: text)
         customText.addAttributeTextColor(label.textColor, range: NSRange(text.startIndex..<text.endIndex, in: text))
-        customText.yy_font = self.label.font.withSize(14)
-        customText.yy_color = textColor
-
-        self.label.numberOfLines = self.numberOfLines
+//        customText.yy_font = self.label.font.withSize(14)
+//        customText.yy_color = textColor
+//
+//        self.label.numberOfLines = self.numberOfLines
         self.label.attributedText = customText
         self.collapseViewWrapper.isHidden = true
 
@@ -125,10 +125,10 @@ class TGTruncatableLabel: UIView {
     func setAttributeText(attString: NSMutableAttributedString, textColor: UIColor = .white, allowTruncation: Bool = false) {
         customText = attString
         customText.addAttributeTextColor(textColor, range: NSRange(attString.string.startIndex..<attString.string.endIndex, in: attString.string))
-        customText.yy_font = self.label.font.withSize(14)
-        customText.yy_color = textColor
-        
-        self.label.numberOfLines = self.numberOfLines
+//        customText.yy_font = self.label.font.withSize(14)
+//        customText.yy_color = textColor
+//        
+//        self.label.numberOfLines = self.numberOfLines
         self.label.attributedText = customText
         self.collapseViewWrapper.isHidden = true
 
@@ -149,9 +149,9 @@ class TGTruncatableLabel: UIView {
                 range: NSRange(text.startIndex..<text.endIndex, in: text)
         ) { (matchResult, _, stop) -> () in
             guard let match = matchResult else { return }
-            self.customText.yy_setTextHighlight(match.range, color: aliasColor, backgroundColor: .clear, tapAction: { [weak self] (v, username, range, _) -> () in
-                self?.onUsernameTapped?(username.string.subString(with: range))
-            })
+//            self.customText.yy_setTextHighlight(match.range, color: aliasColor, backgroundColor: .clear, tapAction: { [weak self] (v, username, range, _) -> () in
+//                self?.onUsernameTapped?(username.string.subString(with: range))
+//            })
 
             self.label.attributedText = self.customText
         }
@@ -164,9 +164,9 @@ class TGTruncatableLabel: UIView {
                 range: NSRange(text.startIndex..<text.endIndex, in: text)
         ) { (matchResult, _, stop) -> () in
             guard let match = matchResult else { return }
-            self.customText.yy_setTextHighlight(match.range, color: hashTagColor, backgroundColor: .clear, tapAction: { [weak self] (v, tags, range, _) -> () in
-                self?.onHashTagTapped?(tags.string.subString(with: range))
-            })
+//            self.customText.yy_setTextHighlight(match.range, color: hashTagColor, backgroundColor: .clear, tapAction: { [weak self] (v, tags, range, _) -> () in
+//                self?.onHashTagTapped?(tags.string.subString(with: range))
+//            })
 
             self.label.attributedText = self.customText
         }
@@ -180,9 +180,9 @@ class TGTruncatableLabel: UIView {
                 range: NSRange(text.startIndex..<text.endIndex, in: text)
         ) { (matchResult, _, stop) -> () in
             guard let match = matchResult else { return }
-            self.customText.yy_setTextHighlight(match.range, color: httpTagColor, backgroundColor: .clear, tapAction: { [weak self] (v, tags, range, _) -> () in
-                self?.onHttpTagTapped?(tags.string.subString(with: range))
-            })
+//            self.customText.yy_setTextHighlight(match.range, color: httpTagColor, backgroundColor: .clear, tapAction: { [weak self] (v, tags, range, _) -> () in
+//                self?.onHttpTagTapped?(tags.string.subString(with: range))
+//            })
 
             self.label.attributedText = self.customText
         }
@@ -190,37 +190,37 @@ class TGTruncatableLabel: UIView {
 
     func setAllowTruncation() {
         let moretext = NSMutableAttributedString(string: " \("rw_text_expand".localized)")
-        let highlight = YYTextHighlight()
+      //  let highlight = YYTextHighlight()
 
-        highlight.setColor(TGAppTheme.white)
+      //  highlight.setColor(TGAppTheme.white)
 
-        moretext.yy_setTextHighlight(highlight, range: moretext.yy_rangeOfAll())
-        moretext.setAllTextFont(font: self.label.font)
-        moretext.yy_setColor(TGAppTheme.feedExpandBlue, range: moretext.yy_rangeOfAll())
-
-        let moreAttachment = YYLabel()
-        moreAttachment.attributedText = moretext
-        moreAttachment.sizeToFit()
-
-        let expandtruncationToken = NSMutableAttributedString.yy_attachmentString(withContent: moreAttachment, contentMode: .center, attachmentSize: moreAttachment.frame.size, alignTo: self.label.font, alignment: .center)
-        
-        highlight.tapAction = { [weak self] (_, text, _, _) in
-            guard let self = self else { return }
-            if self.label.numberOfLines == 0 {
-                self.label.truncationToken = expandtruncationToken
-                self.label.numberOfLines = self.numberOfLines
-            } else {
-                self.label.numberOfLines = 0
-                self.label.layoutIfNeeded()
-                self.label.truncationToken = nil
-            }
-            
-            self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
-            self.onHeightChanged?()
-            self.layoutScrollView()
-            self.onTextNumberOfLinesTapped?(.TruncatableLabelShowMore)
-        }
-        self.label.truncationToken = expandtruncationToken
+//        moretext.yy_setTextHighlight(highlight, range: moretext.yy_rangeOfAll())
+//        moretext.setAllTextFont(font: self.label.font)
+//        moretext.yy_setColor(TGAppTheme.feedExpandBlue, range: moretext.yy_rangeOfAll())
+//
+//        let moreAttachment = YYLabel()
+//        moreAttachment.attributedText = moretext
+//        moreAttachment.sizeToFit()
+//
+//        let expandtruncationToken = NSMutableAttributedString.yy_attachmentString(withContent: moreAttachment, contentMode: .center, attachmentSize: moreAttachment.frame.size, alignTo: self.label.font, alignment: .center)
+//        
+//        highlight.tapAction = { [weak self] (_, text, _, _) in
+//            guard let self = self else { return }
+//            if self.label.numberOfLines == 0 {
+//                self.label.truncationToken = expandtruncationToken
+//                self.label.numberOfLines = self.numberOfLines
+//            } else {
+//                self.label.numberOfLines = 0
+//                self.label.layoutIfNeeded()
+//                self.label.truncationToken = nil
+//            }
+//            
+//            self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
+//            self.onHeightChanged?()
+//            self.layoutScrollView()
+//            self.onTextNumberOfLinesTapped?(.TruncatableLabelShowMore)
+//        }
+//        self.label.truncationToken = expandtruncationToken
     }
 
     
