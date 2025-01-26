@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import OBS
+//import OBS
 import KeychainAccess
 
 let bundleIdentifier: String = Bundle.main.bundleIdentifier ?? "com.togl.rewardslink"
@@ -17,24 +17,24 @@ let AES_KEY = "325a2cc052914ceeb8c19016c091d2ac"
 /// 16 字节IV
 let AES_IV = "0123456789abcdef"
 
-class OBSManager: NSObject {
+class TGOBSManager: NSObject {
     
-    static let shared = OBSManager()
+    static let shared = TGOBSManager()
     
-    var client: OBSClient!
+   // var client: OBSClient!
     
     func initializeOBS(accessKey: String, secretKey: String, securityToken: String){
         // 初始化身份验证
-        var credentialProvider = OBSStaticCredentialProvider(accessKey: accessKey, secretKey: secretKey)
-        credentialProvider?.securityToken = securityToken
-        //初始化服务配置
-        let config = OBSServiceConfiguration(urlString: "https://obs.ap-southeast-1.myhuaweicloud.com", credentialProvider: credentialProvider)
-        // 初始化client
-        client = OBSClient(configuration: config)
-        // 分段上传的最大并发数
-        client.configuration.maxConcurrentUploadRequestCount = 10
-        // 分段上传请求的最大连接数
-        client.configuration.uploadSessionConfiguration.httpMaximumConnectionsPerHost = 10
+//        var credentialProvider = OBSStaticCredentialProvider(accessKey: accessKey, secretKey: secretKey)
+//        credentialProvider?.securityToken = securityToken
+//        //初始化服务配置
+//        let config = OBSServiceConfiguration(urlString: "https://obs.ap-southeast-1.myhuaweicloud.com", credentialProvider: credentialProvider)
+//        // 初始化client
+//        client = OBSClient(configuration: config)
+//        // 分段上传的最大并发数
+//        client.configuration.maxConcurrentUploadRequestCount = 10
+//        // 分段上传请求的最大连接数
+//        client.configuration.uploadSessionConfiguration.httpMaximumConnectionsPerHost = 10
         
     }
 }

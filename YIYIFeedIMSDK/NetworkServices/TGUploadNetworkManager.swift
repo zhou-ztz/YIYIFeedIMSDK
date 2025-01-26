@@ -32,7 +32,7 @@ class TGUploadNetworkManager {
                 let deAccess = OBSHelper.shared.aesDecrypt(value: access)
                 let desSecret = OBSHelper.shared.aesDecrypt(value: secret)
                 ///初始化OBS
-                OBSManager.shared.initializeOBS(accessKey: deAccess, secretKey: desSecret, securityToken: securitytoken)
+                TGOBSManager.shared.initializeOBS(accessKey: deAccess, secretKey: desSecret, securityToken: securitytoken)
                 ///检查文件hash
                 self.checkHash(datas: fileDatas) { models, datas  in
                     guard let datas = datas else {
@@ -90,30 +90,30 @@ class TGUploadNetworkManager {
                             }
                             print(String(format: "%.1f%%", progress))
                         }
-                        group.enter()
-                        DispatchQueue.global(qos: .background).async {
-                            
-                            let task = OBSManager.shared.client?.uploadFile(request) { [weak self] response, error in
-                                guard let self = self else { return  }
-                                if let error = error {
-                                    // 再次上传
-                                    print("OBS uploadFile-error == \(error)")
-                                    isUploadAll = false
-                                }else{
-                                    if isImage {
-                                        let spro = Progress(totalUnitCount: 1)
-                                        spro.completedUnitCount = 1
-                                        progressHandler?(spro)
-                                    }
-                                    print("OBS response == \(String(describing: response))")
-                                    
-                                }
-                                group.leave()
-                            }
-                            
-                            
-                            
-                        }
+//                        group.enter()
+//                        DispatchQueue.global(qos: .background).async {
+//                            
+//                            let task = TGOBSManager.shared.client?.uploadFile(request) { [weak self] response, error in
+//                                guard let self = self else { return  }
+//                                if let error = error {
+//                                    // 再次上传
+//                                    print("OBS uploadFile-error == \(error)")
+//                                    isUploadAll = false
+//                                }else{
+//                                    if isImage {
+//                                        let spro = Progress(totalUnitCount: 1)
+//                                        spro.completedUnitCount = 1
+//                                        progressHandler?(spro)
+//                                    }
+//                                    print("OBS response == \(String(describing: response))")
+//                                    
+//                                }
+//                                group.leave()
+//                            }
+//                            
+//                            
+//                            
+//                        }
                         
                     }
                     
