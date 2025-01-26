@@ -2678,7 +2678,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/YIYIFeedIMSDK/CustomView/Photo\\ Editor",
-					"$(PROJECT_DIR)/YIYIFeedIMSDK",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -2718,7 +2717,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/YIYIFeedIMSDK/CustomView/Photo\\ Editor",
-					"$(PROJECT_DIR)/YIYIFeedIMSDK",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
