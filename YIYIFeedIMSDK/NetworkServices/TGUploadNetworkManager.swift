@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import OBS
+//import OBS
 
 class TGUploadNetworkManager {
     
