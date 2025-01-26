@@ -12,7 +12,7 @@ Pod::Spec.new do |spec|
   spec.author       = { "tingzhi.zhou" => "tingzhi.zhou@yiartkeji.com" }
   spec.platform     = :ios, "13.0"
   spec.source       = { :git => 'https://github.com/zhou-ztz/YIYIFeedIMSDK.git', :tag => '1.0.9'}
-  #spec.vendored_frameworks = ['YIYIFeedIMSDK/OBS.framework']
+  spec.vendored_frameworks = ['YIYIFeedIMSDK/OBS.framework']
   spec.source_files  = "YIYIFeedIMSDK/**/*.swift"
   spec.resources = ['YIYIFeedIMSDK/SDKResource.bundle']
   spec.requires_arc  = true
