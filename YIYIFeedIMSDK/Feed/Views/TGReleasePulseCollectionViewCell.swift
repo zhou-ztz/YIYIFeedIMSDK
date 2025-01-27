@@ -78,17 +78,6 @@ class TGReleasePulseCollectionViewCell: UICollectionViewCell {
         gifIdentityView.image = UIImage(named: "pic_gif")
         contentView.addSubview(gifIdentityView)
         gifIdentityView.isHidden = true
-        payinfoSetBtn.frame = CGRect(x: 0, y: self.height - 30, width: self.width, height: 30)
-        payinfoSetBtn.backgroundColor = UIColor(white: 0, alpha: 0.2)
-        payinfoSetBtn.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        payinfoSetBtn.setTitleColor(UIColor.white, for: .normal)
-        payinfoSetBtn.isHidden = true
-        payinfoSetBtn.setImage(UIImage(named: "IMG_edit_pen"), for: .normal)
-        payinfoSetBtn.setTitle("set_amount".localized, for: .normal)
-        payinfoSetBtn.setImage(UIImage(named: "ico_coins"), for: .selected)
-        payinfoSetBtn.setTitle("set_amount".localized, for: .selected)
-        payinfoSetBtn.addTarget(self, action: #selector(didSelectedPayInfoBtn(btn:)), for: .touchUpInside)
-        contentView.addSubview(payinfoSetBtn)
         
         deleteImageBtn.frame = CGRect(x: self.width - 30, y: 0, width: 30, height: 30)
         deleteImageBtn.setImage(UIImage(named: "IMG_information_ico_delete"), for: .normal)
@@ -105,10 +94,6 @@ class TGReleasePulseCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = self.contentView.bounds
-    }
-
-    @objc func didSelectedPayInfoBtn(btn: UIButton) {
-        self.payBtnBlock?(btn)
     }
 }
 extension TGReleasePulseCollectionViewCell {

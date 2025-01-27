@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import CoreServices
 import ObjectiveC
+import SDWebImage
 
 var MomentPHAssetPayInfoKey = 100_000
 var MomentUIImageGIFKey = 100_001
@@ -310,4 +311,35 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return resultImage
     }
+}
+class TGFadeImageView: SDAnimatedImageView {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        sd_imageTransition = .fade
+        clearBufferWhenStopped = true
+    }
+    
+    override init(image: UIImage?) {
+        super.init(image: image)
+        
+        sd_imageTransition = .fade
+        clearBufferWhenStopped = true
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        
+        sd_imageTransition = .fade
+        clearBufferWhenStopped = true
+    }
+    
+    override init(image: UIImage?, highlightedImage: UIImage?) {
+        super.init(image: image, highlightedImage: highlightedImage)
+        
+        sd_imageTransition = .fade
+        clearBufferWhenStopped = true
+    }
+    
 }

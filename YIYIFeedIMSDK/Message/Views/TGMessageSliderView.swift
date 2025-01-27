@@ -65,17 +65,13 @@ class TGMessageSliderView: UIView {
     
     func updateUI(index: Int){
 
-        if itemViews.count > index {
-            let sub = itemViews[index]
-            sub.setModel(tabs[index], index: index)
-            
-        }
-        
-        for (index, tab) in tabs.enumerated() {
+        for (idx, tab) in tabs.enumerated() {
+            let sub = itemViews[idx]
             if isCanSlider {
-                let sub = itemViews[index]
-                sub.selectedView.isHidden = !(index == selectIndex)
+                tab.isSelected = idx == index ? true : false
+                sub.selectedView.isHidden = !(idx == index)
             }
+            sub.setModel(tab, index: idx)
         }
         selectCallBack?(index)
     }
@@ -85,7 +81,9 @@ class TGMessageSliderView: UIView {
             let tab = self.tabs[index]
             tab.messageCount = count
             self.tabs[index] = tab
-            updateUI(index: index)
+            
+            let sub = itemViews[index]
+            sub.setModel(tab, index: index)
         }
     }
     

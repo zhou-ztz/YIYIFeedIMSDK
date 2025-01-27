@@ -365,7 +365,7 @@ extension TGMiniVideoRecorderViewController: TGBaseCameraViewControllerDelegate 
                         option.deliveryMode = .automatic
                         option.isNetworkAccessAllowed = true
                         
-                        PHImageManager.default().requestExportSession(forVideo: result, options: option, exportPreset: AVAssetExportPresetHighestQuality) { [weak self] (exportSession, info) in
+                        PHImageManager.default().requestExportSession(forVideo: result, options: option, exportPreset: AVAssetExportPreset960x540) { [weak self] (exportSession, info) in
                             
                             let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
                             let dateFormatter = DateFormatter()
@@ -395,13 +395,10 @@ extension TGMiniVideoRecorderViewController: TGBaseCameraViewControllerDelegate 
                                                 self.onSelectMiniVideo?(url)
                                             }
                                         }else{
-                                           // let vc = DependencyContainer.shared.resolveViewControllerFactory().makePostShortVideoView(coverImage: coverImage, url: url)
-//                                            let vc = PostShortVideoViewController(nibName: "PostShortVideoViewController", bundle: nil)
-//                                            vc.shortVideoAsset = ShortVideoAsset(coverImage: coverImage, asset: nil, recorderSession: nil, videoFileURL: url)
-//                                            vc.soundId = BEManager.shared.selectedMusic?.id
-//                                            vc.isMiniVideo = true
-//                                            vc.campaignDict = self.campaignDict
-//                                            self.navigationController?.pushViewController(vc, animated: true)
+                                            let releasePulseVC = TGReleasePulseViewController(type: .miniVideo)
+                                            releasePulseVC.shortVideoAsset = ShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
+                                            self.navigationController?.pushViewController(releasePulseVC, animated: true)
+                                            
                                         }} else {
                                             // 处理导出失败的情况
                                             print("Video export failed: \(exportSession?.error?.localizedDescription ?? "Unknown error")")
