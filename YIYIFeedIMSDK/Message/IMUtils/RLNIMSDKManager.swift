@@ -51,14 +51,14 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         ///用户信息
         NIMSDK.shared().v2UserService.add(self)
         /// 会议组件 初始化
-       // initMeetingkit()
+        initMeetingkit()
     
     }
     
-//    func initMeetingkit() {
-//        let config = NEMeetingKitConfig()
-//        config.appKey = NIMAppKey
-        //config.appName = "RewardsLink"
+    func initMeetingkit() {
+        let config = NEMeetingKitConfig()
+        config.appKey = NIMAppKey
+        config.appName = "RewardsLink"
 //        let language =  LocalizationManager.getCurrentLanguage()
 //        if language == LanguageIdentifier.chineseSimplified.rawValue || language == LanguageIdentifier.chineseTraditional.rawValue {
 //            config.language = .CHINESE
@@ -67,12 +67,12 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
 //        } else {
 //            config.language = .ENGLISH
 //        }
-//        config.broadcastAppGroup = "group.com.togl.getyippi.share"
-//        NEMeetingKit.getInstance().initialize(config) { code, message, result in
-//            print("NEMeetingKit code = \(code)")
-//            print("NEMeetingKit message = \(message)")
-//        }
-//    }
+        config.broadcastAppGroup = "group.com.togl.getyippi.share"
+        NEMeetingKit.getInstance().initialize(config) { code, message, result in
+            print("NEMeetingKit code = \(code)")
+            print("NEMeetingKit message = \(message)")
+        }
+    }
     
     public func logout() {
         NIMSDK.shared().v2LoginService.logout {
