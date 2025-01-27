@@ -122,7 +122,7 @@ class FeedListModel: Mappable, Entity {
     var liveModel: LiveEntityModel? = nil
     /// 商户信息
     // objectbox: convert = { "dbType": "String", "converter": "TSRewardsLinkMerchantUserModel" }
-    var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel]? = nil
+    var rewardsMerchantUsers: [TSRewardsLinkMerchantUserModel]? = nil
     
     /// @用户信息
     // objectbox: convert = { "dbType": "String", "converter": "UserInfoModel" }
@@ -139,39 +139,9 @@ class FeedListModel: Mappable, Entity {
     
     var isPinned: Bool = false
     
-    // objectbox: convert = { "dbType": "String", "converter": "TagVoucherModel" }
-    var tagVoucher: TagVoucherModel? = nil
-    
-    /// 活动动态是否可以编辑
-    var campaignIsEdite: Bool = false
     init() {}
     required init?(map: Map) {
     }
-    init(
-         id: Int,
-         userId: Int,
-         content: String,
-         from: Int,
-         likeCount: Int,
-         viewCount: Int,
-         commentCount: Int,
-         rewardCount: Int,
-         create: Date,
-         hasCollect: Bool,
-         hasLike: Bool
-     ) {
-         self.id = id
-         self.userId = userId
-         self.content = content
-         self.from = from
-         self.likeCount = likeCount
-         self.viewCount = viewCount
-         self.commentCount = commentCount
-         self.rewardCount = rewardCount
-         self.create = create
-         self.hasCollect = hasCollect
-         self.hasLike = hasLike
-     }
 
     func mapping(map: Map) {
         id <- map["id"]
@@ -241,22 +211,20 @@ class FeedListModel: Mappable, Entity {
         
         rewardsLinkMerchantUsers <- map["tag_merchant_users"]
         
-        tagVoucher <- map["tag_voucher"]
         
-        campaignIsEdite <- map["is_edit"]
     }
     
 }
 
 extension FeedListModel {
-    // objectbox: transient
-    var reactionType: ReactionTypes? {
-        return ReactionTypes.initialize(with: reactType.orEmpty)
-    }
-    // objectbox: transient
-    var topReactionList: [ReactionTypes]? {
-        return StringArrayTransformer.transformToJSON(topReactions)?.compactMap { ReactionTypes.initialize(with: $0) }
-    }
+//    // objectbox: transient
+//    var reactionType: ReactionTypes? {
+//        return ReactionTypes.initialize(with: reactType.orEmpty)
+//    }
+//    // objectbox: transient
+//    var topReactionList: [ReactionTypes]? {
+//        return StringArrayTransformer.transformToJSON(topReactions)?.compactMap { ReactionTypes.initialize(with: $0) }
+//    }
 //    // objectbox: transient
 //    var userInfo: UserInfoModel {
 //        return self.user ?? UserInfoModel.retrieveUser(userId: userId) ?? UserInfoModel()
@@ -386,7 +354,7 @@ class FeedListCommentModel: Mappable {
 }
 
 /// 动态商家信息
-class TGRewardsLinkMerchantUserModel: Mappable {
+class TSRewardsLinkMerchantUserModel: Mappable {
     var desc: String = ""
     var merchantId: Int = 0
     var rating: String = ""
@@ -396,9 +364,6 @@ class TGRewardsLinkMerchantUserModel: Mappable {
     var certificationIconUrl: String = ""
     var wantedPath: String = ""
     var wantedMid: Int = 0
-    // Rebate || Offset
-    var merchantRebate: String?
-    var merchantOffset: String?
     
     required init?(map: Map) {}
 
@@ -419,19 +384,18 @@ class TGRewardsLinkMerchantUserModel: Mappable {
         } else {
             userName <- map["name"]
         }
-        merchantRebate <- map["merchant_rebate"]
-        merchantOffset <- map["merchant_offset"]
     }
   
-    static func convert(_ object: [TGRewardsLinkMerchantUserModel]?) -> String? {
+    static func convert(_ object: [TSRewardsLinkMerchantUserModel]?) -> String? {
         guard let object = object else { return nil }
         return object.toJSONString()
     }
     
-    static func convert(_ json: String?) -> [TGRewardsLinkMerchantUserModel]? {
+    static func convert(_ json: String?) -> [TSRewardsLinkMerchantUserModel]? {
         guard let json = json else { return nil }
-        return Mapper<TGRewardsLinkMerchantUserModel>().mapArray(JSONString: json)
+        return Mapper<TSRewardsLinkMerchantUserModel>().mapArray(JSONString: json)
     }
+    
 }
 /// 可付费图片 数据模型
 class FeedImageModel: Mappable {

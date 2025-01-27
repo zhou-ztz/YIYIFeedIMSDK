@@ -13,8 +13,6 @@ class FeedDetailTableHeaderView: UIView {
     var followStatusClickCall: (() -> ())?
     var deleteStatusClickCall: (() -> ())?
     var mediaViewClickCall: (() -> ())?
-    var onTranslated: EmptyClosure?
-    var onTapPictureClickCall: (() -> ())?
     
     // views
     private var contentView: UIStackView = {
@@ -59,8 +57,6 @@ class FeedDetailTableHeaderView: UIView {
         return button
     }()
     
-    private var originalTexts: String = ""
-    private var translatedTexts: String = ""
     
     //动态图片/视频view
     private var mediaContentView: UIView = UIView()
@@ -71,8 +67,8 @@ class FeedDetailTableHeaderView: UIView {
         $0.image = UIImage(named: "ic_feed_video_icon")
     }
     
-    lazy var contentLabel: ActiveLabel = {
-        let lab = ActiveLabel()
+    lazy var contentLabel: UILabel = {
+        let lab = UILabel()
         lab.textColor = .black
         lab.font = UIFont.systemFont(ofSize: 14)
         lab.numberOfLines = 0
@@ -94,10 +90,18 @@ class FeedDetailTableHeaderView: UIView {
         lab.text = ""
         return lab
     }()
-    private var translateButton: LoadableButton = LoadableButton(frame: .zero, icon: nil,
-                                                                 text: "text_translate".localized, textColor: RLColor.share.theme,
-                                                                 font: UIFont.systemMediumFont(ofSize: 12), bgColor: .clear, cornerRadius: 0,
-                                                                 withShadow: false)
+//    private var translateButton: UI = LoadableButton(frame: .zero, icon: nil,
+//                                                                 text: "text_translate".localized, textColor: AppTheme.primaryBlueColor,
+//                                                                 font: UIFont.systemMediumFont(ofSize: 12), bgColor: .clear, cornerRadius: 0,
+//                                                                 withShadow: false)
+    
+    lazy var translateButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("text_translate".localized, for: .normal)
+        button.titleLabel?.font = UIFont.systemMediumFont(ofSize: 12)
+        button.backgroundColor = .clear
+        return button
+    }()
     
     private let commentLabel: UILabel = {
         let lab = UILabel()
@@ -118,12 +122,10 @@ class FeedDetailTableHeaderView: UIView {
         
         return stack
     }()
-    var userIdList: [String] = []
-    var htmlAttributedText: NSMutableAttributedString?
+    
     init() {
         super.init(frame: .zero)
         setupUI()
-       
     }
     
     required init?(coder: NSCoder) {
@@ -207,18 +209,12 @@ class FeedDetailTableHeaderView: UIView {
         self.deleteButton.addAction {
             self.deleteStatusClickCall?()
         }
-        self.imagesSliderView.addAction {
-            self.onTapPictureClickCall?()
-        }
+        
     }
-    
     public func setData(data: TGFeedResponse){
-        
-        originalTexts = data.feedContent ?? ""
-        contentLabel.text = data.feedContent ?? ""
-        
+
         avatarView.setData(data: data)
-        loadTranslateButton(feedId: data.id?.stringValue ?? "")
+        
         let viewCountLabel = "\(data.feedViewCount ?? 0) \("number_of_browsed".localized) "
         var feedDate = ""
       
@@ -228,7 +224,7 @@ class FeedDetailTableHeaderView: UIView {
         }
         viewAndDateLabel.text = viewCountLabel + " • " + feedDate + " • "
         
-       
+        contentLabel.text = data.feedContent ?? ""
         if let images = data.images {
             imagesSliderView.set(imageUrls: images.map{ image in
                 let apiBaseURL = RLSDKManager.shared.loginParma?.apiBaseURL ?? ""
@@ -270,45 +266,6 @@ class FeedDetailTableHeaderView: UIView {
         }
         contentView.setNeedsLayout()
         contentView.layoutIfNeeded()
-    }
-    
-    private func loadTranslateButton(feedId: String) {
-        
-        translateButton.setTitle("button_original".localized, for: .selected)
-        translateButton.setTitle("text_translate".localized, for: .normal)
-        
-        // By Kit Foong (Added checking when no text or only emoji will hide translate button)
-        translateButton.isHidden = self.originalTexts.isEmpty || self.originalTexts.containsOnlyEmoji
-        translateButton.addTap { [weak self] (button) in
-            guard let self = self, let button = button as? LoadableButton else { return }
-            guard button.isSelected == false else {
-                self.htmlAttributedText = self.originalTexts.attributonString().setTextFont(14).setlineSpacing(0)
-                if let attributedText = self.htmlAttributedText {
-                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList)
-                }
-                self.contentLabel.attributedText = self.htmlAttributedText
-                //self.primaryLabel.text = self.originalTexts
-                button.isSelected = false
-                self.onTranslated?()
-                return
-            }
-            
-            button.showLoader(userInteraction: false)
-            
-            TGFeedNetworkManager.shared.translateFeed(feedId: feedId.toInt()) { [weak self] (translates, msg, status) in
-                guard let self = self else { return }
-                defer { button.hideLoader() }
-                if status == true {
-                    button.isSelected = true
-                    self.translatedTexts = translates ?? ""
-                    self.contentLabel.text = translates
-                }else {
-                    print("msg : \(String(describing: msg))")
-                }
-          
-                self.onTranslated?()
-            }
-        }
     }
     
 }

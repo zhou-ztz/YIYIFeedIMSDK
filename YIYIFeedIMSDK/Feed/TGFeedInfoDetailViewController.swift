@@ -8,7 +8,6 @@
 import UIKit
 import CoreMedia
 import IQKeyboardManagerSwift
-import AVFoundation
 
 enum TGSendCommentType {
     /// 删除状态
@@ -43,7 +42,6 @@ public class TGFeedInfoDetailViewController: TGViewController {
     private let navView: TGMomentDetailNavTitle = TGMomentDetailNavTitle()
     
     //    var currentPrimaryButtonState: SocialButtonState = .follow
-    var onToolbarUpdated: onToolbarUpdate?
     var reactionHandler: TGReactionHandler?
     var reactionSelected: ReactionTypes?
     private let primaryButton: UIButton = {
@@ -92,11 +90,10 @@ public class TGFeedInfoDetailViewController: TGViewController {
     //    private var headerView: FeedCommentDetailTableHeaderView = FeedCommentDetailTableHeaderView()
     private var bottomToolBarView: TGFeedCommentDetailBottomView = TGFeedCommentDetailBottomView(frame: .zero, colorStyle: .normal)
     //
-  
     
     var isHomePage: Bool = false
     // feed type
-    var type: TGFeedListType?
+    //    var type: FeedListType?
     
     public override var shouldAutomaticallyForwardAppearanceMethods: Bool {
         return true
@@ -125,8 +122,6 @@ public class TGFeedInfoDetailViewController: TGViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.type = .hot
         
         TGKeyboardToolbar.share.theme = .white
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
@@ -164,14 +159,13 @@ public class TGFeedInfoDetailViewController: TGViewController {
         headerView.setNeedsLayout()
         headerView.layoutIfNeeded()
         tableView.tableHeaderView = headerView
-     
+        
     }
     
     private func setHeader() {
         guard let model = model else { return }
-        
         let likeItem = self.bottomToolBarView.toolbar.getItemAt(0)
-        reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self.view, currentReaction: model.reactionType, feedId: model.id ?? 0, feedItem: FeedListCellModel(from: model), reactions: [.heart,.awesome,.wow,.cry,.angry])
+        reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self.view, currentReaction: model.reactionType, feedId: model.id ?? 0, feedItem: model, reactions: [.heart,.awesome,.wow,.cry,.angry])
         
         likeItem.addGestureRecognizer(reactionHandler!.longPressGesture)
         reactionHandler?.onSelect = { [weak self] reaction in
@@ -292,17 +286,6 @@ public class TGFeedInfoDetailViewController: TGViewController {
             }
             self.model = feedInfo
             self.headerView.setCommentLabel(count: self.model?.feedCommentCount, isCommentDisabled: false)
-            self.headerView.onTapPictureClickCall = { [weak self] in
-                guard let self = self else { return }
-//                guard let userID = TSCurrentUserInfo.share.userInfo?.userIdentity else { return }
-                guard let model = self.model else { return }
-                let cellModel = FeedListCellModel(from: model)
-                let dest = TGFeedDetailImagePageController(config: .list(data: [cellModel], tappedIndex: 0, mediaType: .image, listType: self.type ?? .user(userId: cellModel.userId), transitionId: transitionId, placeholderImage: UIImage(), isClickComment: false, isTranslateText: false), completeHandler: nil, onToolbarUpdated: onToolbarUpdated, translateHandler: nil, tagVoucher: nil)
-                dest.isControllerPush = true
-                dest.afterTime = self.afterTime
-                
-                self.navigationController?.pushViewController(dest, animated: true)
-            }
             self.headerView.setNeedsLayout()
             self.headerView.layoutIfNeeded()
             self.tableView.tableHeaderView = self.headerView
@@ -687,27 +670,20 @@ extension TGFeedInfoDetailViewController: TGToolChooseDelegate {
     func presentPostPhoto() {
 //        guard TSCurrentUserInfo.share.isLogin == true else { return }
         self.showCameraVC(true, onSelectPhoto: { [weak self] (assets, _, _, _, _) in
-            let releasePulseVC = TGReleasePulseViewController(type: .photo)
-            releasePulseVC.selectedPHAssets = assets
-            let navigation = TGNavigationController(rootViewController: releasePulseVC).fullScreenRepresentation
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (self?.launchScreenDismissWithDelay() ?? 0.0)) {
-                self?.present(navigation, animated: true, completion: nil)
-            }
+//            let releasePulseVC = TSReleasePulseViewController(isHiddenshowImageCollectionView: false)
+//            releasePulseVC.selectedPHAssets = assets
+//            let navigation = TSNavigationController(rootViewController: releasePulseVC).fullScreenRepresentation
+//            if let presentedView = self?.currentShowViewcontroller?.presentedViewController {
+//                presentedView.dismiss(animated: false, completion: nil)
+//            }
+//            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (self?.launchScreenDismissWithDelay() ?? 0.0)) {
+//                self?.currentShowViewcontroller?.present(navigation, animated: true, completion: nil)
+//            }
         })
     }
     func presentPostMiniVideo() {
 //        guard TSCurrentUserInfo.share.isLogin == true else { return }
-        self.showMiniVideoRecorder { [weak self] (url) in
-            let asset = AVURLAsset(url: url)
-            let coverImage = FileUtils.generateAVAssetVideoCoverImage(avAsset: asset)
-            let releasePulseVC = TGReleasePulseViewController(type: .miniVideo)
-            releasePulseVC.shortVideoAsset = ShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
-            let navigation = TGNavigationController(rootViewController: releasePulseVC).fullScreenRepresentation
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (self?.launchScreenDismissWithDelay() ?? 0.0)) {
-                self?.present(navigation, animated: true, completion: nil)
-            }
-        }
-        
+        self.showMiniVideoRecorder()
     }
     
 }

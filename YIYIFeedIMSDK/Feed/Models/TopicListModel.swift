@@ -23,13 +23,7 @@ class TopicListModel: Mappable {
 //        topicLogo <- map["logo"]
         topicFollow <- map["has_followed"]
     }
-    
-    init(topicId: Int, topicTitle: String, topicFollow: Bool) {
-        self.topicId = topicId
-        self.topicTitle = topicTitle
-        self.topicFollow = topicFollow
-    }
-    
+
 //    init(object: TopicListObject) {
 //        self.topicId = object.topicId
 //        self.topicTitle = object.topicTitle

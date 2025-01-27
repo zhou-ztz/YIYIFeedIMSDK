@@ -9,7 +9,11 @@ import UIKit
 
 protocol didselectCellDelegate: NSObjectProtocol {
     /// 点击了进入相册按钮 最小为0
-    func didSelectCell(index: Int)    
+    func didSelectCell(index: Int)
+
+    /// 点击了付费信息按钮
+    func didSelectedPayInfoBtn(btn: UIButton)
+    
     /// delete image button did tapped
     func didTapDeleteImageBtn(btn: UIButton)
 }

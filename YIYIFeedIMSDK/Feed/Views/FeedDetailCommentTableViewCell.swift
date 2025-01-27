@@ -7,40 +7,8 @@
 
 import UIKit
 
-protocol TGDetailCommentTableViewCellDelegate: NSObjectProtocol {
+class FeedDetailCommentTableViewCell: UITableViewCell {
 
-    /// 点击重新发送按钮
-    ///
-    /// - Parameter commnetModel: 数据模型
-    func repeatTap(cell: FeedDetailCommentTableViewCell, commnetModel: TGFeedCommentListModel)
-
-    /// 点击了名字
-    ///
-    /// - Parameter userId: 用户Id
-    func didSelectName(userId: Int)
-
-    /// 点击了头像
-    ///
-    /// - Parameter userId: 用户Id
-    func didSelectHeader(userId: Int)
-
-    /// 长按了评论
-    func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: TGFeedCommentListModel) -> Void
-    
-    func didTapToReplyUser(in cell:FeedDetailCommentTableViewCell, model: TGFeedCommentListModel)
-
-    func needShowError()
-}
-
-class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
-
-    
-    static let identifier = "FeedDetailCommentTableViewCell"
-    
-    weak var cellDelegate: TGDetailCommentTableViewCellDelegate?
-
-    var commnetModel: TGFeedCommentListModel?
-    
     var likeButtonClickCall: (() -> ())?
     
     lazy var avatarView: TGAvatarView = {
@@ -62,10 +30,8 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         let lab = UILabel()
         lab.textColor = MainColor.normal.minor
         lab.font = UIFont.systemFont(ofSize: 14)
+        lab.numberOfLines = 0
         lab.text = "-"
-       // lab.showType = .detail
-//        lab.labelDelegate = self
-//        lab.linesSpacing = 4.0
         return lab
     }()
     
@@ -120,14 +86,15 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
 
         contentView.addSubview(avatarView)
         avatarView.snp.makeConstraints { make in
-            make.left.top.equalToSuperview().offset(10)
-            make.width.height.equalTo(36)
+            make.left.top.equalToSuperview().inset(10)
+            make.width.height.equalTo(40)
         }
         
         contentView.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.left.equalTo(avatarView.snp.right).offset(10)
             make.top.equalTo(avatarView.snp.top).offset(2)
+            
         }
         
         contentView.addSubview(pinnedContainer)
@@ -150,15 +117,15 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         contentView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints { make in
             make.left.equalTo(nameLabel.snp.left)
-            make.right.equalToSuperview().offset(-10)
+            make.right.equalToSuperview().inset(50)
             make.top.equalTo(nameLabel.snp.bottom).offset(6)
-            make.height.equalTo(50).priority(.high) // 设置优先级
-            make.bottom.lessThanOrEqualToSuperview().offset(-10) // 防止冲突
         }
+        
+      
         
         contentView.addSubview(dateLabel)
         dateLabel.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-16)
+            make.right.equalToSuperview().inset(16)
             make.centerY.equalTo(nameLabel)
         }
         
@@ -167,26 +134,13 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         separatorLine.backgroundColor = UIColor(hex: 0xf9f9f9)
          contentView.addSubview(separatorLine)
          separatorLine.snp.makeConstraints { make in
+             make.top.equalTo(contentLabel.snp.bottom).offset(10)
              make.left.right.bottom.equalToSuperview()
-             make.height.equalTo(1)
+             make.height.equalTo(1) // 设置分割线高度
          }
-        
-        // 姓名点击响应
-        let nameControl = UIControl()
-        self.contentView.addSubview(nameControl)
-        nameControl.addTarget(self, action: #selector(didTapName), for: .touchUpInside)
-        nameControl.snp.makeConstraints { (make) in
-            make.edges.equalTo(nameLabel)
-        }
-        // 评论整体添加长按举报手势
-        let longGR = UILongPressGestureRecognizer(target: self, action: #selector(commentLongProcess(_:)))
-        contentView.addGestureRecognizer(longGR)
-        
     }
     
     public func setData(data: TGFeedCommentListModel){
-        commnetModel = data
-        
         let avatarInfo = AvatarInfo()
         avatarInfo.type = AvatarInfo.UserAvatarType.normal(userId: data.userId)
         avatarInfo.avatarURL = data.user?.avatar?.url
@@ -199,11 +153,6 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         if let timeModel = data.createdAt?.toBdayDate(by: "yyyy-MM-dd HH:mm:ss") {
             dateLabel.text =  TGDate().dateString(.normal, nDate: timeModel)
         }
-//        contentLabel.tgCommentModel = commnetModel
-//        let height = CGFloat(contentLabel.getSizeWithWidth(width - 10 - 40 - 10 - 15).height)
-//        contentLabel.snp.updateConstraints { make in
-//            make.height.equalTo(height).priority(.high) // 设置优先级
-//        }
         
     }
     public func setAsPinned(pinned: Bool?, isDarkMode: Bool) {
@@ -214,34 +163,6 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
             pinnedContainer.isHidden = !pinned
         }
     }
-    
-    /// 点击名字
-    @objc fileprivate func didTapName() {
-        if let userInfo = self.commnetModel?.user {
-            self.cellDelegate?.didSelectHeader(userId: userInfo.id ?? 0)
-        } else {
-            self.cellDelegate?.needShowError()
-        }
-    }
-    
-    @objc fileprivate func commentLongProcess(_ longPressGR: UILongPressGestureRecognizer) {
-        guard let commnetModel = self.commnetModel else {
-            return
-        }
-        
-        if longPressGR.state == UIGestureRecognizer.State.began {
-            self.cellDelegate?.didLongPressComment(in: self, model: commnetModel)
-        }
-    }
-    func didSelect(didSelectId: Int) {
-        guard let userId = self.commnetModel?.replyUser else { return }
-        self.cellDelegate?.didSelectName(userId: userId)
-    }
-    
-    func didTapToReply() {
-        self.cellDelegate?.didTapToReplyUser(in: self, model: self.commnetModel!)
-    }
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

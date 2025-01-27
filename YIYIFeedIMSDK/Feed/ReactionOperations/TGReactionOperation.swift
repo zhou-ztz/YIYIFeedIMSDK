@@ -9,14 +9,14 @@ import Foundation
 final class TGReactionUpdateOperation: TGAsyncOperation, @unchecked Sendable  {
     
     let feedId: Int
-    let feedItem: FeedListCellModel?
+    let feedItem: TGFeedResponse?
     let currReaction: ReactionTypes?
     let reaction: ReactionTypes?
 
     var onError: ((_ fallbackReaction: ReactionTypes?, _ message: String) -> Void)?
     var onSuccess: ((_ message: String) -> Void)?
     
-    init(feedId: Int, feedItem: FeedListCellModel?, currentReaction: ReactionTypes?, nextReaction: ReactionTypes?)  {
+    init(feedId: Int, feedItem: TGFeedResponse?, currentReaction: ReactionTypes?, nextReaction: ReactionTypes?)  {
         self.feedId = feedId
         self.feedItem = feedItem
         self.currReaction = currentReaction

@@ -104,7 +104,7 @@ import UIKit
     private var isButtonsAnimating = false
     var isCamera: Bool = false
     
-    var stickersViewController = StickersViewController()
+    var stickersViewController: StickersViewController!
 
     var sliderView = SliderView(frame: CGRect(x: 10, y: 0, width: 31, height: 250))
     var slider = UISlider()
@@ -175,6 +175,7 @@ import UIKit
         setupSlider()
         isFirstTimeLaunch = true
         configureCollectionView()
+        stickersViewController = StickersViewController(nibName: "StickersViewController", bundle: Bundle(for: StickersViewController.self))
         hideControls()
     }
 
@@ -287,8 +288,10 @@ import UIKit
         }
         colorsCollectionView.delegate = colorsCollectionViewDelegate
         colorsCollectionView.dataSource = colorsCollectionViewDelegate
-        colorsCollectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: "ColorCollectionViewCell")
-        
+
+        colorsCollectionView.register(
+            UINib(nibName: "ColorCollectionViewCell", bundle: Bundle(for: ColorCollectionViewCell.self)),
+            forCellWithReuseIdentifier: "ColorCollectionViewCell")
     }
 
     func setupSlider() {

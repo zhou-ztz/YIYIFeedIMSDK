@@ -103,13 +103,13 @@ class TGIMNetworkManager: NSObject {
         
     }
     /// delete pinned message
-    //    let deletePinnedMessage = Request<PinnedMessageModel>(method: .delete, path: "user/pinned_message/{id}", replacers: ["{id}"])
-    //
-    //    /// store pinned message
-    //    let storePinnedMessage = Request<PinnedMessageModel>(method: .post, path: "user/pinned_message", replacers: [])
-    //
-    //    /// update pinned message
-    //    let updatePinnedMessage = Request<PinnedMessageModel>(method: .put, path: "user/pinned_message", replacers: [])
+//    let deletePinnedMessage = Request<PinnedMessageModel>(method: .delete, path: "user/pinned_message/{id}", replacers: ["{id}"])
+//    
+//    /// store pinned message
+//    let storePinnedMessage = Request<PinnedMessageModel>(method: .post, path: "user/pinned_message", replacers: [])
+//    
+//    /// update pinned message
+//    let updatePinnedMessage = Request<PinnedMessageModel>(method: .put, path: "user/pinned_message", replacers: [])
     /// 群组pinned list
     class func showGroupPinnedMessage(group_id: String, completion: @escaping ((_ resultModel: [PinnedMessageModel]?, _ error: Error?) -> Void)){
         let path = "api/v2/user/pinned_message/group/\(group_id)"
@@ -136,7 +136,7 @@ class TGIMNetworkManager: NSObject {
             }
             
         }
-        
+ 
     }
     
     // store pinned message list
@@ -164,7 +164,7 @@ class TGIMNetworkManager: NSObject {
                     completion(nil, nserror)
                 }
             }
-            
+
             
         }
     }
@@ -192,256 +192,9 @@ class TGIMNetworkManager: NSObject {
                     completion(nil, nserror)
                 }
             }
+
             
-            
-        }
-    }
-    
-    ///  获取 个人请求添加好友消息列表
-    class func getRequestMessage(limit: Int = 20, after: Int = 0, completion: @escaping (_ requestList: [TGMessageRequestModel]?, _ error: Error?) ->Void ) {
-        let path = "api/v2/user/message/pendingRequest?limit=\(limit)&after=\(after)"
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .GET,
-            params: nil,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(nil, error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                let pinned = Mapper<TGMessageRequestModel>().mapArray(JSONString: jsonString)
-                DispatchQueue.main.async {
-                    completion(pinned, nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion(nil, nserror)
-                }
-            }
-            
-            
-        }
-    }
-    
-    ///  关注好友
-    class func followFriend(userId: Int, completion: @escaping (_ error: Error?) ->Void ) {
-        let path = "api/v2/user/message/addFriend"
-        let parameters: [String: Any] = ["user_id": userId]
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .POST,
-            params: parameters,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                DispatchQueue.main.async {
-                    completion(nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion( nserror)
-                }
-            }
         }
     }
 
-    ///  关注好友
-    class func deleteMessageRequest(requestId: Int, completion: @escaping (_ error: Error?) ->Void ) {
-        let path = "api/v2/user/message/pendingRequest"
-        let parameters: [String: Any] = ["delete_type": "single", "request_id": requestId]
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .DELETE,
-            params: parameters,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                DispatchQueue.main.async {
-                    completion(nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion( nserror)
-                }
-            }
-        }
-    }
-    
-    /// 获取会议列表
-    class func getMeetingList(perPage: String = "15", page: String, completion: @escaping (_ requestList: QuertMeetingListModel?, _ error: Error?) ->Void ) {
-        let path = "api/v2/meeting/list?perPage=\(perPage)&page=\(page)"
-        
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .GET,
-            params: nil,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(nil, error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                let model = Mapper<QuertMeetingListModel>().map(JSONString: jsonString)
-                DispatchQueue.main.async {
-                    completion(model, nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion(nil, nserror)
-                }
-            }
-        }
-    }
-    
-    ///获取用户会议付费信息
-    class func quertUserMeetingPayInfo(completion: @escaping (_ requestList: MeetingPayInfo?, _ error: Error?) ->Void) {
-        let path = "api/v2/meeting/paid/info"
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .GET,
-            params: nil,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(nil, error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                let model = Mapper<MeetingPayInfo>().map(JSONString: jsonString)
-                DispatchQueue.main.async {
-                    completion(model, nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion(nil, nserror)
-                }
-            }
-        }
-    }
-    
-    ///创建会议  CreateMeetingResponse
-    class func createMeeting(param: [String: Any], completion: @escaping (_ requestdata: CreateMeetingResponse?, _ error: Error?) ->Void) {
-        let path = "api/v2/meeting/create"
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .POST,
-            params: param,
-            headers: nil
-        ) { data, _, error1 in
-            guard let data = data, error1 == nil else {
-                completion(nil, error1)
-                return
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                let response = try decoder.decode(CreateMeetingResponse.self, from: data)
-                DispatchQueue.main.async {
-                    completion(response, nil)
-                }
-            } catch {
-                // 解析失败，返回错误
-                DispatchQueue.main.async {
-                    completion(nil, error)
-                }
-            }
-        }
-    }
-    /// 加入会议
-    class func joinMeeting(meetingNum: String, completion: @escaping (_ requestdata: JoinMeetingResponse?, _ error: Error?) ->Void) {
-        let path = "api/v2/meeting/member/join"
-        let param: [String: Any] = ["meetingNum" : meetingNum]
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .POST,
-            params: param,
-            headers: nil
-        ) { data, _, error1 in
-            guard let data = data, error1 == nil else {
-                completion(nil, error1)
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                let response = try decoder.decode(JoinMeetingResponse.self, from: data)
-                DispatchQueue.main.async {
-                    completion(response, nil)
-                }
-            } catch {
-                // 解析失败，返回错误
-                DispatchQueue.main.async {
-                    completion(nil, error)
-                }
-            }
-        }
-    }
-    /// 获取会议账号 "netease/meeting"
-    class func quertMeetingKitAccount(completion: @escaping (_ requestdata: MeetingKitAccountModel?, _ error: Error?) ->Void) {
-        let path = "api/v2/netease/meeting"
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .POST,
-            params: nil,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(nil, error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                let model = Mapper<MeetingKitAccountModel>().map(JSONString: jsonString)
-                DispatchQueue.main.async {
-                    completion(model, nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion(nil, nserror)
-                }
-            }
-        }
-    }
-    
-    ///会议支付 
-    class func meetingPayment(pin: String, completion: @escaping (_ requestdata: MeetingPayment?, _ error: Error?) ->Void) {
-        let path = "api/v2/meeting/payment?pin=\(pin)"
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .POST,
-            params: nil,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(nil, error)
-                return
-            }
-            if let jsonString = String(data: data, encoding: .utf8) {
-                let model = Mapper<MeetingPayment>().map(JSONString: jsonString)
-                DispatchQueue.main.async {
-                    completion(model, nil)
-                }
-            } else {
-                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
-                DispatchQueue.main.async {
-                    completion(nil, nserror)
-                }
-            }
-        }
-    }
 }

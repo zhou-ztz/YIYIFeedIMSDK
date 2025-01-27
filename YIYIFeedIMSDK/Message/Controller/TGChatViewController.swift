@@ -25,7 +25,7 @@ public class TGChatViewController: TGViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .clear
         tableView.allowsSelection = false
         tableView.mj_header = SCRefreshHeader(
             refreshingTarget: self,
@@ -177,8 +177,6 @@ public class TGChatViewController: TGViewController {
         if self.viewmodel.conversationType == .CONVERSATION_TYPE_TEAM {
             self.loadMessagePins()
         }
-        ///聊天背景
-        setChatWallpaper()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -314,7 +312,6 @@ public class TGChatViewController: TGViewController {
                 }
             }
         }
-        
     }
     
     func setupNav() {
@@ -374,33 +371,7 @@ public class TGChatViewController: TGViewController {
     }
     
     @objc func enterPersonInfoCard(){
-        if self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
-            let vc = TGChatDetailViewController(sessionId: self.viewmodel.sessionId, conversationId: self.viewmodel.conversationId)
-            self.navigationController?.pushViewController(vc, animated: true)
-            vc.clearMessageCall = {[weak self] in
-                self?.viewmodel.messages.removeAll()
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            }
-        } else {
-            MessageUtils.getTeamInfo(teamId: self.viewmodel.sessionId, teamType: .TEAM_TYPE_NORMAL) {  [weak self] team in
-                guard let self = self else { return }
-                if let team = team {
-                    DispatchQueue.main.async {
-                        let vc = TGTeamChatDetailViewController(sessionId: self.viewmodel.sessionId, conversationId: self.viewmodel.conversationId, team: team)
-                        self.navigationController?.pushViewController(vc, animated: true)
-                        vc.clearGroupMessageCall = { [weak self] in
-                            self?.viewmodel.messages.removeAll()
-                            DispatchQueue.main.async {
-                                self?.tableView.reloadData()
-                            }
-                        }
-                    }
-                }
-            }
-            
-        }
+        
     }
     
     @objc func callActionSheet(){
@@ -450,23 +421,8 @@ public class TGChatViewController: TGViewController {
     }
     
     deinit {
+        
         NotificationCenter.default.removeObserver(self)
-    }
-    
-    func setChatWallpaper() {
-        let image = viewmodel.sessionBackgroundImage()
-        tableView.backgroundColor = .white
-        if image != nil {
-            let cellBackgroundView = UIImageView(image: image)
-            cellBackgroundView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            cellBackgroundView.clipsToBounds = true
-            cellBackgroundView.contentMode = .scaleAspectFill
-            cellBackgroundView.frame = tableView.bounds
-            
-            tableView.backgroundView = cellBackgroundView
-        } else {
-            tableView.backgroundView = nil
-        }
     }
     
     // MARK: inputview action
@@ -1297,37 +1253,67 @@ extension TGChatViewController: BaseMessageCellDelegate {
         guard let model = model, let message = model.nimMessageModel  else { return }
         switch model.messageType {
         case .MESSAGE_TYPE_IMAGE:
-            viewmodel.searchImageVideoMessage {[weak self] messages, error in
-                guard let self = self, let messages = messages, messages.count > 0  else { return }
-                var mediaArray: [MediaPreviewObject] = []
-                var focusObject: MediaPreviewObject = MediaPreviewObject()
-                for previewMessage in messages {
-                    switch previewMessage.messageType {
-                    case .MESSAGE_TYPE_IMAGE:
-                        if let previewMedia = MessageUtils.previewImageVideoMedia(by: previewMessage){
-                            if previewMessage.messageClientId == message.messageClientId {
-                                focusObject = previewMedia
-                            }
-                            mediaArray.append(previewMedia)
+            let imageMessages = viewmodel.getImageMessages()
+            guard imageMessages.count > 0 else { return }
+            var mediaArray: [MediaPreviewObject] = []
+            var focusObject: MediaPreviewObject = MediaPreviewObject()
+            for previewMessage in imageMessages {
+                switch previewMessage.messageType {
+                case .MESSAGE_TYPE_IMAGE:
+                    if let previewMedia = MessageUtils.previewImageVideoMedia(by: previewMessage){
+                        if previewMessage.messageClientId == message.messageClientId {
+                            focusObject = previewMedia
                         }
-                        break
-                    case .MESSAGE_TYPE_VIDEO:
-                        if let previewMedia = MessageUtils.previewImageVideoMedia(by: previewMessage){
-                            if previewMessage.messageClientId == message.messageClientId {
-                                focusObject = previewMedia
-                            }
-                            mediaArray.append(previewMedia)
-                        }
-                    default:
-                        break
+                        mediaArray.append(previewMedia)
                     }
-                }
-             
-                DispatchQueue.main.async {
-                    let vc = TGMediaGalleryPageViewController(objects: mediaArray, focusObject: focusObject, conversationId: self.viewmodel.conversationId, showMore: true)
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    break
+                case .MESSAGE_TYPE_VIDEO:
+                    if let previewMedia = MessageUtils.previewImageVideoMedia(by: previewMessage){
+                        if previewMessage.messageClientId == message.messageClientId {
+                            focusObject = previewMedia
+                        }
+                        mediaArray.append(previewMedia)
+                    }
+                default:
+                    break
                 }
             }
+            DispatchQueue.main.async {
+                let vc = TGMediaGalleryPageViewController(objects: mediaArray, focusObject: focusObject, sessionId: self.viewmodel.sessionId, showMore: true)
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+            
+//            viewmodel.searchImageVideoMessage {[weak self] messages, error in
+//                guard let self = self, let messages = messages, messages.count > 0  else { return }
+//                var mediaArray: [MediaPreviewObject] = []
+//                var focusObject: MediaPreviewObject = MediaPreviewObject()
+//                for previewMessage in messages {
+//                    switch previewMessage.messageType {
+//                    case .MESSAGE_TYPE_IMAGE:
+//                        if let previewMedia = MessageUtils.previewImageVideoMedia(by: previewMessage){
+//                            if previewMessage.messageClientId == message.messageClientId {
+//                                focusObject = previewMedia
+//                            }
+//                            mediaArray.append(previewMedia)
+//                        }
+//                        break
+//                    case .MESSAGE_TYPE_VIDEO:
+//                        if let previewMedia = MessageUtils.previewImageVideoMedia(by: previewMessage){
+//                            if previewMessage.messageClientId == message.messageClientId {
+//                                focusObject = previewMedia
+//                            }
+//                            mediaArray.append(previewMedia)
+//                        }
+//                    default:
+//                        break
+//                    }
+//                }
+//             
+//                DispatchQueue.main.async {
+//                    let vc = TGMediaGalleryPageViewController(objects: mediaArray, focusObject: focusObject, sessionId: self.viewmodel.sessionId, showMore: true)
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//            }
             break
         case .MESSAGE_TYPE_VIDEO:
             guard let object = message.attachment as? V2NIMMessageVideoAttachment else { return }

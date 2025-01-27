@@ -17,9 +17,9 @@ struct TGFeedResponse: Codable {
     let hot: Int?
     let customAttachment: String?
     let hasTagged: Bool?
-    let location: TGPostLocationModel?
+    let location: String?
     let feedForwardCount: Int?
-    let tagMerchantUsers: [TGFeedTagUserMerchant]?
+    let tagMerchantUsers: [String]?
     let privacy: String?
     let likeCount: Int?
     let hasLike: Bool?
@@ -42,7 +42,8 @@ struct TGFeedResponse: Codable {
     let userID: Int?
     let updatedAt: String?
     let isSponsored: Int?
-    let tagUsers: [TGFeedTagUserMerchant]?
+    let rewardsLinkMerchantYippiUsersID: [String]?
+    let tagUsers: [String]?
     let disableComment: Int?
     let afterTime: String?
     let isPinned: Bool?
@@ -50,7 +51,7 @@ struct TGFeedResponse: Codable {
     let feedMark: Int?
     let campaignHashtags: [String]?
     let feedRewardCount: Int?
-    let rewardsLinkMerchantYippiUsers: [TGFeedTagUserMerchant]?
+    let rewardsLinkMerchantYippiUsers: [String]?
     let hasCollect: Bool?
     /// 活动动态是否可以编辑
     let campaignIsEdite: Bool?
@@ -89,6 +90,7 @@ struct TGFeedResponse: Codable {
         case userID = "user_id"
         case updatedAt = "updated_at"
         case isSponsored = "is_sponsored"
+        case rewardsLinkMerchantYippiUsersID = "rewards_link_merchant_yippi_users_id"
         case tagUsers = "tag_users"
         case disableComment = "disable_comment"
         case afterTime = "after_time"
@@ -188,12 +190,4 @@ extension TGFeedResponse {
     var reactionType: ReactionTypes? {
         return ReactionTypes.initialize(with: reactType.orEmpty)
     }
-}
-
-
-struct TGFeedTagUserMerchant: Codable {
-    let id: Int?
-    let username: String?
-    let name: String?
-    
 }

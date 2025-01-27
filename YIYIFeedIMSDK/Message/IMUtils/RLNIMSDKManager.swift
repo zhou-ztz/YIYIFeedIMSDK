@@ -7,9 +7,9 @@
 
 import UIKit
 import NIMSDK
-//import NEMeetingKit
+import NEMeetingKit
 //cd2ce206e475a58c6d4c13e6931ad8df
-let NIMAppKey: String = "43cf17ab859f4c669349fd68e363d6db"
+let NIMAppKey: String = "cd2ce206e475a58c6d4c13e6931ad8df"
 //"43cf17ab859f4c669349fd68e363d6db"
 
 class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
@@ -50,15 +50,14 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         
         ///用户信息
         NIMSDK.shared().v2UserService.add(self)
-        
         /// 会议组件 初始化
-      //  initMeetingkit()
+        initMeetingkit()
     
     }
-//    
-//    func initMeetingkit() {
-//        let config = NEMeetingKitConfig()
-//        config.appKey = NIMAppKey
+    
+    func initMeetingkit() {
+        let config = NEMeetingKitConfig()
+        config.appKey = NIMAppKey
         //config.appName = "RewardsLink"
 //        let language =  LocalizationManager.getCurrentLanguage()
 //        if language == LanguageIdentifier.chineseSimplified.rawValue || language == LanguageIdentifier.chineseTraditional.rawValue {
@@ -68,12 +67,12 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
 //        } else {
 //            config.language = .ENGLISH
 //        }
-//        config.broadcastAppGroup = "group.com.togl.getyippi.share"
-//        NEMeetingKit.getInstance().initialize(config) { code, message, result in
-//            print("NEMeetingKit code = \(code)")
-//            print("NEMeetingKit message = \(message)")
-//        }
-//    }
+        config.broadcastAppGroup = "group.com.togl.getyippi.share"
+        NEMeetingKit.getInstance().initialize(config) { code, message, result in
+            print("NEMeetingKit code = \(code)")
+            print("NEMeetingKit message = \(message)")
+        }
+    }
     
     public func logout() {
         NIMSDK.shared().v2LoginService.logout {
@@ -88,24 +87,12 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
 
         NIMSDK.shared().v2LoginService.login(accid, token: imToken, option: nil) {
             print("im login success")
-            self.quertMeetingKitAccountInfo()
             success()
         } failure: { error in
             print("im login fail = \(error.detail), code = \(error.code)")
             failure()
         }
 
-    }
-    
-    
-    func quertMeetingKitAccountInfo() {
-        TGIMNetworkManager.quertMeetingKitAccount { requestdata, error in
-            if let model = requestdata {
-                UserDefaults.standard.setValue(model.userUuid, forKey: "MeetingKit-userUuid")
-                UserDefaults.standard.setValue(model.userToken, forKey: "MeetingKit-userToken")
-                UserDefaults.standard.synchronize()
-            }
-        }
     }
     
     /// V2NIMLoginListener

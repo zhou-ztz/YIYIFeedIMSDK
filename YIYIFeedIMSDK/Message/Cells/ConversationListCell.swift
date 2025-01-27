@@ -25,7 +25,7 @@ class ConversationListCell: UITableViewCell {
     }()
     lazy var contentL: UILabel = {
         let lab = UILabel()
-        lab.textColor = RLColor.normal.minor
+        lab.textColor = RLColor.share.lightGray
         lab.font = UIFont.systemFont(ofSize: 14)
         lab.numberOfLines = 1
         lab.text = "你好哈哈哈"
@@ -204,6 +204,7 @@ class ConversationListCell: UITableViewCell {
         pinIcon.isHidden = !conversation.stickTop
         
         var text = ""
+        
         guard let messageType = conversation.lastMessage?.messageType else { return }
         switch messageType {
         case .MESSAGE_TYPE_TEXT:
@@ -219,16 +220,15 @@ class ConversationListCell: UITableViewCell {
         case .MESSAGE_TYPE_AUDIO:
             text = "recent_msg_desc_audio".localized
         case .MESSAGE_TYPE_NOTIFICATION:
-            ///群通知处理
-            if let _ = conversation.lastMessage?.attachment as? V2NIMMessageNotificationAttachment  {
-                text = "recent_msg_desc_group_msg".localized
-            } else {
-                text = conversation.lastMessage?.text ?? ""
-            }
+            text = "recent_msg_unknown".localized
         case .MESSAGE_TYPE_ROBOT:
             text = "recent_msg_desc_robot_msg".localized
         case .MESSAGE_TYPE_TIP:
-            text = conversation.lastMessage?.text ?? ""
+            var nick = "opponent".localized
+            if conversation.lastMessage?.senderName == RLCurrentUserInfo.shared.accid {
+                nick = "you".localized
+            }
+            text = String(format: "revoke_msg".localized, nick)
         case .MESSAGE_TYPE_CUSTOM:
             if let attach = conversation.lastMessage?.attachment {
                let (attachmentType, attachment) = CustomAttachmentDecoder.decodeAttachment(attach.raw)

@@ -17,7 +17,7 @@ public class TGMessageViewController: TGViewController {
     var isWebLoggedIn: Bool = false
     
     let chatListNewVC = RLConversationListViewController()
-   
+    let requestListVC = TGMessageRequestListController()
     var currentIndex = 0
     
     lazy var contentStackView: UIStackView = {
@@ -42,7 +42,6 @@ public class TGMessageViewController: TGViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateConversationUnreadCount()
-        getRequestListCount()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -79,8 +78,7 @@ public class TGMessageViewController: TGViewController {
             self?.currentIndex = index
             RLSDKManager.shared.predownloadSticker()
             if index == 1 {
-                let requestListVC = TGMessageRequestListController()
-                self?.navigationController?.pushViewController(requestListVC, animated: true)
+                self?.navigationController?.pushViewController(self!.requestListVC, animated: true)
             }
         }
     }
@@ -129,11 +127,6 @@ public class TGMessageViewController: TGViewController {
         let unreadCount = TGIMUnreadCountManager.shared.getConversationAllUnreadCount()
         sliderView.updateUnreadCount(count: unreadCount, index: 0)
     }
-    func getRequestListCount() {
-        TGIMUnreadCountManager.shared.getRequestlistCountAllUnreadCount {[weak self] count in
-            self?.sliderView.updateUnreadCount(count: count, index: 1)
-        }
-    }
     
     ///判断网页端是否在线
     func checkWebIsOnline(){
@@ -178,8 +171,6 @@ extension TGMessageViewController: TGToolChooseDelegate {
             let vc = AddChatViewController(isShowCol: false, cancelType: .allwayShow)
             self.navigationController?.pushViewController(vc, animated: true)
         case .meeting:
-//            let vc = TGMeetingListViewController()
-//            self.navigationController?.pushViewController(vc, animated: true)
             break
         case .collection:
             let vc = MsgCollectionViewController()

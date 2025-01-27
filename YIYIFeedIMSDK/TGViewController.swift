@@ -73,74 +73,8 @@ public class TGViewController: UIViewController {
         print("\(self) will deinit")
     }
     
-    
-    func launchScreenDismissWithDelay() -> Double {
-//        return (launchScreenVC != nil ? 1.2 : 0.3)
-        return 0.3
-    }
 
-    func setCloseButton(backImage: Bool = false, titleStr: String? = nil, customView: UIView? = nil, completion: (() -> Void)? = nil, needPop: Bool = true, color: UIColor = .black, backWhiteCircle: Bool = false) {
-        let image: UIImage
-        if backImage == false {
-            image = UIImage(named: "IMG_topbar_close")!
-        } else {
-            image = UIImage(named: "iconsArrowCaretleftBlack")!
-        }
-        
-        var barButton = UIBarButtonItem()
-        let backButtonView = UIView()
-        backButtonView.snp.makeConstraints {
-            $0.width.height.equalTo(30)
-        }
-        
-        let imageView = UIImageView(image: image)
-        
-        backButtonView.addSubview(imageView)
-        imageView.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
-        }
-        
-        if backWhiteCircle {
-            backButtonView.backgroundColor = .white
 
-            backButtonView.layer.masksToBounds = true
-            backButtonView.clipsToBounds = true
-            backButtonView.layer.cornerRadius = 15
-        } else {
-            backButtonView.backgroundColor = .clear
-        }
-
-        barButton = UIBarButtonItem(customView: backButtonView)
-        backButtonView.addTap(action: { [weak self] (_) in
-            if needPop {
-                let _ = self?.navigationController?.popViewController(animated: true, completion: {
-                    completion?()
-                })
-            } else {
-                completion?()
-            }
-        })
-        
-        barButton.tintColor = color
-        
-        if let titleStr = titleStr {
-            let btn = UIButton(type: .custom)
-            btn.setTitle(titleStr, for: .normal)
-            btn.setTitleColor(RLColor.share.black, for: .normal)
-            btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
-            btn.titleLabel?.lineBreakMode = .byTruncatingTail
-            let titleButton = UIBarButtonItem(customView: btn)
-            self.navigationItem.leftBarButtonItems = [barButton, titleButton]
-            return
-        }
-        if let customView = customView {
-            let titleButton = UIBarButtonItem(customView: customView)
-            self.navigationItem.leftBarButtonItems = [barButton, titleButton]
-            return
-        }
-        self.navigationItem.leftBarButtonItem = barButton
-    }
-    
 }
 
 extension UIViewController {

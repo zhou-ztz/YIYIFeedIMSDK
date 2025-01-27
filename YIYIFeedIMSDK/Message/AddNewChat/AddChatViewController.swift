@@ -104,8 +104,8 @@ class AddChatViewController: NewContactsListViewController {
         leftStackView.addArrangedSubview(backimage)
         leftStackView.addArrangedSubview(lab)
         self.customNavigationBar.setLeftViews(views: [leftStackView])
-        leftStackView.addAction { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+        leftStackView.addAction {
+            self.navigationController?.popViewController(animated: true)
         }
 
         searchBtn.addTarget(self, action: #selector(searchAction), for: .touchUpInside)
@@ -121,9 +121,9 @@ class AddChatViewController: NewContactsListViewController {
         groupImg.image = UIImage(named: "iconsNewGroup")?.withRenderingMode(.alwaysTemplate)
         groupImg.tintColor = .black
         groupStackView.addArrangedSubview(groupL)
-        groupL.addAction {[weak self] in
+        groupL.addAction {
            let vc = AddGroupChatViewController()
-           self?.navigationController?.pushViewController(vc, animated: true)
+           self.navigationController?.pushViewController(vc, animated: true)
         }
         
         stackView.insertArrangedSubview(contactsStackView, at: 3)

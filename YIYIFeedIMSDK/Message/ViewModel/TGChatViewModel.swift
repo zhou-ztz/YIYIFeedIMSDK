@@ -552,17 +552,20 @@ class TGChatViewModel: NSObject {
     /// 查询当前会话的ImageVideo message
     func searchImageVideoMessage(_ completion: @escaping ([V2NIMMessage]?, Error?)->Void) {
        
-        let opt = V2NIMMessageListOption()
-        opt.limit = 100
-        opt.messageTypes = [V2NIMMessageType.MESSAGE_TYPE_IMAGE.rawValue,  V2NIMMessageType.MESSAGE_TYPE_VIDEO.rawValue]
-        opt.anchorMessage = nil
-        opt.conversationId = conversationId
-        opt.direction = .QUERY_DIRECTION_ASC
-        
-        NIMSDK.shared().v2MessageService.getMessageList(opt) { messages in
+        let param = V2NIMMessageSearchParams()
+        param.keyword = "-"
+        param.messageLimit = 100
+
+        param.messageTypes = [V2NIMMessageType.MESSAGE_TYPE_IMAGE.rawValue,  V2NIMMessageType.MESSAGE_TYPE_VIDEO.rawValue]
+        if conversationType == .CONVERSATION_TYPE_P2P {
+            param.p2pAccountIds = [sessionId]
+        } else {
+            param.teamIds = [sessionId]
+        }
+        NIMSDK.shared().v2MessageService.searchCloudMessages(param) { messages in
             completion(messages, nil)
         } failure: { error in
-            completion(nil, error.nserror )
+            completion(nil, error.nserror)
         }
         
 
@@ -717,14 +720,6 @@ class TGChatViewModel: NSObject {
         return flag
     }
     
-    func sessionBackgroundImage() -> UIImage? {
-        let defaults = UserDefaults.standard
-        let imagedata = defaults.object(forKey: Constants.GlobalChatWallpaperImageKey) as? Data
-        if let imagedata = imagedata {
-            return UIImage(data: imagedata)
-        }
-        return nil
-    }
 }
 
 extension TGChatViewModel: V2NIMMessageListener {

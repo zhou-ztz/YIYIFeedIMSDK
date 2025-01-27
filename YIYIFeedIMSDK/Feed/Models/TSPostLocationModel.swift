@@ -36,20 +36,3 @@ class TSPostLocationModel: Mappable {
         return TSPostLocationModel(JSONString: json)
     }
 }
-
-class TGPostLocationModel: Codable {
-    
-    var locationID: String?
-    var locationName: String?
-    var locationLatitude: Float?
-    var locationLongtitude: Float?
-    var address: String?
-
-    enum CodingKeys: String, CodingKey {
-        case locationID = "lid"
-        case locationName = "name"
-        case locationLatitude = "lat"
-        case locationLongtitude = "lng"
-        case address = "address"
-    }
-}

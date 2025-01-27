@@ -43,20 +43,7 @@ class TGNetworkManager {
                  completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         
         // 构建完整 URL
-        var fullUrl = (url ?? baseUrl) + urlPath
-        
-        if method == .GET, let params = params {
-            var queryItems = [URLQueryItem]()
-            for (key, value) in params {
-                queryItems.append(URLQueryItem(name: key, value: "\(value)"))
-            }
-            var components = URLComponents(string: fullUrl)
-            components?.queryItems = queryItems
-            if let urlWithParams = components?.url {
-                fullUrl = urlWithParams.absoluteString
-            }
-        }
-        
+        let fullUrl = (url ?? baseUrl) + urlPath
         guard let requestURL = URL(string: fullUrl) else {
             let error = NSError(domain: "TGNetworkManager", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
             completion(nil, nil, error)
@@ -107,63 +94,34 @@ class TGNetworkManager {
                 let statusCode = httpResponse.statusCode
                 print("Status Code: \(statusCode)")
                 
-                if (200...499).contains(statusCode) {
+                if (200...299).contains(statusCode) {
                     print("Request was successful")
-                    
-                    do {
-                        if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                            print("response json = \(json)")
-                            DispatchQueue.main.async {
-                                completion(data, response, nil)
-                            }
-                            
-                        } else if let jsonArr = try JSONSerialization.jsonObject(with: data, options: []) as? [Any] {
-                            print("response jsonArr = \(jsonArr)")
-                            DispatchQueue.main.async {
-                                completion(data, response, nil)
-                            }
-                            
-                        } else {
-                            throw NSError(domain: "TGNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON format"])
-                        }
-                    } catch {
-                        DispatchQueue.main.async {
-                            completion(data, response, error)
-                        }
-                    }
-                    
-                    
                 } else {
-
-                    guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                        let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "No data received"])
-                        DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
-                        }
-                        return
-                    }
- 
-                    if let message = dictionary["message"] as? String, let code = dictionary["code"] as? Int {
-                        let noDataError = NSError(domain: "TGNetworkManager", code: code, userInfo: [NSLocalizedDescriptionKey: message])
-                        DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
-                        }
-                    } else {
-                        let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "No data received"])
-                        DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
-                        }
-                    }
-                    
-                }
-            } else {
-                let noDataError = NSError(domain: "TGNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])
-                DispatchQueue.main.async {
-                    completion(nil, response, noDataError)
+                    print("Request failed with status code: \(statusCode)")
                 }
             }
             
-            
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    print("response json = \(json)")
+                    DispatchQueue.main.async {
+                        completion(data, response, nil)
+                    }
+                    
+                } else if let jsonArr = try JSONSerialization.jsonObject(with: data, options: []) as? [Any] {
+                    print("response jsonArr = \(jsonArr)")
+                    DispatchQueue.main.async {
+                        completion(data, response, nil)
+                    }
+                    
+                } else {
+                    throw NSError(domain: "TGNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON format"])
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(data, response, error)
+                }
+            }
         }
         dataTask.resume()
     }
@@ -184,59 +142,3 @@ var YPApolloClient: ApolloClient {
 var YPCustomHeaders: [String: String] {
     return TGNetworkManager.shared.defaultHeaders
 }
-
-enum ErrorCode: Int {
-    case offTransactionException = 1
-    case settingNotFoundException = 2
-    case userVerifyException = 3
-    case invalidTransactionException = 4
-    case invalidPasswordException = 5
-    case invalidAmountException = 6
-    case invalidPhoneException = 7
-    case customValidationException = 8
-    case transactionFreezeException = 9
-    case dailyLimitException = 10
-    case loginFailedAttemptsException = 11
-    case restrictionException = 12
-    case otpWaitException = 13
-    case otpVerifyException = 14
-    case invalidSecurityPinException = 15
-    case securityPinNotSetException = 16
-    case pinIsLockedException = 17
-    case suspiciousActivity = 18
-    
-    ///
-    case transactionIdMissingException = 201
-    case insufficientBalanceException = 202
-    case aeropayException = 203
-    case partnerFailException = 204
-    case purchaseFailException = 205
-    case invalidCountryException = 207
-    case orderClaimedException = 208
-    case rewardFinishException = 209
-    case tipsException = 210
-    case redPacketClaimException = 211
-    case eggExpiredException = 212
-    case liveEggCountingDownException = 213
-    case userNotEligibleException = 214
-    case userRewardFinishException = 215
-    
-    case socialTokenRedeemRefunded = 217
-    case socialTokenRedeemReachedLimit = 218
-    case socialTokenRedeemUserNotKYC = 219
-    case socialTokenRedeemSoldOut = 220
-    
-    case objectNotFoundException = 404
-    
-    case socialAccountException = 452
-    
-    case timeoutException = 1001
-    case signExpiredException = 1002
-    case transactionRefIdExistsException = 1003
-    
-    //会议不存在或已结束
-    case meetingEndOrInexistence = 1012
-    //会议人数已满
-    case meetingNumberLimit = 1013
-}
-

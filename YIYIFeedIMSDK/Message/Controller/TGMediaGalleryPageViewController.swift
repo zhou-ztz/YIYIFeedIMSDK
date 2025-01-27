@@ -18,11 +18,11 @@ class TGMediaGalleryPageViewController: TGViewController {
     var objects: [MediaPreviewObject]?
     var pageViewController: UIPageViewController?
     var focusObject: MediaPreviewObject?
-    var conversationId: String
+    var sessionId: String?
     var showMore = false
     
-    init(objects: [MediaPreviewObject], focusObject: MediaPreviewObject, conversationId: String , showMore: Bool) {
-        self.conversationId = conversationId
+    init(objects: [MediaPreviewObject], focusObject: MediaPreviewObject, sessionId: String , showMore: Bool) {
+        self.sessionId = sessionId
         self.objects = objects
         self.focusObject = focusObject
         self.showMore = showMore
@@ -87,8 +87,9 @@ class TGMediaGalleryPageViewController: TGViewController {
     }
     
     @objc func onMore() {
-        let viewController = TGChatMediaViewController.init(conversationId: self.conversationId)
-        self.navigationController?.pushViewController(viewController, animated: true)
+//        let session: NIMSession = NIMSession(self.session!.sessionId, type: self.session!.sessionType)
+//        let viewController = ChatMediaViewController.init(session: session)
+//        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     // MARK: Custom methods
