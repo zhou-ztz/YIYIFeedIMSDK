@@ -157,8 +157,6 @@
 		8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */; };
 		8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */; };
 		8ABF5F4A2CF9CCED001DC11E /* TeamMeetingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */; };
-		B15E87492D433E0C0015E5C0 /* TGJoinMeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15E87482D433E0C0015E5C0 /* TGJoinMeetingViewController.swift */; };
-		B15E874B2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15E874A2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift */; };
 		B1DA58EE2D37882800F83914 /* TGIMUnreadCountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */; };
 		B1DA58FA2D38B76A00F83914 /* TGMessageRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */; };
 		B1DA58FC2D38D25B00F83914 /* TGMessageRequestViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */; };
@@ -182,22 +180,6 @@
 		B1DA59322D3F3B2E00F83914 /* TGMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59312D3F3B2E00F83914 /* TGMembersViewController.swift */; };
 		B1DA59342D3F3D6400F83914 /* TGSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59332D3F3D6400F83914 /* TGSearchBar.swift */; };
 		B1DA59362D3F417700F83914 /* TGGroupInfoEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59352D3F417700F83914 /* TGGroupInfoEditViewController.swift */; };
-		B1DA593A2D40DE7000F83914 /* TGMeetingListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59392D40DE7000F83914 /* TGMeetingListViewController.swift */; };
-		B1DA593C2D40E06200F83914 /* MeetingListViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA593B2D40E06200F83914 /* MeetingListViewCell.swift */; };
-		B1DA593E2D40E0C800F83914 /* QuertMeetingListDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA593D2D40E0C800F83914 /* QuertMeetingListDetailModel.swift */; };
-		B1DA59402D40E18400F83914 /* TGMeetingVarietyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA593F2D40E18400F83914 /* TGMeetingVarietyViewController.swift */; };
-		B1DA59422D40E1AC00F83914 /* MeetingPayinfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59412D40E1AC00F83914 /* MeetingPayinfoView.swift */; };
-		B1DA59442D40E2C100F83914 /* NewContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59432D40E2C100F83914 /* NewContactsViewController.swift */; };
-		B1DA594C2D40E3DE00F83914 /* MeetingPayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59492D40E3DE00F83914 /* MeetingPayView.swift */; };
-		B1DA594D2D40E3DE00F83914 /* MeetingFriendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59462D40E3DE00F83914 /* MeetingFriendCell.swift */; };
-		B1DA594E2D40E3DE00F83914 /* MeetingSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA594B2D40E3DE00F83914 /* MeetingSettingCell.swift */; };
-		B1DA59502D40E3DE00F83914 /* MeetingEndView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59452D40E3DE00F83914 /* MeetingEndView.swift */; };
-		B1DA59512D40E3DE00F83914 /* MeetingFriendsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59472D40E3DE00F83914 /* MeetingFriendsListCell.swift */; };
-		B1DA59522D40E3DE00F83914 /* MeetingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA594A2D40E3DE00F83914 /* MeetingSearchView.swift */; };
-		B1DA59542D40E6CB00F83914 /* TGCreateMeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59532D40E6CB00F83914 /* TGCreateMeetingViewController.swift */; };
-		B1DA59562D40F5D400F83914 /* TGMeetingGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59552D40F5D400F83914 /* TGMeetingGroupViewController.swift */; };
-		B1DA59582D40F7B500F83914 /* TGMeetingSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59572D40F7B500F83914 /* TGMeetingSettingViewController.swift */; };
-		B1DA595A2D40FA7900F83914 /* TGMeetingSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA59592D40FA7900F83914 /* TGMeetingSettingViewModel.swift */; };
 		B1EABB782D19481A00EB7868 /* TGInputEmoticonContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EABB772D19481A00EB7868 /* TGInputEmoticonContainer.swift */; };
 		B1EABB7A2D1948B000EB7868 /* InputEmoticonTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EABB792D1948B000EB7868 /* InputEmoticonTabView.swift */; };
 		B1EABB7C2D194AE800EB7868 /* IMStickerTabCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EABB7B2D194AE800EB7868 /* IMStickerTabCollectionViewCell.swift */; };
@@ -627,8 +609,6 @@
 		8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
 		8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMeetingViewModel.swift; sourceTree = "<group>"; };
 		9B7FF8D3AB0A77F6C7BA2655 /* Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; path = "Target Support Files/Pods-YIYISDKDemo-YIYIFeedIMSDK/Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; sourceTree = "<group>"; };
-		B15E87482D433E0C0015E5C0 /* TGJoinMeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGJoinMeetingViewController.swift; sourceTree = "<group>"; };
-		B15E874A2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGJoinMeetingViewModel.swift; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -652,22 +632,6 @@
 		B1DA59312D3F3B2E00F83914 /* TGMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMembersViewController.swift; sourceTree = "<group>"; };
 		B1DA59332D3F3D6400F83914 /* TGSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGSearchBar.swift; sourceTree = "<group>"; };
 		B1DA59352D3F417700F83914 /* TGGroupInfoEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGGroupInfoEditViewController.swift; sourceTree = "<group>"; };
-		B1DA59392D40DE7000F83914 /* TGMeetingListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMeetingListViewController.swift; sourceTree = "<group>"; };
-		B1DA593B2D40E06200F83914 /* MeetingListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingListViewCell.swift; sourceTree = "<group>"; };
-		B1DA593D2D40E0C800F83914 /* QuertMeetingListDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuertMeetingListDetailModel.swift; sourceTree = "<group>"; };
-		B1DA593F2D40E18400F83914 /* TGMeetingVarietyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMeetingVarietyViewController.swift; sourceTree = "<group>"; };
-		B1DA59412D40E1AC00F83914 /* MeetingPayinfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingPayinfoView.swift; sourceTree = "<group>"; };
-		B1DA59432D40E2C100F83914 /* NewContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContactsViewController.swift; sourceTree = "<group>"; };
-		B1DA59452D40E3DE00F83914 /* MeetingEndView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingEndView.swift; sourceTree = "<group>"; };
-		B1DA59462D40E3DE00F83914 /* MeetingFriendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingFriendCell.swift; sourceTree = "<group>"; };
-		B1DA59472D40E3DE00F83914 /* MeetingFriendsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingFriendsListCell.swift; sourceTree = "<group>"; };
-		B1DA59492D40E3DE00F83914 /* MeetingPayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingPayView.swift; sourceTree = "<group>"; };
-		B1DA594A2D40E3DE00F83914 /* MeetingSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingSearchView.swift; sourceTree = "<group>"; };
-		B1DA594B2D40E3DE00F83914 /* MeetingSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingSettingCell.swift; sourceTree = "<group>"; };
-		B1DA59532D40E6CB00F83914 /* TGCreateMeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCreateMeetingViewController.swift; sourceTree = "<group>"; };
-		B1DA59552D40F5D400F83914 /* TGMeetingGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMeetingGroupViewController.swift; sourceTree = "<group>"; };
-		B1DA59572D40F7B500F83914 /* TGMeetingSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMeetingSettingViewController.swift; sourceTree = "<group>"; };
-		B1DA59592D40FA7900F83914 /* TGMeetingSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMeetingSettingViewModel.swift; sourceTree = "<group>"; };
 		B1EABB772D19481A00EB7868 /* TGInputEmoticonContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGInputEmoticonContainer.swift; sourceTree = "<group>"; };
 		B1EABB792D1948B000EB7868 /* InputEmoticonTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputEmoticonTabView.swift; sourceTree = "<group>"; };
 		B1EABB7B2D194AE800EB7868 /* IMStickerTabCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMStickerTabCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1115,7 +1079,6 @@
 		8A9F0D372CF088FA0021462C /* Message */ = {
 			isa = PBXGroup;
 			children = (
-				B1DA59382D40DD2100F83914 /* Meeting */,
 				B1DA590C2D3A251500F83914 /* ChatDetail */,
 				B1EABC582D2E88F100EB7868 /* CollectionMessage */,
 				B1EABC052D23D88300EB7868 /* AddNewChat */,
@@ -1394,31 +1357,6 @@
 				B1DA59352D3F417700F83914 /* TGGroupInfoEditViewController.swift */,
 			);
 			path = ChatDetail;
-			sourceTree = "<group>";
-		};
-		B1DA59382D40DD2100F83914 /* Meeting */ = {
-			isa = PBXGroup;
-			children = (
-				B1DA59452D40E3DE00F83914 /* MeetingEndView.swift */,
-				B1DA59462D40E3DE00F83914 /* MeetingFriendCell.swift */,
-				B1DA59472D40E3DE00F83914 /* MeetingFriendsListCell.swift */,
-				B1DA59492D40E3DE00F83914 /* MeetingPayView.swift */,
-				B1DA594A2D40E3DE00F83914 /* MeetingSearchView.swift */,
-				B1DA594B2D40E3DE00F83914 /* MeetingSettingCell.swift */,
-				B1DA59392D40DE7000F83914 /* TGMeetingListViewController.swift */,
-				B1DA593F2D40E18400F83914 /* TGMeetingVarietyViewController.swift */,
-				B1DA593B2D40E06200F83914 /* MeetingListViewCell.swift */,
-				B1DA593D2D40E0C800F83914 /* QuertMeetingListDetailModel.swift */,
-				B1DA59412D40E1AC00F83914 /* MeetingPayinfoView.swift */,
-				B1DA59432D40E2C100F83914 /* NewContactsViewController.swift */,
-				B1DA59532D40E6CB00F83914 /* TGCreateMeetingViewController.swift */,
-				B1DA59552D40F5D400F83914 /* TGMeetingGroupViewController.swift */,
-				B1DA59572D40F7B500F83914 /* TGMeetingSettingViewController.swift */,
-				B15E87482D433E0C0015E5C0 /* TGJoinMeetingViewController.swift */,
-				B15E874A2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift */,
-				B1DA59592D40FA7900F83914 /* TGMeetingSettingViewModel.swift */,
-			);
-			path = Meeting;
 			sourceTree = "<group>";
 		};
 		B1EABB882D195E7A00EB7868 /* GraphQL */ = {
@@ -2041,7 +1979,6 @@
 				8A4BB3482D09446600AAB4B8 /* CustomAttachment.swift in Sources */,
 				B1EABBB82D22773700EB7868 /* NameCardMessageCell.swift in Sources */,
 				F5CD2C8A2CFEB5A800EA7C7A /* UserStatusEnum.swift in Sources */,
-				B15E874B2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift in Sources */,
 				D7C4E9D32D2D21BF0043DD82 /* TGThrottler.swift in Sources */,
 				8A4BB3B92D114E6D00AAB4B8 /* TGLocationManager.swift in Sources */,
 				F5CD2C8B2CFEB5A800EA7C7A /* TGUserInfoModel.swift in Sources */,
@@ -2061,25 +1998,17 @@
 				B1EABC972D30D3CA00EB7868 /* IMActionListView.swift in Sources */,
 				D711C85B2D1BEAF3004EA26B /* HTMLManager.swift in Sources */,
 				D706E17F2D27EC79000D4437 /* TGRepostModel.swift in Sources */,
-				B1DA59542D40E6CB00F83914 /* TGCreateMeetingViewController.swift in Sources */,
 				8A9F0D5D2CF427A90021462C /* ReplyMessageCell.swift in Sources */,
 				F5CD2C5A2CFEB40500EA7C7A /* ServerResponseDataTransforms.swift in Sources */,
 				B1EABB832D195CC800EB7868 /* StickerManager.swift in Sources */,
 				B1EABC032D23D5F700EB7868 /* NewContactsListCell.swift in Sources */,
 				B1EABC9F2D30F41900EB7868 /* TGNewContactTableViewCell.swift in Sources */,
 				B1EABC6A2D2E8C4200EB7868 /* IMCategorySelectView.swift in Sources */,
-				B1DA594C2D40E3DE00F83914 /* MeetingPayView.swift in Sources */,
-				B1DA594D2D40E3DE00F83914 /* MeetingFriendCell.swift in Sources */,
-				B1DA594E2D40E3DE00F83914 /* MeetingSettingCell.swift in Sources */,
-				B1DA59502D40E3DE00F83914 /* MeetingEndView.swift in Sources */,
-				B1DA59512D40E3DE00F83914 /* MeetingFriendsListCell.swift in Sources */,
-				B1DA59522D40E3DE00F83914 /* MeetingSearchView.swift in Sources */,
 				B1EABC042D23D5F700EB7868 /* ContactsSelecletdCell.swift in Sources */,
 				8A4BB3A52D1011A700AAB4B8 /* TGIMFilePreViewController.swift in Sources */,
 				8A4BB38D2D0FC92600AAB4B8 /* IMEggAttachment.swift in Sources */,
 				D7971DB22D2682E1009772B7 /* TGMiniVideoRecorderContainer.swift in Sources */,
 				8A4BB3902D0FC92600AAB4B8 /* IMFileCollectionAttachment.swift in Sources */,
-				B1DA59562D40F5D400F83914 /* TGMeetingGroupViewController.swift in Sources */,
 				8A4BB34D2D0A92A900AAB4B8 /* VideoCallingCell.swift in Sources */,
 				B1EABB992D1A53D500EB7868 /* TGStickerNetworkManager.swift in Sources */,
 				B1EABB8B2D195E7A00EB7868 /* API.swift in Sources */,
@@ -2123,12 +2052,10 @@
 				D711C8652D1BEB04004EA26B /* TGToolBarButtonItem.swift in Sources */,
 				B1EABBA32D1AAEBA00EB7868 /* CustomerStickerViewController.swift in Sources */,
 				F5CD2C912CFEB5C200EA7C7A /* NSUserDefault+Cache.swift in Sources */,
-				B1DA595A2D40FA7900F83914 /* TGMeetingSettingViewModel.swift in Sources */,
 				B1EABC452D2E4D5500EB7868 /* VideoPlayerControlBottomView.swift in Sources */,
 				F5CD2C922CFEB5C200EA7C7A /* Calendar+Extension.swift in Sources */,
 				8A9F0D7C2CF430E70021462C /* ChatRecordView.swift in Sources */,
 				8A027A512CFD5A38008D1AC7 /* TGReachability.swift in Sources */,
-				B1DA59442D40E2C100F83914 /* NewContactsViewController.swift in Sources */,
 				B1DA590B2D3A07E700F83914 /* TGChatDetailViewController.swift in Sources */,
 				B1EABBA72D1AC40500EB7868 /* MsgCollectionViewCell.swift in Sources */,
 				8A4BB3672D0C0F5900AAB4B8 /* TGToolChoose.swift in Sources */,
@@ -2146,9 +2073,7 @@
 				8A4BB38F2D0FC92600AAB4B8 /* IMWhiteboardAttachment.swift in Sources */,
 				8A4BB3B52D11479B00AAB4B8 /* TGInputLocalContainerCell.swift in Sources */,
 				8A9F0D3E2CF093580021462C /* RLLoginParma.swift in Sources */,
-				B1DA59422D40E1AC00F83914 /* MeetingPayinfoView.swift in Sources */,
 				B1EABC362D2D3AD600EB7868 /* IMMeetingRoomAttachment.swift in Sources */,
-				B15E87492D433E0C0015E5C0 /* TGJoinMeetingViewController.swift in Sources */,
 				8ABF5F3E2CF82395001DC11E /* IMNotificationCenter.swift in Sources */,
 				B1EABCA12D30F9CB00EB7868 /* TGNewContactPickerViewController.swift in Sources */,
 				8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */,
@@ -2198,7 +2123,6 @@
 				8A9F0DAC2CF44D6F0021462C /* Optional+Extension.swift in Sources */,
 				8A027A5B2CFDAD76008D1AC7 /* TGMessageData.swift in Sources */,
 				8A4BB3942D0FC92600AAB4B8 /* IMSnapchatAttachment.swift in Sources */,
-				B1DA593A2D40DE7000F83914 /* TGMeetingListViewController.swift in Sources */,
 				D706E1712D27CDB9000D4437 /* TGReleasePulseCollectionView.swift in Sources */,
 				8A9F0D602CF427A90021462C /* TipMessageCell.swift in Sources */,
 				8A9F0D982CF444A80021462C /* SCRefreshFooter.swift in Sources */,
@@ -2250,7 +2174,6 @@
 				8A9F0DA92CF44D6F0021462C /* Int+Extension.swift in Sources */,
 				B1EABC192D267BC700EB7868 /* TGContactsPickerViewController.swift in Sources */,
 				8A4BB3952D0FC92600AAB4B8 /* IMCallingAttachment.swift in Sources */,
-				B1DA593C2D40E06200F83914 /* MeetingListViewCell.swift in Sources */,
 				B1EABC2F2D2BBFAA00EB7868 /* TGChatNotificationCell.swift in Sources */,
 				8A9F0D6E2CF42AC70021462C /* RLUserInterfacePrinciples.swift in Sources */,
 				8A9F0DA82CF44D6F0021462C /* UIImage+Extension.swift in Sources */,
@@ -2299,7 +2222,6 @@
 				B1EABC862D2E91A600EB7868 /* AudioCollectView.swift in Sources */,
 				B1EABCA82D34BCD500EB7868 /* TGChatCustomSysNotificationSender.swift in Sources */,
 				D7AD6A882D38A8D7006A3A1F /* TGPreviewVideoVC.swift in Sources */,
-				B1DA593E2D40E0C800F83914 /* QuertMeetingListDetailModel.swift in Sources */,
 				B1EABC872D2E91A600EB7868 /* TextCollectView.swift in Sources */,
 				B1EABC882D2E91A600EB7868 /* ImageVideoCollectView.swift in Sources */,
 				B1EABC892D2E91A600EB7868 /* IMMessageSelectorView.swift in Sources */,
@@ -2401,7 +2323,6 @@
 				8A4BB3362D08352B00AAB4B8 /* NMCWhiteBoardViewController.swift in Sources */,
 				D76668E62D351D490086F90E /* TGPostProgressBar.swift in Sources */,
 				8A4BB3B32D11477100AAB4B8 /* TGInputLocalContainer.swift in Sources */,
-				B1DA59582D40F7B500F83914 /* TGMeetingSettingViewController.swift in Sources */,
 				8A4BB3422D0850C000AAB4B8 /* WhiteBoardAuth.swift in Sources */,
 				8A9F0D2A2CF080790021462C /* YIYIFeedIMSDK.docc in Sources */,
 				D7ED1C7E2D3E29DA00B7F95D /* TGCustomNavigationDelegate.swift in Sources */,
@@ -2443,7 +2364,6 @@
 				8A4BB3452D093BD300AAB4B8 /* WhiteBoardMessageCell.swift in Sources */,
 				8A9F0EA02CF6F6910021462C /* CustomAttachmentDecoder.swift in Sources */,
 				B1DA59142D3A44ED00F83914 /* TGCreateGroupCell.swift in Sources */,
-				B1DA59402D40E18400F83914 /* TGMeetingVarietyViewController.swift in Sources */,
 				8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */,
 				8A4BB3322D08352B00AAB4B8 /* NMCMessageDispatcher.swift in Sources */,
 				8A4BB39C2D0FC92700AAB4B8 /* IMVoucherAttachment.swift in Sources */,

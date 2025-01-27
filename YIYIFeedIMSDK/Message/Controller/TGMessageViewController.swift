@@ -178,8 +178,8 @@ extension TGMessageViewController: TGToolChooseDelegate {
             let vc = AddChatViewController(isShowCol: false, cancelType: .allwayShow)
             self.navigationController?.pushViewController(vc, animated: true)
         case .meeting:
-            let vc = TGMeetingListViewController()
-            self.navigationController?.pushViewController(vc, animated: true)
+//            let vc = TGMeetingListViewController()
+//            self.navigationController?.pushViewController(vc, animated: true)
         case .collection:
             let vc = MsgCollectionViewController()
             self.navigationController?.pushViewController(vc, animated: true)

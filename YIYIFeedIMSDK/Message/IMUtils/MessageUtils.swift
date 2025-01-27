@@ -8,7 +8,7 @@
 import UIKit
 import NIMSDK
 import AVFoundation
-import NEMeetingKit
+//import NEMeetingKit
 
 enum IMActionItem: Equatable {
     case reply
@@ -973,22 +973,22 @@ class MessageUtils: NSObject {
     }
     
     //自定义更多菜单的子按钮
-    class func configMoreMenus(options: NEMeetingOptions) {
-        // 1. 创建更多菜单列表构建类，列表默认包含："邀请"、"聊天"
-        var moreMenus = NEMenuItems.defaultMoreMenuItems() as! [NEMeetingMenuItem]
-        
-        // 2. 添加一个多选菜单项
-        let newItem = NESingleStateMenuItem()
-        newItem.itemId = 1000
-        newItem.visibility = .VISIBLE_TO_HOST_ONLY
-        newItem.singleStateItem = NEMenuItemInfo()
-        newItem.singleStateItem.icon = "private-invite"
-        newItem.singleStateItem.text = "meeting_private".localized
-    
-        moreMenus.append(newItem)
-        // 3. 配置完成，设置参数字段
-        options.fullMoreMenuItems = moreMenus
-    }
+//    class func configMoreMenus(options: NEMeetingOptions) {
+//        // 1. 创建更多菜单列表构建类，列表默认包含："邀请"、"聊天"
+//        var moreMenus = NEMenuItems.defaultMoreMenuItems() as! [NEMeetingMenuItem]
+//        
+//        // 2. 添加一个多选菜单项
+//        let newItem = NESingleStateMenuItem()
+//        newItem.itemId = 1000
+//        newItem.visibility = .VISIBLE_TO_HOST_ONLY
+//        newItem.singleStateItem = NEMenuItemInfo()
+//        newItem.singleStateItem.icon = "private-invite"
+//        newItem.singleStateItem.text = "meeting_private".localized
+//    
+//        moreMenus.append(newItem)
+//        // 3. 配置完成，设置参数字段
+//        options.fullMoreMenuItems = moreMenus
+//    }
     
     //获取群成员userId
     class func fetchMembersTeam(teamId: String, completed: @escaping (([String])-> Void)){
