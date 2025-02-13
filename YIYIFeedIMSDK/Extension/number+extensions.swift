@@ -13,6 +13,7 @@ extension Int {
     var uint64: UInt64 { return UInt64(self) }
     var boolValue: Bool { return self > 0 }
     var abbreviated: String { return Double(self).abbreviated }
+    var abbStartFrom5Digit: String { return Double(self).abbStartFrom5Digit }
     var byteSize: String { return ByteCountFormatter().string(fromByteCount: Int64(self)) }
 }
 
@@ -31,7 +32,20 @@ extension Double {
     var cleanValue: String {
         return self.remainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) : String(self)
     }
-    
+    /// 将 Double 转换成 String 类型
+    ///
+    /// - Parameter decimal: 小数位数
+    func tostring(decimal: Int = 2, grouping: Bool = true) -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: "en")
+        formatter.numberStyle = .decimal
+        formatter.usesGroupingSeparator = grouping
+        formatter.groupingSeparator = ","
+        formatter.maximumFractionDigits = decimal
+        formatter.minimumFractionDigits = decimal
+
+        return formatter.string(from: NSNumber(value: self)) ?? String(format: "%.\(decimal)f", self)
+    }
     var abbreviated: String {
         let numFormatter = NumberFormatter()
         numFormatter.roundingMode = .floor
@@ -108,7 +122,14 @@ extension Double {
         return numFormatter.string(from: NSNumber (value:value))!
     }
 
-
+    /// For Star of the day score results
+    var abbStartFrom5Digit: String {
+        guard self >= 10000 else {
+            return self.tostring(decimal: 0)
+        }
+        
+        return self.abbreviated
+    }
     func toCurrencyString(currencyIndicator: String) -> String? {
         let currencyFormatter = NumberFormatter()
         currencyFormatter.numberStyle = .currency

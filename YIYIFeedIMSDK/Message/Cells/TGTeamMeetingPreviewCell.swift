@@ -10,10 +10,8 @@ import NIMSDK
 
 class TGTeamMeetingPreviewCell: UICollectionViewCell {
     var team: V2NIMTeam?
-    //var avatarImageView: AvatarView = AvatarView(type: AvatarType.custom(avatarWidth: 90, showBorderLine: false))
-    var avatarImageView: UIImageView = UIImageView().configure {
-        $0.contentMode = .scaleToFill
-    }
+    var avatarImageView: TGAvatarView = TGAvatarView(type: AvatarType.custom(avatarWidth: 90, showBorderLine: false))
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
@@ -27,8 +25,6 @@ class TGTeamMeetingPreviewCell: UICollectionViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
-    
     
     func setUI(){
         self.contentView.addSubview(avatarImageView)
@@ -43,8 +39,13 @@ class TGTeamMeetingPreviewCell: UICollectionViewCell {
         self.avatarImageView.layer.masksToBounds = true
         self.backgroundColor  = .clear
         
-//        avatarImageView.avatarPlaceholderType = .unknown
-//        avatarImageView.avatarInfo = NIMSDKManager.shared.getAvatarIcon(userId: user)
-        self.setNeedsLayout()
+        MessageUtils.getAvatarIcon(sessionId: user, conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in
+            guard let self = self else {return}
+            DispatchQueue.main.async {
+                self.avatarImageView.avatarInfo = avatarInfo
+                self.setNeedsLayout()
+            }
+        }
+        
     }
 }

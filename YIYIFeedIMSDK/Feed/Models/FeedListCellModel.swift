@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SwiftDate
 /// 发送状态
 enum SendStatus: Int {
     /// 发送成功
@@ -169,6 +169,9 @@ class FeedListCellModel {
 
     var videoType: Int = 0 //2 is minivideo
     
+    /// 活动动态是否可以编辑
+    var campaignIsEdite: Bool = false
+    
 //    var feedType: FeedContentType {
 //        if liveModel != nil, liveModel?.status == 1, pictures.count > 0 {
 //            return .live
@@ -260,6 +263,7 @@ class FeedListCellModel {
         afterTime = model.afterTime
         isPinned = model.isPinned
         tagVoucher = model.tagVoucher
+        campaignIsEdite = model.campaignIsEdite
     }
     
     init(feedStoreModel model: FeedStoreModel) {
@@ -344,7 +348,11 @@ extension FeedListCellModel {
         self.hot = response.hot ?? 0
         self.privacy = response.privacy.orEmpty
         self.isEdited = response.campaignIsEdite ?? false
-//        self.time = response.createdAt.flatMap { DateFormatter.iso8601.date(from: $0) }
+        if let createdAtString = response.createdAt {
+            if let createdAtDate = createdAtString.toDate("yyyy-MM-dd HH:mm:ss", region: .current) {
+                self.time = createdAtDate.date
+            }
+        }
         self.afterTime = response.afterTime.orEmpty
         self.isPinned = response.isPinned ?? false
         self.isSponsored = (response.isSponsored ?? 0) == 1
@@ -360,7 +368,7 @@ extension FeedListCellModel {
         
         // 视频
         if let video = response.video {
-            self.videoURL = video
+            self.videoURL = video.videoPath
             // If video height/width is present in a nested property, parse it
             self.videoHeight = response.user?.avatar?.dimension?.height.map(Double.init) ?? 0
             self.videoWidth = response.user?.avatar?.dimension?.width.map(Double.init) ?? 0
@@ -370,8 +378,10 @@ extension FeedListCellModel {
             var userInfo = UserInfoModel()
             userInfo.name = response.user?.name ?? ""
             userInfo.avatarUrl = response.user?.avatar?.url
-//            self.userInfo = UserInfoModel
+            userInfo.userIdentity = response.user?.id ?? 0
+            self.userInfo = userInfo
         }
+        
         // 转发信息
         self.repostType = response.repostableType
         self.repostId = response.repostableID ?? 0

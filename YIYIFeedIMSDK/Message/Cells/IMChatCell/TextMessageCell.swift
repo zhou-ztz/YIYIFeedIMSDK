@@ -47,11 +47,12 @@ class TextMessageCell: BaseMessageCell {
         )
         if let ext = model.nimMessageModel?.serverExtension?.toDictionary {
             if let usernames = ext["usernames"] as? [String], usernames.count > 0 {
-                self.formMentionNamesContent(content: attribute, usernames: usernames) {attributedString in
+                self.formMentionNamesContent(content: attribute, usernames: usernames) { attributedString in
                     if let attributedString = attributedString {
                         attribute = attributedString
                         attribute = self.formUrlContent(content: attribute)
                         self.contentLabel.attributedText = attribute
+                        self.textLayout(model: model)
                     }
                    
                 }
@@ -62,14 +63,18 @@ class TextMessageCell: BaseMessageCell {
                 attribute = self.formMentionAllContent(content: attribute, mentionAll: mentionAll)
                 attribute = self.formUrlContent(content: attribute)
                 self.contentLabel.attributedText = attribute
+                self.textLayout(model: model)
             }
         } else {
             attribute = self.formUrlContent(content: attribute)
             self.contentLabel.attributedText = attribute
+            self.textLayout(model: model)
         }
-        
-        
-        
+
+    }
+    
+    func textLayout(model: TGMessageData) {
+        let showLeft = !(model.nimMessageModel?.isSelf ?? true)
         let atSide = !self.timeShowAtBottom(messageModel: model)
         
         self.timeTickStackView.snp.remakeConstraints { make in
@@ -103,7 +108,6 @@ class TextMessageCell: BaseMessageCell {
         self.contentLabel.layoutIfNeeded()
         self.textView.layoutIfNeeded()
         self.layoutIfNeeded()
-        
     }
     
     func timeShowAtBottom(messageModel: TGMessageData) -> Bool {

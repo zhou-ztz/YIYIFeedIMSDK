@@ -193,7 +193,7 @@ extension TGMeetingGroupViewController: UITableViewDelegate, UITableViewDataSour
        
         let view = UIView()
         view.backgroundColor = UIColor(hex: "#D9D9D9")
-        var lab = UILabel()
+        let lab = UILabel()
         lab.frame = CGRect(x: 15, y: 0, width: 100, height: 30)
         lab.text = indexDataSource[section]
         lab.font = UIFont.systemFont(ofSize: 14)

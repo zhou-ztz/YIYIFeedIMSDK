@@ -314,7 +314,7 @@ extension TGCommentPageController: TGKeyboardToolbarDelegate {
 //                    self?.dismissLoading()
                 }
                 guard result == true, let data = commentModel, let wself = self else {
-                    //                UIViewController.showBottomFloatingToast(with: message ?? "please_retry_option".localized, desc: "", displayDuration: 4.0)
+                    UIViewController.showBottomFloatingToast(with: message ?? "please_retry_option".localized, desc: "", displayDuration: 4.0)
                     return
                 }
                 if let lastPinnedIndex = wself.comments.lastIndex(where: { $0.pinned == true }) {
@@ -424,7 +424,7 @@ extension TGCommentPageController: CustomPopListProtocol {
         case .copy(model: let model):
             let feedModel = model.model
             UIPasteboard.general.string = feedModel.body ?? ""
-//            UIViewController.showBottomFloatingToast(with: "rw_copy_to_clipboard".localized, desc: "")
+            UIViewController.showBottomFloatingToast(with: "rw_copy_to_clipboard".localized, desc: "")
             break
         default:
             break

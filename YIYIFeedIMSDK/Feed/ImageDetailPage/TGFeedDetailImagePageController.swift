@@ -379,7 +379,7 @@ class TGFeedDetailImagePageController: UIPageViewController {
         }
         
         func onError(message: String) {
-//            UIViewController.showBottomFloatingToast(with: "error_occur".localized, desc: message)
+            UIViewController.showBottomFloatingToast(with: "error_occur".localized, desc: message)
         }
     }
     

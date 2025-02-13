@@ -391,25 +391,25 @@ extension UserInfoModel {
         return "rw_intro_default".localized
     }
 
-//    // objectbox: transient
-//    var relationshipWithCurrentUser: (status: FollowStatus, texts: FollowStatustext)? {
+    // objectbox: transient
+    var relationshipWithCurrentUser: (status: FollowStatus, texts: FollowStatustext)? {
 //        if TSCurrentUserInfo.share.isLogin == false {
 //            return nil
 //        }
 //        guard let currentUser = CurrentUser else {
 //            return nil
 //        }
-//        if currentUser.userIdentity == self.userIdentity {
-//            return (status: .oneself, texts: .oneself)
-//        }
-//        if following == true && follower == true {
-//            return (status: .eachOther, texts: .eachOther)
-//        }
-//        if follower == true {
-//            return (status: .follow, texts: .follow)
-//        }
-//        return (status: .unfollow, texts: .unfollow)
-//    }
+        if RLSDKManager.shared.loginParma?.uid ?? 0 == self.userIdentity {
+            return (status: .oneself, texts: .oneself)
+        }
+        if following == true && follower == true {
+            return (status: .eachOther, texts: .eachOther)
+        }
+        if follower == true {
+            return (status: .follow, texts: .follow)
+        }
+        return (status: .unfollow, texts: .unfollow)
+    }
 
     // objectbox: transient
 //    var isMe: Bool {

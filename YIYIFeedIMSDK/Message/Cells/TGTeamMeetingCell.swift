@@ -23,11 +23,9 @@ class TGTeamMeetingCell: UICollectionViewCell {
         $0.isHidden = true
     }
 
-    //var avatarImageView: AvatarView = AvatarView()
     var avatarImageView: UIImageView = UIImageView().configure {
         $0.contentMode = .scaleToFill
     }
-
     var tipLabel: UILabel = UILabel().configure {
         $0.applyStyle(.regular(size: 13, color: .white))
         $0.textAlignment = .center
@@ -181,13 +179,14 @@ class TGTeamMeetingCell: UICollectionViewCell {
         connectingImageView.stopShimmering()
         
         self.overlayView.isHidden  = true
-        
-       // let nick = MessageUtils.getShowName(userId: user, teamId: nil, session: nil)
         self.nameLabel.isHidden = false
-        self.nameLabel.text = ""
-//        if let session = V2NIMMessage().modifyTime
-//        let avatarURL = MessageUtils.getUserAvatar(userId: user, session: <#T##NIMSession#>)
-//        avatarImageView.sd_setImage(with: URL(string: avatarInfo.avatarURL ?? ""), placeholderImage: UIImage(named: "IMG_pic_default_secret"))
+        MessageUtils.getAvatarIcon(sessionId: user, conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in
+            guard let self = self else {return}
+            DispatchQueue.main.async {
+                self.nameLabel.text = avatarInfo.nickname
+                self.avatarImageView.sd_setImage(with: URL(string: avatarInfo.avatarURL ?? ""), placeholderImage: UIImage(named: "IMG_pic_default_secret"))
+            }
+        }
         self.contentView.bringSubviewToFront(self.nameLabel)
         self.contentView.bringSubviewToFront(self.progressView)
         self.setNeedsLayout()
@@ -195,7 +194,7 @@ class TGTeamMeetingCell: UICollectionViewCell {
     
     func refreshWidthVolume(volume: Int32){
         self.progressView.isHidden = volume > 0 ? false : true
-        var volumeMax: Int32 = 400
+        let volumeMax: Int32 = 400
         let volume1 = volumeMax > (volume * 4) ? (volume * 4) : volumeMax
         
         var vo = Float(volume1) / Float(volumeMax)
@@ -210,15 +209,18 @@ class TGTeamMeetingCell: UICollectionViewCell {
         self.cameraView.isHidden = enable
         
         self.avatarImageView.isHidden = !enable
-        let nick = ""
         self.nameLabel.isHidden = false
-        self.nameLabel.text = nick
         self.contentView.bringSubviewToFront(self.nameLabel)
         self.connectingLabel.isHidden = true
         self.connectingImageView.isHidden  = true
         connectingImageView.stopAnimating()
-//        let avatarInfo = NIMSDKManager.shared.getAvatarIcon(userId: model.userId)
-//        avatarImageView.sd_setImage(with: URL(string: avatarInfo.avatarURL ?? ""), placeholderImage: UIImage(named: "IMG_pic_default_secret"))
+        MessageUtils.getAvatarIcon(sessionId: model.userId, conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in
+            guard let self = self else {return}
+            DispatchQueue.main.async {
+                self.nameLabel.text = avatarInfo.nickname
+                self.avatarImageView.sd_setImage(with: URL(string: avatarInfo.avatarURL ?? ""), placeholderImage: UIImage(named: "IMG_pic_default_secret"))
+            }
+        }
 
         self.overlayView.isHidden  = true
         self.setNeedsLayout()
@@ -236,7 +238,7 @@ class TGTeamMeetingCell: UICollectionViewCell {
         
         NERtcEngine.shared().setupLocalVideoCanvas(localCanvas)
         //以开启本地视频主流采集并发送
-        //NERtcEngine.shared().enableLocalVideo(enable, streamType: .mainStream)
+       // NERtcEngine.shared().enableLocalVideo(enable, streamType: .mainStream)
     }
     func setRemoteView(enable: Bool, model: IMMeetingMember ){
         if remoteCanvas == nil {
@@ -259,7 +261,7 @@ class TGTeamMeetingCell: UICollectionViewCell {
         self.model = model
         self.refreshWithDefaultAvatar(user: model.userId)
         //本端
-        if model.userId == NIMSDK.shared().loginManager.currentAccount() {
+        if model.userId == NIMSDK.shared().v2LoginService.getLoginUser() {
             
             self.setLocalVideo(enable: model.isOpenLocalVideo, model: model)
             
@@ -271,7 +273,7 @@ class TGTeamMeetingCell: UICollectionViewCell {
             
         }
         
-        self.muteButton.isHidden = model.userId == NIMSDK.shared().loginManager.currentAccount()
+        self.muteButton.isHidden = model.userId == NIMSDK.shared().v2LoginService.getLoginUser()
         self.contentView.bringSubviewToFront(self.muteButton)
     }
 }

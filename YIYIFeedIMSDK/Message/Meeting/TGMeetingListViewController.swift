@@ -67,7 +67,7 @@ class TGMeetingListViewController: TGViewController {
             self?.tableView.mj_header.endRefreshing()
             guard let self = self else { return }
             if let error = error {
-               // self.showError(message: error.localizedDescription)
+                UIViewController.showBottomFloatingToast(with:  error.localizedDescription , desc: "")
                 //self.tableView.show(placeholderView: .network)
             }else {
                 if let datas = resultModel?.data {
@@ -98,7 +98,7 @@ class TGMeetingListViewController: TGViewController {
         TGIMNetworkManager.getMeetingList(page: "\(offset)") {[weak self] resultModel, error in
             self?.tableView.mj_header.endRefreshing()
             guard let self = self else { return }
-            if let error = error {
+            if let _ = error {
                 self.tableView.mj_footer.endRefreshing()
                // self.tableView.show(placeholderView: .network)
             } else {
@@ -142,7 +142,7 @@ class TGMeetingListViewController: TGViewController {
             make.height.equalTo(20)
         }
         
-        var myMeeting = UILabel()
+        let myMeeting = UILabel()
         myMeeting.textColor = UIColor(red: 0.129, green: 0.129, blue: 0.129, alpha: 1)
         myMeeting.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.bold)
         myMeeting.text = "meeting_my_meeting".localized
@@ -193,7 +193,7 @@ class TGMeetingListViewController: TGViewController {
                     make.height.equalTo(10)
                 }
                 infoVC = MeetingPayinfoView(frame: .zero, payInfo: info)
-                allStackView.insertArrangedSubview(infoVC!, at: 0)
+                contentStackView.insertArrangedSubview(infoVC!, at: 0)
             }else {
                 infoVC?.setTitleInfo(payInfo: info)
             }
@@ -205,7 +205,7 @@ class TGMeetingListViewController: TGViewController {
     @objc func createMeetingAction(){
         guard let payInfo = self.payInfo else {
             if !(TGReachability.share.isReachable()) {
-               // showError(message: "network_is_not_available".localized)
+                UIViewController.showBottomFloatingToast(with: "network_is_not_available".localized, desc: "")
             }else{
                 getMeetingPayInfo()
             }
@@ -274,7 +274,8 @@ class TGMeetingListViewController: TGViewController {
                 self.payInfoVC?.dismiss()
                 self.payInfoVC = nil
                 RLSDKManager.shared.imDelegate?.dismissPin()
-                //rootVC.showError(message: error.localizedDescription)
+                UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
+                
             } else {
                 guard let model = requestdata else { return }
                 switch model.code {

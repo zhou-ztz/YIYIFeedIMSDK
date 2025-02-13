@@ -7,6 +7,8 @@
 
 import UIKit
 
+public typealias TGTransactionFinishClosure = (_ id: Int, _ userId: [String]?, _ msg: String) -> Void
+
 public enum TGQRType {
     case group, user, transfer, web, merchant, restNGo
 }
@@ -20,6 +22,10 @@ public enum TGAuthMessageType {
         case .purchase: return "text_purchase_with_bio_auth".localized
         }
     }
+}
+
+public enum TGTransactionType {
+    case personal, group, yippsTransfer
 }
 
 public protocol TGMessageDelegate: AnyObject {
@@ -52,8 +58,10 @@ public protocol TGMessageDelegate: AnyObject {
     func showPin(type: TGAuthMessageType, _ completion: ((String) -> Void)?, cancel: (() -> Void)?, needDisplayError: Bool)
     /// 关键支付密码弹窗
     func dismissPin()
-    ///  显示支付message
+    /// 显示支付message
     func showPinError(message: String)
+    /// 发送红包页面
+    func openRedPackect(transactionType: TGTransactionType, fromUser: String, toUser: String, numberOfMember: Int, teamId: String?, completion: TGTransactionFinishClosure?)
 }
 
 public class RLSDKManager: NSObject {

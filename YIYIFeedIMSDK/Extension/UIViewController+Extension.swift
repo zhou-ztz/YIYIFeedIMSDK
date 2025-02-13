@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Photos
+import SwiftEntryKit
 
 typealias EmptyClosure = () -> Void
 
@@ -99,31 +100,31 @@ extension UIViewController {
         var items: [TGPopUpItem] = []
         switch type {
         case .moreUser:
-            guard let feedModel = target as? TGFeedResponse else {
+            guard let feedModel = target as? FeedListCellModel, let id = RLSDKManager.shared.loginParma?.uid else {
                 return
             }
             //是否收藏
-            let isCollect = (feedModel.hasCollect).orFalse ? false : true
+            let isCollect = (feedModel.toolModel?.isCollect).orFalse ? false : true
             items.append(.save(isSaved: isCollect))
             items.append(.reportPost)
         case .moreMe:
-            guard let feedModel = target as? TGFeedResponse else {
+            guard let feedModel = target as? FeedListCellModel, let id = RLSDKManager.shared.loginParma?.uid else {
                 return
             }
-            if !UserDefaults.teenModeIsEnable && feedModel.campaignIsEdite == true {
+            if !UserDefaults.teenModeIsEnable && feedModel.campaignIsEdite{
                 items = [.edit]
             }
             
             //是否Pin
-            let isPinned = (feedModel.isPinned).orFalse ? true : false
+            let isPinned = feedModel.isPinned ? true : false
             items.append(.pinTop(isPinned: isPinned))
       
             //是否收藏
-            let isCollect = (feedModel.hasCollect).orFalse ? false : true
+            let isCollect = (feedModel.toolModel?.isCollect).orFalse ? false : true
             items.append(.save(isSaved: isCollect))
             
             //是否关闭评论
-            let isCommentDisabled = feedModel.disableComment == 0 ? false : true
+            let isCommentDisabled = (feedModel.toolModel?.isCommentDisabled).orFalse
             
             items.append(.comment(isCommentDisabled: isCommentDisabled))
             items.append(.deletePost)
@@ -135,19 +136,16 @@ extension UIViewController {
         case .selfComment:
             guard let target = target as? LivePinCommentModel else { return }
             let model = target.model
-            let showTopIcon = model.pinned ?? false
-           
             if target.requiredPinMessage {
-                items = [showTopIcon ? .liveUnPinComment(model: target) : .livePinComment(model: target), .deleteComment(model: target), .copy(model: target)]
+                items = [model.pinned == true ? .liveUnPinComment(model: target) : .livePinComment(model: target), .deleteComment(model: target), .copy(model: target)]
             } else {
                 items = [.deleteComment(model: target), .copy(model: target)]
             }
         case .normalComment:
             guard let target = target as? LivePinCommentModel else { return }
             let model = target.model
-            let showTopIcon = model.pinned ?? false
             if target.requiredPinMessage {
-                items = [showTopIcon ? .liveUnPinComment(model: target) : .livePinComment(model: target), .reportComment(model: target), .copy(model: target)]
+                items = [model.pinned == true ? .liveUnPinComment(model: target) : .livePinComment(model: target), .reportComment(model: target), .copy(model: target)]
             } else {
                 items = [.reportComment(model: target), .copy(model: target)]
             }
@@ -163,7 +161,51 @@ extension UIViewController {
 //        rewardVC.defaultPageIndex = defaultPageIdx
         self.present(popVC, animated: true, completion: nil)
     }
-    
+    func showTopFloatingToast(with title: String, desc: String = "", background: UIColor? = nil, customView: UIView? = nil) {
+        var attr = UIView.topToastAttributes
+        attr.name = "toast"
+        attr.displayDuration = 2.5
+        
+        var backgroundColor = background
+        
+        if backgroundColor == nil {
+            backgroundColor = UIColor.black.withAlphaComponent(0.75)
+        }
+        
+        attr.entryBackground = .color(color: EKColor(backgroundColor!))
+        
+        if let customView = customView {
+            SwiftEntryKit.display(entry: customView, using: attr)
+            return
+        }
+        
+        let toastView = TGAlertContentView(for: title, desc: desc, background: backgroundColor!)
+        
+        SwiftEntryKit.display(entry: toastView, using: attr)
+    }
+    static func showBottomFloatingToast(with title: String, desc: String, background:UIColor? = nil, displayDuration: TimeInterval = 2.5) {
+        guard SwiftEntryKit.isCurrentlyDisplaying == false else { return }
+        
+        var attr = UIView.bottomToastAttributes
+        attr.name = "errors"
+        attr.displayDuration = displayDuration
+        attr.screenInteraction = .dismiss
+        attr.entryInteraction = .absorbTouches
+        
+        var backgroundColor = background
+        
+        if backgroundColor == nil {
+            backgroundColor = UIColor.black.withAlphaComponent(0.75)
+        }
+        
+        attr.entryBackground = .color(color: EKColor(backgroundColor!))
+        
+        var message = (desc.isEmpty && title.isEmpty) ? "please_retry_option".localized : desc
+        
+        let toastView = TGAlertContentView(for: title, desc: message, background: backgroundColor!)
+        
+        SwiftEntryKit.display(entry: toastView, using: attr)
+    }
     func showDialog(image: UIImage? = nil, title: String? = nil, message: String, dismissedButtonTitle: String, onDismissed: (()->())?, onCancelled: (()->())? = nil, cancelButtonTitle: String? = nil, isRedPacket: Bool? = false, isInsufficientBalance: Bool? = false, isFavouriteMessage: Bool? = false) {
         let alertViewContent = UIView(frame: .zero)
         alertViewContent.snp.makeConstraints {

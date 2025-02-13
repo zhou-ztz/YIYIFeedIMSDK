@@ -117,6 +117,7 @@ class TGJoinMeetingViewController: TGViewController {
         super.viewDidLoad()
         self.customNavigationBar.backItem.setTitle("dashboard_settings".localized, for: .normal)
         setUI()
+        viewmodel.delegate = self
     }
     
     func setUI(){
@@ -223,14 +224,14 @@ class TGJoinMeetingViewController: TGViewController {
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5){
                     self.pop?.dismiss()
                 }
-                
                 if let error = error as? NSError {
                     if error.code == 1012 {
                         print("会议不存在")
+                        UIViewController.showBottomFloatingToast(with: "meeting_ended".localized, desc: "")
                     } else if error.code == 1013 {
-                        
+                        UIViewController.showBottomFloatingToast(with: "meeeting_max_user_limit_reached".localized, desc: "")
                     } else {
-                        
+                        UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
                     }
                 }
             }
@@ -248,7 +249,7 @@ class TGJoinMeetingViewController: TGViewController {
                     print("NEMeetingKit登录成功")
                     self?.joinInMeeting()
                 }else {
-                    //  self?.showError(message: msg ?? "")
+                    UIViewController.showBottomFloatingToast(with:  msg ?? "" , desc: "")
                 }
             }
         }
@@ -267,7 +268,7 @@ class TGJoinMeetingViewController: TGViewController {
                 }
             }
             else {
-               // self.showError(message: resultMsg ?? "")
+                UIViewController.showBottomFloatingToast(with:  msg ?? "" , desc: "")
             }
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5){
                 self.pop?.dismiss()
@@ -448,4 +449,13 @@ class JoiningVC: UIView {
     func dismiss(){
         self.removeFromSuperview()
     }
+}
+
+extension TGJoinMeetingViewController: TGJoinMeetingViewModelDelegate {
+    func leaveMeetingRoom() {
+        self.timer?.stopTimer()
+        self.timeView?.removeFromSuperview()
+    }
+    
+    
 }

@@ -297,6 +297,98 @@ class TGFeedNetworkManager: NSObject {
         }
     }
     
+    func unpinFeed(feedId: Int, completion: @escaping (String, Int, Bool?) -> Void) {
+        let path = "api/v2/feeds/\(feedId)/unpinned"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion("network_problem".localized, 0, false)
+                return
+            }
+            completion("", 0 , true)
+           
+        }
+    }
+    
+    func pinFeed(feedId: Int, completion: @escaping (String, Int, Bool?) -> Void) {
+        let path = "api/v2/feeds/\(feedId)/pinned"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion("network_problem".localized, 0, false)
+                return
+            }
+            completion("", 0 , true)
+           
+        }
+        
+    }
+    
+    func colloction(_ newState: Int, feedIdentity: Int, feedItem: FeedListCellModel?, complete: @escaping ((_ result: Bool) -> Void)) -> Void {
+        
+        let collectPath = newState == 1 ? "/collections" : "/uncollect"
+        let path = "api/v2/feeds/" + "/\(feedIdentity)" +  collectPath
+        
+        let method: HTTPMethod = newState == 1 ? .POST : .DELETE
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: method,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                complete(false)
+                return
+            }
+            complete(true)
+        }
+    }
+    
+    func commentPrivacy(_ newCommentState: Int, feedIdentity: Int, complete: @escaping ((_ result: Bool) -> Void)) -> Void {
+        
+        let path = "api/v2/feeds/comments/disable"
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                complete(false)
+                return
+            }
+            complete(true)
+        }
+    }
+    
+    func deleteMoment(_ feedIdentity: Int, complete: @escaping ((_ success: Bool) -> Void)) {
+        
+        let path = "api/v2/feeds/\(feedIdentity)/currency"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .DELETE,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                complete(false)
+                return
+            }
+            complete(true)
+        }
+    }
+
+    
     func getReactionList(id: Int, reactionType: ReactionTypes?, limit: Int = 20, after: String? = nil, completion: @escaping (_ response: TGFeedReactionsModel?, _ error: Error?) ->Void ) {
         let path = "api/v2/feeds/\(id)/reactions"
         var parameters: [String: Any] = ["limit": limit]

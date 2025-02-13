@@ -294,7 +294,7 @@ extension TGCreateMeetingViewController{
         }
         let view = UIView()
         view.backgroundColor = UIColor(hex: "#D9D9D9")
-        var lab = UILabel()
+        let lab = UILabel()
         lab.frame = CGRect(x: 15, y: 0, width: 100, height: 30)
         lab.text = indexDataSource[section]
         lab.font = UIFont.systemFont(ofSize: 14)
@@ -318,7 +318,7 @@ extension TGCreateMeetingViewController{
         canSelected = false
         if cell.chatButton.isSelected {
             for (index, model) in choosedDataSource.enumerated() {
-                let userinfo: ContactData = model as! ContactData
+                let userinfo: ContactData = model 
                 if userinfo.userName == cell.contactData?.userName {
                     if let collIndex = choosedDataSource.firstIndex(where: {$0.userName == cell.contactData?.userName}) {
                         let collectionIndexPath = IndexPath(row: collIndex, section: 0)
@@ -336,10 +336,10 @@ extension TGCreateMeetingViewController{
             cell.chatButton.isSelected = !cell.chatButton.isSelected
             
         } else {
-//            if choosedDataSource.count >= meetingNumlimit {
-//                self.showError(message: String(format: "meeting_maximum_members_reached_ios".localized, "\(self.meetingNumlimit)"))
-//                return
-//            }
+            if choosedDataSource.count >= meetingNumlimit {
+                UIViewController.showBottomFloatingToast(with: String(format: "meeting_maximum_members_reached_ios".localized, "\(self.meetingNumlimit)"), desc: "")
+                return
+            }
             if let contactData = cell.contactData {
                 choosedDataSource.insert(contactData, at: 0)
                 collectionView.isHidden = choosedDataSource.count == 0

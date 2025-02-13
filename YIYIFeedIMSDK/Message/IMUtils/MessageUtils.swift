@@ -176,6 +176,7 @@ class MessageUtils: NSObject {
             completion(team)
         }
     }
+    
     /// 获取用户头像信息
     class func getAvatarIcon(sessionId: String, conversationType: V2NIMConversationType, completion: @escaping (AvatarInfo) -> Void) {
         let avatarInfo = AvatarInfo()
@@ -432,36 +433,6 @@ class MessageUtils: NSObject {
         
     }
     
-    class func textForReplyModel(message: NIMMessage) -> String {
-        var nick = ""
-        if let session = message.session, let from = message.from {
-            nick = ""//MessageUtils.getShowName(userId: from, teamId: nil, session: session)
-        }
-        var text = "|" + nick
-        text += ": "
-        switch message.messageType {
-        case .text:
-            if let t = message.text {
-                text += t
-            }
-        case .image:
-            text += "[图片消息]"
-        case .audio:
-            text += "[语音消息]"
-        case .video:
-            text += "[视频消息]"
-        case .file:
-            text += "[文件消息]"
-        case .location:
-            text += "[位置消息]"
-        case .custom:
-            text += "[自定义消息]"
-        default:
-            text += "[未知消息]"
-        }
-        return text
-    }
-    
     class func itemsActionArray(_ message: TGMessageData, isPinned: Bool = false, isUpLoad: Bool = false) -> [IMActionItem] {
         var items: [IMActionItem] = []
         
@@ -511,7 +482,10 @@ class MessageUtils: NSObject {
         return items
     }
     
-    class func mediaItems() -> [MediaItem] {
+    class func mediaItems(conversationType: V2NIMConversationType) -> [MediaItem] {
+        if conversationType == .CONVERSATION_TYPE_TEAM {
+            return [.album, .camera, .file, .redpacket, .videoCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+        }
         return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
     }
     
@@ -793,7 +767,7 @@ class MessageUtils: NSObject {
     }
     /// 撤销消息 tip Team
     class func tipOnTeamV2MessageRevoked() -> String{
-        var tip = ""
+     //   var tip = ""
 //        NSString *fromUid = notification.messageFromUserId;
 //        NSString *operatorUid = notification.fromUserId;
 //        BOOL revokeBySender = !operatorUid || [operatorUid isEqualToString:fromUid];
@@ -823,7 +797,7 @@ class MessageUtils: NSObject {
 //        } else if (member.type == NIMTeamMemberTypeManager) {
 //            tipTitle = [String(@"team_admin") stringByAppendingString:info.showName];
 //        }
-        return tip
+        return ""
     }
     
     
@@ -1003,6 +977,23 @@ class MessageUtils: NSObject {
                     memberIds.append(member.accountId)
                 }
                 completed(memberIds)
+            }
+        } failure: { error in
+            completed([])
+        }
+        
+    }
+    
+    class func fetchTeamMembersInfo(teamId: String, completed: @escaping (([V2NIMTeamMember])-> Void)){
+        let option = V2NIMTeamMemberQueryOption()
+        option.limit = 1000
+        option.nextToken = ""
+        option.roleQueryType = .TEAM_MEMBER_ROLE_QUERY_TYPE_ALL
+        NIMSDK.shared().v2TeamService.getTeamMemberList(teamId, teamType: .TEAM_TYPE_NORMAL, queryOption: option) { listResult in
+            if let members = listResult.memberList {
+                completed(members)
+            } else {
+                completed([])
             }
         }
         

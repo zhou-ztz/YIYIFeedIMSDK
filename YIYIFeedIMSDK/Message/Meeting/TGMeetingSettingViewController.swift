@@ -8,6 +8,7 @@
 import UIKit
 import NIMSDK
 import NEMeetingKit
+import Toast
 
 class TGMeetingSettingViewController: TGViewController {
     let viewmodel = TGMeetingSettingViewModel()
@@ -321,7 +322,7 @@ class TGMeetingSettingViewController: TGViewController {
                     print("NEMeetingKit登录成功")
                     self?.createMeeting()
                 }else {
-                    //  self?.showError(message: msg ?? "")
+                    UIViewController.showBottomFloatingToast(with: msg ?? "", desc: "")
                 }
             }
         }
@@ -354,8 +355,14 @@ class TGMeetingSettingViewController: TGViewController {
                     self?.joinInMeeting(data: data, isPrivate: isPrivate)
                 }
             }
-            if let error = error {
-                
+            if let error = error as? NSError {
+                if error.code == 1012 {
+                    UIViewController.showBottomFloatingToast(with: "meeting_ended".localized, desc: "")
+                } else if error.code == 1013 {
+                    UIViewController.showBottomFloatingToast(with: "meeeting_max_user_limit_reached".localized, desc: "")
+                } else {
+                    UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
+                }
             }
         }
     }
@@ -381,7 +388,8 @@ class TGMeetingSettingViewController: TGViewController {
                     self.viewmodel.addNeRoomListener()
                     
                 } else {
-                  //  self.showError(message: resultMsg ?? "")
+                    UIViewController.showBottomFloatingToast(with: msg ?? "" , desc: "")
+
                 }
             }
         }
@@ -420,9 +428,9 @@ class TGMeetingSettingViewController: TGViewController {
             return
         }
         if isLeft {
-           // vc.view.makeToast(String(format: "meeting_left_participants_ios".localized, "5"), duration: 3, position: CSToastPositionBottom)
+            vc.view.makeToast(String(format: "meeting_left_participants_ios".localized, "5"), duration: 3, position: CSToastPositionBottom)
         }else{
-          //  vc.view.makeToast(String(format: "meeting_maximum_members_reached_ios".localized, "\(self.meetingNumlimit)"), duration: 3, position: CSToastPositionBottom)
+            vc.view.makeToast(String(format: "meeting_maximum_members_reached_ios".localized, "\(self.viewmodel.meetingNumlimit)"), duration: 3, position: CSToastPositionBottom)
         }
         
         

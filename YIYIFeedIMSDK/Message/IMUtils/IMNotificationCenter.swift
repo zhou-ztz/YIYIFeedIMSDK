@@ -58,7 +58,7 @@ class IMNotificationCenter: NSObject {
     func shouldResponseBusy() -> Bool{
         guard let topController = TGViewController.topMostController  else { return true }
         return topController.isKind(of: RLAudioVideoCallViewController.self)
-        || topController.isKind(of: RLAudioCallController.self)
+        || topController.isKind(of: RLAudioCallController.self) || topController.isKind(of: TGIMTeamMeetingController.self)
     }
     
     func shouldAutoRejectCall() -> Bool {
@@ -146,19 +146,19 @@ class IMNotificationCenter: NSObject {
         guard let topVC = TGViewController.topMostController else {
             return
         }
-//        let channelInfo = IMTeamMeetingCalleeInfo()
-//        channelInfo.requestId = notifyResponse.requestId
-//        channelInfo.channelId = notifyResponse.channelInfo.channelId
-//        channelInfo.channelName = notifyResponse.channelInfo.channelName
-//        channelInfo.caller = notifyResponse.fromAccountId
-//        channelInfo.teamId = (data["teamId"] as? String) ?? ""
-//        channelInfo.members = (data["members"] as? [String]) ?? []
-//        TSUtil.checkAuthorizeStatusByType(type: .videoCall, viewController: topVC, completion: {
-//            DispatchQueue.main.async {
-//                let vc = IMTeamMeetingViewController(channelInfo: channelInfo)
-//                topVC.present(vc.fullScreenRepresentation, animated: true, completion: nil)
-//            }
-//        })
+        let channelInfo = IMTeamMeetingCalleeInfo()
+        channelInfo.requestId = event.requestId
+        channelInfo.channelId = event.channelInfo.channelId
+        channelInfo.channelName = event.channelInfo.channelName
+        channelInfo.caller = event.inviterAccountId ?? ""
+        channelInfo.teamId = (data["teamId"] as? String) ?? ""
+        channelInfo.members = (data["members"] as? [String]) ?? []
+        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .videoCall, viewController: topVC, completion: {
+            DispatchQueue.main.async {
+                let vc = TGIMTeamMeetingController(channelInfo: channelInfo)
+                topVC.present(vc.fullScreenRepresentation, animated: true, completion: nil)
+            }
+        })
         
         
     }
@@ -202,30 +202,6 @@ extension IMNotificationCenter: V2NIMSignallingListener {
         guard let eventOne = event.first else {
             return
         }
-//        switch eventOne.eventType {
-//        case .SIGNALLING_EVENT_TYPE_INVITE:
-//            if self.shouldResponseBusy() || self.shouldAutoRejectCall() {
-//                self.unAcceptInvited(channelId: eventOne.channelInfo.channelId, caller: eventOne.inviterAccountId ?? "", requestId: eventOne.requestId)
-//                return
-//            }
-//            if let data = eventOne.channelInfo.channelExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-//                if let type = customInfo["type"] as? String {
-//                    switch NERtCallingType(rawValue: type) {
-//                    case .team:
-//                        if let data = customInfo["data"] as? [String : Any] {
-//                            self.presentTeamCall(data: data, event: eventOne)
-//                        }
-//                    case .p2p:
-//                        self.presentCalls(types: eventOne.channelInfo.channelType, caller: eventOne.inviterAccountId ?? "", channelId: eventOne.channelInfo.channelId, channelName: eventOne.channelInfo.channelName ?? "", requestId: eventOne.requestId)
-//
-//                    default:
-//                        break
-//                    }
-//                    
-//                }
-//            }
-//        default:
-//            break
-//        }
+
     }
 }

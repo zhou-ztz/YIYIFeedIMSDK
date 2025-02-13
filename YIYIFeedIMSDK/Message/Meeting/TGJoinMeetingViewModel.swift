@@ -8,7 +8,14 @@
 import UIKit
 import NEMeetingKit
 
+protocol TGJoinMeetingViewModelDelegate: AnyObject {
+    /// 离开会议
+    func leaveMeetingRoom()
+}
+
 class TGJoinMeetingViewModel: NSObject {
+    
+    weak var delegate: TGJoinMeetingViewModelDelegate?
 
     //会议是否付年费 0 无 1 已付
     var level: Int = 0
@@ -121,7 +128,7 @@ extension TGJoinMeetingViewModel: NEMeetingStatusListener {
     func onMeetingStatusChanged(_ event: NEMeetingEvent) {
         
         if event.status == .MEETING_STATUS_DISCONNECTING || event.status == .MEETING_STATUS_IDLE {
-           // self.delegate?.leaveMeetingRoom()
+            self.delegate?.leaveMeetingRoom()
         }
     }
     

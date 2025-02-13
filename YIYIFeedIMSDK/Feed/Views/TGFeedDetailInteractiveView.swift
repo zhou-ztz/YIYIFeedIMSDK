@@ -622,7 +622,7 @@ class TGFeedDetailInteractiveView: UIView {
                 guard let self = self else { return }
                 self.updateReactionButton(reactionType: fallback)
 
-//                UIViewController.showBottomFloatingToast(with: "error".localized, desc: message)
+                UIViewController.showBottomFloatingToast(with: "error".localized, desc: message)
             }
         }
 

@@ -126,7 +126,7 @@ class AudioVideoViewModel: NSObject {
     func joinChannel(isResponse: Bool = false, success: @escaping () ->Void, failure: @escaping () ->Void){
         let member = self.channelInfo?.members.first(where: {$0.accountId == NIMSDK.shared().v2LoginService.getLoginUser()})
         let rtcToken = self.callInfo.isCaller ? (self.V2NIMSignalCallerInfo?.rtcInfo?.rtcToken ?? "") : (self.V2NIMSignalCalleeInfo?.rtcInfo?.rtcToken ?? "")
-        if let uid = member?.uid ,  let channelName = self.channelInfo?.channelInfo.channelName{
+        if let uid = member?.uid, let channelName = self.channelInfo?.channelInfo.channelName{ 
             let _ = NERtcEngine.shared().joinChannel(withToken: rtcToken, channelName: channelName, myUid: UInt64(uid)) { error, _, _, _ in
                 if let _ = error {
                     failure()

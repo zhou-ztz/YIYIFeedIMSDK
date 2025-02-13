@@ -444,4 +444,37 @@ class TGIMNetworkManager: NSObject {
             }
         }
     }
+    
+    /// OpenEgg 打开红包
+    /**case .personal: return "/wallet/api/eggs/personal"
+     case .group: return "/wallet/api/eggs/group"
+     case .live: return "/wallet/api/eggs/live/v1"*/
+    class func openEgg(eggId: Int, isGroup: Bool, completion: @escaping (ClaimEggResponse?, Error?) -> Void) {
+        let path: String = isGroup == true ? "wallet/api/eggs/group" : "wallet/api/eggs/personal"
+        let param: [String: Any] = ["red_packet_id" : eggId]
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .PATCH,
+            params: param,
+            headers: nil
+        ) { data, _, error1 in
+            guard let data = data, error1 == nil else {
+                completion(nil, error1)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(ClaimEggResponse.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response, nil)
+                }
+            } catch {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
 }

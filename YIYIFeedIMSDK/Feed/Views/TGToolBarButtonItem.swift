@@ -73,6 +73,7 @@ class TGToolBarButtonItem: UIView {
          }
 
         titleLabel.isHidden = model?.titleShouldHide ?? true
+        titleLabel.textColor = titleColor
     }
     
     // MARK: - Public

@@ -59,6 +59,9 @@ public class TGFeedInfoDetailViewController: TGViewController {
     var addPostButton = UIButton(type: .custom).configure {
         $0.setImage(UIImage(named: "iconsAddmomentBlack"), for: .normal)
     }
+    var miniVideoButton = UIButton(type: .custom).configure {
+        $0.setImage(UIImage(named: "ico_video_disabled"), for: .normal)
+    }
     var moreButton = UIButton(type: .custom).configure {
         $0.setImage(UIImage(named: "icMoreBlack"), for: .normal)
     }
@@ -254,10 +257,11 @@ public class TGFeedInfoDetailViewController: TGViewController {
     //    }
     func setRightBarButton() {
         self.addPostButton.addTarget(self, action: #selector(addPostButtonClick), for: .touchUpInside)
+        self.miniVideoButton.addTarget(self, action: #selector(miniVideoButtonClick), for: .touchUpInside)
         self.moreButton.addTarget(self, action: #selector(moreButtonClick), for: .touchUpInside)
-        customNavigationBar.setRightViews(views: [addPostButton, moreButton])
+        customNavigationBar.setRightViews(views: [addPostButton, miniVideoButton, moreButton])
     }
-    @objc func addPostButtonClick(){
+    @objc func addPostButtonClick() {
         var data = [TGToolModel]()
         let titles = ["photo".localized, "mini_video".localized]
         let images = ["ic_rl_feed_photo", "ic_rl_feed_video"]
@@ -272,6 +276,23 @@ public class TGFeedInfoDetailViewController: TGViewController {
         preference.drawing.button.color = .lightGray
         preference.drawing.background.color = .clear
         self.addPostButton.showToolChoose(identifier: "", data: data, arrowPosition: .none, preferences: preference, delegate: self, isMessage: true)
+    }
+    @objc func miniVideoButtonClick() {
+        let vc = TGMiniVideoPageViewController(type: .hot, videos: [], focus: 0, onToolbarUpdate: self.onToolbarUpdated, avPlayer: nil, tagVoucher: nil)
+        
+//        vc.onPassPlayer = { [weak self] player, time in
+//            DispatchQueue.main.async {
+//                guard let player = player, let time = time else { return }
+//                self?.currentCell?.feedContentView.videoPlayer.setPlayer(player, at: time)
+//                self?.isViewVideo = false
+//            }
+//        }
+//        if isGlobalSearch {
+//            _parentVC?.present(TSNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true, completion: nil)
+//        } else {
+//            vc.isControllerPush = true
+            self.navigationController?.pushViewController(vc, animated: true)
+//        }
     }
     @objc func moreButtonClick(){
         
@@ -362,7 +383,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
             }
             
             guard result == true, let data = commentModel, let wself = self else {
-                //                UIViewController.showBottomFloatingToast(with: message ?? "please_retry_option".localized, desc: "", displayDuration: 4.0)
+                UIViewController.showBottomFloatingToast(with: message ?? "please_retry_option".localized, desc: "", displayDuration: 4.0)
                 return
             }
             //            var simpleModel = data.simpleModel()
@@ -537,19 +558,19 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
             }
             break
         case .save(isSaved: let isSaved):
-            //            if let data = self.model {
-            //                let isCollect = (data.toolModel?.isCollect).orFalse ? false : true
-            //                TSMomentNetworkManager().colloction(isCollect ? 1 : 0, feedIdentity: data.idindex, feedItem: data) { [weak self] (result) in
-            //                    if result == true {
-            //                        self?.model?.toolModel?.isCollect = isCollect
-            //                        DispatchQueue.main.async {
-            //                            if isCollect {
-            //                                self?.showTopFloatingToast(with: "success_save".localized, desc: "")
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //            }
+//            if let data = self.model {
+//                let isCollect = (data.toolModel?.isCollect).orFalse ? false : true
+//                TSMomentNetworkManager().colloction(isCollect ? 1 : 0, feedIdentity: data.idindex, feedItem: data) { [weak self] (result) in
+//                    if result == true {
+//                        self?.model?.toolModel?.isCollect = isCollect
+//                        DispatchQueue.main.async {
+//                            if isCollect {
+//                                self?.showTopFloatingToast(with: "success_save".localized, desc: "")
+//                            }
+//                        }
+//                    }
+//                }
+//            }
             break
         case .reportPost:
             //            if let model = self.model {

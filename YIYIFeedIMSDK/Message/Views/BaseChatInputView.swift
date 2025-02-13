@@ -9,6 +9,7 @@ import UIKit
 import KMPlaceholderTextView
 import AudioToolbox
 import CoreLocation
+import NIMSDK
 
 enum ChatMenuType: Int {
     case normal = 0
@@ -76,6 +77,8 @@ class BaseChatInputView: UIView {
     var contentHeight = 234.0 + TSBottomSafeAreaHeight
     
     var maxTextViewHeight = 108.0
+    
+    var conversationType: V2NIMConversationType = .CONVERSATION_TYPE_P2P
 
     lazy var barStackView: UIStackView = {
         let stack = UIStackView()
@@ -327,8 +330,6 @@ class BaseChatInputView: UIView {
         chatAddMoreView.isHidden = true
         locationView.isHidden = true
         locationView.backgroundColor = .yellow
-        let moreItems = MessageUtils.mediaItems()
-        chatAddMoreView.configData(data: moreItems)
 
         emojiView.snp.makeConstraints { make in
             make.left.top.bottom.right.equalToSuperview()
@@ -347,6 +348,12 @@ class BaseChatInputView: UIView {
         let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panAction(recognizer:)))
         panGesture.delegate = self
         recordButton.addGestureRecognizer(panGesture)
+    }
+    
+    func configMoreViewData(conversationType: V2NIMConversationType) {
+        self.conversationType = conversationType
+        let moreItems = MessageUtils.mediaItems(conversationType: conversationType)
+        chatAddMoreView.configData(data: moreItems)
     }
     
     func keyboardDismiss(){

@@ -83,7 +83,7 @@ class TGAvatarView: UIView {
     var avatarPlaceholderType = PlaceholderType.unknown
     /// 头像占位图
     var avatarPlaceholderImage: UIImage {
-        return UIImage.set_image(named: avatarPlaceholderType.rawValue)!
+        return UIImage.set_image(named: avatarPlaceholderType.rawValue) ?? UIImage()
     }
     /// able to custom placeholder image
     var customAvatarPlaceholderImage: UIImage?

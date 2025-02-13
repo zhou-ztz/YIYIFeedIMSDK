@@ -77,11 +77,11 @@ class TGFeedContentPageController: TGBaseContentPageController {
         }
         
         interactiveView.onMoreTouched = { [unowned self] in
-//            guard let id = CurrentUserSessionInfo?.userIdentity else {
-//                return
-//            }
+            guard let id = RLSDKManager.shared.loginParma?.uid else {
+                return
+            }
             
-//            self.navigationController?.presentPopVC(target: self.dataModel, type: self.dataModel.userId == id ? .moreMe : .moreUser , delegate: self)
+            self.navigationController?.presentPopVC(target: self.dataModel, type: self.dataModel.userId == id ? .moreMe : .moreUser , delegate: self)
         }
         
         interactiveView.onFollowTouched = { [weak self] in
@@ -94,7 +94,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
             user.updateFollow(completion: { [weak self] (success) in
                 if success {
                     DispatchQueue.main.async {
-//                        self?.interactiveView.updateFollowButton(user.followStatus)
+                        self?.interactiveView.updateFollowButton(user.followStatus)
                     }
                 }
             })

@@ -124,21 +124,21 @@ class TGTruncatableLabel: UIView {
     
     func setAttributeText(attString: NSMutableAttributedString, textColor: UIColor = .white, allowTruncation: Bool = false) {
         customText = attString
-        customText.addAttributeTextColor(textColor, range: NSRange(attString.string.startIndex..<attString.string.endIndex, in: attString.string))
-        customText.yy_font = self.label.font.withSize(14)
-        customText.yy_color = textColor
-        
-        self.label.numberOfLines = self.numberOfLines
-        self.label.attributedText = customText
-        self.collapseViewWrapper.isHidden = true
-
-        prepareAlias(for: customText.string)
-        prepareHashTags(for: customText.string)
-        prepareHttpTag(for: customText.string)
-        if allowTruncation { setAllowTruncation() }
-        
-        setNeedsLayout()
-        layoutIfNeeded()
+//        customText.addAttributeTextColor(textColor, range: NSRange(attString.string.startIndex..<attString.string.endIndex, in: attString.string))
+//        customText.yy_font = self.label.font.withSize(14)
+//        customText.yy_color = textColor
+//        
+//        self.label.numberOfLines = self.numberOfLines
+//        self.label.attributedText = customText
+//        self.collapseViewWrapper.isHidden = true
+//
+//        prepareAlias(for: customText.string)
+//        prepareHashTags(for: customText.string)
+//        prepareHttpTag(for: customText.string)
+//        if allowTruncation { setAllowTruncation() }
+//        
+//        setNeedsLayout()
+//        layoutIfNeeded()
     }
 
     private func prepareAlias(for text: String) {

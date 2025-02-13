@@ -9,6 +9,7 @@ import UIKit
 import NERtcSDK
 import NIMSDK
 import AVFAudio
+import Toast
 
 class RLAudioVideoCallViewController: TGViewController {
     
@@ -137,7 +138,7 @@ class RLAudioVideoCallViewController: TGViewController {
             self?.calleeResponsed = true
             self?.joinChannel()
         } failure: {[weak self] error in
-            //self?.showError(message: error.localizedDescription ?? "")
+            UIViewController.showBottomFloatingToast(with: error.nserror.localizedDescription, desc: "")
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0){
                 self?.dismiss()
             }
@@ -163,8 +164,8 @@ class RLAudioVideoCallViewController: TGViewController {
                 guard let self = self else {
                    return
                 }
-                if let error = error {
-                   // self.showError(message: error.localizedDescription)
+                if let error = error?.nserror {
+                    UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
                 }
                 self.viewmodel.callEventType = .miss
                 self.leavlChannel()
@@ -218,10 +219,11 @@ extension RLAudioVideoCallViewController: TimerHolderDelegate {
                 self.player?.stop()
                 if viewmodel.callInfo.isCaller {
                     viewmodel.callEventType = .noResponse
-                    //view.makeToast("no_answer_call".localized, duration: 2, position: CSToastPositionCenter)
+                    
+                    view.makeToast("no_answer_call".localized, duration: 2, position: CSToastPositionCenter)
                     self.closeChannel()
                 }else {
-                   // navigationController?.view.makeToast("timeout_answer".localized, duration: 2, position: CSToastPositionCenter)
+                    navigationController?.view.makeToast("timeout_answer".localized, duration: 2, position: CSToastPositionCenter)
                     self.dismiss()
                 }
                 
@@ -256,7 +258,7 @@ extension RLAudioVideoCallViewController: AudioVideoViewModelDelegate {
             if let data = event.channelInfo.channelExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
                 if let type = customInfo["type"] as? String {
                     let msg = type == "isCallBusy" ? "avchat_peer_busy".localized : "chatroom_rejected".localized
-                    //self.view.makeToast(msg, duration: 2, position: CSToastPositionCenter)
+                    UIViewController.showBottomFloatingToast(with: msg, desc: "")
                 }
             }
             self.closeChannel()
@@ -284,8 +286,7 @@ extension RLAudioVideoCallViewController: AudioVideoViewModelDelegate {
                     case .agreeToVideo:
                         self.switchToVideo()
                     case .rejectToVideo:
-                        break
-                       // self.view.makeToast("switching_reject_video".localized, duration: 2, position: CSToastPositionCenter)
+                        self.view.makeToast("switching_reject_video".localized, duration: 2, position: CSToastPositionCenter)
                     default:
                         break
                     }

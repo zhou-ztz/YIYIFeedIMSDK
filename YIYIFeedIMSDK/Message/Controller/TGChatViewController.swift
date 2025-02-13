@@ -18,6 +18,8 @@ let record_duration: TimeInterval = 60.0
 public class TGChatViewController: TGViewController {
     
     var viewmodel: TGChatViewModel
+    private var userInfo: UserInfoModel? = nil
+    var meetingViewmodel: TGJoinMeetingViewModel = TGJoinMeetingViewModel()
     
     lazy var tableView: RLTableView = {
         let tableView = RLTableView(frame: .zero, style: .plain)
@@ -109,6 +111,16 @@ public class TGChatViewController: TGViewController {
         return button
     }()
     
+    lazy var eggOverlayView: RedPacketView = {
+        let view = RedPacketView(frame: CGRect(origin: .zero, size: CGSize(width: self.view.bounds.width, height: self.view.bounds.height)))
+        view.backgroundColor = UIColor(white: 0.2, alpha: 0.5)
+        return view
+    }()
+    private var eggOverlayTapGesture : UITapGestureRecognizer!
+    private var openEggTapGesture : UITapGestureRecognizer!
+    private var eggAttachment: IMEggAttachment?
+    private var isEggAttachmentOutgoing: Bool?
+    
     var selectedMsgId: [String] = []
     
     //保存识别结果
@@ -127,6 +139,7 @@ public class TGChatViewController: TGViewController {
     var isDownLoading: Bool = false
     /// 是否在打开egg
     var onClickedEgg: Bool = false
+    var isRedPacket = false
     /// 置顶view
     var pinnedView: IMPinnedView?
     var pinnedAlert: TGAlertController?
@@ -149,8 +162,15 @@ public class TGChatViewController: TGViewController {
         }
     }
     
+    ///会议
+    var timer: TimerHolder?
+    var timeView: UIView?
+    var timeLabel:  UILabel?
+    var password = ""
     /// @用户列表
     var mentionsUsernames = [AutoMentionsUser]()
+    
+    var dependVC : UIViewController!
   
     public init(conversationId: String, conversationType: Int) {
         let type = V2NIMConversationType(rawValue: conversationType) ?? .CONVERSATION_TYPE_P2P
@@ -190,6 +210,7 @@ public class TGChatViewController: TGViewController {
     }
 
     func addObserve() {
+        meetingViewmodel.delegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyBoardWillShow(_:)),
                                                name: UIResponder.keyboardWillShowNotification,
@@ -253,6 +274,7 @@ public class TGChatViewController: TGViewController {
     
     func commonUI(){
         viewmodel.delegate = self
+        chatInputView.configMoreViewData(conversationType: viewmodel.conversationType) 
         backBaseView.addSubview(tableView)
         backBaseView.addSubview(chatInputView)
         chatInputView.delegate = self
@@ -315,6 +337,12 @@ public class TGChatViewController: TGViewController {
             }
         }
         
+        eggOverlayTapGesture = UITapGestureRecognizer(target: self, action: #selector(closeEggView))
+        eggOverlayView.addGestureRecognizer(eggOverlayTapGesture)
+        
+        openEggTapGesture = UITapGestureRecognizer(target: self, action: #selector(checkOpenEggStatus))
+        eggOverlayView.openEggView.addGestureRecognizer(openEggTapGesture)
+        
     }
     
     func setupNav() {
@@ -323,6 +351,12 @@ public class TGChatViewController: TGViewController {
         } else {
             switch viewmodel.conversationType {
             case .CONVERSATION_TYPE_P2P:
+                TGNewFriendsNetworkManager.getUsersInfo(usersId: [], names: [self.viewmodel.sessionId]) {[weak self] users, error in
+                    guard let self = self, let model = users?.first else {
+                        return
+                    }
+                    self.userInfo = model
+                }
                 if viewmodel.sessionId.count > 0 {
                     customNavigationBar.setRightViews(views: [videoCallBtn, enterInfoBtn])
                     self.nonfriendBottomView.makeHidden()
@@ -346,6 +380,10 @@ public class TGChatViewController: TGViewController {
         }
         
         
+        
+    }
+    
+    func updateNav(_ model: UserInfoModel) {
         
     }
     
@@ -415,7 +453,12 @@ public class TGChatViewController: TGViewController {
         case .CONVERSATION_TYPE_TEAM:
             let videoCall = UIAlertAction(title: "msg_type_video_call".localized, style: .default, handler: { [weak self] _ in
                 guard let self = self else { return }
-                
+                MessageUtils.fetchMembersTeam(teamId: self.viewmodel.sessionId) { userIds in
+                    DispatchQueue.main.async {
+                        self.teamMeeting(userIds: userIds)
+                    }
+                    
+                }
             })
             videoCall.setValue(videoImage?.withRenderingMode(.alwaysOriginal), forKey: "image")
             actionSheet.addAction(videoCall)
@@ -451,6 +494,44 @@ public class TGChatViewController: TGViewController {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    func teamMeeting(userIds: [String]) {
+        let currentUserID = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
+        var memberIds = [String]()
+        for userId in userIds{
+            if userId != currentUserID {
+                memberIds.append(userId)
+            }
+        }
+        
+        let config = TGContactsPickerConfig(title: "select_contact".localized, rightButtonTitle: "confirm".localized, allowMultiSelect: true, enableTeam: false, enableRecent: false, enableRobot: false, maximumSelectCount: 8, members: memberIds, enableButtons: false, allowSearchForOtherPeople: true)
+        
+        self.dependVC = TGContactsPickerViewController(configuration: config, finishClosure: {[weak self] contacts in
+            guard let self = self  else {return}
+            let users = contacts.compactMap {$0.userName}
+            var members : [String] = [currentUserID]
+            members.append(contentsOf: users)
+            let info = IMTeamMeetingCallerInfo()
+            info.members = members
+            info.teamId = self.viewmodel.sessionId
+            AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .videoCall, viewController: self, completion: {
+                DispatchQueue.main.async {
+                    self.dependVC.dismiss(animated: true) {
+                        let vc1 = TGIMTeamMeetingController(info: info, conversationId: self.viewmodel.conversationId)
+                        vc1.modalPresentationStyle = .fullScreen
+                        self.present(vc1, animated: true, completion: nil)
+                    }
+                }
+            })
+        }, isTeamMeeting: true)
+        
+        DispatchQueue.main.async {
+            let nav = TGNavigationController(rootViewController: self.dependVC)
+            nav.modalPresentationStyle = .fullScreen
+            self.present(nav, animated: true, completion: nil)
+        }
+        
     }
     
     func setChatWallpaper() {
@@ -532,10 +613,10 @@ public class TGChatViewController: TGViewController {
                 if let size_B = fileAttributes[FileAttributeKey.size] as? Double {
                     let size_MB = size_B / 1e6
                     if size_MB > fileSizeLimit {
-                       // self.showTips(message: "文件大小不能超过\(fileSizeLimit)MB")
+                        UIViewController.showBottomFloatingToast(with: "文件大小不能超过\(fileSizeLimit)MB", desc: "")
                         try? FileManager.default.removeItem(atPath: desPath)
                     } else {
-                        viewmodel.sendFileMessage(filePath: desPath, displayName: displayName, conversationId: viewmodel.conversationId) { [weak self] _, error, _ in
+                        viewmodel.sendFileMessage(filePath: desPath, displayName: displayName, conversationId: viewmodel.conversationId) { _, error, _ in
                             
                         }
 
@@ -552,7 +633,7 @@ public class TGChatViewController: TGViewController {
         TGIMNetworkManager.createWhiteboard(roomName: viewmodel.sessionId + String(timeStamp)) {[weak self] model, error in
             guard let self = self else {return}
             if let error = error {
-               // self.showError(message: error.localizedDescription)
+                UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
             } else {
                 self.whiteboardRoomId = model?.data?.cid ?? 0
                 self.showWhiteBoard(channelName: self.whiteboardRoomId.stringValue)
@@ -591,15 +672,33 @@ public class TGChatViewController: TGViewController {
             MessageUtils.getTeamInfo(teamId: self.viewmodel.sessionId, teamType: .TEAM_TYPE_NORMAL) {[weak self] team in
                 if let team = team, let self = self {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-                        let vc = TGRedPacketViewController(transactionType: .personal, fromUser: NIMSDK.shared().v2LoginService.getLoginUser() ?? "", toUser: self.viewmodel.sessionId, numberOfMember: team.memberCount, teamId: team.teamId, completion: nil)
-                        self.navigationController?.pushViewController(vc, animated: true)
+                        RLSDKManager.shared.imDelegate?.openRedPackect(transactionType: .group, fromUser: NIMSDK.shared().v2LoginService.getLoginUser() ?? "", toUser: self.viewmodel.sessionId, numberOfMember: team.memberCount, teamId: team.teamId, completion: { id, userId, msg in
+                            self.onClickedEgg = false
+                            self.isRedPacket = true
+                            let message = MessageUtils.eggV2Message(with: id, tid: team.teamId, uid: userId, messageStr: msg)
+                            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
+                                self.viewmodel.sendMessage(message: message, conversationId: self.viewmodel.conversationId, params: nil) { _, _, _ in
+                                    
+                                }
+                            }
+                            
+                        })
                     }
                 }
             }
         } else {
-            let vc = TGRedPacketViewController(transactionType: .group, fromUser: NIMSDK.shared().v2LoginService.getLoginUser() ?? "", toUser: self.viewmodel.sessionId, numberOfMember: 0, teamId: nil, completion: nil)
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-                self.navigationController?.pushViewController(vc, animated: true)
+                RLSDKManager.shared.imDelegate?.openRedPackect(transactionType: .personal, fromUser: NIMSDK.shared().v2LoginService.getLoginUser() ?? "", toUser: self.viewmodel.sessionId, numberOfMember: 0, teamId: nil, completion: {[weak self] id, userId, msg in
+                    guard let self = self else { return }
+                    self.onClickedEgg = false
+                    self.isRedPacket = true
+                    let message = MessageUtils.eggV2Message(with: id, tid: self.viewmodel.sessionId, uid: userId, messageStr: msg)
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
+                        self.viewmodel.sendMessage(message: message, conversationId: self.viewmodel.conversationId, params: nil) { _, _, _ in
+                            
+                        }
+                    }
+                })
             }
         }
     }
@@ -711,12 +810,12 @@ public class TGChatViewController: TGViewController {
         
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let cancelAction = UIAlertAction(title: "cancel".localized, style: .cancel, handler: nil)
-        let deleteForEveryone = UIAlertAction(title: "longclick_msg_revoke_message".localized, style: .default, handler: { [weak self] action in
-            guard let self = self else { return }
-            
-            self.selectedMsgId.removeAll()
-            self.showSelectActionToolbar(false, isDelete: false)
-        })
+//        let deleteForEveryone = UIAlertAction(title: "longclick_msg_revoke_message".localized, style: .default, handler: { [weak self] action in
+//            guard let self = self else { return }
+//            
+//            self.selectedMsgId.removeAll()
+//            self.showSelectActionToolbar(false, isDelete: false)
+//        })
         let deleteForMe = UIAlertAction(title: "longclick_msg_delete_for_me".localized, style: .default, handler: { [weak self] action in
             guard let self = self else { return }
             self.viewmodel.deleteMessage(messages: messages, onlyDeleteLocal: false) { error in
@@ -850,15 +949,15 @@ public class TGChatViewController: TGViewController {
         params.collectionType = Int32(type.rawValue)
         params.collectionData = msgData
         params.uniqueId = message.messageClientId
-        NIMSDK.shared().v2MessageService.addCollection(params) {[weak self] collection in
+        NIMSDK.shared().v2MessageService.addCollection(params) { _ in
             //TODO:
             if UserDefaults.isMessageFirstCollection == false {
                 UserDefaults.isMessageFirstCollection = true
                 UserDefaults.messageFirstCollectionFilterTooltipShouldHide = true
             }
-            //self?.showError(message: "favourite_msg_save_success".localized)
+            UIViewController.showBottomFloatingToast(with: "favourite_msg_save_success".localized, desc: "")
         } failure: { error in
-            //self?.showError(message: error.localizedDescription)
+            UIViewController.showBottomFloatingToast(with: error.nserror.localizedDescription, desc: "")
         }
 
     }
@@ -901,8 +1000,8 @@ public class TGChatViewController: TGViewController {
     func loadMessagePins() {
         viewmodel.getGroupPinnedList(groupId: viewmodel.sessionId) {[weak self] pins, error in
             guard let self = self else { return }
-            if let _ = error  {
-                
+            if let error = error  {
+                UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
             } else {
                 if let models = pins, let model = models.first {
                     self.viewmodel.pinnedList = models
@@ -1005,7 +1104,7 @@ public class TGChatViewController: TGViewController {
     
     func setPinnedMessageForMessageId() {
         viewmodel.messages.forEach { messageData in
-            if let item = self.viewmodel.pinnedList.first(where: { model in
+            if let _ = self.viewmodel.pinnedList.first(where: { model in
                 model.im_msg_id == messageData.nimMessageModel?.messageClientId
             }) {
                 messageData.isPinned = true
@@ -1051,8 +1150,161 @@ public class TGChatViewController: TGViewController {
     }
     
     @objc func handleCustomNotification(_ notification: Notification) {
-        guard let dict = notification.userInfo else {
+//        guard let dict = notification.userInfo else {
+//            return
+//        }
+    }
+    
+    // MARK: MeetingKit - 会议
+    //后端接口加入会议- 会议记录
+    func joinMeetingApi(meetingNum: String, password: String) {
+        self.password = password
+        meetingViewmodel.joinMeetingApi(meetingNum: meetingNum) {[weak self] requestdata, error in
+            guard let self = self else {return}
+            if let model = requestdata {
+                self.meetingViewmodel.level = model.data.meetingLevel
+                self.meetingViewmodel.roomUuid = (model.data.roomUuid).stringValue
+                self.meetingViewmodel.meetingTimeLimit = model.data.meetingTimeLimit
+                self.meetingViewmodel.meetingMemberLimit = model.data.meetingMemberLimit
+                self.meetingViewmodel.startTime = (model.data.meetingInfo?.startTime ?? "").toInt()
+                self.meetingViewmodel.isPrivate = (model.data.meetingInfo?.isPrivate ?? 0) == 1 ? true : false
+                self.quertMeetingKitAccountInfo()
+            } else {
+                if let error = error as? NSError {
+                    if error.code == 1012 {
+                        print("会议不存在")
+                        UIViewController.showBottomFloatingToast(with: "meeting_ended".localized, desc: "")
+                    } else if error.code == 1013 {
+                        UIViewController.showBottomFloatingToast(with: "meeeting_max_user_limit_reached".localized, desc: "")
+                    } else {
+                        UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
+                    }
+                }
+            }
+        }
+    }
+    
+    func quertMeetingKitAccountInfo(){
+        let userUuid: String? = UserDefaults.standard.string(forKey: "MeetingKit-userUuid")
+        let token: String? = UserDefaults.standard.string(forKey: "MeetingKit-userToken")
+        if let userUuid = userUuid, let token = token {
+            meetingViewmodel.meetingkitLogin(username: userUuid, password: token) {[weak self] code, msg in
+                if code == 0 {
+                    print("NEMeetingKit登录成功")
+                    self?.joinInMeeting()
+                }else {
+                    UIViewController.showBottomFloatingToast(with:  msg ?? "" , desc: "")
+                }
+            }
+        }
+    }
+    ///加入会议
+    func joinInMeeting() {
+        
+        meetingViewmodel.joinInMeeting(meetingID: meetingViewmodel.meetingNum, password: self.password) {[weak self] requestdata, code, msg in
+            guard let self = self else {
+                return
+            }
+            if code == 0 {
+                if self.meetingViewmodel.level == 0 {
+                    self.startTimerHolder()
+                }
+            }
+            else {
+                UIViewController.showBottomFloatingToast(with:  msg ?? "" , desc: "")
+            }
+        }
+    }
+    
+    func startTimerHolder(){
+        if self.timer != nil {
+            self.timeView?.removeFromSuperview()
+            self.timer?.stopTimer()
+        }
+        let now = Date().timeIntervalSince1970
+       
+        let dt = Int(now) - self.meetingViewmodel.startTime / 1000
+        
+        self.meetingViewmodel.duration = self.meetingViewmodel.meetingTimeLimit * 60 - dt
+        self.timer = TimerHolder()
+        self.timer?.startTimer(seconds: 1, delegate: self, repeats: true)
+        self.showTimeView()
+    }
+    
+    
+    func showTimeView(){
+        guard let vc = UIViewController.topMostController  else {
             return
+        }
+        let nimute = self.meetingViewmodel.duration / 60
+        let s = self.meetingViewmodel.duration % 60
+        let nim = String(format: "%02d", nimute)
+        let ss = String(format: "%02d", s)
+        timeView = UIView()
+        timeView?.backgroundColor = UIColor(red: 0.93, green: 0.13, blue: 0.13, alpha: 1)
+        timeView?.layer.cornerRadius = 10
+        timeView?.clipsToBounds = true
+        vc.view.addSubview(timeView!)
+        timeView?.isHidden = true
+        timeLabel = UILabel()
+        let timeStr = "\(nim):\(ss)"
+        timeLabel?.text = String(format: "meeting_end_in_ios".localized, timeStr)
+        timeLabel?.textColor = .white
+        timeLabel?.font = UIFont.systemFont(ofSize: 15)
+        timeLabel?.textAlignment = .center
+        timeView?.addSubview(timeLabel!)
+        timeView?.snp.makeConstraints { make in
+            make.left.equalTo(12)
+            make.top.equalTo(26 + TSNavigationBarHeight)
+            
+        }
+        timeLabel?.snp.makeConstraints { make in
+            make.left.top.equalTo(3)
+            make.right.bottom.equalTo(-3)
+            make.height.equalTo(24)
+        }
+        
+    }
+    // MARK: Egg 🧧
+    private func renderEggView() {
+        let transition = CATransition()
+        transition.duration = 0.2
+        transition.type = .fade
+        eggOverlayView.layer.add(transition, forKey: nil)
+        eggOverlayView.frame = UIScreen.main.bounds
+        let count = UIApplication.shared.windows.count
+        UIApplication.shared.windows[count - 1].addSubview(eggOverlayView)
+        UIApplication.shared.windows[count - 1].bringSubviewToFront(eggOverlayView)
+    }
+    @objc func closeEggView() {
+        eggOverlayView.removeFromSuperview()
+        self.eggAttachment = nil
+    }
+    
+    @objc func checkOpenEggStatus() {
+        eggOverlayView.removeFromSuperview()
+        
+        guard let attachment = self.eggAttachment, let eggId = Int(attachment.eggId) else { return }
+        self.view.isUserInteractionEnabled = false
+        let isGroup = self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P ? false : true
+        TGIMNetworkManager.openEgg(eggId: eggId, isGroup: isGroup) { [weak self] eggResponse, error in
+            guard let self = self else { return }
+            self.view.isUserInteractionEnabled = true
+            if error == nil {
+                let vc = TGEggDetailViewController()
+                vc.info = eggResponse
+                vc.isSender = self.isEggAttachmentOutgoing ?? true
+                vc.isGroup = isGroup
+                let nav = TGNavigationController(rootViewController: vc).fullScreenRepresentation
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
+                    self.present(nav, animated: true, completion: { [weak self] in
+                        self?.closeEggView()
+                    })
+                }
+            } else {
+                self.closeEggView()
+                UIViewController.showBottomFloatingToast(with: error?.localizedDescription ?? "", desc: "")
+            }
         }
     }
 }
@@ -1272,6 +1524,22 @@ extension TGChatViewController: BaseMessageCellDelegate {
     
     
     func meetingTapped(cell: BaseMessageCell?, model: TGMessageData?) {
+        guard let attachment = model?.customAttachment as? IMMeetingRoomAttachment else { return }
+        
+        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .videoCall, viewController: self, completion: {
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "tips".localized, message: "meeting_join_confirmation".localized, preferredStyle: .alert)
+                
+                let cancel = UIAlertAction(title: "cancel".localized, style: .cancel)
+                let comfirm = UIAlertAction(title: "confirm".localized,style: .default) {_ in
+                    self.joinMeetingApi(meetingNum: attachment.meetingNum, password: attachment.meetingPassword)
+                }
+                alert.addAction(cancel)
+                alert.addAction(comfirm)
+                self.present(alert, animated: true)
+            }
+            
+        })
         
     }
     
@@ -1381,6 +1649,25 @@ extension TGChatViewController: BaseMessageCellDelegate {
                 case .Voucher:
                     guard let attach = model.customAttachment as? IMVoucherAttachment else { return}
                     RLSDKManager.shared.imDelegate?.didPressVoucher(urlString: attach.postUrl)
+                case .Egg:
+                    guard let message = model.nimMessageModel, let attachment = model.customAttachment as? IMEggAttachment  else { return }
+                    self.chatInputView.textView.resignFirstResponder()
+                    self.eggAttachment = attachment
+                    self.isEggAttachmentOutgoing = message.isSelf
+                    
+                    if message.isSelf {
+                        self.checkOpenEggStatus()
+                    } else {
+                        MessageUtils.getAvatarIcon(sessionId: message.senderId ?? "", conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in
+                            guard let self = self else { return }
+                            self.eggOverlayView.updateInfo(avatarInfo: avatarInfo, name: avatarInfo.nickname ?? "", message: attachment.message, uids: attachment.uids, completion: {
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+                                    self.renderEggView()
+                                }
+                            })
+                        }
+                        
+                    }
                 default:
                     break
                 }
@@ -1582,7 +1869,7 @@ extension TGChatViewController{
                     imageHeight = Int32(abs(correctedSize.height))
                 }
                 
-                weak var weakSelf = self
+               // weak var weakSelf = self
                 viewmodel.sendVideoMessage(url: videoUrl, name: imageName, width: imageWidth, height: imageHeight, duration: videoDuration, conversationId: viewmodel.conversationId) { message, error, progress in
                     //if progress > 0, progress <= 100 {
                     // self?.setModelProgress(message, progress)
@@ -1659,7 +1946,7 @@ extension TGChatViewController{
                     }
                 }
                 
-                viewmodel.sendImageMessage(path: imageUrl.relativePath, name: imageName, width: imageWidth, height: imageHeight, conversationId: viewmodel.conversationId) { [weak self] error in
+                viewmodel.sendImageMessage(path: imageUrl.relativePath, name: imageName, width: imageWidth, height: imageHeight, conversationId: viewmodel.conversationId) { _ in
                     // 删除临时保存的图片
                     if needDelete {
                         try? FileManager.default.removeItem(at: imageUrl)
@@ -1683,10 +1970,13 @@ extension TGChatViewController: UIDocumentInteractionControllerDelegate{
 extension TGChatViewController: TGChatViewModelDelegate {
     
     func onSend(_ message: V2NIMMessage, succeeded: Bool) {
-       
+       // let row = viewmodel.messages.count - 1
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
+//            let indexpath = IndexPath(row: row, section: 0)
+//            self?.tableView.insertRow(at: indexpath, with: .none)
             self?.scrollTableViewToBottom()
+            
         }
     }
     
@@ -1874,7 +2164,7 @@ extension TGChatViewController: ChatInputViewDelegate {
             openLocation(model: nil)
         }
     }
-    ///更多
+    ///更多菜单
     func didSelectMoreCell(cell: InputMoreCell) {
         guard let item = cell.cellData else {
             return
@@ -1893,9 +2183,18 @@ extension TGChatViewController: ChatInputViewDelegate {
         case .redpacket:
             eggTapped()
         case .videoCall:
-            let vc = RLAudioCallController(callee: self.viewmodel.sessionId, callType: .SIGNALLING_CHANNEL_TYPE_VIDEO)
-            let nav = TGNavigationController(rootViewController: vc)
-            self.present(nav.fullScreenRepresentation, animated: true)
+            if viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
+                let vc = RLAudioCallController(callee: self.viewmodel.sessionId, callType: .SIGNALLING_CHANNEL_TYPE_VIDEO)
+                let nav = TGNavigationController(rootViewController: vc)
+                self.present(nav.fullScreenRepresentation, animated: true)
+            } else {
+                MessageUtils.fetchMembersTeam(teamId: self.viewmodel.sessionId) {[weak self] userIds in
+                    DispatchQueue.main.async {
+                        self?.teamMeeting(userIds: userIds)
+                    }
+                    
+                }
+            }
         case .voiceCall:
             let vc = RLAudioCallController(callee: self.viewmodel.sessionId, callType: .SIGNALLING_CHANNEL_TYPE_AUDIO)
             let nav = TGNavigationController(rootViewController: vc)
@@ -1950,7 +2249,7 @@ extension TGChatViewController: ChatInputViewDelegate {
             }
             
         } else {
-            viewmodel.sendTextMessage(text: content, conversationId: viewmodel.conversationId, remoteExt: remoteExt) {[weak self] message, error in
+            viewmodel.sendTextMessage(text: content, conversationId: viewmodel.conversationId, remoteExt: remoteExt) {message, error in
                 if let _ = error {
                     
                 }
@@ -2348,6 +2647,56 @@ extension TGChatViewController: IMPinnedPopViewDeleagte {
         self.pinnedView?.layoutIfNeeded()
     }
     
+    
+    
+}
+
+extension TGChatViewController: TimerHolderDelegate {
+    func onTimerFired(holder: TimerHolder) {
+        if holder == timer {
+            if self.meetingViewmodel.duration > 0 {
+                self.meetingViewmodel.duration = self.meetingViewmodel.duration - 1
+                let nimute = self.meetingViewmodel.duration / 60
+                let s = self.meetingViewmodel.duration % 60
+                let nim = String(format: "%02d", nimute)
+                let ss = String(format: "%02d", s)
+                let timeStr = "\(nim):\(ss)"
+                timeLabel?.text = String(format: "meeting_end_in_ios".localized, timeStr)
+                if self.meetingViewmodel.duration <= 5 * 60 {
+                    self.timeView?.isHidden = false
+                }
+            }else {
+                self.timer?.stopTimer()
+
+                let window = UIApplication.shared.keyWindow
+                
+                let bgView = MeetingEndView()
+                bgView.backgroundColor = .black.withAlphaComponent(0.2)
+                window?.addSubview(bgView)
+                bgView.bindToEdges()
+                bgView.okAction = { [weak self] in
+                    bgView.isHidden = true
+                    bgView.removeFromSuperview()
+                    self?.timeView?.isHidden = true
+                    self?.timeView?.removeFromSuperview()
+                    self?.meetingViewmodel.leaveMeetingRoom()
+                    
+                }
+            }
+        }
+//        else if holder == titleTimer {
+//            isTypingLabel.isHidden = true
+//        }
+    }
+    
+    
+}
+
+extension TGChatViewController: TGJoinMeetingViewModelDelegate {
+    func leaveMeetingRoom() {
+        self.timer?.stopTimer()
+        self.timeView?.removeFromSuperview()
+    }
     
     
 }

@@ -13,6 +13,7 @@ enum HTTPMethod: String {
     case POST = "POST"
     case PUT = "PUT"
     case DELETE = "DELETE"
+    case PATCH = "PATCH"
 }
 
 class TGNetworkManager {
@@ -106,8 +107,11 @@ class TGNetworkManager {
             if let httpResponse = response as? HTTPURLResponse {
                 let statusCode = httpResponse.statusCode
                 print("Status Code: \(statusCode)")
+                print("requestUrl: \(String(describing: request.url?.absoluteString))")
+                print("params: \(String(describing: params))")
+                print("httpBody: \(String(describing: request.httpBody))")
                 
-                if (200...499).contains(statusCode) {
+                if (200...299).contains(statusCode) {
                     print("Request was successful")
                     
                     do {
@@ -134,7 +138,7 @@ class TGNetworkManager {
                     
                     
                 } else {
-
+                   
                     guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                         let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "No data received"])
                         DispatchQueue.main.async {
@@ -148,7 +152,18 @@ class TGNetworkManager {
                         DispatchQueue.main.async {
                             completion(nil, response, noDataError)
                         }
-                    } else {
+                    } else if let message = dictionary["message"] as? String {
+                        let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+                        DispatchQueue.main.async {
+                            completion(nil, response, noDataError)
+                        }
+                    } else if let code = dictionary["code"] as? Int {
+                        let noDataError = NSError(domain: "TGNetworkManager", code: code, userInfo: [NSLocalizedDescriptionKey: ""])
+                        DispatchQueue.main.async {
+                            completion(nil, response, noDataError)
+                        }
+                    }
+                    else {
                         let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "No data received"])
                         DispatchQueue.main.async {
                             completion(nil, response, noDataError)

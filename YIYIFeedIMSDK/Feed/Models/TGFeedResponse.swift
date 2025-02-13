@@ -35,7 +35,7 @@ struct TGFeedResponse: Codable {
     let feedFrom: Int?
     let images: [FeedImage]?
     let tagVoucher: TagVoucher?
-    let video: String?
+    let video: TGFeedVideoModel?
     let topics: [String]?
     let repostableID: Int?
     let feedContent: String?
@@ -103,6 +103,7 @@ struct TGFeedResponse: Codable {
 //        case pinnedComments = "pinned_comments"
     }
 }
+
 
 // 嵌套的 User 对象
 struct FeedUser: Codable {
@@ -195,5 +196,30 @@ struct TGFeedTagUserMerchant: Codable {
     let id: Int?
     let username: String?
     let name: String?
+    
+}
+
+struct TGFeedVideoModel: Codable {
+    /// 文件 file_with 标识 不收费图片只存在 file 这一个字段。
+    var videoID: Int
+    /// 视频宽度
+    var width: Int
+    /// 视频高度
+    var height: Int
+    /// 封面文件id
+    var videoCoverID: Int
+    var type: Int
+    var soundId: String?
+    var videoPath: String
+  
+    enum CodingKeys: String, CodingKey {
+        case videoID = "video_id"
+        case width
+        case height
+        case videoCoverID = "cover_id"
+        case type
+        case soundId = "extra.sound_id"
+        case videoPath = "video_path"
+    }
     
 }

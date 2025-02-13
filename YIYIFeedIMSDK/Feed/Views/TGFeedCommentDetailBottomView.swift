@@ -78,15 +78,15 @@ class TGFeedCommentDetailBottomView: UIView {
         
         self.backgroundColor = colorStyle == .normal ? .white : .black
         
-        addSubview(lineView)
-        lineView.snp.makeConstraints {
-            $0.height.equalTo(2)
-            $0.top.left.right.equalToSuperview()
-        }
+//        addSubview(lineView)
+//        lineView.snp.makeConstraints {
+//            $0.height.equalTo(2)
+//            $0.top.left.right.equalToSuperview()
+//        }
         
         addSubview(contentView)
         contentView.snp.makeConstraints {
-            $0.top.equalTo(lineView.snp.bottom)
+            $0.top.equalTo(0)
             $0.bottom.right.equalToSuperview()
             $0.leading.equalToSuperview().inset(15)
         }
@@ -106,6 +106,16 @@ class TGFeedCommentDetailBottomView: UIView {
         }
         
         toolbar.set(items: [TGToolbarItemModel(image: colorStyle == .normal ? "IMG_home_ico_love" : "IMG_home_ico_love_white" , title: "", index: 0, titleShouldHide: false), TGToolbarItemModel(image: colorStyle == .normal ? "IMG_home_ico_comment_normal" : "IMG_home_ico_comment_normal_white", title: "", index: 1, titleShouldHide: false), TGToolbarItemModel(image: colorStyle == .normal ? "IMG_home_ico_forward_normal" : "IMG_home_ico_forward_normal_white", title: "", index: 2, titleShouldHide: false) ])
+        
+        if self.colorStyle == .dark {
+            commentButton.backgroundColor = UIColor(hex: 0x3A3A3A)
+            commentButton.setTitleColor(UIColor(hex: 0xB4B4B4), for: .normal)
+            toolbar.setTitleColor(.white, At: 0)
+            toolbar.setTitleColor(.white, At: 1)
+            toolbar.setTitleColor(.white, At: 2)
+            lineView.isHidden = true
+        }
+      
         contentView.addArrangedSubview(toolbar)
       
     }
@@ -129,6 +139,33 @@ class TGFeedCommentDetailBottomView: UIView {
         toolbar.setTitle(model.feedForwardCount?.abbreviated ?? "", At: 2)
         
         if model.disableComment == 1 {
+            toolbar.item(isHidden: true, at: 1)
+            commentView.isHidden = true
+        } else {
+            toolbar.item(isHidden: false, at: 1)
+            commentView.isHidden = false
+        }
+        toolbar.delegate = self
+    }
+    public func loadToolbar(model: FeedListToolModel?, canAcceptReward: Bool, reactionType: ReactionTypes?) {
+        guard let model = model else { return }
+        toolbar.backgroundColor = colorStyle == .normal ? .white : .black
+        if let reaction = reactionType {
+            toolbar.setImage(reaction.imageName, At: 0)
+            toolbar.setTitle(reaction.title, At: 0)
+        } else {
+            toolbar.setImage(colorStyle == .normal ? "IMG_home_ico_love" : "IMG_home_ico_love_white" , At: 0)
+            toolbar.setTitle("love_reaction".localized, At: 0)
+        }
+        
+        // 设置点赞数量
+        toolbar.setTitle(model.diggCount.abbreviated, At: 0)
+        // 设置评论按钮
+        toolbar.setTitle(model.commentCount.abbreviated, At: 1)
+        // 设置转发按钮
+        toolbar.setTitle(model.forwardCount.abbreviated, At: 2)
+        
+        if model.isCommentDisabled == true {
             toolbar.item(isHidden: true, at: 1)
             commentView.isHidden = true
         } else {
