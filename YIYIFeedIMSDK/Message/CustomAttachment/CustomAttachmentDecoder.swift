@@ -114,6 +114,13 @@ class CustomAttachmentDecoder: NSObject {
                     attachment.roomArchiveId = data.jsonString(CMRoomArchiveId)
                     attachment.roomUuid = data.jsonString(CMRoomUuid)
                     return (type, attachment)
+                case .Translate:
+                    let attachment = IMTextTranslateAttachment()
+                    attachment.oriMessageId =  data.jsonString(CMOriginalMessageId)
+                    attachment.originalText = data.jsonString(CMOriginalMessage)
+                    attachment.translatedText = data.jsonString(CMTranslatedMessage)
+                    attachment.isOutgoingMsg = data.jsonBool(CMTranslatedMessageIsOutgoing)
+                    return (type, attachment)
                 default:
                     return (type, nil)
                 }

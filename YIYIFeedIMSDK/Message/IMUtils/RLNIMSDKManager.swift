@@ -20,7 +20,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         super.init()
     }
     
-    func setupNIMSDK() {
+    func setupNIMSDK(appKey: String) {
         
         NIMSDKConfig.shared().delegate = self
         NIMSDKConfig.shared().shouldSyncUnreadCount = true
@@ -31,7 +31,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         
         let apnsCername = ""
         let pkCername = ""
-        
+        //appKey
         let option = NIMSDKOption(appKey: NIMAppKey)
         option.apnsCername = apnsCername
         option.pkCername = pkCername
@@ -60,14 +60,14 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         let config = NEMeetingKitConfig()
         config.appKey = NIMAppKey
         //config.appName = "RewardsLink"
-//        let language =  LocalizationManager.getCurrentLanguage()
-//        if language == LanguageIdentifier.chineseSimplified.rawValue || language == LanguageIdentifier.chineseTraditional.rawValue {
-//            config.language = .CHINESE
-//        } else if language == LanguageIdentifier.japanese.rawValue {
-//            config.language = .JAPANESE
-//        } else {
-//            config.language = .ENGLISH
-//        }
+        let language =  TGLocalizationManager.getCurrentLanguage()
+        if language == TGLanguageIdentifier.chineseSimplified.rawValue || language == TGLanguageIdentifier.chineseTraditional.rawValue {
+            config.language = .CHINESE
+        } else if language == TGLanguageIdentifier.japanese.rawValue {
+            config.language = .JAPANESE
+        } else {
+            config.language = .ENGLISH
+        }
         config.broadcastAppGroup = "group.com.togl.getyippi.share"
         NEMeetingKit.getInstance().initialize(config) { code, message, result in
             print("NEMeetingKit code = \(code)")

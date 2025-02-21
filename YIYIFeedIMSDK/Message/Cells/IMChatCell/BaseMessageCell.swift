@@ -32,6 +32,9 @@ class BaseMessageCell: UITableViewCell {
     let senderRedPacket = UIImage.set_image(named: "pink_bubble_right")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
     let receiverRedPacket = UIImage.set_image(named: "pink_bubble_left")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
     
+    let rightBackgroundImg = UIImage.set_image(named: "rightTranslate")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), resizingMode: .stretch)
+    let leftBackgroundImg = UIImage.set_image(named: "leftTranslate")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), resizingMode: .stretch)
+    
     let urlPattern = "<{0,1}(((https|http)?://)?([a-z0-9_-]+[.])|(www.))" + "\\w+[.|\\/]([a-z0-9\\-]{0,})?[[.]([a-z0-9\\-]{0,})]+((/[\\S&&[^,;\\u4E00-\\u9FA5]]+)+)?([.][a-z0-9\\-]{0,}+|/?)>{0,1}"
     
     let unreadImage = UIImage.set_image(named: "unreadTick")
@@ -120,6 +123,13 @@ class BaseMessageCell: UITableViewCell {
         return stackView
     }()
     
+    lazy var emptyHeaderView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.isHidden = true
+        return view
+    }()
+    
     private let pulseIndicator = IMSendMsgIndicator(radius: 8.0, color: RLColor.main.red)
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -138,6 +148,7 @@ class BaseMessageCell: UITableViewCell {
         self.contentView.addSubview(failImage)
         self.contentView.addSubview(pulseIndicator)
         wholeContentStackView.addArrangedSubview(avatarHeaderView)
+        wholeContentStackView.addArrangedSubview(emptyHeaderView)
         wholeContentStackView.addArrangedSubview(allContentStackView)
         
         allContentStackView.addArrangedSubview(nicknameLabel)
@@ -168,9 +179,18 @@ class BaseMessageCell: UITableViewCell {
         nicknameLabel.isHidden = !(model.showName ?? false)
         wholeContentStackView.removeAllArrangedSubviews()
         
-        let isleft = !messageModel.isSelf
+        var isleft = !messageModel.isSelf
+        emptyHeaderView.isHidden = true
+        avatarHeaderView.isHidden = isleft ? false : true
+        ///如果是翻译的消息
+        if let customType = model.customType , customType == .Translate, let attach =  model.customAttachment as? IMTextTranslateAttachment {
+            isleft = !attach.isOutgoingMsg
+            emptyHeaderView.isHidden = !isleft
+            avatarHeaderView.isHidden = true
+        }
         if isleft {
             wholeContentStackView.addArrangedSubview(avatarHeaderView)
+            wholeContentStackView.addArrangedSubview(emptyHeaderView)
             wholeContentStackView.addArrangedSubview(allContentStackView)
             allContentStackView.alignment = .leading
         }else{
@@ -178,11 +198,13 @@ class BaseMessageCell: UITableViewCell {
             wholeContentStackView.addArrangedSubview(avatarHeaderView)
             allContentStackView.alignment = .trailing
         }
-        avatarHeaderView.isHidden = isleft ? false : true
+        
         bubbleImage.image = isleft ? defaultReceiverImage : defaultSenderImage
         if let customType = model.customType {
             if customType == .Egg {
                 bubbleImage.image = isleft ? receiverRedPacket : senderRedPacket
+            } else if customType == .Translate {
+                bubbleImage.image = isleft ? leftBackgroundImg : rightBackgroundImg
             }
         }
         
@@ -204,6 +226,10 @@ class BaseMessageCell: UITableViewCell {
             }
             avatarHeaderView.snp.remakeConstraints { make in
                 make.left.top.equalToSuperview()
+                make.height.width.equalTo(40)
+            }
+            emptyHeaderView.snp.remakeConstraints { make in
+                make.top.equalToSuperview()
                 make.height.width.equalTo(40)
             }
             allContentStackView.snp.remakeConstraints { make in
@@ -267,7 +293,7 @@ class BaseMessageCell: UITableViewCell {
         
         timeLabel.text = messageModel.createTime.messageTimeString()
         
-        if model.messageType == .MESSAGE_TYPE_IMAGE || model.messageType == .MESSAGE_TYPE_VIDEO {
+        if (model.messageType == .MESSAGE_TYPE_IMAGE || model.messageType == .MESSAGE_TYPE_VIDEO) && model.messageList.count < 4  {
             timeLabel.textColor = .white
         } else {
             timeLabel.textColor = UIColor(hex: "#808080")

@@ -64,11 +64,11 @@ class NMCWhiteBoardManager: NSObject, WKUIDelegate, WKNavigationDelegate, WKScri
         loginParam["platform"] = "ios"
         loginParam["toolbar"] = [String: Any]()
         //简体中文
-//        if "zh-Hans" == LocalizationManager.getCurrentLanguage() {
-//            loginParam["lang"] = "zh"
-//        } else {
-//            loginParam["lang"] = "en"
-//        }
+        if "zh-Hans" == TGLocalizationManager.getCurrentLanguage() {
+            loginParam["lang"] = "zh"
+        } else {
+            loginParam["lang"] = "en"
+        }
         loginParam["lang"] = "zh"
         var appConfig = [String: Any]()
         appConfig["nosAntiLeech"] = true
@@ -188,7 +188,7 @@ class NMCWhiteBoardManager: NSObject, WKUIDelegate, WKNavigationDelegate, WKScri
         NSLog("[WKUIDelegate] runJavaScriptTextInputPanelWithPrompt")
         
         if let vc = getTopViewController(), vc.isViewLoaded,  webView.superview != nil {
-            let alert = UIAlertController(title: nil, message: prompt ?? "", preferredStyle: .alert)
+            let alert = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
             alert.addTextField { textField in
                 textField.textColor = .black
                 textField.placeholder = defaultText ?? ""

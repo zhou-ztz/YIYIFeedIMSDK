@@ -316,7 +316,6 @@ class BaseChatInputView: UIView {
         contentSubView.snp.makeConstraints { make in
             make.top.equalTo(barStackView.snp.bottom).offset(5)
             make.left.right.equalToSuperview()
-           // make.height.equalTo(200)
             make.bottom.equalToSuperview().inset(TSBottomSafeAreaHeight)
         }
         locationView = TGInputLocalContainer(frame: .zero, callBackHandler: {[weak self] isSend, title, coordinate in

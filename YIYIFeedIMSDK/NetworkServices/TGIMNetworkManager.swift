@@ -170,7 +170,7 @@ class TGIMNetworkManager: NSObject {
     }
     // delete pinned message
     class func deletePinnedMessage(id: Int, completion: @escaping ((_ resultModel: PinnedMessageModel?, _ error: Error?) -> Void)){
-        let path = "api/v2/user/pinned_message/\(id)"
+        let path = "api/v2/user/pinned_message/\(id.stringValue)"
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .DELETE,
@@ -179,6 +179,11 @@ class TGIMNetworkManager: NSObject {
         ) { data, _, error in
             guard let data = data, error == nil else {
                 completion(nil, error)
+                return
+            }
+            ///处理数据不需要解析情况
+            if data.bytes.count == 0 {
+                completion(nil, nil)
                 return
             }
             if let jsonString = String(data: data, encoding: .utf8) {
@@ -466,6 +471,37 @@ class TGIMNetworkManager: NSObject {
             do {
                 let decoder = JSONDecoder()
                 let response = try decoder.decode(ClaimEggResponse.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response, nil)
+                }
+            } catch {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
+    
+    ///语音翻译
+    class func translateTexts(message: String, completion: @escaping (IMTranslateModel?, Error?) -> Void) {
+        let path = "/api/v2/translates/text"
+        let param: [String: Any] = ["text" : message]
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: param,
+            headers: nil
+        ) { data, _, error1 in
+            guard let data = data, error1 == nil else {
+                completion(nil, error1)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(IMTranslateModel.self, from: data)
                 DispatchQueue.main.async {
                     completion(response, nil)
                 }

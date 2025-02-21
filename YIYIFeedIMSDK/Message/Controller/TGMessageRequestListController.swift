@@ -124,7 +124,7 @@ class TGMessageRequestListController: TGViewController {
             self.tableView.mj_footer.makeVisible()
             if self.currentIndex == 0 {
                 if self.viewmodel.requestList.count <= 0  {
-                    // self.tableView.show(placeholderView: .empty)
+                     self.tableView.show(placeholderView: .empty)
                 } else {
                     self.tableView.removePlaceholderViews()
                     if self.temRequestList.count < self.viewmodel.limit {
@@ -135,7 +135,7 @@ class TGMessageRequestListController: TGViewController {
                 }
             } else {
                 if self.viewmodel.filterNotifications.count <= 0  {
-                    // self.tableView.show(placeholderView: .empty)
+                     self.tableView.show(placeholderView: .empty)
                 } else {
                     self.tableView.removePlaceholderViews()
                     if self.viewmodel.teamFinished {

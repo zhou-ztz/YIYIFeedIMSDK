@@ -127,7 +127,7 @@ class InputAudioRecordIndicatorView: UIView {
     private var convertErrorIconImageView: UIImageView!
     private var convertErrorLabel: UILabel!
     
-   // private var currentSelectedLangCode: SupportedLanguage = SupportedLanguage(code: "en", name: "English")
+    private var currentSelectedLangCode: SupportedLanguage = SupportedLanguage(code: "en", name: "English")
   
     let defaultBubbleImage = UIImage.set_image(named: "ic_nim_bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 18), resizingMode: .stretch)
     let errorBubbleImage = UIImage.set_image(named: "ic_nim_bubble_red")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 18, bottom: 10, right: 10), resizingMode: .stretch)
@@ -155,12 +155,11 @@ class InputAudioRecordIndicatorView: UIView {
             backgroundView.isHidden = false
             bottomStackView.isHidden = false
             //更新语言标识
-//            currentSelectedLangCode = getSupportedLanguageData()
-//            guard var langCode = currentSelectedLangCode.code?.uppercased() else {
-//                convertLangNameLabel.text = "EN"
-//                return
-//            }
-            var langCode = "en"
+            currentSelectedLangCode = getSupportedLanguageData()
+            guard var langCode = currentSelectedLangCode.code?.uppercased() else {
+                convertLangNameLabel.text = "EN"
+                return
+            }
             langCode = langCode.replacingOccurrences(of: "-HANS", with: "").replacingOccurrences(of: "-HANT", with: "")
             convertLangNameLabel.text = langCode
             
@@ -425,12 +424,11 @@ class InputAudioRecordIndicatorView: UIView {
         convertLangNameLabel.textColor = .white
         convertLangNameLabel.textAlignment = .center
         //更新语言标识
-//        guard var langCode = currentSelectedLangCode.code?.uppercased() else {
-//            convertLangNameLabel.text = "EN"
-//            return
-//        }
-        convertLangNameLabel.text = "EN"
-        var langCode = "EN"
+        guard var langCode = currentSelectedLangCode.code?.uppercased() else {
+            convertLangNameLabel.text = "EN"
+            return
+        }
+        
         langCode = langCode.replacingOccurrences(of: "-HANS", with: "").replacingOccurrences(of: "-HANT", with: "")
         convertLangNameLabel.text = langCode
         sectionView.addSubview(convertLangNameLabel)
@@ -632,14 +630,14 @@ class InputAudioRecordIndicatorView: UIView {
         }
     }
     
-//    func getSupportedLanguageData() -> SupportedLanguage {
-//        let langIdentifier = Locale.current.languageCode ?? "en"
-//        if let preferredLanguageObject = UserDefaults.standard.object(forKey: "SpeechToTextTypingLanguage") as? [String:String] {
-//            return SupportedLanguage(code: preferredLanguageObject["locale"] ?? langIdentifier, name: preferredLanguageObject["name"] ?? LocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
-//        }
-//
-//        return SupportedLanguage(code: langIdentifier, name: LocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
-//    }
+    func getSupportedLanguageData() -> SupportedLanguage {
+        let langIdentifier = Locale.current.languageCode ?? "en"
+        if let preferredLanguageObject = UserDefaults.standard.object(forKey: "SpeechToTextTypingLanguage") as? [String:String] {
+            return SupportedLanguage(code: preferredLanguageObject["locale"] ?? langIdentifier, name: preferredLanguageObject["name"] ?? TGLocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
+        }
+
+        return SupportedLanguage(code: langIdentifier, name: TGLocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
+    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

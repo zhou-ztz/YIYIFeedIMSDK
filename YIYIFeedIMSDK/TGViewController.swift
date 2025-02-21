@@ -36,6 +36,22 @@ public class TGViewController: UIViewController {
         setNavigationBar()
     }
     
+    var placeholder = TGPlaceholder()
+    
+    private lazy var loadingIndicator: UIImageView = {
+        let imageView = UIImageView()
+        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        var images: [UIImage] = []
+        for index in 0..<30 {
+            let imageName = "RL_IMG_default_center_000\(index)"
+            let image = UIImage(named: imageName)!
+            images.append(image)
+        }
+        imageView.animationImages = images
+        imageView.contentMode = .center
+        return imageView
+    }()
+    
     func setNavigationBar(){
         
         view.addSubview(allStackView)
@@ -139,6 +155,35 @@ public class TGViewController: UIViewController {
             return
         }
         self.navigationItem.leftBarButtonItem = barButton
+    }
+    
+    func show(placeholder type: PlaceholderViewType, theme: Theme = .white) {
+        if placeholder.superview == nil {
+            backBaseView.addSubview(placeholder)
+            placeholder.bindToEdges()
+            placeholder.onTapActionButton = {
+                self.placeholderButtonDidTapped()
+            }
+        }
+        placeholder.set(type)
+        placeholder.theme = theme
+    }
+    
+    func removePlaceholderView() {
+        placeholder.removeFromSuperview()
+    }
+    
+    func placeholderButtonDidTapped() { }
+    
+    func showLoadingAnimation() {
+        self.view.addSubview(loadingIndicator)
+        loadingIndicator.bindToEdges()
+        loadingIndicator.startAnimating()
+    }
+    
+    func dismissLoadingAnimation() {
+        self.loadingIndicator.stopAnimating()
+        self.loadingIndicator.removeFromSuperview()
     }
     
 }

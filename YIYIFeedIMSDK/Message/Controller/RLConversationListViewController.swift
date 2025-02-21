@@ -68,31 +68,32 @@ public class RLConversationListViewController: TGViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewmodel.getConversationList { [weak self] _,_  in
-            guard let self = self else {return}
-            self.tableView.reloadData()
-            self.tableView.mj_footer.isHidden = false
-            if self.viewmodel.conversationList.count < self.viewmodel.limit {
-                self.tableView.mj_footer.endRefreshingWithNoMoreData()
-            }
-        }
+        getConversationList()
     }
     
     deinit{
 
     }
     
-    @objc func getConversationList(){
+    @objc func getConversationList() {
         viewmodel.getConversationList { [weak self] list,_  in
             guard let self = self else {return}
-            self.tableView.mj_header.endRefreshing()
-            self.tableView.reloadData()
-            self.tableView.mj_footer.isHidden = false
-            if let list = list, list.count < self.viewmodel.limit {
-                self.tableView.mj_footer.endRefreshingWithNoMoreData()
-            } else {
-                self.tableView.mj_footer.endRefreshing()
+            DispatchQueue.main.async {
+                self.tableView.mj_header.endRefreshing()
+                self.tableView.reloadData()
+                self.tableView.mj_footer.isHidden = false
+                if let list = list, list.count < self.viewmodel.limit {
+                    self.tableView.mj_footer.endRefreshingWithNoMoreData()
+                    if list.count == 0 {
+                        self.tableView.show(placeholderView: .emptyChat)
+                    } else {
+                        self.tableView.removePlaceholderViews()
+                    }
+                } else {
+                    self.tableView.mj_footer.endRefreshing()
+                }
             }
+            
         }
         
     }
@@ -103,10 +104,12 @@ public class RLConversationListViewController: TGViewController {
             return}
         viewmodel.getConversationList(isRefresh: false) { [weak self] list,_  in
             guard let self = self else {return}
-            self.tableView.mj_footer.endRefreshing()
-            self.tableView.reloadData()
-            if let list = list, list.count < self.viewmodel.limit {
-                self.tableView.mj_footer.endRefreshingWithNoMoreData()
+            DispatchQueue.main.async {
+                self.tableView.mj_footer.endRefreshing()
+                self.tableView.reloadData()
+                if let list = list, list.count < self.viewmodel.limit {
+                    self.tableView.mj_footer.endRefreshingWithNoMoreData()
+                }
             }
         }
     }
@@ -276,6 +279,11 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
 extension RLConversationListViewController: ConversationViewModelDelegate {
     
     public func onConversationChanged() {
+        if self.viewmodel.conversationList.count == 0 {
+            self.tableView.show(placeholderView: .emptyChat)
+        } else {
+            self.tableView.removePlaceholderViews()
+        }
         self.tableView.reloadData()
     }
     

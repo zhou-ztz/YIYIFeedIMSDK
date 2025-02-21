@@ -595,10 +595,8 @@ extension TGTeamChatDetailViewController: UICollectionViewDataSource, UICollecti
 extension TGTeamChatDetailViewController {
     // Selectors
     @objc func onClickSearchMessages() {
-//        if let session = viewmodel.session {
-//            let vc = SearchChatHistoryTableViewController(session: session)
-//            self.navigationController?.pushViewController(vc, animated: true)
-//        }
+        let vc = TGSearchChatHistoryController(conversationId: conversationId)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func onClickClearChat() {

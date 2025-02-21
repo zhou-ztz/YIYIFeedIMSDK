@@ -9,17 +9,33 @@ import UIKit
 import NIMSDK
 import AVFoundation
 import Photos
+import PhotosUI
 
 // 发送文件大小限制(单位：MB)
 let fileSizeLimit: Double = 200
 //录音时长
 let record_duration: TimeInterval = 60.0
 
+let maxPhoto: Int = 9
+
 public class TGChatViewController: TGViewController {
     
     var viewmodel: TGChatViewModel
     private var userInfo: UserInfoModel? = nil
     var meetingViewmodel: TGJoinMeetingViewModel = TGJoinMeetingViewModel()
+    
+    lazy var headerAvatarView: TGAvatarView = {
+        let view = TGAvatarView(type: .width26(showBorderLine: false))
+        return view
+    }()
+    
+    lazy var headerTitle: UILabel = {
+        let label = UILabel()
+        label.textColor = TGAppTheme.black
+        label.font = UIFont.systemFont(ofSize: TGFontSize.chatroomMsgFontSize)
+        label.numberOfLines = 1
+        return label
+    }()
     
     lazy var tableView: RLTableView = {
         let tableView = RLTableView(frame: .zero, style: .plain)
@@ -44,6 +60,8 @@ public class TGChatViewController: TGViewController {
     let ges = UITapGestureRecognizer()
 
     var replyView: MessageReplyView?
+    
+    var currentSelectedLangCode: SupportedLanguage?
  
     lazy var enterInfoBtn: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
@@ -199,6 +217,7 @@ public class TGChatViewController: TGViewController {
         }
         ///聊天背景
         setChatWallpaper()
+        updateNavLeftItem()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -295,7 +314,11 @@ public class TGChatViewController: TGViewController {
         tableView.register(MeetingMessageCell.self, forCellReuseIdentifier: "MeetingMessageCell")
         tableView.register(SocialPostMessageCell.self, forCellReuseIdentifier: "SocialPostMessageCell")
         tableView.register(VoucherMessageCell.self, forCellReuseIdentifier: "VoucherMessageCell")
+        tableView.register(MiniProgramMessageCell.self, forCellReuseIdentifier: "MiniProgramMessageCell")
+        tableView.register(MultiImageMessageCell.self, forCellReuseIdentifier: "MultiImageMessageCell")
+        tableView.register(TranslateMessageCell.self, forCellReuseIdentifier: "TranslateMessageCell")
         
+    
         chatInputView.frame = CGRect(x: 0, y: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
         
         customNavigationBar.setRightViews(views: [videoCallBtn, enterInfoBtn])
@@ -305,11 +328,10 @@ public class TGChatViewController: TGViewController {
             $0.leading.trailing.bottom.equalToSuperview()
         }
         nonfriendBottomView.makeHidden()
+        /// 目前先做桥接回去
         nonfriendBottomView.messageRequestLabel.addAction { [weak self] in
-           // guard let self = self else { return }
-//            let vc = MsgRequestChatViewController()
-//            vc.userInfo = self.userInfo
-//            self.navigationController?.pushViewController(vc, animated: true)
+            guard let userInfo = self?.userInfo else { return }
+            RLSDKManager.shared.imDelegate?.openMsgRequestChat(username: userInfo.username, userIdentity: userInfo.userIdentity)
         }
 
         self.backBaseView.addSubview(selectActionToolbar)
@@ -323,20 +345,6 @@ public class TGChatViewController: TGViewController {
             make.bottom.equalToSuperview()
         }
         setupNav()
-        if viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
-            MessageUtils.getUserInfo(accountIds: [viewmodel.sessionId]) {[weak self] users, _ in
-                if let user = users?.first , let self = self {
-                    self.customNavigationBar.title = user.name ?? self.viewmodel.sessionId
-                }
-            }
-        } else {
-            MessageUtils.getTeamInfo(teamId: viewmodel.sessionId, teamType: .TEAM_TYPE_NORMAL) {[weak self] team in
-                if let self = self {
-                    self.customNavigationBar.title = team?.name ?? self.viewmodel.sessionId
-                }
-            }
-        }
-        
         eggOverlayTapGesture = UITapGestureRecognizer(target: self, action: #selector(closeEggView))
         eggOverlayView.addGestureRecognizer(eggOverlayTapGesture)
         
@@ -356,44 +364,141 @@ public class TGChatViewController: TGViewController {
                         return
                     }
                     self.userInfo = model
-                }
-                if viewmodel.sessionId.count > 0 {
-                    customNavigationBar.setRightViews(views: [videoCallBtn, enterInfoBtn])
-                    self.nonfriendBottomView.makeHidden()
-                } else {
-                    customNavigationBar.setRightViews(views: [])
-                    self.backBaseView.bringSubviewToFront(self.nonfriendBottomView)
-                    self.chatInputView.isHidden = true
-                    self.nonfriendBottomView.makeVisible()
+                    DispatchQueue.main.async {
+                        self.updateNav(model)
+                    }
                 }
             case .CONVERSATION_TYPE_TEAM:
                 customNavigationBar.setRightViews(views: [enterInfoBtn])
                 MessageUtils.getTeamInfo(teamId: self.viewmodel.sessionId, teamType: .TEAM_TYPE_NORMAL) {[weak self] team in
-                    if let team = team , team.isValidTeam, let self = self {
-                        self.customNavigationBar.setRightViews(views: [self.teamMeetingBtn, self.enterInfoBtn])
+                    DispatchQueue.main.async {
+                        if let team = team , team.isValidTeam, let self = self {
+                            self.customNavigationBar.setRightViews(views: [self.teamMeetingBtn, self.enterInfoBtn])
+                        }
                     }
                 }
-
             default:
                 customNavigationBar.setRightViews(views: [])
             }
         }
         
+        headerAvatarView.buttonForAvatar.addAction(action: { [weak self] in
+            guard let self = self else { return }
+            if self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
+                RLSDKManager.shared.imDelegate?.didPressNameCard(memberId: self.viewmodel.sessionId)
+            } else {
+                self.enterPersonInfoCard()
+            }
+        })
+        headerTitle.addAction(action: { [weak self] in
+            guard let self = self else { return }
+            if self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
+                RLSDKManager.shared.imDelegate?.didPressNameCard(memberId: self.viewmodel.sessionId)
+            } else {
+                self.enterPersonInfoCard()
+            }
+        })
+    }
+    
+    func updateNavLeftItem() {
+        let allunreadCount = RLSDKManager.shared.getConversationAllUnreadCount()
         
+        let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 58, height: 30))
+        backButton.setImage(UIImage.set_image(named: "iconsArrowCaretleftBlack"), for: .normal)
+        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        self.customNavigationBar.setLeftViews(views: [backButton])
         
+        let unreadCountLabel = UILabel()
+        unreadCountLabel.isHidden = (allunreadCount <= 0)
+        unreadCountLabel.backgroundColor = TGAppTheme.secondaryColor
+        unreadCountLabel.textColor = TGAppTheme.twilightBlue
+        unreadCountLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        unreadCountLabel.numberOfLines = 1
+        unreadCountLabel.text = allunreadCount.stringValue
+        unreadCountLabel.textAlignment = .center
+        unreadCountLabel.sizeToFit()
+        let unreadCountView = UIView()
+        unreadCountView.addSubview(unreadCountLabel)
+        
+        let lblHeight: CGFloat = unreadCountLabel.height + 4
+        let lblWidth: CGFloat = unreadCountLabel.width + 10.0
+        
+        let titleStackView = UIStackView().configure { (stack) in
+            stack.axis = .horizontal
+            stack.spacing = 10
+            stack.distribution = .fill
+            stack.alignment = .center
+        }
+
+        unreadCountView.isHidden = allunreadCount == 0
+        titleStackView.addArrangedSubview(unreadCountView)
+        titleStackView.addArrangedSubview(headerAvatarView)
+        titleStackView.addArrangedSubview(headerTitle)
+        
+        headerAvatarView.snp.makeConstraints({make in
+            make.width.height.equalTo(26)
+        })
+        unreadCountView.snp.makeConstraints({make in
+            make.width.equalTo(lblWidth)
+        })
+        unreadCountLabel.snp.makeConstraints({make in
+            make.width.equalTo(lblWidth)
+            make.height.equalTo(lblHeight)
+            make.centerY.equalToSuperview()
+        })
+        unreadCountLabel.roundCorner(lblHeight/2)
+        
+        MessageUtils.getAvatarIcon(sessionId: viewmodel.sessionId, conversationType: viewmodel.conversationType) {[weak self] avatarInfo in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.headerAvatarView.avatarInfo = avatarInfo
+                self.headerTitle.text = avatarInfo.nickname
+                self.customNavigationBar.setLeftViews(views: [backButton, titleStackView])
+            }
+        }
     }
     
     func updateNav(_ model: UserInfoModel) {
-        
+        guard let relationship = model.relationshipWithCurrentUser else { return }
+        var showIM = false
+      //  let isMeWhitelist = TSCurrentUserInfo.share.userInfo?.whiteListType?.contains("outgoing_message") ?? false
+        let isUserWhitelist = model.whiteListType?.contains("incoming_call") ?? false
+        switch relationship.status {
+        case .eachOther:
+            showIM = true
+        case .follow, .unfollow:
+            showIM = isUserWhitelist
+        case .oneself:
+            return
+        }
+        if showIM {
+            customNavigationBar.setRightViews(views: [videoCallBtn, enterInfoBtn])
+            self.nonfriendBottomView.makeHidden()
+        } else {
+            customNavigationBar.setRightViews(views: [])
+            self.backBaseView.bringSubviewToFront(self.nonfriendBottomView)
+            self.chatInputView.isHidden = true
+            self.nonfriendBottomView.makeVisible()
+        }
+    }
+    
+    @objc func backAction (){
+        self.navigationController?.popViewController(animated: true)
     }
     
     func loadData() {
         viewmodel.loadData {[weak self] error, count, messages in
             if messages.count > 0 {
                 DispatchQueue.main.async {
+                    self?.tableView.removePlaceholderViews()
                     self?.tableView.reloadData()
                     let indexPath = IndexPath(row: messages.count - 1, section: 0)
                     self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                }
+                self?.viewmodel.readAllMessageReceipt(completion: nil)
+            } else {
+                DispatchQueue.main.async {
+                    self?.tableView.show(placeholderView: .imEmpty)
                 }
             }
         }
@@ -418,6 +523,7 @@ public class TGChatViewController: TGViewController {
             vc.clearMessageCall = {[weak self] in
                 self?.viewmodel.messages.removeAll()
                 DispatchQueue.main.async {
+                    self?.tableView.show(placeholderView: .imEmpty)
                     self?.tableView.reloadData()
                 }
             }
@@ -431,6 +537,7 @@ public class TGChatViewController: TGViewController {
                         vc.clearGroupMessageCall = { [weak self] in
                             self?.viewmodel.messages.removeAll()
                             DispatchQueue.main.async {
+                                self?.tableView.show(placeholderView: .imEmpty)
                                 self?.tableView.reloadData()
                             }
                         }
@@ -558,7 +665,57 @@ public class TGChatViewController: TGViewController {
         imagePicker.delegate = self
         imagePicker.mediaTypes = ["public.image", "public.movie"]
         present(imagePicker, animated: true, completion: nil)
+
+        
     }
+    
+    /// 处理受限访问模式下的逻辑
+    private func handleLimitedAccess() {
+        
+        self.showAlert(message: "rw_limited_feed_photo_tip".localized, buttonTitle: "ok".localized) { action in
+            if #available(iOS 15, *) {
+                PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self) { ids in
+                    var selectedAssets: [PHAsset] = []
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                        selectedAssets = self.fetchAllLimitedAssets()
+//                        self.handleSelectedPhotos(photos: [UIImage()], imageAsset: selectedAssets, isGifImage: false)
+                    }
+                }
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+    /// 获取当前受限模式下的所有 PHAsset
+    private func fetchAllLimitedAssets() -> [PHAsset] {
+        var assets: [PHAsset] = []
+         // 设置排序条件：按创建日期降序排列
+         let fetchOptions = PHFetchOptions()
+         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+         
+         let allAssets = PHAsset.fetchAssets(with: fetchOptions)
+         allAssets.enumerateObjects { asset, _, _ in
+             assets.append(asset)
+         }
+         return assets
+    }
+    
+    /// 打开 PHPickerViewController
+    func presentPHPicker() {
+        if #available(iOS 14.0, *) {
+            var phPickerConfig = PHPickerConfiguration(photoLibrary: .shared())
+            phPickerConfig.selectionLimit = maxPhoto
+            phPickerConfig.filter = .any(of: [.images, .livePhotos])
+            
+            let phPickerVC = PHPickerViewController(configuration: phPickerConfig)
+            phPickerVC.delegate = self
+            present(phPickerVC, animated: true)
+        } else {
+            // Fallback on earlier versions
+        }
+        
+    }
+    
     // 打开相机
     func openCamera() {
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -961,7 +1118,59 @@ public class TGChatViewController: TGViewController {
         }
 
     }
+    /// 文本消息翻译
+    func translateTextIM() {
+        guard let model = viewmodel.operationModel, let message = model.nimMessageModel else { return }
+        var messageText = message.text
+        if let attach = model.customAttachment as? IMReplyAttachment {
+            messageText = attach.content
+        }
+        guard let messageText = messageText, messageText != "" else { return }
+        
+        textTranslate(withText: messageText, oriMessage: model)
+ 
+    }
     
+    func textTranslate(withText messageText: String, oriMessage: TGMessageData, translateMessage: TGMessageData? = nil) {
+        viewmodel.translateTextMessage(messageText: messageText) {[weak self] text, error in
+            oriMessage.isTranslated = true
+            guard let self = self else {return}
+            if let error = error {
+                
+                if let translateMessage = translateMessage {
+                    let _ = self.viewmodel.updateTranslateMessage(for: translateMessage, with: error.localizedDescription)
+                } else {
+                    let messageData = MessageUtils.translateMessage(oriMessage, with: error.localizedDescription)
+                    self.viewmodel.insert(message: messageData, after: oriMessage)
+                }
+            } else {
+                if let translateMessage = translateMessage {
+                    let _ = self.viewmodel.updateTranslateMessage(for: translateMessage, with: text ?? "")
+                } else {
+                    let messageData = MessageUtils.translateMessage(oriMessage, with: text ?? "")
+                    self.viewmodel.insert(message: messageData, after: oriMessage)
+                    
+                }
+
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    
+    ///语音翻译
+    func vioceTotext() {
+        
+        guard let model = viewmodel.operationModel, let message = model.nimMessageModel, let attach = message.attachment as? V2NIMMessageAudioAttachment else { return }
+        
+        let audioPath = attach.path ?? ""
+        let fileUrl = URL(fileURLWithPath: audioPath)
+        
+        let voiceToTextVC = TGVoiceToTextIMViewController(fileUrl: fileUrl, selectedLanguage: currentSelectedLangCode, isLanguageSelection: false)
+        self.present(voiceToTextVC, animated: true)
+    }
     private func scrollToMessage(by indexpath: IndexPath, animation: Bool) {
         self.tableView.scrollToRow(at: indexpath, at: .top, animated: false)
         
@@ -1020,8 +1229,8 @@ public class TGChatViewController: TGViewController {
         
         viewmodel.storePinnedMessage(imMsgId: messageClientId, imGroupId: self.viewmodel.sessionId, content: data, deleteFlag: true) {[weak self] resultModel, error in
             guard let self = self else { return }
-            if let _ = error  {
-                
+            if let error = error  {
+                UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
             } else {
                 if let model = resultModel {
                     self.viewmodel.currentPinned = model
@@ -1045,10 +1254,13 @@ public class TGChatViewController: TGViewController {
         viewmodel.deletePinnedMessage(id: model.id) {[weak self] resultModel, error in
             guard let self = self else { return }
             if let error = error  {
-                print("delete - error = \(error) ")
+                UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
             } else {
-                self.messageDeletePinItem(pinnedModel: model)
-                self.sendPinnedNotify(type: NTESPinnedDeleted, pinnedModel: model)
+                DispatchQueue.main.async {
+                    self.messageDeletePinItem(pinnedModel: model)
+                    self.sendPinnedNotify(type: NTESPinnedDeleted, pinnedModel: model)
+                }
+                
             }
         }
     }
@@ -1324,6 +1536,13 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
             cell.setData(model: model)
             return cell
         }
+        // 多张图片类型
+        if model.messageList.count >= 4 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MultiImageMessageCell", for: indexPath) as! MultiImageMessageCell
+            cell.setData(model: model)
+            cell.delegate = self
+            return cell
+        }
         
         switch model.messageType {
         case .MESSAGE_TYPE_TEXT:
@@ -1400,6 +1619,16 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
                     return cell
                 case .Voucher:
                     let cell = tableView.dequeueReusableCell(withIdentifier: "VoucherMessageCell", for: indexPath) as! VoucherMessageCell
+                    cell.setData(model: model)
+                    cell.delegate = self
+                    return cell
+                case .MiniProgram:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "MiniProgramMessageCell", for: indexPath) as! MiniProgramMessageCell
+                    cell.setData(model: model)
+                    cell.delegate = self
+                    return cell
+                case .Translate: 
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "TranslateMessageCell", for: indexPath) as! TranslateMessageCell
                     cell.setData(model: model)
                     cell.delegate = self
                     return cell
@@ -1557,7 +1786,17 @@ extension TGChatViewController: BaseMessageCellDelegate {
     }
     
     func selectionLanguageTapped(cell: BaseMessageCell?, model: TGMessageData?) {
+        guard let nimMessage = model?.nimMessageModel, let audioObject = nimMessage.attachment as? V2NIMMessageAudioAttachment else { return }
         
+        let audioPath = audioObject.url ?? ""
+        let fileUrl = URL(fileURLWithPath: audioPath)
+        
+        let voiceToTextVC = TGVoiceToTextIMViewController(fileUrl: fileUrl, selectedLanguage: currentSelectedLangCode, isLanguageSelection: true)
+        voiceToTextVC.onLanguageChanged = { [weak self] model in
+            guard let self = self else { return }
+            self.currentSelectedLangCode = model
+        }
+        self.present(voiceToTextVC, animated: true)
     }
     
     /// 点击cell
@@ -1668,6 +1907,12 @@ extension TGChatViewController: BaseMessageCellDelegate {
                         }
                         
                     }
+                case .MiniProgram:
+                    guard let attach = model.customAttachment as? IMMiniProgramAttachment else { return}
+                    RLSDKManager.shared.imDelegate?.didPressMiniProgrom(appId: attach.appId, path: attach.path)
+                case .Translate:
+                    guard let attach = model.customAttachment as? IMTextTranslateAttachment, let oriMessage = self.viewmodel.findMessageData(messageClientId: model.nimMessageModel?.messageClientId ?? "")  else { return}
+                    textTranslate(withText: attach.originalText, oriMessage: oriMessage, translateMessage: model)
                 default:
                     break
                 }
@@ -1972,6 +2217,7 @@ extension TGChatViewController: TGChatViewModelDelegate {
     func onSend(_ message: V2NIMMessage, succeeded: Bool) {
        // let row = viewmodel.messages.count - 1
         DispatchQueue.main.async { [weak self] in
+            self?.tableView.removePlaceholderViews()
             self?.tableView.reloadData()
 //            let indexpath = IndexPath(row: row, section: 0)
 //            self?.tableView.insertRow(at: indexpath, with: .none)
@@ -1982,17 +2228,23 @@ extension TGChatViewController: TGChatViewModelDelegate {
     
     func onReceive(_ messages: [V2NIMMessage]) {
         DispatchQueue.main.async { [weak self] in
+            self?.tableView.removePlaceholderViews()
             self?.tableView.reloadData()
             self?.scrollTableViewToBottom()
+            self?.viewmodel.readMessageReceipt(messages: messages, completion: nil)
         }
     }
     
     func onReceive(_ readReceipts: [V2NIMP2PMessageReadReceipt]) {
-        
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
     
     func onReceive(_ readReceipts: [V2NIMTeamMessageReadReceipt]) {
-        
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
     
     func onReceiveMessagesModified(_ messages: [V2NIMMessage]) {
@@ -2358,7 +2610,7 @@ extension TGChatViewController: ChatInputViewDelegate {
         chatInputView.recognizedText = ""
         chatInputView.recording = true
 
-        NIMSDK.shared().mediaManager.record(NIMAudioType.AMR, duration: 65)
+        NIMSDK.shared().mediaManager.record(NIMAudioType.AAC, duration: 65)
         //保存识别结果
         SpeechVoiceDetectManager.shared.state = .recording
         SpeechVoiceDetectManager.shared.onReceiveValue = { [weak self] (receiveValue, isFinal) in
@@ -2471,7 +2723,6 @@ extension TGChatViewController: ChatInputViewDelegate {
             } failure: { _ in
                 
             }
-
             chatInputView.recording = false
         }
         NIMSDK.shared().mediaManager.cancelRecord()
@@ -2494,8 +2745,19 @@ extension TGChatViewController: ChatInputViewDelegate {
         chatInputView.recording = false
     }
     
-    
-    
+    //弹出更多语言页面
+    func moreLanguageButtonTapped() {
+        let vc = TGIMAudioLanguageController()
+        vc.onLanguageCodeDidSelect =  { [weak self] (langCode) in
+            guard let self = self else { return }
+            self.chatInputView.recordPhase = .converted
+            self.receiveResult = ""
+            SpeechVoiceDetectManager.shared.convertToTextWithAudioFile(filePath: self.viewmodel.saveAudioFilePath ?? "", langCode: langCode)
+        }
+        vc.modalTransitionStyle = .coverVertical
+        vc.isModalInPresentation = true
+        self.present(vc, animated: true, completion: nil)
+    }
 }
 
 //    MARK: UIImagePickerControllerDelegate
@@ -2505,13 +2767,61 @@ extension TGChatViewController: UIImagePickerControllerDelegate, UINavigationCon
         sendMediaMessage(didFinishPickingMediaWithInfo: info)
         picker.dismiss(animated: true, completion: nil)
     }
-    
     // 取消选择时调用
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
 
 }
+
+// MARK: PHPickerViewControllerDelegate
+extension TGChatViewController: PHPickerViewControllerDelegate {
+    @available(iOS 14.0, *)
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: .none)
+        
+        var photos: [UIImage] = []
+        var imageAsset: [PHAsset] = []
+        var isGifImage = false
+        
+        let dispatchGroup = DispatchGroup()
+        
+        for result in results {
+            // Check if the item is a GIF
+            if result.itemProvider.hasItemConformingToTypeIdentifier(UTType.gif.identifier) {
+                isGifImage = true
+            } else {
+                isGifImage = false
+            }
+            
+            // Handle UIImage extraction
+            dispatchGroup.enter()
+            result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+                if let image = object as? UIImage {
+                    photos.append(image)
+                }
+                dispatchGroup.leave()
+            }
+            
+            // Handle PHAsset extraction
+            if let assetIdentifier = result.assetIdentifier {
+                let asset = PHAsset.fetchAssets(withLocalIdentifiers: [assetIdentifier], options: nil).firstObject
+                if let phAsset = asset {
+                    imageAsset.append(phAsset)
+                }
+            }
+        }
+        
+        // After all images are loaded
+        dispatchGroup.notify(queue: .main) {
+            
+        }
+        
+    }
+    
+    
+}
+
 //MARK: IMToolChooseDelegate
 extension TGChatViewController: IMToolChooseDelegate {
     func didSelectedItem(model: IMActionItem) {
@@ -2519,7 +2829,7 @@ extension TGChatViewController: IMToolChooseDelegate {
         case .stickerCollection:
             showStickerCollection()
         case .cancelUpload:
-            
+        
             break
         case .reply:
             self.showReplyMessageView()
@@ -2536,21 +2846,14 @@ extension TGChatViewController: IMToolChooseDelegate {
             isForwarding = false
             self.showSelectActionToolbar(true, isDelete: true)
         case .translate:
-           
-            break
+            translateTextIM()
         case .voiceToText:
-           
-            break
+            vioceTotext()
         case .collection:
             collectMessage()
         case .save:
-            
             break
-        case .forwardAll:
-           
-            break
-        case .deleteAll:
-            
+        case .forwardAll, .deleteAll:
             break
         case .pinned:
             pinnedMessage()
@@ -2564,8 +2867,6 @@ extension TGChatViewController: IMToolChooseDelegate {
             break
         }
     }
-    
-    
 }
 
 //MARK: IMPinnedViewDelegate
@@ -2573,8 +2874,6 @@ extension TGChatViewController: IMPinnedViewDelegate {
     func deletePinItem(pinItem: PinnedMessageModel) {
         unPinnedMessage(model: pinItem)
     }
-    
-    
 }
 
 //MARK: IMPinnedPopViewDeleagte
@@ -2616,7 +2915,6 @@ extension TGChatViewController: IMPinnedPopViewDeleagte {
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
-    
     func didClickAudio(model: FavoriteMsgModel) {
         pinnedAlert?.dismiss()
         pinnedAlert = nil
@@ -2646,9 +2944,6 @@ extension TGChatViewController: IMPinnedPopViewDeleagte {
         self.pinnedView?.content.text = data
         self.pinnedView?.layoutIfNeeded()
     }
-    
-    
-    
 }
 
 extension TGChatViewController: TimerHolderDelegate {
@@ -2688,8 +2983,6 @@ extension TGChatViewController: TimerHolderDelegate {
 //            isTypingLabel.isHidden = true
 //        }
     }
-    
-    
 }
 
 extension TGChatViewController: TGJoinMeetingViewModelDelegate {

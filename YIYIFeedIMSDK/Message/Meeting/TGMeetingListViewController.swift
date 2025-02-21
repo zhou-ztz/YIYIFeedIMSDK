@@ -68,14 +68,14 @@ class TGMeetingListViewController: TGViewController {
             guard let self = self else { return }
             if let error = error {
                 UIViewController.showBottomFloatingToast(with:  error.localizedDescription , desc: "")
-                //self.tableView.show(placeholderView: .network)
+                self.tableView.show(placeholderView: .network)
             }else {
                 if let datas = resultModel?.data {
                     self.dataSouce = datas.data
                     self.tableView.removePlaceholderViews()
                     if (datas.data?.count ?? 0) < 15 {
                         if (datas.data?.count ?? 0) == 0{
-                            //self.tableView.show(placeholderView: .empty)
+                            self.tableView.show(placeholderView: .empty)
                         }
                         self.tableView.mj_footer.makeVisible()
                         self.tableView.mj_footer.endRefreshingWithNoMoreData()
@@ -100,7 +100,7 @@ class TGMeetingListViewController: TGViewController {
             guard let self = self else { return }
             if let _ = error {
                 self.tableView.mj_footer.endRefreshing()
-               // self.tableView.show(placeholderView: .network)
+                self.tableView.show(placeholderView: .network)
             } else {
                 if let datas = resultModel?.data {
                     self.dataSouce = (self.dataSouce ?? []) + (datas.data ?? [])

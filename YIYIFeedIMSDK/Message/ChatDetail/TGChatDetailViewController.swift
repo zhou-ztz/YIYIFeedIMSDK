@@ -233,7 +233,8 @@ extension TGChatDetailViewController: UITableViewDataSource, UITableViewDelegate
                 let vc = TGChatMediaViewController(conversationId: self.conversationId)
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
-                
+                let vc = TGSearchChatHistoryController(conversationId: self.conversationId)
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             break
         case 2:

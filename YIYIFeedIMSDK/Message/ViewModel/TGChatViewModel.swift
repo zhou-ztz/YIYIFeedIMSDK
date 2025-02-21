@@ -120,6 +120,7 @@ class TGChatViewModel: NSObject {
                 self.oldMsg = messageList.last
                 let datas = messageList.reversed().compactMap { TGMessageData($0) }
                 self.messages = processTimeData(datas)
+                self.handleMultiImageMessage()
                 completion(error, self.messages.count, self.messages)
             } else {
                 completion(error, 0, [])
@@ -140,6 +141,7 @@ class TGChatViewModel: NSObject {
                 let datas = messageList.reversed().compactMap { TGMessageData($0) }
                 let newDatas = self.processTimeData(datas)
                 self.messages.insert(contentsOf: newDatas, at: 0)
+                self.handleMultiImageMessage()
                 var indexPath: IndexPath?
                 if let msg = newDatas.last {
                     indexPath = self.getIndexPathForMessage(model: msg)
@@ -201,6 +203,55 @@ class TGChatViewModel: NSObject {
         }
         return nil
     }
+    ///处理多张连续图片消息
+    func handleMultiImageMessage() {
+        for (index, messageData) in messages.enumerated() {
+            if messageData.nimMessageModel?.messageType == .MESSAGE_TYPE_IMAGE {
+                var i = index + 1
+                repeat {
+                    if messages.indices.contains(i) {
+                        let nextMessage = messages[i]
+                        
+                        if nextMessage.nimMessageModel?.messageType == .MESSAGE_TYPE_IMAGE && self.getMessageSecondsTimeInterval(messageData.messageTime, nextMessage.messageTime) < 5 {
+                            if messageData.messageList.contains(messageData) == false {
+                                messageData.messageList.append(messageData)
+                            }
+                            
+                            messageData.messageList.append(nextMessage)
+                        } else {
+                            break
+                        }
+                    }
+                    
+                    i += 1
+                } while messages.indices.contains(i)
+            }
+        }
+        
+        for (index, messageData) in messages.enumerated() {
+            if messageData.messageList.count >= 4 {
+                for sub in messageData.messageList {
+                    if sub != messageData, let i = messages.firstIndex(of: sub) {
+                        messages.remove(at: i)
+                    }
+                }
+            } else {
+                messageData.messageList.removeAll()
+            }
+        }
+    }
+    
+    func getMessageSecondsTimeInterval(_ startInterval: TimeInterval, _ endInterval: TimeInterval) -> Int {
+        let startIntervalDate = Date(timeIntervalSince1970: startInterval)
+        let endIntervalDate = Date(timeIntervalSince1970: endInterval)
+        
+        let calendar = Calendar.current
+        let unitFlags = Set<Calendar.Component>([ .second])
+        let datecomponents = calendar.dateComponents(unitFlags, from: startIntervalDate, to: endIntervalDate)
+        let seconds = datecomponents.second ?? 0
+        
+        return seconds
+    }
 
     ///删除消息
     ///onlyDeleteLocal 是否只删除本地
@@ -236,6 +287,24 @@ class TGChatViewModel: NSObject {
             }
         }
         return indexPaths
+    }
+    
+    func findMessageDataIndexPath(data: TGMessageData) -> IndexPath?{
+        var indexPath: IndexPath?
+        if let index = messages.firstIndex(of: data) {
+            indexPath = IndexPath(row: index, section: 0)
+        }
+        return indexPath
+    }
+    
+    func findMessageData(messageClientId: String) -> TGMessageData? {
+        var data: TGMessageData?
+        if let index = self.messages.firstIndex(where: { model in
+            model.nimMessageModel?.messageClientId == messageClientId
+        }) {
+            data = self.messages[index]
+        }
+        return data
     }
     
     
@@ -439,13 +508,32 @@ class TGChatViewModel: NSObject {
     func forwardV2Message(_ indexPaths: [IndexPath], to sessionId: String, isTeam: Bool) {
         indexPaths.forEach { path in
             if self.messages.count > path.row, let originalMessage = self.messages[path.row].nimMessageModel, let accountId = NIMSDK.shared().v2LoginService.getLoginUser() {
+                
+                let model = self.messages[path.row]
                 let conversationId = isTeam ? "\(accountId)|2|\(sessionId)" : "\(accountId)|1|\(sessionId)"
-                let message = V2NIMMessageCreator.createForwardMessage(originalMessage)
-                NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: nil) { _ in
+                // 处理多图消息
+                if model.messageList.count >= 4 {
+                    model.messageList.forEach { data in
+                        if let originalData = data.nimMessageModel {
+                            let message = V2NIMMessageCreator.createForwardMessage(originalData)
+                            NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: nil) { _ in
+                                
+                            } failure: { _ in
+                                
+                            }
+                        }
+                    }
                     
-                } failure: { _ in
-                    
+                } else {
+                    let message = V2NIMMessageCreator.createForwardMessage(originalMessage)
+                    NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: nil) { _ in
+                        
+                    } failure: { _ in
+                        
+                    }
                 }
+                
+                
                 
             }
         }
@@ -519,7 +607,7 @@ class TGChatViewModel: NSObject {
     }
     
     func sendMsgFailed(_ message: V2NIMMessage, _ error: Error?) {
-        guard let messageClientId = message.messageClientId else {
+        guard message.messageClientId != nil else {
             return
         }
         for (i, msg) in messages.enumerated() {
@@ -725,6 +813,77 @@ class TGChatViewModel: NSObject {
         }
         return nil
     }
+    
+    func readAllMessageReceipt(completion: (() -> Void)?) {
+        NIMSDK.shared().v2ConversationService.markConversationRead(self.conversationId, success: nil)
+        
+        var messageReceipts: [V2NIMMessage] = []
+        for model in self.messages {
+            guard let message = model.nimMessageModel else { return }
+            if !message.isSelf {
+                messageReceipts.append(message)
+            }
+        }
+        if messageReceipts.count == 0 {
+            return
+        }
+        if conversationType == .CONVERSATION_TYPE_P2P {
+            for messageReceipt in messageReceipts {
+                NIMSDK.shared().v2MessageService.sendP2PMessageReceipt(messageReceipt, success: nil, failure: nil)
+            }
+            completion?()
+        } else {
+            NIMSDK.shared().v2MessageService.sendTeamMessageReceipts(messageReceipts) {
+                completion?()
+            } failure: { _ in
+                completion?()
+            }
+
+        }
+        
+        
+    }
+    
+    func readMessageReceipt(messages: [V2NIMMessage], completion: (() -> Void)?) {
+        NIMSDK.shared().v2ConversationService.markConversationRead(self.conversationId, success: nil)
+        if conversationType == .CONVERSATION_TYPE_P2P {
+            for message in messages {
+                NIMSDK.shared().v2MessageService.sendP2PMessageReceipt(message, success: nil, failure: nil)
+            }
+            completion?()
+        } else {
+            NIMSDK.shared().v2MessageService.sendTeamMessageReceipts(messages) {
+                completion?()
+            } failure: { _ in
+                completion?()
+            }
+
+        }
+    }
+    
+    ///翻译文本消息
+    func translateTextMessage(messageText: String, completion: ((String?, Error?) -> Void)?) {
+        TGIMNetworkManager.translateTexts(message: messageText) { model, error in
+            if let error = error {
+                completion?(nil, error)
+            } else {
+                completion?(model?.text, nil)
+            }
+        }
+    }
+    
+    func updateTranslateMessage(for data: TGMessageData, with result: String) -> TGMessageData {
+        if let attach = data.customAttachment as? IMTextTranslateAttachment {
+            attach.translatedText = result
+        }
+        return data
+    }
+    
+    func insert(message: TGMessageData, after ori: TGMessageData) {
+        if let indexPath = findMessageDataIndexPath(data: ori) {
+            self.messages.insert(message, at: indexPath.row + 1)
+        }
+    }
 }
 
 extension TGChatViewModel: V2NIMMessageListener {
@@ -763,11 +922,11 @@ extension TGChatViewModel: V2NIMMessageListener {
     }
     
     func onReceive(_ readReceipts: [V2NIMP2PMessageReadReceipt]) {
-        
+        self.delegate?.onReceive(readReceipts)
     }
     
     func onReceive(_ readReceipts: [V2NIMTeamMessageReadReceipt]) {
-        
+        self.delegate?.onReceive(readReceipts)
     }
     
     func onReceiveMessagesModified(_ messages: [V2NIMMessage]) {
@@ -882,7 +1041,7 @@ extension TGChatViewModel: V2NIMNotificationListener {
         }
         do {
             let dic = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
-            guard let dict = dic as? [String: Any], let type = dict[NTESNotifyID] as? Int , let sender = notification.senderId else {
+            guard let dict = dic as? [String: Any], let sender = notification.senderId else {
                 return
             }
             self.delegate?.onReceiveCustomNotification(senderId: sender, content: dict)

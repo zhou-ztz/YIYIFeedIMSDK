@@ -41,4 +41,18 @@ class IMSocialPostAttachment: CustomAttachment{
     override func canBeForwarded() -> Bool {
         return true
     }
+    
+    func socialPostMessage(with model: TGmessagePopModel) {
+        self.postUrl = model.contentUrl
+        self.title = model.owner
+        self.desc = model.content
+        self.imageURL = model.coverImage
+        self.contentType = "\(model.contentType.messageTypeID)"
+        self.contentDescribed = model.campaignContent
+    }
+    
+    func socialPostMessage(linkUrl: String, contentUrl: String) {
+        self.postUrl = linkUrl
+        self.contentUrl = contentUrl
+    }
 }

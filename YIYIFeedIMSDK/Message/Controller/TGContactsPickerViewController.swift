@@ -97,7 +97,7 @@ class TGContactsPickerViewController: TGChatFriendListViewController {
     
     override func rightButtonClick() {
         guard TGReachability.share.isReachable() else {
-           // showError(message: "network_is_not_available".localized)
+            UIViewController.showBottomFloatingToast(with: "network_is_not_available".localized, desc: "")
             return
         }
         
@@ -260,7 +260,7 @@ class TGContactsPickerViewController: TGChatFriendListViewController {
             searchView.isHidden = false
             friendListTableView.reloadData()
         } else {
-           // friendListTableView.show(placeholderView: .empty)
+            friendListTableView.show(placeholderView: .empty)
         }
         friendListTableView.mj_header.endRefreshing()
     }
@@ -296,14 +296,14 @@ class TGContactsPickerViewController: TGChatFriendListViewController {
                     }
                     
                     guard let datas = userModels else {
-                       // weakSelf.friendListTableView.show(placeholderView: .empty)
+                        weakSelf.friendListTableView.show(placeholderView: .empty)
                         return
                     }
                     weakSelf.friendOffset = datas.count
                     weakSelf.updateFriendListData(model: datas)
                     
                     if error != nil {
-                       // weakSelf.friendListTableView.show(placeholderView: .network)
+                        weakSelf.friendListTableView.show(placeholderView: .network)
                         return
                     }
                     
@@ -316,7 +316,7 @@ class TGContactsPickerViewController: TGChatFriendListViewController {
                     
                     DispatchQueue.main.async {
                         if weakSelf.searchResults.isEmpty {
-                          //  weakSelf.friendListTableView.show(placeholderView: .empty)
+                            weakSelf.friendListTableView.show(placeholderView: .empty)
                         }
                         weakSelf.friendListTableView.reloadData()
                     }
@@ -714,22 +714,11 @@ extension TGContactsPickerViewController {
     func shareStickerToChat() {
         guard let sticker = model else { return }
         
-//        let attachment = IMStickerCardAttachment()
-//        attachment.stickerCardAttachment(with: sticker)
-//        
-//        let custom = NIMCustomObject()
-//        custom.attachment = attachment
-//        
-//        choosedDataSource.forEach {
-//            let contact = $0 as! ContactData
-//            let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
-//            let message = NIMMessage()
-//            message.messageObject = custom
-//            message.text = sticker.owner
-//            try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
-//        }
-//        
-//        showTopIndicator(status: .success, "select_friend_success_sent".localized)
+//        let attachment = IMStickerAttachment()
+//        attachment.chartletId = ""
+//        attachment.chartletCatalog = ""
+//        attachment.stickerId = ""
+     
     }
     
     func shareMiniProgramToChat() {
@@ -742,96 +731,140 @@ extension TGContactsPickerViewController {
         content.desc = model.content
         content.imageURL = model.coverImage
         content.contentType = "\(model.contentType.messageTypeID)"
-        
-        let custom = NIMCustomObject()
-        custom.attachment = content as! any NIMCustomAttachment
-        
+        let rawAttachment = content.encode()
+        let message = MessageUtils.customV2Message(text: "", rawAttachment: rawAttachment)
+        let me = RLSDKManager.shared.loginParma?.imAccid ?? ""
+       
         choosedDataSource.forEach {
             let contact = $0 as! ContactData
-            let message = NIMMessage()
-            message.messageObject = custom
-            let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
-            try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
+            let userName = contact.userName
+            var conversationId = ""
+            var conversationType = "1"
+            var sessionId = me
+            if contact.isTeam {
+                conversationType = "2"
+                sessionId = userName
+            }
+            conversationId = "\(me)|\(conversationType)|\(userName)"
+            let params = V2NIMSendMessageParams()
+            let pushConfig = V2NIMMessagePushConfig()
+            
+            pushConfig.pushPayload = self.updateV2ApnsPayload(sessionId: sessionId, conversationType: conversationType)
+            params.pushConfig = pushConfig
+            NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: params) { _ in
+                
+            } failure: { _ in
+                
+            }
+            
         }
-        
-       // showTopIndicator(status: .success, "select_friend_success_sent".localized)
+        UIViewController.showBottomFloatingToast(with: "select_friend_success_sent".localized, desc: "")
     }
     
     func sharePostToChat() {
         guard let model = model else { return }
-        
-        let content = IMSocialPostAttachment()
-//        content.socialPostMessage(with: model)
-//        
-//        let custom = NIMCustomObject()
-//        custom.attachment = content
-//        
-//        choosedDataSource.forEach {
-//            let contact = $0 as! ContactData
-//            let message = NIMMessage()
-//            message.messageObject = custom
-//            let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
-//            try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
-//        }
-        
-       // showTopIndicator(status: .success, "select_friend_success_sent".localized)
+        let attachment = IMSocialPostAttachment()
+        attachment.socialPostMessage(with: model)
+        let rawAttachment = attachment.encode()
+        let message = MessageUtils.customV2Message(text: "", rawAttachment: rawAttachment)
+        let me = RLSDKManager.shared.loginParma?.imAccid ?? ""
+       
+        choosedDataSource.forEach {
+            let contact = $0 as! ContactData
+            let userName = contact.userName
+            var conversationId = ""
+            var conversationType = "1"
+            var sessionId = me
+            if contact.isTeam {
+                conversationType = "2"
+                sessionId = userName
+            }
+            conversationId = "\(me)|\(conversationType)|\(userName)"
+            let params = V2NIMSendMessageParams()
+            let pushConfig = V2NIMMessagePushConfig()
+            
+            pushConfig.pushPayload = self.updateV2ApnsPayload(sessionId: sessionId, conversationType: conversationType)
+            params.pushConfig = pushConfig
+            NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: params) { _ in
+                
+            } failure: { _ in
+                
+            }
+            
+        }
+        UIViewController.showBottomFloatingToast(with: "select_friend_success_sent".localized, desc: "")
     }
     
     func shareVoucherToChat() {
         guard let model = model else { return }
         
-        let content = IMVoucherAttachment()
-       // content.voucherPostMessage(with: model)
+        let attachment = IMVoucherAttachment()
+        attachment.voucherPostMessage(with: model)
+        let rawAttachment = attachment.encode()
+        let message = MessageUtils.customV2Message(text: "", rawAttachment: rawAttachment)
+        let me = RLSDKManager.shared.loginParma?.imAccid ?? ""
         
-//        let custom = NIMCustomObject()
-//        custom.attachment = content
-//        
-//        choosedDataSource.forEach {
-//            let contact = $0 as! ContactData
-//            let message = NIMMessage()
-//            message.messageObject = custom
-//            let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
-//            try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
-//        }
+        choosedDataSource.forEach {
+            let contact = $0 as! ContactData
+            let userName = contact.userName
+            var conversationId = ""
+            var conversationType = "1"
+            var sessionId = me
+            if contact.isTeam {
+                conversationType = "2"
+                sessionId = userName
+            }
+            conversationId = "\(me)|\(conversationType)|\(userName)"
+            let params = V2NIMSendMessageParams()
+            let pushConfig = V2NIMMessagePushConfig()
+            
+            pushConfig.pushPayload = self.updateV2ApnsPayload(sessionId: sessionId, conversationType: conversationType)
+            params.pushConfig = pushConfig
+            NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: params) { _ in
+                
+            } failure: { _ in
+                
+            }
+        }
         
-        //showTopIndicator(status: .success, "select_friend_success_sent".localized)
+        UIViewController.showBottomFloatingToast(with: "select_friend_success_sent".localized, desc: "")
     }
     
     func shareReferralToChat() {
         guard let model = model else { return }
-//        var imageURL: String = ""
-//        
-//        let group = DispatchGroup()
-//        group.enter()
-//        
-//        model.coverImage = model.coverImage.replacingOccurrences(of: "file:///", with: "", options: NSString.CompareOptions.literal, range: nil)
-//        NIMSDK.shared().resourceManager.upload(model.coverImage, progress: nil) { [weak self] (urlString, error) in
-//            if error == nil, let urlString = urlString {
-//                imageURL = urlString
-//            } else {
-//                print("Error uploading image: \(error?.localizedDescription ?? "Unknown error")")
-//            }
-//            group.leave()
-//        }
-//        
-//        group.notify(queue: .main) {
-//            let content = IMReferralAttachment()
-//            model.coverImage = imageURL
-//            content.referralPostMessage(with: model)
-//            
-//            let custom = NIMCustomObject()
-//            custom.attachment = content
-//            
-//            self.choosedDataSource.forEach {
-//                let contact = $0 as! ContactData
-//                let message = NIMMessage()
-//                message.messageObject = custom
-//                let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
-//                try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
-//            }
-//            
-//            self.showTopIndicator(status: .success, "select_friend_success_sent".localized)
-  //      }
+        //        var imageURL: String = ""
+        //
+        //        let group = DispatchGroup()
+        //        group.enter()
+        //
+        //        model.coverImage = model.coverImage.replacingOccurrences(of: "file:///", with: "", options: NSString.CompareOptions.literal, range: nil)
+        //        NIMSDK.shared().resourceManager.upload(model.coverImage, progress: nil) { [weak self] (urlString, error) in
+        //            if error == nil, let urlString = urlString {
+        //                imageURL = urlString
+        //            } else {
+        //                print("Error uploading image: \(error?.localizedDescription ?? "Unknown error")")
+        //            }
+        //            group.leave()
+        //        }
+        //
+        //        group.notify(queue: .main) {
+        //            let content = IMReferralAttachment()
+        //            model.coverImage = imageURL
+        //            content.referralPostMessage(with: model)
+        //
+        //            let custom = NIMCustomObject()
+        //            custom.attachment = content
+        //
+        //            self.choosedDataSource.forEach {
+        //                let contact = $0 as! ContactData
+        //                let message = NIMMessage()
+        //                message.messageObject = custom
+        //                let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
+        //                try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
+        //            }
+        //
+        //            self.showTopIndicator(status: .success, "select_friend_success_sent".localized)
+        //      }
         
     }
     
@@ -840,56 +873,31 @@ extension TGContactsPickerViewController {
         
         choosedDataSource.forEach {
             let contact = $0 as! ContactData
-            let message = NIMMessage()
-            let messageObject = NIMImageObject(image: model.qrImage)
-            message.messageObject = messageObject
-            let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
-            try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
-            
-            if !model.content.isEmpty {
-                let textMessage = NIMMessage()
-                textMessage.text = model.content
-                try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(textMessage, session.sessionId, contact.isTeam), to: session)
-            }
+//            let message = NIMMessage()
+//            let messageObject = NIMImageObject(image: model.qrImage)
+//            message.messageObject = messageObject
+//            let session = NIMSession(contact.userName, type:  contact.isTeam ? .team : .P2P)
+//            try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(message, session.sessionId, contact.isTeam), to: session)
+//            
+//            if !model.content.isEmpty {
+//                let textMessage = NIMMessage()
+//                textMessage.text = model.content
+//                try? NIMSDK.shared().chatManager.send(self.updateApnsPayload(textMessage, session.sessionId, contact.isTeam), to: session)
+//            }
         }
         
-      //  showTopIndicator(status: .success, "select_friend_success_sent".localized)
+        //  showTopIndicator(status: .success, "select_friend_success_sent".localized)
     }
     
-    // By Kit Foong (Update message session id and type into apns payload)
-    func updateApnsPayload(_ message: NIMMessage, _ sessionIdString: String, _ isTeam: Bool) -> NIMMessage {
-        var sessionId: String = ""
-        var sessionType: Int = 0
-        
-        sessionType = isTeam ? 1 : 0
-        
-        if (sessionType == 0) {
-            sessionId =  NIMSDK.shared().loginManager.currentAccount() ?? ""
-        } else {
-            sessionId = sessionIdString
-            let setting = NIMMessageSetting()
-            setting.teamReceiptEnabled = true
-            message.setting = setting
+    func updateV2ApnsPayload(sessionId: String, conversationType: String) -> String {
+        var apnsPayload = ""
+        let parameters: [String: Any] = ["sessionID": sessionId, "sessionType": conversationType]
+        if let pushPayload = parameters.toJSON {
+            apnsPayload = pushPayload
         }
-        
-        if sessionId.isEmpty == false {
-            var parameters: String = ""
-            parameters = String(format: "{\"sessionID\": \"%@\", \"sessionType\": \"%@\"}", sessionId, sessionType.stringValue)
-            print(parameters)
-            
-            if let data = parameters.data(using: String.Encoding.utf8) {
-                do {
-                    let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:Any]
-                    print(json)
-                    message.apnsPayload = json
-                } catch {
-                    print("Something went wrong")
-                }
-            }
-        }
-        
-        return message
+        return apnsPayload
     }
+    
 }
 
 extension TGContactsPickerViewController: ContactsSelecletdCellDelegate {

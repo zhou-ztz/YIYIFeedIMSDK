@@ -35,6 +35,9 @@ class TGMessageData: NSObject {
     var isPinned: Bool = false
     // 文本是否在 底部
    // var atBottom: Bool = true
+    var messageList: [TGMessageData] = []
+    // 是否被翻译
+    var isTranslated: Bool = false
     
     //modifyTime
     init(nimMessageModel: V2NIMMessage? = nil, showName: Bool? = nil, messageType: V2NIMMessageType = .MESSAGE_TYPE_TEXT, messageTime: TimeInterval = 0, type: TGChatMessageType, replyText: String = "") {

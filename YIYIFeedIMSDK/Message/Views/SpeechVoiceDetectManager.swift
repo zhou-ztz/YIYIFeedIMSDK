@@ -50,7 +50,7 @@ class SpeechVoiceDetectManager: NSObject, SFSpeechRecognizerDelegate, SFSpeechRe
     
     private var timer: Timer?
     
-    //private var currentSelectedLangCode: SupportedLanguage = SupportedLanguage(code: "en", name: "English")
+    private var currentSelectedLangCode: SupportedLanguage = SupportedLanguage(code: "en", name: "English")
     
     override init() {
         super.init()
@@ -96,11 +96,11 @@ class SpeechVoiceDetectManager: NSObject, SFSpeechRecognizerDelegate, SFSpeechRe
     //设定自定义识别语言
     public func setLanguage(code: String) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: code)) ?? SFSpeechRecognizer(locale: Locale(identifier: "en"))!
-       // let languageName = LocalizationManager.getDisplayNameForLanguageIdentifier(identifier: code)
+        let languageName = TGLocalizationManager.getDisplayNameForLanguageIdentifier(identifier: code)
         
         let dict = [
             "locale": code,
-            "name": "languageName"
+            "name": languageName
         ]
 
         UserDefaults.standard.set(dict, forKey: "SpeechToTextTypingLanguage")
@@ -187,9 +187,9 @@ class SpeechVoiceDetectManager: NSObject, SFSpeechRecognizerDelegate, SFSpeechRe
             bufferRecognitionRequest.addsPunctuation = true
         }
         //更新语言标识
-        //currentSelectedLangCode = getSupportedLanguageData()
-        //var langIdentifier = currentSelectedLangCode.code ?? "en"
-        var langIdentifier = "en"
+        currentSelectedLangCode = getSupportedLanguageData()
+        var langIdentifier = currentSelectedLangCode.code ?? "en"
+    
         langIdentifier = langIdentifier.replacingOccurrences(of: "-hans", with: "").replacingOccurrences(of: "-hant", with: "")
         
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: langIdentifier)) ?? SFSpeechRecognizer(locale: Locale(identifier: "en"))!
@@ -257,12 +257,12 @@ class SpeechVoiceDetectManager: NSObject, SFSpeechRecognizerDelegate, SFSpeechRe
         timer = nil
     }
     
-//    func getSupportedLanguageData() -> SupportedLanguage {
-//        let langIdentifier = Locale.current.languageCode ?? "en"
-//        if let preferredLanguageObject = UserDefaults.standard.object(forKey: "SpeechToTextTypingLanguage") as? [String:String] {
-//            return SupportedLanguage(code: preferredLanguageObject["locale"] ?? langIdentifier, name: preferredLanguageObject["name"] ?? LocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
-//        }
-//
-//        return SupportedLanguage(code: langIdentifier, name: LocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
-//    }
+    func getSupportedLanguageData() -> SupportedLanguage {
+        let langIdentifier = Locale.current.languageCode ?? "en"
+        if let preferredLanguageObject = UserDefaults.standard.object(forKey: "SpeechToTextTypingLanguage") as? [String:String] {
+            return SupportedLanguage(code: preferredLanguageObject["locale"] ?? langIdentifier, name: preferredLanguageObject["name"] ?? TGLocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
+        }
+
+        return SupportedLanguage(code: langIdentifier, name: TGLocalizationManager.getDisplayNameForLanguageIdentifier(identifier: langIdentifier))
+    }
 }

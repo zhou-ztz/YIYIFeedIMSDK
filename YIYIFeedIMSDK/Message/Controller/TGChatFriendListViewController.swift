@@ -360,7 +360,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         if let datas = datas {
             dataSource = datas
             if dataSource.isEmpty && keyword.isEmpty {
-               // friendListTableView.show(placeholderView: .empty)
+                friendListTableView.show(placeholderView: .empty)
             } else {
                 searchView.isHidden = false
             }
@@ -368,7 +368,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         // 获取数据失败
         if message != nil {
             dataSource = []
-           // friendListTableView.show(placeholderView: .network)
+            friendListTableView.show(placeholderView: .network)
         }
         friendListTableView.reloadData()
     }

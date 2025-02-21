@@ -357,6 +357,26 @@ class MessageUtils: NSObject {
         return message
     }
     
+    class func translateMessage(_ data: TGMessageData, with result: String) -> TGMessageData {
+        guard let message = data.nimMessageModel else { return data }
+        var messageText = message.text
+        if let attach = data.customAttachment as? IMReplyAttachment {
+            messageText = attach.content
+        }
+        let attachment = IMTextTranslateAttachment()
+        attachment.oriMessageId = message.messageClientId ?? ""
+        attachment.originalText = messageText ?? ""
+        attachment.translatedText = result
+        attachment.isOutgoingMsg = message.isSelf
+        let rawAttachment = attachment.encode()
+        let v2message = V2NIMMessageCreator.createCustomMessage("", rawAttachment: rawAttachment)
+        let messageData = TGMessageData(v2message)
+        messageData.customAttachment = attachment
+        messageData.customType = .Translate
+        
+        return messageData
+    }
+    
     class func replyV2Message(with messageModel: TGMessageData, replyView: MessageReplyView, text: String, completion: @escaping (V2NIMMessage?) -> Void) {
         guard let messageReplied = messageModel.nimMessageModel else {
             completion(nil)
@@ -440,11 +460,21 @@ class MessageUtils: NSObject {
         case .MESSAGE_TYPE_TEXT:
             if let msg = message.nimMessageModel, MessageUtils.showRevokeButton(msg), msg.isSelf  {
                 items = [.copy, .forward, .reply, .collection, .translate, .edit, .delete]
+                if message.isTranslated {
+                    items = [.copy, .forward, .reply, .collection, .edit, .delete]
+                }
             } else {
                 items = [.copy, .forward, .reply, .collection, .translate, .delete]
+                if message.isTranslated {
+                    items = [.copy, .forward, .reply, .collection, .delete]
+                }
             }
-            
-        case .MESSAGE_TYPE_IMAGE, .MESSAGE_TYPE_LOCATION, .MESSAGE_TYPE_FILE:
+        case .MESSAGE_TYPE_IMAGE:
+            items = [.forward, .reply, .collection, .delete]
+            if message.messageList.count >= 4 {
+                items = [.forward, .delete]
+            }
+        case .MESSAGE_TYPE_LOCATION, .MESSAGE_TYPE_FILE:
             items = [.forward, .reply, .collection, .delete]
         case .MESSAGE_TYPE_VIDEO:
             if !isUpLoad {
@@ -465,6 +495,8 @@ class MessageUtils: NSObject {
                     items = [.delete]
                 case .Reply:
                     items = [.reply, .translate, .delete]
+                case .Translate:
+                    items = []
                 default:
                     items = [.delete]
                 }

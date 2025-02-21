@@ -208,7 +208,7 @@ class CustomerStickerViewController: TGViewController {
                     self.tipLable.textColor = self.selectArray.count ?? 0 > 0 ? .black : UIColor(red: 155, green: 155, blue: 155)
                 }
             } else {
-               // self.showError(message: "network_is_not_available".localized)
+                UIViewController.showBottomFloatingToast(with: "network_is_not_available".localized, desc: "")
             }
         }
     }

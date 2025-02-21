@@ -105,7 +105,8 @@ public class TGMessageViewController: TGViewController {
     
     // MARK: - （右上角按钮点击事件）
     @objc func rightButtonClick() {
-        
+        let vc = TGMessageSearchListController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func moreButtonClick(){

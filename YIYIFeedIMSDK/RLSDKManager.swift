@@ -62,6 +62,8 @@ public protocol TGMessageDelegate: AnyObject {
     func showPinError(message: String)
     /// 发送红包页面
     func openRedPackect(transactionType: TGTransactionType, fromUser: String, toUser: String, numberOfMember: Int, teamId: String?, completion: TGTransactionFinishClosure?)
+    ///  openMsgRequestChat
+    func openMsgRequestChat(username: String, userIdentity: Int)
 }
 
 public class RLSDKManager: NSObject {
@@ -71,9 +73,9 @@ public class RLSDKManager: NSObject {
     var loginParma: RLLoginParma?
     
     public weak var imDelegate: TGMessageDelegate?
-    
-    public func initSDK(){
-        RLNIMSDKManager.shared.setupNIMSDK()
+    // 云信 appKey
+    public func initSDK(appKey: String){
+        RLNIMSDKManager.shared.setupNIMSDK(appKey: appKey)
         IMNotificationCenter.sharedCenter.start()
         setupIQKeyboardManager()
     }

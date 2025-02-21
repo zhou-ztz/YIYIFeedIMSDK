@@ -169,7 +169,7 @@ class TGCreateMeetingViewController: NewContactsViewController {
             self?.searchTableView.mj_header.endRefreshing()
             guard let self = self else { return }
             if error != nil {
-                // self.tableView.show(placeholderView: .network)
+                 self.tableView.show(placeholderView: .network)
             } else {
                 if let datas = usermodels {
                     let users = datas.compactMap {
@@ -178,7 +178,7 @@ class TGCreateMeetingViewController: NewContactsViewController {
 
                     self.searchdDataSource = users
                     if self.searchdDataSource.isEmpty  {
-                        //self.searchTableView.show(placeholderView: .empty)
+                        self.searchTableView.show(placeholderView: .empty)
                     } else {
                         self.searchTableView.removePlaceholderViews()
                     }
@@ -205,7 +205,7 @@ class TGCreateMeetingViewController: NewContactsViewController {
             guard let self = self else { return }
             if error != nil {
                 self.searchTableView.mj_footer.endRefreshing()
-                // self.searchTableView.show(placeholderView: .network)
+                 self.searchTableView.show(placeholderView: .network)
             } else {
                 if let datas = userModels {
                     self.searchOffset = self.searchOffset + datas.count
@@ -214,7 +214,7 @@ class TGCreateMeetingViewController: NewContactsViewController {
                     }
                     self.searchdDataSource = self.searchdDataSource + users
                     if self.searchdDataSource.isEmpty  {
-                       // self.searchTableView.show(placeholderView: .empty)
+                        self.searchTableView.show(placeholderView: .empty)
                     }
                     if datas.count < TGNewFriendsNetworkManager.limit {
                         self.searchTableView.mj_footer.endRefreshingWithNoMoreData()

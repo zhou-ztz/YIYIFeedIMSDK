@@ -113,6 +113,11 @@ class TGNetworkManager {
                 
                 if (200...299).contains(statusCode) {
                     print("Request was successful")
+                    ///数据不需要解析
+                    if  data.bytes.count == 0 {
+                        completion(data, response, nil)
+                        return
+                    }
                     
                     do {
                         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {

@@ -39,4 +39,18 @@ class IMVoucherAttachment: CustomAttachment {
     override func canBeForwarded() -> Bool {
         return true
     }
+    
+    
+    func voucherPostMessage(with model: TGmessagePopModel) {
+        self.postUrl = model.contentUrl
+        self.title = model.owner
+        self.desc = model.content
+        self.imageURL = model.coverImage
+        self.contentType = "\(model.contentType.messageTypeID)"
+    }
+    
+    func voucherPostMessage(linkUrl: String, contentUrl: String) {
+        self.postUrl = linkUrl
+        self.contentUrl = contentUrl
+    }
 }

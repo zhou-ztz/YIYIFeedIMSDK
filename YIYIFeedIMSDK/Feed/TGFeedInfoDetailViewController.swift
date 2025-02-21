@@ -530,9 +530,10 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
         case .message:
             // 记录转发数
             //self.forwardFeed()
-            
-            if let model = self.feedModel {
-                let messageModel = TGmessagePopModel(momentModel: model)
+
+            if let model = self.model {
+                let feedmodel = FeedListCellModel(from: model)
+                let messageModel = TGmessagePopModel(momentModel: feedmodel)
                 let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
                 if #available(iOS 11, *) {
                     self.navigationController?.pushViewController(vc, animated: true)
@@ -546,8 +547,9 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
             // 记录转发数
             //            self.forwardFeed()
             
-            if let model = self.feedModel {
-                let messagePopModel = TGmessagePopModel(momentModel: model)
+            if let model = self.model {
+                let feedmodel = FeedListCellModel(from: model)
+                let messagePopModel = TGmessagePopModel(momentModel: feedmodel)
                 //"https://preprod-web-rewardslink.getyippi.cn/feeds/839248"
                 let fullUrlString = "" //"\(TSUtil.getWebServerAddress())feeds/\(String(messagePopModel.feedId))"
                 // By Kit Foong (Hide Yippi App from share)

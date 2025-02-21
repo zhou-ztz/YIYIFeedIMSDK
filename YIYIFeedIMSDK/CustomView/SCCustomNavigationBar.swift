@@ -97,6 +97,7 @@ class SCCustomNavigationBar: UIView {
         leftStackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(14)
+            make.width.lessThanOrEqualTo(220)
         }
         rightStackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

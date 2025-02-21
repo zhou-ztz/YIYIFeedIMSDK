@@ -129,12 +129,12 @@ class NewContactsListViewController: TGViewController {
             self?.tableView.mj_header.endRefreshing()
             guard let self = self else {return}
             if let _ = error {
-               // self.tableView.show(placeholderView: .network)
+                self.tableView.show(placeholderView: .network)
             }else {
                 if let datas = datas {
                     self.dataSource = datas
                     if self.dataSource.isEmpty {
-                       // self.tableView.show(placeholderView: .empty)
+                        self.tableView.show(placeholderView: .empty)
                     } else {
                         self.tableView.removePlaceholderViews()
                     }
@@ -170,13 +170,13 @@ class NewContactsListViewController: TGViewController {
             guard let self = self else {return}
             if let _ = error {
                 self.tableView.mj_footer.endRefreshing()
-               // self.tableView.show(placeholderView: .network)
+                self.tableView.show(placeholderView: .network)
             }else {
                 if let datas = datas {
                     self.offset = self.offset + datas.count
                     self.dataSource = self.dataSource + datas
                     if self.dataSource.isEmpty && self.keyword.isEmpty {
-                        //self.tableView.show(placeholderView: .empty)
+                        self.tableView.show(placeholderView: .empty)
                     } else {
                         
                     }

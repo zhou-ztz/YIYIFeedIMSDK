@@ -162,7 +162,7 @@ class AddChatViewController: NewContactsListViewController {
             self?.searchTableView.mj_header.endRefreshing()
             guard let self = self else {return}
             if let _ = error {
-                //self.searchTableView.show(placeholderView: .network)
+                self.searchTableView.show(placeholderView: .network)
             } else {
                 if let datas = datas {
                     let users = datas.compactMap {
@@ -171,7 +171,7 @@ class AddChatViewController: NewContactsListViewController {
                     
                     self.searchdDataSource = users
                     if self.searchdDataSource.isEmpty && self.searchKeyword.isEmpty {
-                       // self.searchTableView.show(placeholderView: .empty)
+                        self.searchTableView.show(placeholderView: .empty)
                     } else {
                         
                     }
@@ -197,7 +197,7 @@ class AddChatViewController: NewContactsListViewController {
             guard let self = self else {return}
             if let _ = error {
                 self.searchTableView.mj_footer.endRefreshing()
-                //self.searchTableView.show(placeholderView: .network)
+                self.searchTableView.show(placeholderView: .network)
             }else {
                 if let datas = datas {
                     self.searchOffset = self.searchOffset + datas.count
@@ -206,7 +206,7 @@ class AddChatViewController: NewContactsListViewController {
                     }
                     self.searchdDataSource = self.searchdDataSource + users
                     if self.searchdDataSource.isEmpty && self.keyword.isEmpty {
-                        //self.searchTableView.show(placeholderView: .empty)
+                        self.searchTableView.show(placeholderView: .empty)
                     } else {
                         
                     }

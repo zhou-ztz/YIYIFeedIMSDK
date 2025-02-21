@@ -112,12 +112,12 @@ class NewContactsViewController: TGViewController {
             self?.tableView.mj_header.endRefreshing()
             guard let self = self else { return }
             if error != nil {
-                // self.tableView.show(placeholderView: .network)
+                 self.tableView.show(placeholderView: .network)
             } else {
                 if let datas = users {
                     self.dataSource = datas
                     if self.dataSource.isEmpty  {
-                       // self.tableView.show(placeholderView: .empty)
+                        self.tableView.show(placeholderView: .empty)
                     } else {
                         self.tableView.removePlaceholderViews()
                         self.tableView.mj_footer.isHidden = false
@@ -146,7 +146,7 @@ class NewContactsViewController: TGViewController {
             self?.tableView.mj_footer.endRefreshing()
             guard let self = self else { return }
             if error != nil {
-                // self.tableView.show(placeholderView: .network)
+                 self.tableView.show(placeholderView: .network)
             } else {
                 if let datas = users {
                     self.offset = self.offset + datas.count
