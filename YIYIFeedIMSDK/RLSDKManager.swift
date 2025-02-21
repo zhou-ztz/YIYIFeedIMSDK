@@ -63,7 +63,7 @@ public protocol TGMessageDelegate: AnyObject {
     /// 发送红包页面
     func openRedPackect(transactionType: TGTransactionType, fromUser: String, toUser: String, numberOfMember: Int, teamId: String?, completion: TGTransactionFinishClosure?)
     ///  openMsgRequestChat
-    func openMsgRequestChat(username: String, userIdentity: Int)
+    func openMsgRequestChat(userinfoJsonString: String)
 }
 
 public class RLSDKManager: NSObject {

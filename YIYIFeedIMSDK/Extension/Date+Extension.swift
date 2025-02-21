@@ -9,7 +9,7 @@ import Foundation
 
 private let calendar = Calendar(identifier: .gregorian)
 
-public extension Date {
+extension Date {
     
     func compareDates(_ components: Calendar.Component..., as date: Date, using calendar: Calendar = .current) -> Bool {
              return components.filter { calendar.component($0, from: date) != calendar.component($0, from: self) }.isEmpty

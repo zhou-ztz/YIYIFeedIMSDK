@@ -76,7 +76,7 @@ extension NSDate {
 
 }
 
-public extension Date {
+extension Date {
 
     static func getCurrentTime() -> Date {
         if let now = Clock.now {

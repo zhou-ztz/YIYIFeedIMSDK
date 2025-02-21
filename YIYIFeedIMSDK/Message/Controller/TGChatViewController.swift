@@ -317,7 +317,6 @@ public class TGChatViewController: TGViewController {
         tableView.register(MiniProgramMessageCell.self, forCellReuseIdentifier: "MiniProgramMessageCell")
         tableView.register(MultiImageMessageCell.self, forCellReuseIdentifier: "MultiImageMessageCell")
         tableView.register(TranslateMessageCell.self, forCellReuseIdentifier: "TranslateMessageCell")
-        
     
         chatInputView.frame = CGRect(x: 0, y: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
         
@@ -330,8 +329,8 @@ public class TGChatViewController: TGViewController {
         nonfriendBottomView.makeHidden()
         /// 目前先做桥接回去
         nonfriendBottomView.messageRequestLabel.addAction { [weak self] in
-            guard let userInfo = self?.userInfo else { return }
-            RLSDKManager.shared.imDelegate?.openMsgRequestChat(username: userInfo.username, userIdentity: userInfo.userIdentity)
+            guard let userInfo = self?.userInfo, let jsonString = userInfo.toJSONString() else { return }
+            RLSDKManager.shared.imDelegate?.openMsgRequestChat(userinfoJsonString: jsonString)
         }
 
         self.backBaseView.addSubview(selectActionToolbar)

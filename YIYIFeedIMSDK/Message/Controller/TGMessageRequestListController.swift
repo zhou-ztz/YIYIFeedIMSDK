@@ -72,18 +72,11 @@ class TGMessageRequestListController: TGViewController {
     }
     
     func loadData() {
-        let group = DispatchGroup()
-        group.enter()
         viewmodel.getRequestList {[weak self] requestList, error in
             self?.temRequestList = requestList ?? []
-            group.leave()
-        }
-        group.enter()
-        viewmodel.getTeamJoinActions { error in
-            group.leave()
-        }
-        group.notify(queue: DispatchQueue.global()) { [weak self] in
             self?.tableRefresh()
+        }
+        viewmodel.getTeamJoinActions { error in
         }
     }
     
