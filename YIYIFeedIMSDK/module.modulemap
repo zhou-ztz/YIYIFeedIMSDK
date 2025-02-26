@@ -5,7 +5,7 @@
 //  Created by yiyikeji_zhou on 2025/2/26.
 //
 
-module IMEngine [extern_c] {
+module IMEngine {
     
     umbrella header "TZImagePickerController/TZImagePickerController.h"
 
