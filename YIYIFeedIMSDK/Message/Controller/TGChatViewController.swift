@@ -11,6 +11,8 @@ import AVFoundation
 import Photos
 import PhotosUI
 
+import IMEngine
+
 // 发送文件大小限制(单位：MB)
 let fileSizeLimit: Double = 200
 //录音时长

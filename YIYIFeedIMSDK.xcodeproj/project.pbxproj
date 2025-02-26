@@ -182,8 +182,6 @@
 		B193FC1B2D66CE5300BEB3F7 /* IMTextTranslateAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FC1A2D66CE5300BEB3F7 /* IMTextTranslateAttachment.swift */; };
 		B193FC1D2D66D89500BEB3F7 /* TranslateMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FC1C2D66D89500BEB3F7 /* TranslateMessageCell.swift */; };
 		B193FC2A2D6DB59700BEB3F7 /* TGIMSessionHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FC292D6DB59700BEB3F7 /* TGIMSessionHistoryViewController.swift */; };
-		B193FC892D6EAF7500BEB3F7 /* MyOCTest.h in Headers */ = {isa = PBXBuildFile; fileRef = B193FC872D6EAF7500BEB3F7 /* MyOCTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B193FC8A2D6EAF7500BEB3F7 /* MyOCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FC882D6EAF7500BEB3F7 /* MyOCTest.m */; };
 		B193FCB72D6EB5A500BEB3F7 /* NSBundle+TZImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = B193FC912D6EB5A500BEB3F7 /* NSBundle+TZImagePicker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B193FCB82D6EB5A500BEB3F7 /* TZImageCropManager.h in Headers */ = {isa = PBXBuildFile; fileRef = B193FC9B2D6EB5A500BEB3F7 /* TZImageCropManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B193FCB92D6EB5A500BEB3F7 /* TZPhotoPickerController.h in Headers */ = {isa = PBXBuildFile; fileRef = B193FCA82D6EB5A500BEB3F7 /* TZPhotoPickerController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -730,8 +728,6 @@
 		B193FC1A2D66CE5300BEB3F7 /* IMTextTranslateAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMTextTranslateAttachment.swift; sourceTree = "<group>"; };
 		B193FC1C2D66D89500BEB3F7 /* TranslateMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslateMessageCell.swift; sourceTree = "<group>"; };
 		B193FC292D6DB59700BEB3F7 /* TGIMSessionHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMSessionHistoryViewController.swift; sourceTree = "<group>"; };
-		B193FC872D6EAF7500BEB3F7 /* MyOCTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyOCTest.h; sourceTree = "<group>"; };
-		B193FC882D6EAF7500BEB3F7 /* MyOCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOCTest.m; sourceTree = "<group>"; };
 		B193FC8B2D6EB5A500BEB3F7 /* CompressHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompressHelper.h; sourceTree = "<group>"; };
 		B193FC8C2D6EB5A500BEB3F7 /* CompressHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CompressHelper.m; sourceTree = "<group>"; };
 		B193FC8D2D6EB5A500BEB3F7 /* LZImageBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LZImageBrowser.h; sourceTree = "<group>"; };
@@ -775,6 +771,7 @@
 		B193FCB32D6EB5A500BEB3F7 /* UIView+Layout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Layout.m"; sourceTree = "<group>"; };
 		B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZLEditVideoController.h; sourceTree = "<group>"; };
 		B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLEditVideoController.m; sourceTree = "<group>"; };
+		B193FCF22D6F1BF200BEB3F7 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1257,6 +1254,7 @@
 				8A9F0DA02CF44D240021462C /* Extension */,
 				8A9F0D952CF444490021462C /* CustomView */,
 				8A9F0D372CF088FA0021462C /* Message */,
+				8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */,
 				8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */,
 				8A9F0D352CF0819E0021462C /* TGViewController.swift */,
 				8A9F0E032CF57E520021462C /* TGNavigationController.swift */,
@@ -1266,6 +1264,7 @@
 				D711C84A2D1BEAA1004EA26B /* RLFont.swift */,
 				D711C84B2D1BEAA1004EA26B /* TGFeedSDKManager.swift */,
 				D711C84C2D1BEAA1004EA26B /* TGUtil.swift */,
+				B193FCF22D6F1BF200BEB3F7 /* module.modulemap */,
 				8A9F0D6B2CF42AC70021462C /* RLUserInterfacePrinciples.swift */,
 				8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */,
 				8A9F0D3D2CF093580021462C /* RLLoginParma.swift */,
@@ -1599,9 +1598,6 @@
 				B193FCB32D6EB5A500BEB3F7 /* UIView+Layout.m */,
 				B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */,
 				B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */,
-				B193FC872D6EAF7500BEB3F7 /* MyOCTest.h */,
-				B193FC882D6EAF7500BEB3F7 /* MyOCTest.m */,
-				8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */,
 			);
 			path = TZImagePickerController;
 			sourceTree = "<group>";
@@ -2137,13 +2133,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B193FCC72D6EB5A500BEB3F7 /* ZLEditVideoController.h in Headers */,
+				B193FCC82D6EB5A500BEB3F7 /* TZAssetCell.h in Headers */,
 				B193FCC52D6EB5A500BEB3F7 /* UIView+Layout.h in Headers */,
 				B193FCC42D6EB5A500BEB3F7 /* TSLocalVideoCoverSelectedVC.h in Headers */,
 				B193FCBF2D6EB5A500BEB3F7 /* TZProgressView.h in Headers */,
 				B193FCBC2D6EB5A500BEB3F7 /* TZImageRequestOperation.h in Headers */,
 				B193FCBB2D6EB5A500BEB3F7 /* LZImageBrowser.h in Headers */,
 				B193FCC32D6EB5A500BEB3F7 /* TZPhotoAccessViewController.h in Headers */,
-				B193FCC82D6EB5A500BEB3F7 /* TZAssetCell.h in Headers */,
 				B193FCBA2D6EB5A500BEB3F7 /* LZImageCropping.h in Headers */,
 				B193FCB82D6EB5A500BEB3F7 /* TZImageCropManager.h in Headers */,
 				B193FCC12D6EB5A500BEB3F7 /* TZVideoPlayerController.h in Headers */,
@@ -2157,9 +2153,8 @@
 				B193FCC92D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.h in Headers */,
 				B193FCCA2D6EB5A500BEB3F7 /* TZImageManager.h in Headers */,
 				B193FCCB2D6EB5A500BEB3F7 /* CompressHelper.h in Headers */,
-				B193FC892D6EAF7500BEB3F7 /* MyOCTest.h in Headers */,
-				8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */,
 				D7047C292D3A4D7800E6FCF6 /* LoadingButtons.h in Headers */,
+				8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */,
 				D7C4E9E42D2D29C90043DD82 /* ActiveLabel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2407,7 +2402,6 @@
 				D711C8632D1BEB04004EA26B /* TGToolbarView.swift in Sources */,
 				D70949BD2D229DEC0000A4BA /* TGReactionSelectorView.swift in Sources */,
 				D711C8642D1BEB04004EA26B /* TGFeedCommentDetailBottomView.swift in Sources */,
-				B193FC8A2D6EAF7500BEB3F7 /* MyOCTest.m in Sources */,
 				D711C8652D1BEB04004EA26B /* TGToolBarButtonItem.swift in Sources */,
 				B1EABBA32D1AAEBA00EB7868 /* CustomerStickerViewController.swift in Sources */,
 				F5CD2C912CFEB5C200EA7C7A /* NSUserDefault+Cache.swift in Sources */,
@@ -3026,12 +3020,14 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MODULEMAP_FILE = "";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yiyi.feedimsdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/YIYIFeedIMSDK";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3066,12 +3062,14 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MODULEMAP_FILE = "";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yiyi.feedimsdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/YIYIFeedIMSDK";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -1,0 +1,13 @@
+//
+//  module.modulemap
+//  YIYIFeedIMSDK
+//
+//  Created by yiyikeji_zhou on 2025/2/26.
+//
+
+module IMEngine [extern_c] {
+    
+    umbrella header "TZImagePickerController/TZImagePickerController.h"
+
+    export *
+}
