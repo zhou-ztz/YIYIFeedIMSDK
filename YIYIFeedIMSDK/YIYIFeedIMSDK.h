@@ -20,6 +20,18 @@ FOUNDATION_EXPORT const unsigned char YIYIFeedIMSDKVersionString[];
 
 #import <YIYIFeedIMSDK/TZAssetModel.h>
 #import <YIYIFeedIMSDK/CompressHelper.h>
+#import <YIYIFeedIMSDK/LZImageCropping.h>
+#import <YIYIFeedIMSDK/TSLocalVideoCoverSelectedVC.h>
+#import <YIYIFeedIMSDK/TZAssetCell.h>
+#import <YIYIFeedIMSDK/TZImageCropManager.h>
+#import <YIYIFeedIMSDK/TZImageRequestOperation.h>
+#import <YIYIFeedIMSDK/TZPhotoAccessViewController.h>
+#import <YIYIFeedIMSDK/ZLEditVideoController.h>
+#import <YIYIFeedIMSDK/UIView+Layout.h>
+#import <YIYIFeedIMSDK/TZProgressView.h>
+#import <YIYIFeedIMSDK/TZPhotoPreviewCell.h>
+#import <YIYIFeedIMSDK/TZProgressView.h>
+
 
 #import <YIYIFeedIMSDK/TZImageManager.h>
 #import <YIYIFeedIMSDK/NSBundle+TZImagePicker.h>
@@ -30,6 +42,5 @@ FOUNDATION_EXPORT const unsigned char YIYIFeedIMSDKVersionString[];
 #import <YIYIFeedIMSDK/TZGifPhotoPreviewController.h>
 
 #import <YIYIFeedIMSDK/TZImagePickerController.h>
-
 
 
