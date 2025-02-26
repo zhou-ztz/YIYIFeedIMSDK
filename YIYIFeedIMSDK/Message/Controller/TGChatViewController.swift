@@ -11,7 +11,7 @@ import AVFoundation
 import Photos
 import PhotosUI
 
-import IMEngine
+@_implementationOnly import IMEngine
 
 // 发送文件大小限制(单位：MB)
 let fileSizeLimit: Double = 200
@@ -677,7 +677,7 @@ public class TGChatViewController: TGViewController {
     // 打开相册
     func openPhotoLibrary() {
 
-        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: self, mainColor: RLColor.share.theme) else { return }
+        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: nil, mainColor: RLColor.share.theme) else { return }
         vc.allowCrop = false
         vc.allowTakePicture = false
         vc.allowTakeVideo = false
@@ -2759,24 +2759,24 @@ extension TGChatViewController: UIImagePickerControllerDelegate, UINavigationCon
 }
 
 // MARK: TZImagePickerControllerDelegate
-extension TGChatViewController: TZImagePickerControllerDelegate {
-    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
-        
-        
-    }
-    
-    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingGifImage animatedImage: UIImage!, sourceAssets asset: PHAsset!) {
-        
-    }
-    
-    public func imagePickerController(_ picker: TZImagePickerController!, didFinishEditVideoCover coverImage: UIImage!, videoURL: Any!) {
-        
-    }
-    
-    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingVideo asset: PHAsset!) {
-        
-    }
-}
+//extension TGChatViewController: IMEngine.TZImagePickerControllerDelegate {
+//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
+//        
+//        
+//    }
+//    
+//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishPickingGifImage animatedImage: UIImage!, sourceAssets asset: PHAsset!) {
+//        
+//    }
+//    
+//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishEditVideoCover coverImage: UIImage!, videoURL: Any!) {
+//        
+//    }
+//    
+//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishPickingVideo asset: PHAsset!) {
+//        
+//    }
+//}
 
 //MARK: IMToolChooseDelegate
 extension TGChatViewController: IMToolChooseDelegate {
