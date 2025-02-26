@@ -78,6 +78,8 @@ public class RLSDKManager: NSObject {
         RLNIMSDKManager.shared.setupNIMSDK(appKey: appKey)
         IMNotificationCenter.sharedCenter.start()
         setupIQKeyboardManager()
+        let oc = MyOCTest()
+        oc.hhhhh()
     }
     
     public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping ()->Void){

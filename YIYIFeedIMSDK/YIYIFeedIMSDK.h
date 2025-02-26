@@ -17,6 +17,7 @@ FOUNDATION_EXPORT const unsigned char YIYIFeedIMSDKVersionString[];
 
 
 #import <YIYIFeedIMSDK/MyOCTest.h>
+
 #import <YIYIFeedIMSDK/TZAssetModel.h>
 #import <YIYIFeedIMSDK/CompressHelper.h>
 
