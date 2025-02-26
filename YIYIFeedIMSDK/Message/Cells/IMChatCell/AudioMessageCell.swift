@@ -142,24 +142,12 @@ class AudioMessageCell: BaseMessageCell {
         } else {
             playButtonImage.image = UIImage.set_image(named: "voice_play_gray")
         }
-        if labelTimer == nil && progressValue == 0 {
-            let seconds: Float = Float(audioObject.duration) / 1000.0
-            self.maximumValue = seconds
-            var milliseconds = Float(audioObject.duration)
-            milliseconds = milliseconds / 1000
-            currSeconds = Int(fmod(milliseconds, 60))
-            currMinute = Int(fmod((milliseconds / 60), 60))
-            durationLabel.text = String(format: "%d:%02d", currMinute, currSeconds)
-        }
-        if labelTimer != nil {
-            labelTimer?.invalidate()
-            labelTimer = nil
-        }
+        let seconds: Float = Float(audioObject.duration) / 1000.0
+        self.maximumValue = seconds
+
         msgStateView.clearAllView()
         handleAudioJson(jsonString: message.serverExtension, duration: Int(audioObject.duration))
-        if IMAudioCenter.shared.currentMessage?.messageClientId ==  self.contentModel?.nimMessageModel?.messageClientId {
-            print("isplay1 = \(IMAudioCenter.shared.currentMessage?.messageClientId)")
-            print("isplay = \(self.contentModel?.nimMessageModel?.messageClientId)")
+        if let currentMessage = IMAudioCenter.shared.currentMessage , currentMessage.messageClientId ==  self.contentModel?.nimMessageModel?.messageClientId {
             startAnimation(model: self.contentModel)
         } else {
             stopAnimation(model: self.contentModel)
@@ -198,48 +186,29 @@ class AudioMessageCell: BaseMessageCell {
         }
     }
     
-    @objc func timerCountDown() {
-        let temp = Float(1) / 60
-        index = index + temp
-        let indexValue = self.progressValue + temp
-        self.progressValue = indexValue
-        print("self.progressValue = \(self.progressValue)")
-        //去更新动态进度条视图的状态
-        self.msgStateView.updateLevelColor(CGFloat(self.progressValue))
-        if index >= 1 {
-            currSeconds += 1
-            if currSeconds == 60 {
-                currSeconds = 0
-                currMinute += 1
-            }
-            durationLabel.text = String(format: "%d:%02d", currMinute, currSeconds)
-            index = 0
-        }
+    func timerCountDown() {
+        
+        guard let currentMessage = IMAudioCenter.shared.currentMessage , currentMessage.messageClientId ==  self.contentModel?.nimMessageModel?.messageClientId else { return }
+        
+        let progress = IMAudioCenter.shared.progressValue * IMAudioCenter.shared.maximumValue
+        self.msgStateView.updateLevelColor(CGFloat(progress))
+        
+        currSeconds = Int(fmod(progress, 60))
+        currMinute = Int(fmod((progress / 60), 60))
+        durationLabel.text = String(format: "%01d:%02d", currMinute, currSeconds)
+
     }
     
     func startAnimation(model: TGMessageData?){
-       
         playButtonImage.startAnimating()
         self.contentModel?.isPlaying = true
-      
-        if (labelTimer == nil) {
-            let startingValue = self.progressValue
-            currSeconds = Int(fmod(startingValue, 60))
-            currMinute = Int(fmod((startingValue / 60), 60))
-            durationLabel.text = String(format: "%01d:%02d", currMinute, currSeconds)
-            labelTimer = Timer.scheduledTimer(timeInterval: TimeInterval(Float(1) / 60), target: self, selector: #selector(timerCountDown), userInfo: nil, repeats: true)
-            RunLoop.current.add(labelTimer!, forMode: .common)
-        }
+        self.timerCountDown()
     }
     
     func stopAnimation(model: TGMessageData?){
    
         playButtonImage.stopAnimating()
-        self.progressValue = 0
-        if labelTimer != nil {
-            labelTimer?.invalidate()
-            labelTimer = nil
-        }
+        
         self.msgStateView.resetLevelColor()
         guard let message = self.contentModel?.nimMessageModel , let object = message.attachment as? V2NIMMessageAudioAttachment else { return }
         
@@ -253,3 +222,26 @@ class AudioMessageCell: BaseMessageCell {
         
     }
 }
+
+class IMAudioCenter: NSObject {
+    
+    static let shared = IMAudioCenter()
+    
+    var currentMessage: V2NIMMessage? = nil
+    
+    var progressValue: Float = 0.0
+    
+    var maximumValue: Float = 0.0
+
+    override init() {
+        super.init()
+    }
+    
+    func clearAll() {
+        currentMessage = nil
+        progressValue = 0.0
+        maximumValue = 0.0
+    }
+}
+
+

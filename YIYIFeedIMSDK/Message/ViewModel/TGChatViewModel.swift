@@ -43,7 +43,7 @@ class TGChatViewModel: NSObject {
     weak var delegate: TGChatViewModelDelegate?
     var messages = [TGMessageData]()
     // 下拉时间戳
-    private var oldMsg: V2NIMMessage?
+    var oldMsg: V2NIMMessage?
     // 上拉时间戳
     private var newMsg: V2NIMMessage?
 
@@ -67,6 +67,9 @@ class TGChatViewModel: NSObject {
     var saveAudioFilePath: String?
     ///未播放语音列表
     var pendingAudioMessages: [V2NIMMessage]?
+    
+    var audioPlayer: AVAudioPlayer?
+    var progressTimer: Timer?
     
     //被置顶的列表
     var pinnedList: [PinnedMessageModel] = []
@@ -96,6 +99,7 @@ class TGChatViewModel: NSObject {
     }
     
     deinit {
+        stop()
         NIMSDK.shared().v2MessageService.remove(self)
         NIMSDK.shared().mediaManager.remove(self)
         NIMSDK.shared().v2NotificationService.remove(self)
@@ -228,7 +232,7 @@ class TGChatViewModel: NSObject {
             }
         }
         
-        for (index, messageData) in messages.enumerated() {
+        for (_, messageData) in messages.enumerated() {
             if messageData.messageList.count >= 4 {
                 for sub in messageData.messageList {
                     if sub != messageData, let i = messages.firstIndex(of: sub) {
@@ -568,11 +572,6 @@ class TGChatViewModel: NSObject {
             }
         }
         
-        // 避免重复发送
-        //      if ChatDeduplicationHelper.instance.isMessageSended(messageId: message.messageClientId ?? "") {
-        //        return
-        //      }
-        
         // 自定义消息发送之前的处理
         if newMsg == nil {
             newMsg = message
@@ -718,7 +717,7 @@ class TGChatViewModel: NSObject {
             return
         }
         if playingModel == model {
-            if NIMSDK.shared().mediaManager.isPlaying(){
+            if let audioPlayer = audioPlayer, audioPlayer.isPlaying {
                 stopPlay()
             } else {
                 startPlaying(model: model, isSend: isSend)
@@ -737,26 +736,25 @@ class TGChatViewModel: NSObject {
         }
         playingCell?.startAnimation(model: model)
         if FileManager.default.fileExists(atPath: path) {
-            NIMSDK.shared().mediaManager.switch(NIMAudioOutputDevice.speaker)
-            NIMSDK.shared().mediaManager.play(path)
+            play(audioPath: path)
             playingModel?.isPlaying = true
             IMAudioCenter.shared.currentMessage = model?.nimMessageModel
+            IMAudioCenter.shared.maximumValue = playingCell?.maximumValue ?? 0.0
             pendingAudioMessages = findRemainAudioMessages(message: message)
         } else {
             playingCell?.stopAnimation(model: model)
             pendingAudioMessages = nil
-            IMAudioCenter.shared.currentMessage = nil
+            IMAudioCenter.shared.clearAll()
         }
     }
     
     func stopPlay() {
-        if NIMSDK.shared().mediaManager.isPlaying() {
-            NIMSDK.shared().mediaManager.stopPlay()
-        }
+        stop()
         playingCell?.stopAnimation(model: playingModel)
-        playingModel?.isPlaying = false
+        playingModel = nil
+        playingCell = nil
         pendingAudioMessages = nil
-        IMAudioCenter.shared.currentMessage = nil
+        IMAudioCenter.shared.clearAll()
     }
     
     func playNextAudio() {
@@ -774,6 +772,52 @@ class TGChatViewModel: NSObject {
             }
         }
     }
+    
+    func play(audioPath: String) {
+        let audioURL = URL(fileURLWithPath: audioPath)
+        do {
+            // 设置听筒/扬声器
+            let cate: AVAudioSession.Category =  AVAudioSession.Category.playback
+            try AVAudioSession.sharedInstance().setCategory(cate, options: .duckOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+            audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
+            audioPlayer?.delegate = self
+            audioPlayer?.play()
+            startProgressTimer()
+        } catch {
+            print("音频加载失败: \(error)")
+        }
+        
+    }
+    
+    func stop() {
+        audioPlayer?.stop()
+        stopProgressTimer()
+        IMAudioCenter.shared.clearAll()
+    }
+    
+    func startProgressTimer() {
+        progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateProgress), userInfo: nil, repeats: true)
+        RunLoop.current.add(progressTimer!, forMode: .common)
+    }
+    
+    func stopProgressTimer() {
+        progressTimer?.invalidate()
+        progressTimer = nil
+    }
+    
+    @objc func updateProgress() {
+        guard let player = audioPlayer else { return }
+        let currentTime = player.currentTime
+        let duration = player.duration
+        let progress: Float = Float(currentTime) / Float(duration)
+        print("当前播放时间: \(currentTime), 总时长: \(duration), 进度：\(progress)")
+        IMAudioCenter.shared.progressValue = progress
+        DispatchQueue.main.async {
+            self.playingCell?.timerCountDown()
+        }
+    }
+
     
     /// 群组置顶消息
     func getGroupPinnedList(groupId: String, _ completion: @escaping ([PinnedMessageModel]?, Error?)->Void) {
@@ -884,6 +928,7 @@ class TGChatViewModel: NSObject {
             self.messages.insert(message, at: indexPath.row + 1)
         }
     }
+    
 }
 
 extension TGChatViewModel: V2NIMMessageListener {
@@ -957,29 +1002,7 @@ extension TGChatViewModel: V2NIMMessageListener {
 }
 // MARK: NIMMediaManagerDelegate
 extension TGChatViewModel: NIMMediaManagerDelegate {
-    
-    func playAudio(_ filePath: String, progress value: Float) {
-        
-    }
-    func playAudio(_ filePath: String, didBeganWithError error: (any Error)?) {
-        if error != nil {
-            playingCell?.stopAnimation(model: playingModel)
-            playingModel = nil
-            IMAudioCenter.shared.currentMessage = nil
-        }
-    }
-    func playAudio(_ filePath: String, didCompletedWithError error: (any Error)?) {
-        playingCell?.stopAnimation(model: playingModel)
-        playingModel = nil
-        IMAudioCenter.shared.currentMessage = nil
-    }
-    func stopPlayAudio(_ filePath: String, didCompletedWithError error: (any Error)?) {
-       // playNextAudio()
-        playingCell?.stopAnimation(model: playingModel)
-        playingModel = nil
-        IMAudioCenter.shared.currentMessage = nil
-    }
-    
+
     func recordAudio(_ filePath: String?, didBeganWithError error: Error?) {
         self.delegate?.recordAudio(filePath, didBeganWithError: error)
     }
@@ -1023,16 +1046,6 @@ extension Array {
         return result
     }
 }
-
-class IMAudioCenter: NSObject {
-    
-    var currentMessage: V2NIMMessage? = nil
-    static let shared = IMAudioCenter()
-    
-    override init() {
-        super.init()
-    }
-}
 // MARK:  V2NIMNotificationListener
 extension TGChatViewModel: V2NIMNotificationListener {
     func onReceive(_ customNotifications: [V2NIMCustomNotification]) {
@@ -1056,3 +1069,18 @@ extension TGChatViewModel: V2NIMNotificationListener {
     }
     
 }
+
+// MARK: - AVAudioPlayerDelegate
+
+extension TGChatViewModel: AVAudioPlayerDelegate {
+  /// 声音播放完成回调
+  func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+      stopPlay()
+  }
+
+  /// 声音解码失败回调
+  func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: (any Error)?) {
+      stopPlay()
+  }
+}
+

@@ -9,7 +9,7 @@ import UIKit
 import NIMSDK
 import NEMeetingKit
 //cd2ce206e475a58c6d4c13e6931ad8df
-let NIMAppKey: String = "43cf17ab859f4c669349fd68e363d6db"
+let NIMAppKey: String = "cd2ce206e475a58c6d4c13e6931ad8df"
 //"43cf17ab859f4c669349fd68e363d6db"
 
 class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {

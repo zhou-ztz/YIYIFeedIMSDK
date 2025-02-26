@@ -210,10 +210,12 @@ public class TGChatViewController: TGViewController {
         commonUI()
         loadData()
     }
+     
+    
     public override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
         if self.viewmodel.conversationType == .CONVERSATION_TYPE_TEAM {
-            self.loadMessagePins()
+            fetchTeam()
         }
         ///聊天背景
         setChatWallpaper()
@@ -222,10 +224,20 @@ public class TGChatViewController: TGViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if NIMSDK.shared().mediaManager.isPlaying() {
-            NIMSDK.shared().mediaManager.stopPlay()
+        viewmodel.stop()
+    }
+
+    func fetchTeam() {
+        MessageUtils.getTeamInfo(teamId: self.viewmodel.sessionId, teamType: .TEAM_TYPE_NORMAL) {[weak self] team in
+            guard let self = self, let team = team else {return}
+            DispatchQueue.main.async {
+                self.isLeavedGroupUser = !team.isValidTeam
+                if team.isValidTeam {
+                    self.loadMessagePins()
+                }
+            } 
         }
-        IMAudioCenter.shared.currentMessage = nil
+       
     }
 
     func addObserve() {
@@ -486,21 +498,24 @@ public class TGChatViewController: TGViewController {
     }
     
     func loadData() {
-        viewmodel.loadData {[weak self] error, count, messages in
-            if messages.count > 0 {
-                DispatchQueue.main.async {
-                    self?.tableView.removePlaceholderViews()
-                    self?.tableView.reloadData()
-                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                    self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
-                }
-                self?.viewmodel.readAllMessageReceipt(completion: nil)
-            } else {
-                DispatchQueue.main.async {
-                    self?.tableView.show(placeholderView: .imEmpty)
+        DispatchQueue.global(qos: .background).async {
+            self.viewmodel.loadData {[weak self] error, count, messages in
+                if messages.count > 0 {
+                    DispatchQueue.main.async {
+                        self?.tableView.removePlaceholderViews()
+                        self?.tableView.reloadData()
+                        let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                        self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                    }
+                    self?.viewmodel.readAllMessageReceipt(completion: nil)
+                } else {
+                    DispatchQueue.main.async {
+                        self?.tableView.show(placeholderView: .imEmpty)
+                    }
                 }
             }
         }
+        
     }
     
     @objc func loadMoreData(){
@@ -659,59 +674,27 @@ public class TGChatViewController: TGViewController {
     // MARK: inputview action
     // 打开相册
     func openPhotoLibrary() {
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.delegate = self
-        imagePicker.mediaTypes = ["public.image", "public.movie"]
-        present(imagePicker, animated: true, completion: nil)
 
-        
-    }
-    
-    /// 处理受限访问模式下的逻辑
-    private func handleLimitedAccess() {
-        
-        self.showAlert(message: "rw_limited_feed_photo_tip".localized, buttonTitle: "ok".localized) { action in
-            if #available(iOS 15, *) {
-                PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self) { ids in
-                    var selectedAssets: [PHAsset] = []
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                        selectedAssets = self.fetchAllLimitedAssets()
-//                        self.handleSelectedPhotos(photos: [UIImage()], imageAsset: selectedAssets, isGifImage: false)
-                    }
-                }
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-    }
-    /// 获取当前受限模式下的所有 PHAsset
-    private func fetchAllLimitedAssets() -> [PHAsset] {
-        var assets: [PHAsset] = []
-         // 设置排序条件：按创建日期降序排列
-         let fetchOptions = PHFetchOptions()
-         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-         
-         let allAssets = PHAsset.fetchAssets(with: fetchOptions)
-         allAssets.enumerateObjects { asset, _, _ in
-             assets.append(asset)
-         }
-         return assets
-    }
-    
-    /// 打开 PHPickerViewController
-    func presentPHPicker() {
-        if #available(iOS 14.0, *) {
-            var phPickerConfig = PHPickerConfiguration(photoLibrary: .shared())
-            phPickerConfig.selectionLimit = maxPhoto
-            phPickerConfig.filter = .any(of: [.images, .livePhotos])
-            
-            let phPickerVC = PHPickerViewController(configuration: phPickerConfig)
-            phPickerVC.delegate = self
-            present(phPickerVC, animated: true)
-        } else {
-            // Fallback on earlier versions
-        }
+        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: self, mainColor: RLColor.share.theme) else { return }
+        vc.allowCrop = false
+        vc.allowTakePicture = false
+        vc.allowTakeVideo = false
+        vc.allowPickingImage = true
+        vc.allowPickingVideo = true
+        vc.allowPickingGif = true
+        vc.allowPickingMultipleVideo = false
+        vc.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
+        vc.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
+        vc.navigationBar.tintColor = .black
+        vc.navigationItem.titleView?.tintColor = .black
+        vc.navigationBar.barTintColor = .black
+        vc.barItemTextColor = .black
+        vc.backImage = UIImage(named: "iconsArrowCaretleftBlack")
+        vc.allowPreview = true
+        var dic = [NSAttributedString.Key: Any]()
+        dic[NSAttributedString.Key.foregroundColor] = UIColor.black
+        vc.navigationBar.titleTextAttributes = dic
+        self.present(vc.fullScreenRepresentation, animated: true, completion: nil)
         
     }
     
@@ -1170,7 +1153,7 @@ public class TGChatViewController: TGViewController {
         let voiceToTextVC = TGVoiceToTextIMViewController(fileUrl: fileUrl, selectedLanguage: currentSelectedLangCode, isLanguageSelection: false)
         self.present(voiceToTextVC, animated: true)
     }
-    private func scrollToMessage(by indexpath: IndexPath, animation: Bool) {
+    func scrollToMessage(by indexpath: IndexPath, animation: Bool) {
         self.tableView.scrollToRow(at: indexpath, at: .top, animated: false)
         
         if animation {
@@ -2773,52 +2756,24 @@ extension TGChatViewController: UIImagePickerControllerDelegate, UINavigationCon
 
 }
 
-// MARK: PHPickerViewControllerDelegate
-extension TGChatViewController: PHPickerViewControllerDelegate {
-    @available(iOS 14.0, *)
-    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true, completion: .none)
+// MARK: TZImagePickerControllerDelegate
+extension TGChatViewController: TZImagePickerControllerDelegate {
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
         
-        var photos: [UIImage] = []
-        var imageAsset: [PHAsset] = []
-        var isGifImage = false
-        
-        let dispatchGroup = DispatchGroup()
-        
-        for result in results {
-            // Check if the item is a GIF
-            if result.itemProvider.hasItemConformingToTypeIdentifier(UTType.gif.identifier) {
-                isGifImage = true
-            } else {
-                isGifImage = false
-            }
-            
-            // Handle UIImage extraction
-            dispatchGroup.enter()
-            result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
-                if let image = object as? UIImage {
-                    photos.append(image)
-                }
-                dispatchGroup.leave()
-            }
-            
-            // Handle PHAsset extraction
-            if let assetIdentifier = result.assetIdentifier {
-                let asset = PHAsset.fetchAssets(withLocalIdentifiers: [assetIdentifier], options: nil).firstObject
-                if let phAsset = asset {
-                    imageAsset.append(phAsset)
-                }
-            }
-        }
-        
-        // After all images are loaded
-        dispatchGroup.notify(queue: .main) {
-            
-        }
         
     }
     
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingGifImage animatedImage: UIImage!, sourceAssets asset: PHAsset!) {
+        
+    }
     
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishEditVideoCover coverImage: UIImage!, videoURL: Any!) {
+        
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingVideo asset: PHAsset!) {
+        
+    }
 }
 
 //MARK: IMToolChooseDelegate

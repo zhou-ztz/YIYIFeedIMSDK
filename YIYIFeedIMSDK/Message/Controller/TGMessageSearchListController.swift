@@ -295,12 +295,11 @@ class TGMessageSearchListController: TGViewController {
         searchSession.removeAll()
         // 设置关键字
         self.keyWord = keyword
-        
         // 创建搜索选项
         let params = V2NIMMessageSearchParams()
         params.keyword = self.keyWord
         params.messageLimit = UInt(SearchLimit)
-        params.sortOrder = .SORT_ORDER_ASC
+        params.sortOrder = .SORT_ORDER_DESC
         NIMSDK.shared().v2MessageService.searchCloudMessages(params) {[weak self] messages in
             guard let self = self else {return}
             print("messages = \(messages.count)")
