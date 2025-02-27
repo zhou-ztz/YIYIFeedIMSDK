@@ -6,6 +6,7 @@
 //
 
 import UIKit
+@_implementationOnly import IMEngine
 
 public typealias TGTransactionFinishClosure = (_ id: Int, _ userId: [String]?, _ msg: String) -> Void
 
@@ -86,6 +87,8 @@ public class RLSDKManager: NSObject {
             if let xToken = self.loginParma?.xToken {
                 UserDefaults.standard.setValue(xToken , forKey: "TG_ACCESS_TOKEN")
             }
+            let oc = MyOCTest()
+            oc.ocTest()
             success()
         } failure: {
             failure()

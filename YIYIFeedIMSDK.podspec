@@ -2,7 +2,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "YIYIFeedIMSDK"
-  spec.version      = "2.3.6"
+  spec.version      = "2.3.7"
   spec.summary      = "A short description of YIYIFeedIMSDK."
   spec.description  = <<-DESC
                    这个是一个测试的demo description of YIYIFeedIMSDK项目
@@ -11,14 +11,14 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => 'MIT', :file => 'LICENSE' }
   spec.author       = { "tingzhi.zhou" => "tingzhi.zhou@yiartkeji.com" }
   spec.platform     = :ios, "13.0"
-  spec.source       = { :git => 'https://github.com/zhou-ztz/YIYIFeedIMSDK.git', :tag => '2.3.6'}
+  spec.source       = { :git => 'https://github.com/zhou-ztz/YIYIFeedIMSDK.git', :tag => '2.3.7'}
   spec.vendored_frameworks = ['YIYIFeedIMSDK/OBS.framework']
-  spec.source_files = ['YIYIFeedIMSDK/**/*.swift']
+  spec.source_files = ['YIYIFeedIMSDK/**/*.swift','YIYIFeedIMSDK/TZImagePickerController/**/*.h']
   #'YIYIFeedIMSDK/TZImagePickerController/**/*.h'
-  spec.public_header_files = 'YIYIFeedIMSDK/YIYIFeedIMSDK.h'
-  spec.module_map = 'YIYIFeedIMSDK/module.modulemap'
+  #spec.public_header_files = 'YIYIFeedIMSDK/YIYIFeedIMSDK.h'
+  #spec.module_map = 'YIYIFeedIMSDK/YIYIFeedIMSDK.modulemap'
+
   spec.resources = ['YIYIFeedIMSDK/SDKResource.bundle']
-  #spec.public_header_files = 'YIYIFeedIMSDK/TZImagePickerController/**/*.h'
   spec.requires_arc  = true
   spec.static_framework = true
   spec.swift_version    = '5.0'

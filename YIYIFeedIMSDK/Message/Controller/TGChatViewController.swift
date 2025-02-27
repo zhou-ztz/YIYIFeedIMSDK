@@ -677,26 +677,26 @@ public class TGChatViewController: TGViewController {
     // 打开相册
     func openPhotoLibrary() {
 
-        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: nil, mainColor: RLColor.share.theme) else { return }
-        vc.allowCrop = false
-        vc.allowTakePicture = false
-        vc.allowTakeVideo = false
-        vc.allowPickingImage = true
-        vc.allowPickingVideo = true
-        vc.allowPickingGif = true
-        vc.allowPickingMultipleVideo = false
-        vc.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
-        vc.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
-        vc.navigationBar.tintColor = .black
-        vc.navigationItem.titleView?.tintColor = .black
-        vc.navigationBar.barTintColor = .black
-        vc.barItemTextColor = .black
-        vc.backImage = UIImage(named: "iconsArrowCaretleftBlack")
-        vc.allowPreview = true
-        var dic = [NSAttributedString.Key: Any]()
-        dic[NSAttributedString.Key.foregroundColor] = UIColor.black
-        vc.navigationBar.titleTextAttributes = dic
-        self.present(vc.fullScreenRepresentation, animated: true, completion: nil)
+//        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: nil, mainColor: RLColor.share.theme) else { return }
+//        vc.allowCrop = false
+//        vc.allowTakePicture = false
+//        vc.allowTakeVideo = false
+//        vc.allowPickingImage = true
+//        vc.allowPickingVideo = true
+//        vc.allowPickingGif = true
+//        vc.allowPickingMultipleVideo = false
+//        vc.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
+//        vc.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
+//        vc.navigationBar.tintColor = .black
+//        vc.navigationItem.titleView?.tintColor = .black
+//        vc.navigationBar.barTintColor = .black
+//        vc.barItemTextColor = .black
+//        vc.backImage = UIImage(named: "iconsArrowCaretleftBlack")
+//        vc.allowPreview = true
+//        var dic = [NSAttributedString.Key: Any]()
+//        dic[NSAttributedString.Key.foregroundColor] = UIColor.black
+//        vc.navigationBar.titleTextAttributes = dic
+//        self.present(vc.fullScreenRepresentation, animated: true, completion: nil)
         
     }
     
