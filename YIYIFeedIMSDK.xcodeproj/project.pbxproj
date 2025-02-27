@@ -772,6 +772,7 @@
 		B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZLEditVideoController.h; sourceTree = "<group>"; };
 		B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLEditVideoController.m; sourceTree = "<group>"; };
 		B193FCF22D6F1BF200BEB3F7 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		B193FCF32D70118000BEB3F7 /* YIYIFeedIMSDK.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = YIYIFeedIMSDK.modulemap; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1263,6 +1264,7 @@
 				8A9F0D6A2CF42AC70021462C /* RLColor.swift */,
 				D711C84A2D1BEAA1004EA26B /* RLFont.swift */,
 				D711C84B2D1BEAA1004EA26B /* TGFeedSDKManager.swift */,
+				B193FCF32D70118000BEB3F7 /* YIYIFeedIMSDK.modulemap */,
 				D711C84C2D1BEAA1004EA26B /* TGUtil.swift */,
 				B193FCF22D6F1BF200BEB3F7 /* module.modulemap */,
 				8A9F0D6B2CF42AC70021462C /* RLUserInterfacePrinciples.swift */,
