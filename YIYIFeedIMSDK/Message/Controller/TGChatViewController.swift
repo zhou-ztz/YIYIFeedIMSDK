@@ -11,7 +11,7 @@ import AVFoundation
 import Photos
 import PhotosUI
 
-@_implementationOnly import IMEngine
+//@_implementationOnly import IMEngine
 
 // 发送文件大小限制(单位：MB)
 let fileSizeLimit: Double = 200
