@@ -773,9 +773,9 @@
 		B193FCB32D6EB5A500BEB3F7 /* UIView+Layout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Layout.m"; sourceTree = "<group>"; };
 		B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZLEditVideoController.h; sourceTree = "<group>"; };
 		B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLEditVideoController.m; sourceTree = "<group>"; };
-		B193FCF22D6F1BF200BEB3F7 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B193FCF42D70307E00BEB3F7 /* MyOCTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyOCTest.h; sourceTree = "<group>"; };
 		B193FCF52D70307E00BEB3F7 /* MyOCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOCTest.m; sourceTree = "<group>"; };
+		B193FCF82D703B4B00BEB3F7 /* YIYIFeedIMSDK.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = YIYIFeedIMSDK.modulemap; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1265,10 +1265,10 @@
 				8A9F0D672CF42A290021462C /* RLTableView.swift */,
 				8A9F0D692CF42AC70021462C /* RLCollectionView.swift */,
 				8A9F0D6A2CF42AC70021462C /* RLColor.swift */,
+				B193FCF82D703B4B00BEB3F7 /* YIYIFeedIMSDK.modulemap */,
 				D711C84A2D1BEAA1004EA26B /* RLFont.swift */,
 				D711C84B2D1BEAA1004EA26B /* TGFeedSDKManager.swift */,
 				D711C84C2D1BEAA1004EA26B /* TGUtil.swift */,
-				B193FCF22D6F1BF200BEB3F7 /* module.modulemap */,
 				8A9F0D6B2CF42AC70021462C /* RLUserInterfacePrinciples.swift */,
 				8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */,
 				8A9F0D3D2CF093580021462C /* RLLoginParma.swift */,
@@ -3028,14 +3028,14 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "";
+				MODULEMAP_FILE = "$(SRCROOT)/YIYIFeedIMSDK/YIYIFeedIMSDK.modulemap";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yiyi.feedimsdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/YIYIFeedIMSDK";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3070,14 +3070,14 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "";
+				MODULEMAP_FILE = "$(SRCROOT)/YIYIFeedIMSDK/YIYIFeedIMSDK.modulemap";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yiyi.feedimsdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/YIYIFeedIMSDK";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
