@@ -6,7 +6,7 @@
 //
 
 framework module YIYIFeedIMSDK {
-    umbrella header "YIYIFeedIMSDK.h"
+    //umbrella header "YIYIFeedIMSDK.h"
     
     export *
     module * { export * }
