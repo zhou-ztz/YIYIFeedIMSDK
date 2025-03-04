@@ -8,6 +8,7 @@
 framework module YIYIFeedIMSDK {
     umbrella header "YIYIFeedIMSDK.h" // Umbrella Header 文件
     header "TZImagePickerController.h"
+    header "MyOCTest.h"
     export * // 导出所有内容
     module * { export * } // 导出子模块
 }
