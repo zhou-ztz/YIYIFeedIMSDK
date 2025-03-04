@@ -8,5 +8,7 @@
 #import "MyOCTest.h"
 
 @implementation MyOCTest
-
+-(void)ocTest {
+    NSLog(@"我是测试oc");
+}
 @end
