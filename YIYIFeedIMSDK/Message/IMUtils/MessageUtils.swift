@@ -277,6 +277,41 @@ class MessageUtils: NSObject {
         return message
     }
     
+    class func imageV2Message(originImage: UIImage, completion: @escaping (V2NIMMessage?, URL?, Bool) -> Void) {
+        
+        var image = originImage
+        let time = Date().timeIntervalSince1970.stringValue
+        let imageName = "IMG_" + "\(time)"
+        image = image.fixOrientation()
+        // 获取图片宽度、高度
+        let imageWidth = Int32(image.size.width)
+        let imageHeight = Int32(image.size.height)
+        let pngImage = image.pngData()
+        var needDelete = false
+        var imageUrl: URL?
+        
+        if let data = pngImage {
+            let url = FileUtils.getDocumentsDirectory().appendingPathComponent("photo_\(UUID().uuidString).png")
+            do {
+                try data.write(to: url)
+                imageUrl = url
+                needDelete = true
+            } catch  {
+                print("Error saving image: \(error)")
+                completion(nil, nil ,needDelete)
+            }
+        }
+        
+        guard let imageUrl = imageUrl else {
+            completion(nil, nil, needDelete)
+            return
+        }
+        
+        let message = V2NIMMessageCreator.createImageMessage(imageUrl.relativePath, name: imageName, sceneName: V2NIMStorageSceneConfig.default_IM().sceneName, width: imageWidth, height: imageHeight)
+        
+        completion(message, imageUrl, needDelete)
+    }
+    
     class func imageV2Message(path: String,
                               name: String?,
                               sceneName: String?,

@@ -28,6 +28,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         NIMSDKConfig.shared().customTag = String(NIMLoginClientType.typeiOS.rawValue)
         NIMSDKConfig.shared().shouldCountTeamNotification = true
         NIMSDKConfig.shared().maxAutoLoginRetryTimes = 3
+        NIMSDKConfig.shared().teamReceiptEnabled = true
         
         let apnsCername = ""
         let pkCername = ""
@@ -39,9 +40,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         let v2Option = V2NIMSDKOption()
         v2Option.useV1Login = false
         NIMSDK.shared().register(withOptionV2: option, v2Option: v2Option)
-        
-        
-        NIMSDKConfig.shared().teamReceiptEnabled = false
+    
         
         let sceneDict: NSMutableDictionary = NSMutableDictionary(dictionary: ["nim_custom":1])
         NIMSDK.shared().sceneDict = sceneDict

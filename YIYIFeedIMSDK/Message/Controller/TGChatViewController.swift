@@ -10,6 +10,8 @@ import NIMSDK
 import AVFoundation
 import Photos
 import PhotosUI
+import MobileCoreServices
+
 
 //@_implementationOnly import IMEngine
 
@@ -510,6 +512,7 @@ public class TGChatViewController: TGViewController {
                         self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
                     }
                     self?.viewmodel.readAllMessageReceipt(completion: nil)
+                    self?.getMessageReceipts()
                 } else {
                     DispatchQueue.main.async {
                         self?.tableView.show(placeholderView: .imEmpty)
@@ -518,6 +521,26 @@ public class TGChatViewController: TGViewController {
             }
         }
         
+    }
+    
+    func getMessageReceipts() {
+        DispatchQueue.global(qos: .background).async {
+            if self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
+                self.viewmodel.getP2PMessageReceipt({ indexPaths, error in
+                    DispatchQueue.main.async {
+                        self.tableView.reloadRows(at: indexPaths, with: .none)
+                    }
+                    
+                })
+            } else {
+                self.viewmodel.getTeamMessageReceipts({ indexPaths, error in
+                    DispatchQueue.main.async {
+                        self.tableView.reloadRows(at: indexPaths, with: .none)
+                    }
+                })
+                
+            }
+        }
     }
     
     @objc func loadMoreData(){
@@ -676,8 +699,7 @@ public class TGChatViewController: TGViewController {
     // MARK: inputview action
     // 打开相册
     func openPhotoLibrary() {
-
-        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: nil, mainColor: RLColor.share.theme) else { return }
+        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: self, mainColor: RLColor.share.theme) else { return }
         vc.allowCrop = false
         vc.allowTakePicture = false
         vc.allowTakeVideo = false
@@ -702,14 +724,33 @@ public class TGChatViewController: TGViewController {
     
     // 打开相机
     func openCamera() {
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            let imagePicker = UIImagePickerController()
-            imagePicker.sourceType = .camera
-            imagePicker.delegate = self
-            present(imagePicker, animated: true, completion: nil)
-        } else {
-            print("Camera not available")
+        let mediaVC = TGIMMediaRecordController()
+        mediaVC.allowPickingVideo = true
+        mediaVC.enableMultiplePhoto = true
+        mediaVC.allowEdit = true
+        mediaVC.onSelectMiniVideo = { [weak self] (path) in
+            guard let self = self else { return }
+            let url = URL(fileURLWithPath: path)
+            self.sendVideoMessga(coverImage: nil, videoUrl: url)
         }
+        
+        mediaVC.onSelectPhoto = { [weak self] (assetss, images, videoPath, isGif, isSelOriImage) in
+            guard let self = self else { return }
+            if let path = videoPath {
+                let url = URL(fileURLWithPath: path)
+                self.sendVideoMessga(coverImage: nil, videoUrl: url)
+            } else {
+                guard let images = images else {
+                    return
+                }
+                self.sendImageMessage(images: images)
+            }
+        }
+        
+        let nav = TGNavigationController(rootViewController: mediaVC).fullScreenRepresentation
+        self.present(nav, animated: true, completion: nil)
+        
+    
     }
     //打开文件
     func openFile(){
@@ -2056,134 +2097,53 @@ extension TGChatViewController{
         }
     }
     
-  
-    func sendMediaMessage(didFinishPickingMediaWithInfo info: [UIImagePickerController
-        .InfoKey: Any]) {
-            var imageName = "IMG_0001"
-            var imageWidth: Int32 = 0
-            var imageHeight: Int32 = 0
-            var videoDuration: Int32 = 0
-            
-            // 获取展示名称
-            if let imgUrl = info[.referenceURL] as? URL {
-                let fetchRes = PHAsset.fetchAssets(withALAssetURLs: [imgUrl], options: nil)
-                let asset = fetchRes.firstObject
-                if let fileName = asset?.value(forKey: "filename") as? String {
-                    imageName = fileName
-                }
-            }
-            
-            // 获取图片宽高、视频时长
-            // phAsset 不一定有
-            if #available(iOS 11.0, *) {
-                if let phAsset = info[.phAsset] as? PHAsset {
-                    imageWidth = Int32(phAsset.pixelWidth)
-                    imageHeight = Int32(phAsset.pixelHeight)
-                    videoDuration = Int32(phAsset.duration * 1000)
-                }
-            }
-            
-            // video
-            if let videoUrl = info[.mediaURL] as? URL {
-                print("image picker video : url", videoUrl)
-                // 获取视频宽高、时长
-                let asset = AVURLAsset(url: videoUrl)
-                videoDuration = Int32(asset.duration.seconds * 1000)
-                let track = asset.tracks(withMediaType: .video).first
-                if let track = track {
-                    let size = track.naturalSize
-                    let transform = track.preferredTransform
-                    let correctedSize = size.applying(transform)
-                    imageWidth = Int32(abs(correctedSize.width))
-                    imageHeight = Int32(abs(correctedSize.height))
-                }
-                
-               // weak var weakSelf = self
-                viewmodel.sendVideoMessage(url: videoUrl, name: imageName, width: imageWidth, height: imageHeight, duration: videoDuration, conversationId: viewmodel.conversationId) { message, error, progress in
-                    //if progress > 0, progress <= 100 {
-                    // self?.setModelProgress(message, progress)
-                    //  }
-                    
-                }
-                
-                return
-            }
-            
-            if #available(iOS 11.0, *) {
-                var imageUrl = info[.imageURL] as? URL
-                var image = info[.originalImage] as? UIImage
-                image = image?.fixOrientation()
-                // 获取图片宽度
-                if let width = image?.size.width {
-                    imageWidth = Int32(width)
-                }
-                // 获取图片高度度
-                if let height = image?.size.height {
-                    imageHeight = Int32(height)
-                }
-                
-                let pngImage = image?.pngData()
-                var needDelete = false
-                // 无url则临时保存到本地，发送成功后删除临时文件
-                if imageUrl == nil {
-                    if let data = pngImage {
-                        let url = FileUtils.getDocumentsDirectory().appendingPathComponent("photo_\(UUID().uuidString).png")
-                        do {
-                            try data.write(to: url)
-                            imageUrl = url
-                            needDelete = true
-                        } catch  {
-                            print("Error saving image: \(error)")
-                            // showToast(chatLocalizable("image_is_nil"))
+    func sendImageMessage(images: [UIImage]) {
+        images.forEach { image in
+            MessageUtils.imageV2Message(originImage: image) {[weak self] message, url, needDelete in
+                guard let self = self else {return}
+                if let message = message , let url = url {
+                    self.viewmodel.sendMessage(message: message, conversationId: viewmodel.conversationId) { _, _, _ in
+                        if needDelete {
+                            try? FileManager.default.removeItem(at: url)
                         }
                     }
                 }
-                guard let imageUrl = imageUrl else {
-                    return
-                }
-                
-                if let url = info[.referenceURL] as? URL {
-                    if url.absoluteString.hasSuffix("ext=GIF") == true {
-                        // GIF 需要特殊处理
-                        let imageAsset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset
-                        let options = PHImageRequestOptions()
-                        options.version = .current
-                        guard let asset = imageAsset else {
-                            return
-                        }
-                        weak var weakSelf = self
-                        PHImageManager.default().requestImageData(for: asset, options: options) { imageData, dataUTI, orientation, info in
-                            if let data = imageData {
-                                let tempDirectoryURL = FileManager.default.temporaryDirectory
-                                let uniqueString = UUID().uuidString
-                                let temUrl = tempDirectoryURL.appendingPathComponent(uniqueString + ".gif")
-                                print("tem url path : ", temUrl.path)
-                                do {
-                                    try data.write(to: temUrl)
-                                    DispatchQueue.main.async {
-                                        weakSelf?.viewmodel.sendImageMessage(path: temUrl.path, name: imageName, width: imageWidth, height: imageHeight, conversationId: weakSelf?.viewmodel.conversationId ?? "") { error in
-                                            
-                                            
-                                        }
-                                    }
-                                } catch {
-                                    
-                                }
-                            }
-                        }
-                        return
-                    }
-                }
-                
-                viewmodel.sendImageMessage(path: imageUrl.relativePath, name: imageName, width: imageWidth, height: imageHeight, conversationId: viewmodel.conversationId) { _ in
-                    // 删除临时保存的图片
-                    if needDelete {
-                        try? FileManager.default.removeItem(at: imageUrl)
-                    }
-                }
+            }
         }
     }
     
+    func sendVideoMessga(coverImage: UIImage?, videoUrl: URL) {
+        var videoDuration: Int32 = 0
+        var imageWidth: Int32 = 0
+        var imageHeight: Int32 = 0
+        let time = Date().timeIntervalSince1970.stringValue
+        let imageName = "video_" + "\(time)"
+        // 获取视频宽高、时长
+        let asset = AVURLAsset(url: videoUrl)
+        videoDuration = Int32(asset.duration.seconds * 1000)
+        let track = asset.tracks(withMediaType: .video).first
+        if let track = track {
+            let size = track.naturalSize
+            let transform = track.preferredTransform
+            let correctedSize = size.applying(transform)
+            imageWidth = Int32(abs(correctedSize.width))
+            imageHeight = Int32(abs(correctedSize.height))
+        }
+        
+        let alert = TGAlertController(title: "im_send_confirmation".localized, message: String(format: "text_send_confirmation_description".localized, videoUrl.lastPathComponent, self.headerTitle.text ?? ""), style: .alert, hideCloseButton: true, animateView: false)
+
+        let dismissAction = TGAlertAction(title: "cancel".localized, style: TGAlertActionStyle.cancel) { (_) in
+            alert.dismiss()
+        }
+        let sendAction = TGAlertAction(title: "send".localized, style: TGAlertActionStyle.theme) { (_) in
+            self.viewmodel.sendVideoMessage(url: videoUrl, name: imageName, width: imageWidth, height: imageHeight, duration: videoDuration, conversationId: self.viewmodel.conversationId) { message, error, progress in
+            }
+            alert.dismiss()
+        }
+        alert.addAction(sendAction)
+        alert.addAction(dismissAction)
+        self.present(alert, animated: true)
+    }
 }
 // MARK: UIDocumentInteractionControllerDelegate
 extension TGChatViewController: UIDocumentInteractionControllerDelegate{
@@ -2219,15 +2179,15 @@ extension TGChatViewController: TGChatViewModelDelegate {
         }
     }
     
-    func onReceive(_ readReceipts: [V2NIMP2PMessageReadReceipt]) {
+    func onReceiveP2PReadReceipts(_ indexPaths: [IndexPath]) {
         DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
+            self?.tableView.reloadRows(at: indexPaths, with: .none)
         }
     }
     
-    func onReceive(_ readReceipts: [V2NIMTeamMessageReadReceipt]) {
+    func onReceiveTeamReadReceipts(_ indexPaths: [IndexPath]) {
         DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
+            self?.tableView.reloadRows(at: indexPaths, with: .none)
         }
     }
     
@@ -2744,39 +2704,62 @@ extension TGChatViewController: ChatInputViewDelegate {
     }
 }
 
-//    MARK: UIImagePickerControllerDelegate
-extension TGChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
-    // 处理选择的照片
-    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        sendMediaMessage(didFinishPickingMediaWithInfo: info)
-        picker.dismiss(animated: true, completion: nil)
-    }
-    // 取消选择时调用
-    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true, completion: nil)
-    }
-
-}
-
 // MARK: TZImagePickerControllerDelegate
-//extension TGChatViewController: IMEngine.TZImagePickerControllerDelegate {
-//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
-//        
-//        
-//    }
-//    
-//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishPickingGifImage animatedImage: UIImage!, sourceAssets asset: PHAsset!) {
-//        
-//    }
-//    
-//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishEditVideoCover coverImage: UIImage!, videoURL: Any!) {
-//        
-//    }
-//    
-//    public func imagePickerController(_ picker: IMEngine.TZImagePickerController!, didFinishPickingVideo asset: PHAsset!) {
-//        
-//    }
-//}
+extension TGChatViewController: TZImagePickerControllerDelegate {
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
+        self.dismiss(animated: true, completion: nil)
+        guard let imageAsset = assets as? [PHAsset] else {
+            return
+        }
+        //在这里加上判断，如果选择的图片为gif图片，不需要进入图片编辑页面
+        var isGifImage = false
+        if imageAsset.count > 0 {
+            let phAsset = imageAsset[0]
+            if let imageType = phAsset.value(forKey: "uniformTypeIdentifier") as? String {
+                if imageType == String(kUTTypeGIF) {
+                    isGifImage = true
+                }
+            }
+        }
+        if photos.count == 1 && !isGifImage {
+            let editor = PhotoEditorViewController(nibName: "PhotoEditorViewController", bundle: Bundle(for: PhotoEditorViewController.self))
+            editor.photoEditorDelegate = self
+            editor.image = photos[0]
+            self.present(editor.fullScreenRepresentation, animated: true, completion: nil)
+        } else {
+            self.sendImageMessage(images: photos)
+        }
+
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingGifImage animatedImage: UIImage!, sourceAssets asset: PHAsset!) {
+        
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishEditVideoCover coverImage: UIImage!, videoURL: Any!) {
+        self.dismiss(animated: true, completion: nil)
+        guard let videoURL = videoURL as? URL else {
+            return
+        }
+        self.sendVideoMessga(coverImage: coverImage, videoUrl: videoURL)
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingVideo asset: PHAsset!) {
+       
+    }
+}
+//MARK: PhotoEditorDelegate
+extension TGChatViewController: PhotoEditorDelegate {
+    public func doneEditing(image: UIImage) {
+        self.dismiss(animated: true) {
+            self.sendImageMessage(images: [image])
+        }
+    }
+    
+    public func canceledEditing() {
+        
+    }
+}
 
 //MARK: IMToolChooseDelegate
 extension TGChatViewController: IMToolChooseDelegate {

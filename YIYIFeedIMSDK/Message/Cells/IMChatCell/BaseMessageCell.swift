@@ -278,13 +278,14 @@ class BaseMessageCell: UITableViewCell {
             nicknameLabel.snp.remakeConstraints { make in
                 make.right.top.equalToSuperview()
             }
-            tickImage.image = messageModel.isSelf ? readImage : unreadImage
+            tickImage.image = model.unreadCount == 0 ? readImage : unreadImage
             
             if messageModel.sendingState != .MESSAGE_SENDING_STATE_FAILED {
                 tickImage.isHidden = false
             }else{
                 failImage.isHidden = false
             }
+            
         }
         
         MessageUtils.getAvatarIcon(sessionId: messageModel.senderId ?? "", conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in

@@ -55,6 +55,9 @@ class ConversationViewModel: NSObject {
                 self?.conversationList = (self?.conversationList ?? []) + (result.conversationList ?? [])
             }
             completion(result.conversationList, nil)
+            self?.getHistoryMessage(order: .QUERY_DIRECTION_DESC, message: nil, { _, _, _ in
+                
+            })
         }failure: { error in
             completion(nil, error)
         }
@@ -159,6 +162,33 @@ class ConversationViewModel: NSObject {
         
         self.conversationList = stickTopConversations + normalConversations
       
+    }
+    
+    /// 预加载messagelist
+    func getHistoryMessage(order: V2NIMQueryDirection,
+                                message: V2NIMMessage?,
+                                _ completion: @escaping (V2NIMError?, NSInteger, [V2NIMMessage])
+                                  -> Void) {
+        guard let conversationId = self.conversationList.first?.conversationId else {return}
+        
+        let opt = V2NIMMessageListOption()
+        opt.limit = 20
+        opt.anchorMessage = message
+        opt.conversationId = conversationId
+        opt.direction = order
+        if let msg = message {
+            if order == .QUERY_DIRECTION_DESC {
+                opt.endTime = msg.createTime
+            } else {
+                opt.beginTime = msg.createTime
+            }
+        }
+        NIMSDK.shared().v2MessageService.getMessageList(opt) { messageArray in
+            completion(nil, messageArray.count, messageArray)
+        } failure: { error in
+            completion(error, 0, [])
+        }
+    
     }
 
 }

@@ -70,12 +70,10 @@
 		8A9F0D3A2CF089410021462C /* RLNIMSDKManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D392CF089410021462C /* RLNIMSDKManager.swift */; };
 		8A9F0D3C2CF0911A0021462C /* RLSDKManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */; };
 		8A9F0D3E2CF093580021462C /* RLLoginParma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D3D2CF093580021462C /* RLLoginParma.swift */; };
-		8A9F0D422CF41ACD0021462C /* RLMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D412CF41ACD0021462C /* RLMessageData.swift */; };
 		8A9F0D462CF41D290021462C /* ChatLocaitonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D452CF41D290021462C /* ChatLocaitonModel.swift */; };
 		8A9F0D482CF41D4B0021462C /* OperationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D472CF41D4B0021462C /* OperationItem.swift */; };
 		8A9F0D4A2CF41D610021462C /* MessageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D492CF41D610021462C /* MessageUtils.swift */; };
 		8A9F0D4E2CF427560021462C /* RLConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D4D2CF427560021462C /* RLConversationListViewController.swift */; };
-		8A9F0D5A2CF427A90021462C /* UserInfoMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D512CF427A90021462C /* UserInfoMessageCell.swift */; };
 		8A9F0D5B2CF427A90021462C /* BaseMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D522CF427A90021462C /* BaseMessageCell.swift */; };
 		8A9F0D5C2CF427A90021462C /* LocationMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D532CF427A90021462C /* LocationMessageCell.swift */; };
 		8A9F0D5D2CF427A90021462C /* ReplyMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D542CF427A90021462C /* ReplyMessageCell.swift */; };
@@ -97,7 +95,6 @@
 		8A9F0D7E2CF430E70021462C /* InputMoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D762CF430E60021462C /* InputMoreCell.swift */; };
 		8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D772CF430E60021462C /* ChatMoreActionView.swift */; };
 		8A9F0D802CF430E70021462C /* MessageReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D782CF430E60021462C /* MessageReplyView.swift */; };
-		8A9F0D812CF430E70021462C /* MessageOperationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D792CF430E60021462C /* MessageOperationView.swift */; };
 		8A9F0D902CF430FE0021462C /* TGNEEmotionTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D862CF430FE0021462C /* TGNEEmotionTool.swift */; };
 		8A9F0D922CF430FE0021462C /* TGNIMInputEmoticonDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D882CF430FE0021462C /* TGNIMInputEmoticonDefine.swift */; };
 		8A9F0D932CF430FE0021462C /* TGNIMInputEmoticonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F0D892CF430FE0021462C /* TGNIMInputEmoticonManager.swift */; };
@@ -225,8 +222,7 @@
 		B193FCDF2D6EB5A500BEB3F7 /* TZProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FCAF2D6EB5A500BEB3F7 /* TZProgressView.m */; };
 		B193FCE02D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FC9A2D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m */; };
 		B193FCE12D6EB5A500BEB3F7 /* TZImagePickerController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B193FCA02D6EB5A500BEB3F7 /* TZImagePickerController.bundle */; };
-		B193FCF62D70307E00BEB3F7 /* MyOCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FCF52D70307E00BEB3F7 /* MyOCTest.m */; };
-		B193FCF72D70307E00BEB3F7 /* MyOCTest.h in Headers */ = {isa = PBXBuildFile; fileRef = B193FCF42D70307E00BEB3F7 /* MyOCTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */; };
 		B1DA58EE2D37882800F83914 /* TGIMUnreadCountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */; };
 		B1DA58FA2D38B76A00F83914 /* TGMessageRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */; };
 		B1DA58FC2D38D25B00F83914 /* TGMessageRequestViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */; };
@@ -617,12 +613,10 @@
 		8A9F0D392CF089410021462C /* RLNIMSDKManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLNIMSDKManager.swift; sourceTree = "<group>"; };
 		8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLSDKManager.swift; sourceTree = "<group>"; };
 		8A9F0D3D2CF093580021462C /* RLLoginParma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLLoginParma.swift; sourceTree = "<group>"; };
-		8A9F0D412CF41ACD0021462C /* RLMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLMessageData.swift; sourceTree = "<group>"; };
 		8A9F0D452CF41D290021462C /* ChatLocaitonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLocaitonModel.swift; sourceTree = "<group>"; };
 		8A9F0D472CF41D4B0021462C /* OperationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationItem.swift; sourceTree = "<group>"; };
 		8A9F0D492CF41D610021462C /* MessageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUtils.swift; sourceTree = "<group>"; };
 		8A9F0D4D2CF427560021462C /* RLConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLConversationListViewController.swift; sourceTree = "<group>"; };
-		8A9F0D512CF427A90021462C /* UserInfoMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoMessageCell.swift; sourceTree = "<group>"; };
 		8A9F0D522CF427A90021462C /* BaseMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseMessageCell.swift; sourceTree = "<group>"; };
 		8A9F0D532CF427A90021462C /* LocationMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMessageCell.swift; sourceTree = "<group>"; };
 		8A9F0D542CF427A90021462C /* ReplyMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplyMessageCell.swift; sourceTree = "<group>"; };
@@ -644,7 +638,6 @@
 		8A9F0D762CF430E60021462C /* InputMoreCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputMoreCell.swift; sourceTree = "<group>"; };
 		8A9F0D772CF430E60021462C /* ChatMoreActionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMoreActionView.swift; sourceTree = "<group>"; };
 		8A9F0D782CF430E60021462C /* MessageReplyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageReplyView.swift; sourceTree = "<group>"; };
-		8A9F0D792CF430E60021462C /* MessageOperationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOperationView.swift; sourceTree = "<group>"; };
 		8A9F0D862CF430FE0021462C /* TGNEEmotionTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNEEmotionTool.swift; sourceTree = "<group>"; };
 		8A9F0D882CF430FE0021462C /* TGNIMInputEmoticonDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNIMInputEmoticonDefine.swift; sourceTree = "<group>"; };
 		8A9F0D892CF430FE0021462C /* TGNIMInputEmoticonManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGNIMInputEmoticonManager.swift; sourceTree = "<group>"; };
@@ -773,9 +766,8 @@
 		B193FCB32D6EB5A500BEB3F7 /* UIView+Layout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Layout.m"; sourceTree = "<group>"; };
 		B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZLEditVideoController.h; sourceTree = "<group>"; };
 		B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLEditVideoController.m; sourceTree = "<group>"; };
-		B193FCF42D70307E00BEB3F7 /* MyOCTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyOCTest.h; sourceTree = "<group>"; };
-		B193FCF52D70307E00BEB3F7 /* MyOCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOCTest.m; sourceTree = "<group>"; };
 		B193FCF82D703B4B00BEB3F7 /* YIYIFeedIMSDK.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = YIYIFeedIMSDK.modulemap; sourceTree = "<group>"; };
+		B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMMediaRecordController.swift; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1221,6 +1213,7 @@
 				B193FC042D646DBD00BEB3F7 /* TGIMSearchUserListMoreVC.swift */,
 				B193FC0F2D65ACCD00BEB3F7 /* TGIMAudioLanguageController.swift */,
 				B193FC152D65B88200BEB3F7 /* TGVoiceToTextIMViewController.swift */,
+				B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1333,7 +1326,6 @@
 		8A9F0D402CF41A6E0021462C /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8A9F0D412CF41ACD0021462C /* RLMessageData.swift */,
 				8A027A5A2CFDAD76008D1AC7 /* TGMessageData.swift */,
 				8A9F0D452CF41D290021462C /* ChatLocaitonModel.swift */,
 				8A9F0D472CF41D4B0021462C /* OperationItem.swift */,
@@ -1360,7 +1352,6 @@
 				B1EABB9E2D1AA2EA00EB7868 /* IMChatCell */,
 				8A9F0D632CF429390021462C /* ConversationListCell.swift */,
 				B1EABC2E2D2BBFAA00EB7868 /* TGChatNotificationCell.swift */,
-				8A9F0D512CF427A90021462C /* UserInfoMessageCell.swift */,
 				8A027A522CFD5CCA008D1AC7 /* TGTeamMeetingCell.swift */,
 				8A027A542CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift */,
 				8A4BB3B42D11479B00AAB4B8 /* TGInputLocalContainerCell.swift */,
@@ -1396,7 +1387,6 @@
 				8A9F0D742CF430E60021462C /* ChatRecordView.swift */,
 				8A9F0D762CF430E60021462C /* InputMoreCell.swift */,
 				8A9F0D752CF430E60021462C /* MapViewSearchView.swift */,
-				8A9F0D792CF430E60021462C /* MessageOperationView.swift */,
 				8A9F0D732CF430E60021462C /* OperationCell.swift */,
 				8A9F0D782CF430E60021462C /* MessageReplyView.swift */,
 				8A027A562CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift */,
@@ -1602,8 +1592,6 @@
 				B193FCB32D6EB5A500BEB3F7 /* UIView+Layout.m */,
 				B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */,
 				B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */,
-				B193FCF42D70307E00BEB3F7 /* MyOCTest.h */,
-				B193FCF52D70307E00BEB3F7 /* MyOCTest.m */,
 			);
 			path = TZImagePickerController;
 			sourceTree = "<group>";
@@ -2159,7 +2147,6 @@
 				B193FCCB2D6EB5A500BEB3F7 /* CompressHelper.h in Headers */,
 				B193FCC22D6EB5A500BEB3F7 /* TZAssetModel.h in Headers */,
 				B193FCC02D6EB5A500BEB3F7 /* TZImagePickerController.h in Headers */,
-				B193FCF72D70307E00BEB3F7 /* MyOCTest.h in Headers */,
 				D7047C292D3A4D7800E6FCF6 /* LoadingButtons.h in Headers */,
 				8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */,
 				D7C4E9E42D2D29C90043DD82 /* ActiveLabel.h in Headers */,
@@ -2383,12 +2370,10 @@
 				8A9F0EA42CF6F9270021462C /* NetCallChatInfo.swift in Sources */,
 				B1DA592B2D3E35B500F83914 /* TGChatMemberCell.swift in Sources */,
 				8A9F0DC12CF451E90021462C /* Then.swift in Sources */,
-				8A9F0D812CF430E70021462C /* MessageOperationView.swift in Sources */,
 				B193FC142D65AE7200BEB3F7 /* TGLocalizationManager.swift in Sources */,
 				8A4BB31D2D08273000AAB4B8 /* InputAudioRecordIndicatorView.swift in Sources */,
 				D76668DB2D3506E20086F90E /* TGAtPeopleAndMechantListVC.swift in Sources */,
 				8A9F0DAB2CF44D6F0021462C /* number+extensions.swift in Sources */,
-				8A9F0D422CF41ACD0021462C /* RLMessageData.swift in Sources */,
 				8A9F0DC72CF451E90021462C /* UIView+Actions.swift in Sources */,
 				8A9F0D3A2CF089410021462C /* RLNIMSDKManager.swift in Sources */,
 				8A4BB3192D0824DC00AAB4B8 /* IMAudioMessageStateView.swift in Sources */,
@@ -2430,9 +2415,7 @@
 				8A9F0D5E2CF427A90021462C /* FileMessageCell.swift in Sources */,
 				8A9F0D9D2CF44A550021462C /* RLMapClient.swift in Sources */,
 				B1EABC252D26840900EB7868 /* TGChatChooseFriendCell.swift in Sources */,
-				B193FCF62D70307E00BEB3F7 /* MyOCTest.m in Sources */,
 				B1EABB7A2D1948B000EB7868 /* InputEmoticonTabView.swift in Sources */,
-				8A9F0D5A2CF427A90021462C /* UserInfoMessageCell.swift in Sources */,
 				D706E17B2D27EA4E000D4437 /* TGTopicCommonModel.swift in Sources */,
 				8A4BB38F2D0FC92600AAB4B8 /* IMWhiteboardAttachment.swift in Sources */,
 				8A4BB3B52D11479B00AAB4B8 /* TGInputLocalContainerCell.swift in Sources */,
@@ -2664,6 +2647,7 @@
 				B193FBE12D5C907100BEB3F7 /* TGReceiverTableCell.swift in Sources */,
 				F5CD2C732CFEB4C400EA7C7A /* FeedImageSliderView.swift in Sources */,
 				D711C86D2D1BEB81004EA26B /* Array+Extension.swift in Sources */,
+				B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */,
 				F5CD2C742CFEB4C400EA7C7A /* FeedCommentLabelModel.swift in Sources */,
 				B1DA59322D3F3B2E00F83914 /* TGMembersViewController.swift in Sources */,
 				D706E1732D27CEEE000D4437 /* TGReleasePulseCollectionViewCell.swift in Sources */,

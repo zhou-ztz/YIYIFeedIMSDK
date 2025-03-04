@@ -13,8 +13,8 @@ protocol TGChatViewModelDelegate: AnyObject {
     func onSend(_ message: V2NIMMessage, succeeded: Bool)
     func onReceive(_ messages: [V2NIMMessage])
     
-    func onReceive(_ readReceipts: [V2NIMP2PMessageReadReceipt])
-    func onReceive(_ readReceipts: [V2NIMTeamMessageReadReceipt])
+    func onReceiveP2PReadReceipts(_ indexPaths: [IndexPath])
+    func onReceiveTeamReadReceipts(_ indexPaths: [IndexPath])
     func onReceiveMessagesModified(_ messages: [V2NIMMessage])
     func onRevokeMessage(atIndexs: [IndexPath])
     
@@ -49,7 +49,7 @@ class TGChatViewModel: NSObject {
 
     var topMessage: V2NIMMessage? // 置顶消息
     var isReplying = false
-    let messagPageNum: Int = 30
+    let messagPageNum: Int = 20
     var anchor: V2NIMMessage?
     
     //长按cell model
@@ -402,7 +402,10 @@ class TGChatViewModel: NSObject {
     ///   - conversationId: 会话id
     ///   - completion: 回调
     func sendMessage(message: V2NIMMessage, conversationId: String, params: V2NIMSendMessageParams? = nil, completion: @escaping (V2NIMMessage?, V2NIMError?, UInt) -> Void) {
-        
+        let config = V2NIMMessageConfig()
+        config.readReceiptEnabled = true
+        config.unreadEnabled = true
+        params?.messageConfig = config
         NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: params) { result in
             completion(result.message, nil, 100)
         } failure: { error in
@@ -419,8 +422,9 @@ class TGChatViewModel: NSObject {
           completion(nil, nil)
           return
         }
+        let param = V2NIMSendMessageParams()
         let message = MessageUtils.textV2Message(text: text, remoteExt: remoteExt)
-        sendMessage(message: message, conversationId: conversationId) { v2message, error, _  in
+        sendMessage(message: message, conversationId: conversationId, params: param) { v2message, error, _  in
             completion(v2message, error)
         }
     }
@@ -858,13 +862,90 @@ class TGChatViewModel: NSObject {
         return nil
     }
     
-    func readAllMessageReceipt(completion: (() -> Void)?) {
-        NIMSDK.shared().v2ConversationService.markConversationRead(self.conversationId, success: nil)
+    func getP2PMessageReceipt(_ completion: @escaping ([IndexPath], Error?) -> Void) {
+        NIMSDK.shared().v2MessageService.getP2PMessageReceipt(self.conversationId) {[weak self] readReceipt in
+            guard let self = self else {return}
+
+            var reloadIndexs = [IndexPath]()
+            for (i, model) in self.messages.enumerated() {
+                if model.nimMessageModel?.isSelf == false {
+                    continue
+                }
+                if let msgCreateTime = model.nimMessageModel?.createTime, msgCreateTime <= readReceipt.timestamp {
+                  if model.readCount == 1, model.unreadCount == 0 {
+                    continue
+                  }
+
+                  model.readCount = 1
+                  model.unreadCount = 0
+                  reloadIndexs.append(IndexPath(row: i, section: 0))
+                }
+            }
+            completion(reloadIndexs, nil)
+            
+        } failure: { error in
+            completion([], error.nserror)
+        }
         
+        
+        
+    }
+    
+    func getTeamMessageReceipts(_ completion: @escaping ([IndexPath], Error?) -> Void) {
+        
+        var messageList: [V2NIMMessage] = []
+        self.messages.forEach { model in
+            if let message = model.nimMessageModel, message.isSelf, message.messageType != .MESSAGE_TYPE_TIP, message.messageType != .MESSAGE_TYPE_NOTIFICATION, model.type != .time, message.messageStatus.readReceiptSent == false {
+                messageList.append(message)
+            }
+        }
+        if messageList.count == 0 {
+            completion([], nil)
+            return
+        }
+        
+        NIMSDK.shared().v2MessageService.getTeamMessageReceipts(messageList) {[weak self] readReceipts in
+            guard let self = self else {return}
+            var reloadIndexs = [IndexPath]()
+            
+            readReceipts.forEach { readReceipt in
+                for (i, model) in self.messages.enumerated() {
+                    if !self.getMessageCanReceipt(model: model) {
+                        continue
+                    }
+                    if model.nimMessageModel?.messageClientId == readReceipt.messageClientId {
+                        if model.readCount == readReceipt.readCount,
+                           model.unreadCount == readReceipt.unreadCount {
+                            continue
+                        }
+                        
+                        model.readCount = readReceipt.readCount
+                        model.unreadCount = readReceipt.unreadCount
+                        reloadIndexs.append(IndexPath(row: i, section: 0))
+                    }
+                }
+            }
+            completion(reloadIndexs, nil)
+        } failure: { error in
+            completion([], error.nserror)
+        }
+        
+    }
+    
+    func readAllMessageReceipt(completion: (() -> Void)?) {
+//        NIMSDK.shared().v2ConversationService.clearUnreadCount(byIds: [self.conversationId]) { _ in
+//            
+//        } failure: { error in
+//            
+//        }
+//        
+//        NIMSDK.shared().v2ConversationService.markConversationRead(self.conversationId, success: nil)
         var messageReceipts: [V2NIMMessage] = []
         for model in self.messages {
-            guard let message = model.nimMessageModel else { return }
-            if !message.isSelf {
+            if model.type == .time || model.messageType == .MESSAGE_TYPE_TIP || model.messageType == .MESSAGE_TYPE_NOTIFICATION {
+                continue
+            }
+            if let message = model.nimMessageModel, !message.isSelf {
                 messageReceipts.append(message)
             }
         }
@@ -873,16 +954,20 @@ class TGChatViewModel: NSObject {
         }
         if conversationType == .CONVERSATION_TYPE_P2P {
             for messageReceipt in messageReceipts {
-                NIMSDK.shared().v2MessageService.sendP2PMessageReceipt(messageReceipt, success: nil, failure: nil)
+                NIMSDK.shared().v2MessageService.sendP2PMessageReceipt(messageReceipt, success: {
+                    
+                }) { error in
+                    
+                }
             }
             completion?()
         } else {
             NIMSDK.shared().v2MessageService.sendTeamMessageReceipts(messageReceipts) {
                 completion?()
-            } failure: { _ in
+            } failure: { error in
                 completion?()
             }
-
+            
         }
         
         
@@ -901,8 +986,15 @@ class TGChatViewModel: NSObject {
             } failure: { _ in
                 completion?()
             }
-
+            
         }
+    }
+    /// 该消息是否可以 Receipt
+    func getMessageCanReceipt(model: TGMessageData) -> Bool {
+        if model.nimMessageModel?.isSelf != false, model.type != .time, model.nimMessageModel?.messageType != .MESSAGE_TYPE_TIP, model.nimMessageModel?.messageType != .MESSAGE_TYPE_NOTIFICATION{
+            return true
+        }
+        return false
     }
     
     ///翻译文本消息
@@ -942,7 +1034,7 @@ extension TGChatViewModel: V2NIMMessageListener {
         case .MESSAGE_SENDING_STATE_SUCCEEDED:
             sendMsgSuccess(message)
         default:
-          break
+            break
         }
     }
     
@@ -951,7 +1043,7 @@ extension TGChatViewModel: V2NIMMessageListener {
         for msg in messages {
             if MessageUtils.conversationTargetId(msg.conversationId ?? "") == sessionId {
                 if !(msg.messageServerId?.isEmpty == false), msg.messageType != .MESSAGE_TYPE_CUSTOM {
-                  continue
+                    continue
                 }
                 count += 1
                 // 自定义消息处理
@@ -967,11 +1059,54 @@ extension TGChatViewModel: V2NIMMessageListener {
     }
     
     func onReceive(_ readReceipts: [V2NIMP2PMessageReadReceipt]) {
-        self.delegate?.onReceive(readReceipts)
+        var reloadIndexPaths: [IndexPath] = []
+        
+        for readReceipt in readReceipts {
+            if readReceipt.conversationId != conversationId {
+                continue
+            }
+            
+            for (i, model) in messages.enumerated() {
+                if !self.getMessageCanReceipt(model: model) {
+                    continue
+                }
+                
+                if let msgCreateTime = model.nimMessageModel?.createTime, msgCreateTime <= readReceipt.timestamp {
+                    if model.readCount == 1, model.unreadCount == 0 {
+                        continue
+                    }
+                    
+                    model.readCount = 1
+                    model.unreadCount = 0
+                    reloadIndexPaths.append(IndexPath(row: i, section: 0))
+                }
+            }
+        }
+        
+        self.delegate?.onReceiveP2PReadReceipts(reloadIndexPaths)
     }
     
     func onReceive(_ readReceipts: [V2NIMTeamMessageReadReceipt]) {
-        self.delegate?.onReceive(readReceipts)
+        var reloadIndexPaths: [IndexPath] = []
+        
+        for readReceipt in readReceipts {
+            if readReceipt.conversationId != conversationId {
+                continue
+            }
+            
+            for (i, model) in messages.enumerated() {
+                if !self.getMessageCanReceipt(model: model) {
+                    continue
+                }
+                if model.nimMessageModel?.messageClientId == readReceipt.messageClientId {
+                    model.readCount = readReceipt.readCount
+                    model.unreadCount = readReceipt.unreadCount
+                    reloadIndexPaths.append(IndexPath(row: i, section: 0))
+                }
+            }
+        }
+        
+        self.delegate?.onReceiveTeamReadReceipts(reloadIndexPaths)
     }
     
     func onReceiveMessagesModified(_ messages: [V2NIMMessage]) {
@@ -998,11 +1133,11 @@ extension TGChatViewModel: V2NIMMessageListener {
     func onClearHistoryNotifications(_ clearHistoryNotification: [V2NIMClearHistoryNotification]) {
         
     }
-
+    
 }
 // MARK: NIMMediaManagerDelegate
 extension TGChatViewModel: NIMMediaManagerDelegate {
-
+    
     func recordAudio(_ filePath: String?, didBeganWithError error: Error?) {
         self.delegate?.recordAudio(filePath, didBeganWithError: error)
     }
@@ -1058,7 +1193,7 @@ extension TGChatViewModel: V2NIMNotificationListener {
                 return
             }
             self.delegate?.onReceiveCustomNotification(senderId: sender, content: dict)
-           
+            
         } catch  {
             
         }
@@ -1073,14 +1208,14 @@ extension TGChatViewModel: V2NIMNotificationListener {
 // MARK: - AVAudioPlayerDelegate
 
 extension TGChatViewModel: AVAudioPlayerDelegate {
-  /// 声音播放完成回调
-  func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-      stopPlay()
-  }
-
-  /// 声音解码失败回调
-  func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: (any Error)?) {
-      stopPlay()
-  }
+    /// 声音播放完成回调
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        stopPlay()
+    }
+    
+    /// 声音解码失败回调
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: (any Error)?) {
+        stopPlay()
+    }
 }
 

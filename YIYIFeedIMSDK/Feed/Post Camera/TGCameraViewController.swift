@@ -11,7 +11,7 @@ import IQKeyboardManagerSwift
 import PhotosUI
 import Photos
 
-typealias CameraHandler = (([PHAsset], UIImage?, String?, Bool, Bool) -> Void)
+typealias CameraHandler = (([PHAsset], [UIImage]?, String?, Bool, Bool) -> Void)
 class TGCameraViewController: TGBaseCameraViewController {
     
     var onSelectPhoto: CameraHandler? = nil
@@ -297,7 +297,7 @@ extension TGCameraViewController: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 self.dismiss(animated: true, completion: {
                     guard !self.selectedAsset.isEmpty else { return }
-                    self.onSelectPhoto?(self.selectedAsset, photos.first, nil, false, false)
+                    self.onSelectPhoto?(self.selectedAsset, photos, nil, false, false)
                 })
             }
 
@@ -324,7 +324,7 @@ extension TGCameraViewController: PhotoEditorDelegate {
                     
                     DispatchQueue.main.async {
                         self.dismiss(animated: true) {
-                            self.onSelectPhoto?(self.selectedAsset, image, nil, false, true)
+                            self.onSelectPhoto?(self.selectedAsset, [image], nil, false, true)
                         }
                     }
                 }

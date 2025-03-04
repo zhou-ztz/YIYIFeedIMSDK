@@ -195,6 +195,7 @@ class ConversationListCell: UITableViewCell {
             width = 22
             redPiont.text = "99+"
         }
+        print("unreadCount = \(conversation.unreadCount)")
         redPiont.snp.remakeConstraints {
             $0.width.equalTo(width)
             $0.height.equalTo(18)
