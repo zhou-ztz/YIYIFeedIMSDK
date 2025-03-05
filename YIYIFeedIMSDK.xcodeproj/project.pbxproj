@@ -223,8 +223,6 @@
 		B193FCE02D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FC9A2D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m */; };
 		B193FCE12D6EB5A500BEB3F7 /* TZImagePickerController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B193FCA02D6EB5A500BEB3F7 /* TZImagePickerController.bundle */; };
 		B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */; };
-		B193FD0E2D76EBBF00BEB3F7 /* MyOCTest.h in Headers */ = {isa = PBXBuildFile; fileRef = B193FD0C2D76EBBF00BEB3F7 /* MyOCTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B193FD0F2D76EBBF00BEB3F7 /* MyOCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FD0D2D76EBBF00BEB3F7 /* MyOCTest.m */; };
 		B1DA58EE2D37882800F83914 /* TGIMUnreadCountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */; };
 		B1DA58FA2D38B76A00F83914 /* TGMessageRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */; };
 		B1DA58FC2D38D25B00F83914 /* TGMessageRequestViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */; };
@@ -770,8 +768,6 @@
 		B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLEditVideoController.m; sourceTree = "<group>"; };
 		B193FCF82D703B4B00BEB3F7 /* YIYIFeedIMSDK.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = YIYIFeedIMSDK.modulemap; sourceTree = "<group>"; };
 		B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMMediaRecordController.swift; sourceTree = "<group>"; };
-		B193FD0C2D76EBBF00BEB3F7 /* MyOCTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyOCTest.h; sourceTree = "<group>"; };
-		B193FD0D2D76EBBF00BEB3F7 /* MyOCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOCTest.m; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1255,6 +1251,7 @@
 				8A9F0DA02CF44D240021462C /* Extension */,
 				8A9F0D952CF444490021462C /* CustomView */,
 				8A9F0D372CF088FA0021462C /* Message */,
+				8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */,
 				8A9F0D292CF080790021462C /* YIYIFeedIMSDK.docc */,
 				8A9F0D352CF0819E0021462C /* TGViewController.swift */,
 				8A9F0E032CF57E520021462C /* TGNavigationController.swift */,
@@ -1264,7 +1261,6 @@
 				B193FCF82D703B4B00BEB3F7 /* YIYIFeedIMSDK.modulemap */,
 				D711C84A2D1BEAA1004EA26B /* RLFont.swift */,
 				D711C84B2D1BEAA1004EA26B /* TGFeedSDKManager.swift */,
-				8A9F0D282CF080790021462C /* YIYIFeedIMSDK.h */,
 				D711C84C2D1BEAA1004EA26B /* TGUtil.swift */,
 				8A9F0D6B2CF42AC70021462C /* RLUserInterfacePrinciples.swift */,
 				8A9F0D3B2CF0911A0021462C /* RLSDKManager.swift */,
@@ -1596,8 +1592,6 @@
 				B193FCB32D6EB5A500BEB3F7 /* UIView+Layout.m */,
 				B193FCB42D6EB5A500BEB3F7 /* ZLEditVideoController.h */,
 				B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */,
-				B193FD0C2D76EBBF00BEB3F7 /* MyOCTest.h */,
-				B193FD0D2D76EBBF00BEB3F7 /* MyOCTest.m */,
 			);
 			path = TZImagePickerController;
 			sourceTree = "<group>";
@@ -2132,7 +2126,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B193FD0E2D76EBBF00BEB3F7 /* MyOCTest.h in Headers */,
 				B193FCC72D6EB5A500BEB3F7 /* ZLEditVideoController.h in Headers */,
 				B193FCC82D6EB5A500BEB3F7 /* TZAssetCell.h in Headers */,
 				B193FCC52D6EB5A500BEB3F7 /* UIView+Layout.h in Headers */,
@@ -2753,7 +2746,6 @@
 				D7ED1C9C2D3E549600B7F95D /* TGImageScrollView.swift in Sources */,
 				B1EABCA42D34B19F00EB7868 /* IMPinnedView.swift in Sources */,
 				B1EABC632D2E8AB700EB7868 /* CollectionImageVideoMsgViewController.swift in Sources */,
-				B193FD0F2D76EBBF00BEB3F7 /* MyOCTest.m in Sources */,
 				B1EABC642D2E8AB700EB7868 /* CollectionTextMsgViewController.swift in Sources */,
 				B1EABC652D2E8AB700EB7868 /* MsgCollectionViewController.swift in Sources */,
 				B1EABC662D2E8AB700EB7868 /* CollectionAudioMsgViewController.swift in Sources */,

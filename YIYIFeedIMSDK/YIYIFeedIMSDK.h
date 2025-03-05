@@ -15,8 +15,6 @@ FOUNDATION_EXPORT const unsigned char YIYIFeedIMSDKVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <YIYIFeedIMSDK/PublicHeader.h>
 
-#import <YIYIFeedIMSDK/MyOCTest.h>
-
 #import <YIYIFeedIMSDK/TZAssetModel.h>
 #import <YIYIFeedIMSDK/CompressHelper.h>
 #import <YIYIFeedIMSDK/LZImageCropping.h>
@@ -41,4 +39,7 @@ FOUNDATION_EXPORT const unsigned char YIYIFeedIMSDKVersionString[];
 #import <YIYIFeedIMSDK/TZGifPhotoPreviewController.h>
 
 #import <YIYIFeedIMSDK/TZImagePickerController.h>
+
+
+
 
