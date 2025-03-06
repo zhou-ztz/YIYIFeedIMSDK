@@ -80,7 +80,7 @@ import UIKit
      */
     var colors  : [UIColor] = []
 
-    weak var photoEditorDelegate: PhotoEditorDelegate?
+    public weak var photoEditorDelegate: PhotoEditorDelegate?
     var colorsCollectionViewDelegate: ColorsCollectionViewDelegate!
 
     // list of controls to be hidden
