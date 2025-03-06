@@ -11,17 +11,17 @@ import IQKeyboardManagerSwift
 import PhotosUI
 import Photos
 
-typealias CameraHandler = (([PHAsset], [UIImage]?, String?, Bool, Bool) -> Void)
-class TGCameraViewController: TGBaseCameraViewController {
+public typealias TGCameraHandler = (([PHAsset], [UIImage]?, String?, Bool, Bool) -> Void)
+public class TGCameraViewController: TGBaseCameraViewController {
     
-    var onSelectPhoto: CameraHandler? = nil
-    var enableMultiplePhoto: Bool = false
-    var allowPickingVideo: Bool = false
-    var selectedAsset: [PHAsset] = []
-    var selectedImage: [Any] = []
-    var onDismiss: EmptyClosure? = nil
-    var allowCrop: Bool = false //剪切
-    var allowEdit: Bool = false //编辑
+    public var onSelectPhoto: TGCameraHandler? = nil
+    public var enableMultiplePhoto: Bool = false
+    public var allowPickingVideo: Bool = false
+    public var selectedAsset: [PHAsset] = []
+    public var selectedImage: [Any] = []
+    public var onDismiss: TGEmptyClosure? = nil
+    public var allowCrop: Bool = false //剪切
+    public var allowEdit: Bool = false //编辑
     
     fileprivate lazy var buttonsContainer: TGCameraContainer = {
         let container = TGCameraContainer()
@@ -35,7 +35,7 @@ class TGCameraViewController: TGBaseCameraViewController {
     public override var supportedInterfaceOrientations: UIInterfaceOrientationMask { return [.portrait] }
     public override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { return .portrait }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = .black
@@ -61,7 +61,7 @@ class TGCameraViewController: TGBaseCameraViewController {
     }
     
 
-    override var prefersStatusBarHidden: Bool {
+    public override var prefersStatusBarHidden: Bool {
         return true
     }
     
@@ -73,13 +73,13 @@ class TGCameraViewController: TGBaseCameraViewController {
         print("deinit CameraViewController")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.addObserver()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
@@ -89,7 +89,7 @@ class TGCameraViewController: TGBaseCameraViewController {
  
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.buttonsContainer.isHidden == true {
             self.buttonsContainer.isHidden = false
         }
@@ -231,7 +231,7 @@ extension TGCameraViewController: MiniVideoRecordContainerDelegate {
 
 extension TGCameraViewController: PHPickerViewControllerDelegate {
     @available(iOS 14.0, *)
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true, completion: .none)
         
         var photos: [UIImage] = []
@@ -339,7 +339,7 @@ extension TGCameraViewController: PhotoEditorDelegate {
 
 extension TGCameraViewController: UIViewControllerTransitioningDelegate {
     
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+    public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         
         buttonsContainer.isContainerHidden = true
         
@@ -356,7 +356,7 @@ extension TGCameraViewController: UIViewControllerTransitioningDelegate {
 }
 
 extension TGCameraViewController: AVCapturePhotoCaptureDelegate {
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+    public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let imageData = photo.fileDataRepresentation(),
            let image = UIImage(data: imageData) {
             let watermarkImage = image.addWatermark()
@@ -463,7 +463,7 @@ extension TGCameraContainer: TGRecordButtonDelegate {
 }
 public class CustomSizePresentationController : UIPresentationController {
     var heightPercent: CGFloat = 0.66
-    var dismissHandler: EmptyClosure?
+    var dismissHandler: TGEmptyClosure?
     private let background = UIView().configure {
         $0.backgroundColor = .clear
     }

@@ -36,7 +36,7 @@ class TGTruncatableLabel: UIView {
     var onHashTagTapped: ((String) -> Void)?
     var onHttpTagTapped: ((String) -> Void)?
     var onTextNumberOfLinesTapped: ((TruncatableLabelShowStyle) -> Void)?
-    var onHeightChanged: EmptyClosure?
+    var onHeightChanged: TGEmptyClosure?
     
     var maximumHeight: CGFloat = UIScreen.main.bounds.height / 3
     

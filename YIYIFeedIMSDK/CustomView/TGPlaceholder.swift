@@ -133,7 +133,7 @@ class TGPlaceholder: UIView {
     
     private lazy var button = UIButton()
     
-    var onTapActionButton: EmptyClosure?
+    var onTapActionButton: TGEmptyClosure?
     var theme: Theme = .white {
         didSet {
             if let customColor = customBackgroundColor {

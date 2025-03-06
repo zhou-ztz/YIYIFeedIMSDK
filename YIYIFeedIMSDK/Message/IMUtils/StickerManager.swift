@@ -31,7 +31,7 @@ class StickerManager {
          
     }
 
-    func downloadSticker(for id: String, completion: EmptyClosure?, onError: @escaping (String) -> Void) {
+    func downloadSticker(for id: String, completion: TGEmptyClosure?, onError: @escaping (String) -> Void) {
         
         let mutation = DownloadStickerMutation(bundleId: id)
         YPApolloClient.perform(mutation: mutation) { (response, error) in
@@ -81,7 +81,7 @@ class StickerManager {
         }
     }
     
-    func purchaseSticker(for id: String, password: String?, completion: EmptyClosure?) {
+    func purchaseSticker(for id: String, password: String?, completion: TGEmptyClosure?) {
 //        guard let user = AppEnvironment.current.currentUser, let password = password  else { return }
 //        YippiAPI.shared.send(PurchaseSticker(bundleId: id, username: user.username, password: password)) { response in
 //            switch response {
@@ -102,7 +102,7 @@ class StickerManager {
 //        }
     }
     
-    func removeSticker(id: String, completion: EmptyClosure?, onError: ((String?) -> Void)?) {
+    func removeSticker(id: String, completion: TGEmptyClosure?, onError: ((String?) -> Void)?) {
         
         let mutation = RemoveStickerMutation(bundleId: id)
         YPApolloClient.perform(mutation: mutation) { (response, error) in

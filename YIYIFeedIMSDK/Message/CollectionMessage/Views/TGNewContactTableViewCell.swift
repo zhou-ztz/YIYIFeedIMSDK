@@ -19,7 +19,7 @@ class TGNewContactTableViewCell: UITableViewCell {
     @IBOutlet weak var actionButton: UIButton!
     @IBOutlet weak var messageButton: UIButton!
     
-    var onClickAction: EmptyClosure?
+    var onClickAction: TGEmptyClosure?
     
     class func nib() -> UINib {
         return UINib(nibName: cellReuseIdentifier, bundle: nil)

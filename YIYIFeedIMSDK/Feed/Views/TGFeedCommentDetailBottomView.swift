@@ -14,7 +14,7 @@ enum FeedCommentDetailBottomViewColorStyle {
 
 class TGFeedCommentDetailBottomView: UIView {
 
-    var onCommentAction: EmptyClosure?
+    var onCommentAction: TGEmptyClosure?
     
     var colorStyle: FeedCommentDetailBottomViewColorStyle = .normal
     

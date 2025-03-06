@@ -29,7 +29,7 @@ class TGTutorialView: UIView {
         return view
     }()
     
-    var onDismiss: EmptyClosure?
+    var onDismiss: TGEmptyClosure?
     
     init() {
         super.init(frame: .zero)

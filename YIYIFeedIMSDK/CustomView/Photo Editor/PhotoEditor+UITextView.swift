@@ -11,13 +11,13 @@ import UIKit
 
 extension PhotoEditorViewController: UITextViewDelegate {
 
-    func textViewDidChange(_ textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         let oldFrame = textView.frame
         let sizeToFit = textView.sizeThatFits(CGSize(width: oldFrame.width, height: CGFloat.greatestFiniteMagnitude))
         textView.frame.size = CGSize(width: oldFrame.width, height: sizeToFit.height)
     }
 
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    public func textViewDidBeginEditing(_ textView: UITextView) {
         isTyping = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         backgroundView.addGestureRecognizer(tap)
@@ -36,7 +36,7 @@ extension PhotoEditorViewController: UITextViewDelegate {
 
     }
 
-    func textViewDidEndEditing(_ textView: UITextView) {
+    public func textViewDidEndEditing(_ textView: UITextView) {
         guard previousCenter != nil && textView.text.isEmpty == false else {
             currentTextViewCount -= 1
             textView.removeFromSuperview()

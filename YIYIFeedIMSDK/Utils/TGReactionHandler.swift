@@ -96,8 +96,8 @@ class TGReactionHandler {
     var currentReaction: ReactionTypes?
 
     var onSelect: ((_ reaction: ReactionTypes?) -> Void)?
-    var onPresent: EmptyClosure?
-    var onDismiss: EmptyClosure?
+    var onPresent: TGEmptyClosure?
+    var onDismiss: TGEmptyClosure?
     var onError: ((_ fallbackReaction: ReactionTypes?, _ message: String) -> Void)?
     var onSuccess: ((_ message: String) -> Void)?
 

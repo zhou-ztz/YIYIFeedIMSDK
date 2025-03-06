@@ -91,7 +91,7 @@ class TGReactionSelectorView: UIView {
 
 class TGTouchAbsorbingView: UIView {
     
-    var onTouchInside: EmptyClosure?
+    var onTouchInside: TGEmptyClosure?
     
     private let tapgesture = UITapGestureRecognizer()
     

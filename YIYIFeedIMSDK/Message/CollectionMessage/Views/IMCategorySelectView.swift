@@ -14,7 +14,7 @@ class IMCategorySelectView: UIView {
     private var animatable: Bool = false
     var selectedType: MessageCollectionType = .text
     var selectionHandler: ((MessageCollectionType, String) -> Void)?
-    var notifyComplete: EmptyClosure?
+    var notifyComplete: TGEmptyClosure?
     
     init(selectedType: MessageCollectionType, animatable: Bool) {
         super.init(frame: .zero)

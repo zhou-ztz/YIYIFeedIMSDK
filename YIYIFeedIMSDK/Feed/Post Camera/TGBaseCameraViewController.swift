@@ -9,11 +9,11 @@ import Foundation
 import UIKit
 import AVFoundation
 
-enum TGMediaType {
+public enum TGMediaType {
     case camera
     case miniVideo
 }
-enum TGMediaPageType {
+public enum TGMediaPageType {
     case IMPage
     case feedPage
 }
@@ -22,7 +22,7 @@ protocol TGBaseCameraViewControllerDelegate: AnyObject {
     func finishRecordingTo(outputFileURL: URL)
 }
 
-class TGBaseCameraViewController: TGViewController {
+public class TGBaseCameraViewController: TGViewController {
 
     var mediaType: TGMediaType {
         return .camera
@@ -58,7 +58,7 @@ class TGBaseCameraViewController: TGViewController {
     //  表示当时是否在录像中
     var isRecording = false
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         isHiddenNavigaBar = true
     }
@@ -263,26 +263,26 @@ extension TGBaseCameraViewController {
 // MARK: - CAAnimationDelegate
 extension TGBaseCameraViewController: CAAnimationDelegate {
     /// 动画开始
-    func animationDidStart(_ anim: CAAnimation) {
+    public func animationDidStart(_ anim: CAAnimation) {
         DispatchQueue.global(qos: .background).async {
             self.captureSession.startRunning()
         }
     }
     
     /// 动画结束
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
     }
 }
 
 // MARK: - AVCaptureFileOutputRecordingDelegate
 extension TGBaseCameraViewController: AVCaptureFileOutputRecordingDelegate {
     /// 开始录制
-    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+    public func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         
     }
     
     /// 结束录制
-    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+    public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         let avAsset = AVURLAsset(url: outputFileURL)
         let coverImage = FileUtils.generateAVAssetVideoCoverImage(avAsset: avAsset)
         self.delegate?.finishRecordingTo(outputFileURL: outputFileURL)

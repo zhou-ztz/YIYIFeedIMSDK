@@ -638,7 +638,7 @@ extension TSIMToolChoose {
 
 extension UIView {
     @discardableResult
-    func showIMToolChoose(identifier: String, data: [GroupIMActionItem], arrowPosition: TSIMToolChoose.ArrowPosition, preferences: TGToolChoosePreferences = TGToolChoosePreferences(), delegate: IMToolChooseDelegate? = nil, dismissCompletion: EmptyClosure? = nil) -> TSIMToolChoose {
+    func showIMToolChoose(identifier: String, data: [GroupIMActionItem], arrowPosition: TSIMToolChoose.ArrowPosition, preferences: TGToolChoosePreferences = TGToolChoosePreferences(), delegate: IMToolChooseDelegate? = nil, dismissCompletion: TGEmptyClosure? = nil) -> TSIMToolChoose {
         let tooltip = TSIMToolChoose(view: self, identifier: identifier, data: data, arrowPosition: arrowPosition, preferences: preferences, delegate: delegate, dismissCompletion: dismissCompletion)
         tooltip.calculateBubbleSize()
         tooltip.calculateFrame()
@@ -685,7 +685,7 @@ class TSIMToolChoose: UIView, UIGestureRecognizerDelegate {
     var data = [GroupIMActionItem]()
     let noOfCellsInRow = 4
     
-    private var dismissCompletion: EmptyClosure?
+    private var dismissCompletion: TGEmptyClosure?
     
     // MARK: Lazy variables
     private lazy var gradient: CGGradient = { [unowned self] in
@@ -732,7 +732,7 @@ class TSIMToolChoose: UIView, UIGestureRecognizerDelegate {
     }()
     
     // MARK: Initializer
-    init(view: UIView, identifier: String,  data: [GroupIMActionItem], arrowPosition: ArrowPosition, preferences: TGToolChoosePreferences, delegate: IMToolChooseDelegate? = nil, dismissCompletion: EmptyClosure? = nil) {
+    init(view: UIView, identifier: String,  data: [GroupIMActionItem], arrowPosition: ArrowPosition, preferences: TGToolChoosePreferences, delegate: IMToolChooseDelegate? = nil, dismissCompletion: TGEmptyClosure? = nil) {
         self.presentingView = view
         self.id = identifier
         self.data = data

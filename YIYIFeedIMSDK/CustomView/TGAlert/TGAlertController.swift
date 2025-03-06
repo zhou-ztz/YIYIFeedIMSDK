@@ -142,7 +142,7 @@ class TGAlertController: UIViewController {
     private var availableOrientations: UIInterfaceOrientationMask?
     private var attachmentBehaviour: UIAttachmentBehavior?
     private var allowBackgroundDismiss: Bool = true
-    private var cancel: EmptyClosure? = nil
+    private var cancel: TGEmptyClosure? = nil
 
     private lazy var alertAnimator: UIDynamicAnimator = UIDynamicAnimator()
     
@@ -160,7 +160,7 @@ class TGAlertController: UIViewController {
          //allowToRotate: Bool = true,
          availableOrientations: UIInterfaceOrientationMask? = nil,
          allowBackgroundDismiss: Bool = true,
-         cancel: EmptyClosure? = nil,
+         cancel: TGEmptyClosure? = nil,
          isOffset: Bool? = nil) {
         self.style = style
         self.customTitle = title
@@ -660,7 +660,7 @@ class TGAlertController: UIViewController {
 
     }
     
-    func dismiss(completion: EmptyClosure? = nil) {
+    func dismiss(completion: TGEmptyClosure? = nil) {
         switch self.style {
         case .alert, .popup:
             let translate = CGAffineTransform(translationX: 0, y: UIScreen.main.bounds.height)

@@ -18,7 +18,7 @@ class TGRemoveMemberViewController: TGChatFriendListViewController {
     
     var teamId: String
     
-    var membersDidRemovedHandler: EmptyClosure?
+    var membersDidRemovedHandler: TGEmptyClosure?
     
     var isSearching = false
     

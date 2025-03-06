@@ -10,7 +10,7 @@ import UIKit
 import Photos
 import SwiftEntryKit
 
-typealias EmptyClosure = () -> Void
+public typealias TGEmptyClosure = () -> Void
 
 
 extension UIViewController {
@@ -28,8 +28,8 @@ extension UIViewController {
                             selectedAssets: [PHAsset] = [],
                             selectedImages: [Any] = [],
                             allowEdit: Bool = false,
-                            onSelectPhoto: CameraHandler? = nil,
-                            onDismiss: EmptyClosure? = nil) {
+                            onSelectPhoto: TGCameraHandler? = nil,
+                            onDismiss: TGEmptyClosure? = nil) {
         DispatchQueue.main.async {
             let camera = TGCameraViewController()
             camera.enableMultiplePhoto = enableMultiplePhoto

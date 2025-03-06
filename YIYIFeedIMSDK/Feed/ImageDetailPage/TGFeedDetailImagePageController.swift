@@ -45,7 +45,7 @@ class TGFeedDetailImagePageController: UIPageViewController {
     var completeHandler: ((Int, String) -> Void)?
     var onToolbarUpdated: onToolbarUpdate?
     var translateHandler: ((Bool) -> Void)?
-    var onRefresh: EmptyClosure?
+    var onRefresh: TGEmptyClosure?
     var userId: Int? = nil
     var afterTime: String? = ""
     var isControllerPush: Bool?

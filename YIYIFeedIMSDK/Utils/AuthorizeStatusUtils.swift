@@ -42,7 +42,7 @@ class AuthorizeStatusUtils {
     }
     
     
-    class func checkAuthorizeStatusByType(type: SCPermissionType, viewController: UIViewController?, completion: @escaping EmptyClosure) {
+    class func checkAuthorizeStatusByType(type: SCPermissionType, viewController: UIViewController?, completion: @escaping TGEmptyClosure) {
         let photoStatus = PHPhotoLibrary.authorizationStatus()
         let cameraStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         let audioStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.audio)

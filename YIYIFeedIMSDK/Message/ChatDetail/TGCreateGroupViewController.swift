@@ -152,14 +152,9 @@ class TGCreateGroupViewController: TGViewController {
         }
         nameT.delegate = self
         nameT.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
-    }
-    
-    func groupIconDidTapped() {
-        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: {
-            DispatchQueue.main.async {
-               // self.openCamera()
-            }
-        })
+        headImageView.addAction {[weak self] in
+            self?.openCamera()
+        }
     }
 
     func getMembers() {
@@ -174,27 +169,28 @@ class TGCreateGroupViewController: TGViewController {
     }
     
     func openCamera() {
-        func showImagePicker(type: UIImagePickerController.SourceType, alert: TGAlertController) {
-            alert.dismiss(animated: true, completion: {
-                let picker = UIImagePickerController()
-                picker.delegate = self
-                picker.sourceType = type
-                picker.allowsEditing = true
-                self.present(picker, animated: true, completion: nil)
-            })
+        self.showCameraVC {[weak self] assets, images, _, _, _ in
+            guard let image1 = images?.first else {
+                return
+            }
+            let lzImage = LZImageCropping()
+            lzImage.cropSize = CGSize(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+            lzImage.image = image1
+            lzImage.isRound = true
+            lzImage.titleLabel.text = "Move and Scale".localized
+            lzImage.didFinishPickingImage = { [weak self] image in
+                guard let self = self, let image = image else {
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.headImageView.image = image
+                    self.cameraImageView.isHidden = true
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                self?.navigationController?.present(lzImage.fullScreenRepresentation, animated: true, completion: nil)
+            }
         }
-        
-        let alert = TGAlertController(title: nil, message: "set_group_avatar".localized, style: .actionsheet, sheetCancelTitle: "cancel".localized)
-        
-        alert.addAction(TGAlertAction(title: "choose_from_camera".localized, style: TGAlertSheetActionStyle.default, handler: { _ in
-            showImagePicker(type: .camera, alert: alert)
-        }))
-        
-        alert.addAction(TGAlertAction(title: "choose_from_photo".localized, style: TGAlertSheetActionStyle.default, handler: { _ in
-            showImagePicker(type: .photoLibrary, alert: alert)
-        }))
-        
-        self.presentPopup(alert: alert)
         
     }
     func showFail(text: String) {
@@ -430,13 +426,3 @@ extension TGCreateGroupViewController: UITextFieldDelegate {
     }
 }
 
-extension TGCreateGroupViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            self.headImageView.image = image
-            picker.dismiss(animated: true) {
-                
-            }
-        }
-    }
-}

@@ -14,7 +14,7 @@ class TGImageScrollView: UIScrollView, UIScrollViewDelegate {
     private let maxZoom: CGFloat = 3.0
 
     let imageView: SDAnimatedImageView = SDAnimatedImageView()
-    var onZoomUpdate: EmptyClosure?
+    var onZoomUpdate: TGEmptyClosure?
 
 
     required init?(coder: NSCoder) {

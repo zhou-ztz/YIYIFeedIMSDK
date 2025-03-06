@@ -602,7 +602,7 @@ class TGContactsPickerViewController: TGChatFriendListViewController {
 
 /// 获取data
 extension TGContactsPickerViewController {
-    func fetchTeams(_ completion: @escaping EmptyClosure) {
+    func fetchTeams(_ completion: @escaping TGEmptyClosure) {
         if let teams = NIMSDK.shared().teamManager.allMyTeams() {
             
             teamData = teams.filter { $0.type == NIMTeamType.advanced }.compactMap { ContactData(team: $0) }
@@ -615,7 +615,7 @@ extension TGContactsPickerViewController {
         }
     }
     
-    func fetchRecentChats(_ completion: @escaping EmptyClosure) {
+    func fetchRecentChats(_ completion: @escaping TGEmptyClosure) {
         recentChatData.removeAll()
         var recentsData = [String]()
         let dispatchGroup = DispatchGroup()
@@ -661,7 +661,7 @@ extension TGContactsPickerViewController {
         
     }
     
-    func fetchFriends(_ completion: @escaping EmptyClosure) {
+    func fetchFriends(_ completion: @escaping TGEmptyClosure) {
         TGNewFriendsNetworkManager.searchMyFriend(offset: 0, keyWordString: nil) {[weak self] userModels, error in
             guard let self = self else {
                 return

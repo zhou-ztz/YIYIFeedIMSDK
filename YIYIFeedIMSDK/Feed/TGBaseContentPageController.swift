@@ -18,8 +18,8 @@ class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDele
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(self.handleRefreshPanGesture))
         return gesture
     }()
-    var onRefresh: EmptyClosure?
-    var onLoadMore: EmptyClosure?
+    var onRefresh: TGEmptyClosure?
+    var onLoadMore: TGEmptyClosure?
     var interactionController: UIPercentDrivenInteractiveTransition?
     var pushDestination: (() -> UIViewController?)?
     var beginPoint: CGPoint = .zero

@@ -28,9 +28,9 @@ class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate
     private(set) var model: FeedListCellModel?
     private let doubleTapGesture = UITapGestureRecognizer()
     private let singleTap = UITapGestureRecognizer()
-    var onSingleTapView: EmptyClosure?
-    var onDoubleTapView: EmptyClosure?
-    var onZoomUpdate: EmptyClosure?
+    var onSingleTapView: TGEmptyClosure?
+    var onDoubleTapView: TGEmptyClosure?
+    var onZoomUpdate: TGEmptyClosure?
 
     init(imageUrlPath: String = "", imageIndex: Int, model: FeedListCellModel, placeholderImage: UIImage? = nil, transitionId: String? = nil) {
         super.init(nibName: nil, bundle: nil)

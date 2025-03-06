@@ -22,7 +22,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
     private var imageIndex: Int = 0
     var isClickComment: Bool = false
     var isTranslateText: Bool = false
-    var onDelete: EmptyClosure?
+    var onDelete: TGEmptyClosure?
     // feed type
     var type: TGFeedListType?
     
@@ -30,7 +30,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
          imageIndex: Int = 0, placeholderImage: UIImage?,
          transitionId: String? = nil, isClickComment: Bool = false,
          isTranslateText: Bool = false,
-         onRefresh: EmptyClosure?, onLoadMore: EmptyClosure?,
+         onRefresh: TGEmptyClosure?, onLoadMore: TGEmptyClosure?,
          onToolbarUpdated: onToolbarUpdate?,
          onIndexUpdate: ((Int, String) -> Void)? = nil,
          translateHandler: ((Bool) -> Void)? = nil,

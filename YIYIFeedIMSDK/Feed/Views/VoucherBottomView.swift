@@ -10,7 +10,7 @@ import UIKit
 
 class VoucherBottomView: UIView {
     
-    var voucherOnTapped: EmptyClosure?
+    var voucherOnTapped: TGEmptyClosure?
     
     let contentView: UIView = {
         let view = UIView()

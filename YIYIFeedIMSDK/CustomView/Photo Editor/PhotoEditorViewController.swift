@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objcMembers final class PhotoEditorViewController: UIViewController {
+@objcMembers final public class PhotoEditorViewController: UIViewController {
 
     /** holding the 2 imageViews original image and drawing & stickers */
     @IBOutlet weak var canvasView: UIView!
@@ -43,6 +43,7 @@ import UIKit
     @IBOutlet weak var continueButton: UIButton!
     @IBOutlet private var rotationButtons: [UIButton]!
     
+    @IBOutlet weak var closeButton: UIButton!
     private var safeAreaTop: CGFloat {
         if #available(iOS 11.0, *) {
             return self.view.safeAreaInsets.top
@@ -69,7 +70,7 @@ import UIKit
     }
 
 
-    var image: UIImage?
+    public var image: UIImage?
     /**
      Array of Stickers -UIImage- that the user will choose from
      */
@@ -124,12 +125,12 @@ import UIKit
     var panGestureRecognizer = UIPanGestureRecognizer()
 
     //Register Custom font before we load XIB
-    override func loadView() {
+    public override func loadView() {
         registerFont()
         super.loadView()
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         //        self.setImageView(image: image!)
         imageView.image = image
@@ -146,8 +147,8 @@ import UIKit
 //        } else {
 //            imageViewHeightConstraint.constant = 818
 //        }
-
-        saveButton.setImage(UIImage(named: "icDownload"), for: .normal)
+        closeButton.setImage(UIImage(named: "ico_search_delete")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        saveButton.setImage(UIImage(named: "icEditDownload"), for: .normal)
         shareButton.setImage(UIImage(named: "icShare"), for: .normal)
         clearButton.setImage(UIImage(named: "icClearall"), for: .normal)
         cropButton.setImage(UIImage(named: "icCrop"), for: .normal)
@@ -244,12 +245,12 @@ import UIKit
         }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(orientationChanged), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         if isFirstTimeLaunch == true {
@@ -264,7 +265,7 @@ import UIKit
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }

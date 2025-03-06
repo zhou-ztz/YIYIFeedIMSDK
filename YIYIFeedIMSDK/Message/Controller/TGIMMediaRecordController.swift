@@ -48,11 +48,11 @@ class TGIMMediaRecordController: TGBaseCameraViewController {
     }
 
     //camera type 所需参数
-    var onSelectPhoto: CameraHandler? = nil
+    var onSelectPhoto: TGCameraHandler? = nil
     var enableMultiplePhoto: Bool = false
     var allowPickingVideo: Bool = false
     var selectedAsset: [PHAsset] = []
-    var onDismiss: EmptyClosure? = nil
+    var onDismiss: TGEmptyClosure? = nil
     var allowCrop: Bool = false //剪切
     var allowEdit: Bool = false //编辑
     

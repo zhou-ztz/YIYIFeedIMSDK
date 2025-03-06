@@ -348,28 +348,53 @@ class AddGroupChatViewController: TGViewController {
     
     
     func openAblum(){
-        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: { [weak self] in
-            DispatchQueue.main.async {
-                let picker = UIImagePickerController()
-                picker.delegate = self
-                picker.sourceType = .photoLibrary
-                picker.allowsEditing = true
-                self?.present(picker, animated: true, completion: nil)
-            }
-        })
+        guard let vc = TZImagePickerController(maxImagesCount: 9, columnNumber: 4, delegate: self, mainColor: RLColor.share.theme) else { return }
+        vc.allowCrop = false
+        vc.allowTakePicture = false
+        vc.allowTakeVideo = false
+        vc.allowPickingImage = true
+        vc.allowPickingVideo = true
+        vc.allowPickingGif = true
+        vc.allowPickingMultipleVideo = false
+        vc.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
+        vc.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
+        vc.navigationBar.tintColor = .black
+        vc.navigationItem.titleView?.tintColor = .black
+        vc.navigationBar.barTintColor = .black
+        vc.barItemTextColor = .black
+        vc.backImage = UIImage(named: "iconsArrowCaretleftBlack")
+        vc.allowPreview = true
+        var dic = [NSAttributedString.Key: Any]()
+        dic[NSAttributedString.Key.foregroundColor] = UIColor.black
+        vc.navigationBar.titleTextAttributes = dic
+        self.present(vc.fullScreenRepresentation, animated: true, completion: nil)
         
     }
     
     func openCamera() {
-        AuthorizeStatusUtils.checkAuthorizeStatusByType(type: .cameraAlbum, viewController: self, completion: {[weak self] in
-            DispatchQueue.main.async {
-                let picker = UIImagePickerController()
-                picker.delegate = self
-                picker.sourceType = .camera
-                picker.allowsEditing = true
-                self?.present(picker, animated: true, completion: nil)
+        self.showCameraVC {[weak self] assets, images, _, _, _ in
+            guard let image1 = images?.first else {
+                return
             }
-        })
+            let lzImage = LZImageCropping()
+            lzImage.cropSize = CGSize(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+            lzImage.image = image1
+            lzImage.isRound = true
+            lzImage.titleLabel.text = "Move and Scale".localized
+            lzImage.didFinishPickingImage = { [weak self] image in
+                guard let self = self, let image = image else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self.settingVC?.headImageView.image = image
+                    self.settingVC?.cameraImageView.isHidden = true
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                self?.navigationController?.present(lzImage.fullScreenRepresentation, animated: true, completion: nil)
+            }
+        }
     }
 
 }
@@ -412,38 +437,26 @@ extension AddGroupChatViewController: TGCustomCameraSheetViewDelegate {
     }
 }
 
-extension AddGroupChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            settingVC?.headImageView.image = image
-            self.settingVC?.cameraImageView.isHidden = true
-            picker.dismiss(animated: true) {
-                
+extension AddGroupChatViewController: TZImagePickerControllerDelegate {
+    func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
+        
+        let lzImage = LZImageCropping()
+        lzImage.cropSize = CGSize(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+        lzImage.image = photos.first
+        lzImage.isRound = true
+        lzImage.titleLabel.text = "Move and Scale".localized
+        lzImage.didFinishPickingImage = { [weak self] image in
+            guard let self = self, let image = image else {
+                return
             }
+            
+            DispatchQueue.main.async {
+                self.settingVC?.headImageView.image = image
+                self.settingVC?.cameraImageView.isHidden = true
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+            self.navigationController?.present(lzImage.fullScreenRepresentation, animated: true, completion: nil)
         }
     }
 }
-
-//extension AddGroupChatViewController: TZImagePickerControllerDelegate {
-//    func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
-//        
-//        let lzImage = LZImageCropping()
-//        lzImage.cropSize = CGSize(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-//        lzImage.image = photos.first
-//        lzImage.isRound = true
-//        lzImage.titleLabel.text = "Move and Scale".localized
-//        lzImage.didFinishPickingImage = { [weak self] image in
-//            guard let self = self, let image = image else {
-//                return
-//            }
-//            
-//            DispatchQueue.main.async {
-//                self.settingVC?.headImageView.image = image
-//                self.settingVC?.cameraImageView.isHidden = true
-//            }
-//        }
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-//            self.navigationController?.present(lzImage.fullScreenRepresentation, animated: true, completion: nil)
-//        }
-//    }
-//}

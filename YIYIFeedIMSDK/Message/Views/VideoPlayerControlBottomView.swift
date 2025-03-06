@@ -13,7 +13,7 @@ private let ALYPVBottomViewDefaultTime = "00:00" //默认时间样式
 class VideoPlayerControlBottomView: UIView, VideoPlayerProgressViewDelegate {
 
     // MARK: action
-    var onFullScreenTapped: EmptyClosure?
+    var onFullScreenTapped: TGEmptyClosure?
     var onDragProgressSliderValue: ((_ value: Float, _ event: UIControl.Event) -> Void)?
     
     private lazy var stackView: UIStackView = {

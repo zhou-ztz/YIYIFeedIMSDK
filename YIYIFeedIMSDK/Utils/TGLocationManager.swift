@@ -15,7 +15,7 @@ class TGLocationManager: NSObject {
     private var geoCoder = CLGeocoder()
     private let operationQueue = OperationQueue()
     
-    var onLocationUpdate: EmptyClosure?
+    var onLocationUpdate: TGEmptyClosure?
     var location: CLLocation? = nil
     var locationCoordinate: CLLocationCoordinate2D? = nil
     var latitude : Double?

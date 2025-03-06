@@ -469,7 +469,6 @@
 		D7B586882D27915600A52F1E /* PhotoEditor+UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5865C2D27915600A52F1E /* PhotoEditor+UITextView.swift */; };
 		D7B5868A2D27915600A52F1E /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586602D27915600A52F1E /* Protocols.swift */; };
 		D7B5868B2D27915600A52F1E /* PhotoEditor+Gestures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586592D27915600A52F1E /* PhotoEditor+Gestures.swift */; };
-		D7B586932D27915600A52F1E /* PhotoEditor.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D7B586542D27915600A52F1E /* PhotoEditor.bundle */; };
 		D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7B5865F2D27915600A52F1E /* PhotoEditorViewController.xib */; };
 		D7B586982D27915600A52F1E /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B5864C2D27915600A52F1E /* icomoon.ttf */; };
 		D7C4E9D12D2D20560043DD82 /* TGLocationPOICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D02D2D20560043DD82 /* TGLocationPOICell.swift */; };
@@ -996,7 +995,6 @@
 		D7B5864A2D27915600A52F1E /* EmojisCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		D7B5864B2D27915600A52F1E /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		D7B5864C2D27915600A52F1E /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
-		D7B586542D27915600A52F1E /* PhotoEditor.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = PhotoEditor.bundle; sourceTree = "<group>"; };
 		D7B586552D27915600A52F1E /* PhotoEditor+Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoEditor+Controls.swift"; sourceTree = "<group>"; };
 		D7B586562D27915600A52F1E /* PhotoEditor+Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoEditor+Crop.swift"; sourceTree = "<group>"; };
 		D7B586572D27915600A52F1E /* PhotoEditor+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoEditor+Drawing.swift"; sourceTree = "<group>"; };
@@ -1897,7 +1895,6 @@
 				D7B5864A2D27915600A52F1E /* EmojisCollectionViewDelegate.swift */,
 				D7B5864B2D27915600A52F1E /* GradientView.swift */,
 				D7B5864C2D27915600A52F1E /* icomoon.ttf */,
-				D7B586542D27915600A52F1E /* PhotoEditor.bundle */,
 				D7B586552D27915600A52F1E /* PhotoEditor+Controls.swift */,
 				D7B586562D27915600A52F1E /* PhotoEditor+Crop.swift */,
 				D7B586572D27915600A52F1E /* PhotoEditor+Drawing.swift */,
@@ -2225,7 +2222,6 @@
 				8A9F0DF22CF48B3B0021462C /* reaction-love.json in Resources */,
 				8A4BB3312D08352B00AAB4B8 /* NMCJSBridge.js in Resources */,
 				B1EABC9E2D30F41900EB7868 /* TGNewContactTableViewCell.xib in Resources */,
-				D7B586932D27915600A52F1E /* PhotoEditor.bundle in Resources */,
 				D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */,
 				D7B586982D27915600A52F1E /* icomoon.ttf in Resources */,
 				D764EC7B2D37869F00F62268 /* TGReleasePulseViewController.xib in Resources */,

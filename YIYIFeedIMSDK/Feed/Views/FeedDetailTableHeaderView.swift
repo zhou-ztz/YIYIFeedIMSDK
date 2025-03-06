@@ -13,7 +13,7 @@ class FeedDetailTableHeaderView: UIView {
     var followStatusClickCall: (() -> ())?
     var deleteStatusClickCall: (() -> ())?
     var mediaViewClickCall: (() -> ())?
-    var onTranslated: EmptyClosure?
+    var onTranslated: TGEmptyClosure?
     var onTapPictureClickCall: (() -> ())?
     
     // views

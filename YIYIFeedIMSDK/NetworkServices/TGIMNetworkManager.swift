@@ -258,7 +258,7 @@ class TGIMNetworkManager: NSObject {
         }
     }
 
-    ///  关注好友
+    ///
     class func deleteMessageRequest(requestId: Int, completion: @escaping (_ error: Error?) ->Void ) {
         let path = "api/v2/user/message/pendingRequest"
         let parameters: [String: Any] = ["delete_type": "single", "request_id": requestId]

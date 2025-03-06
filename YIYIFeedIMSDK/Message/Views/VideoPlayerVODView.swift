@@ -93,7 +93,7 @@ class VideoPlayerVODView: UIView, AVPDelegate {
         return CMTime(seconds: TimeInterval(aliPlayerView.currentPosition / 1000), preferredTimescale: CMTimeScale(1000000))
     }
     
-    func playViewPrepare(with url: URL?, isFinal: Bool = false, onComplete: EmptyClosure? = nil) {
+    func playViewPrepare(with url: URL?, isFinal: Bool = false, onComplete: TGEmptyClosure? = nil) {
         controlView.centerControl.state = .loading
         
         guard let url = url else {

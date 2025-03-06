@@ -273,7 +273,7 @@ extension TGVoiceToTextIMViewController: UIViewControllerTransitioningDelegate {
 class HalfScreenPresentationController: UIPresentationController {
     var heightPercentage: CGFloat = 0.55
     var customStaticHeight: CGFloat? = nil
-    var onDismiss: EmptyClosure? = nil
+    var onDismiss: TGEmptyClosure? = nil
     
     private let background = UIView().configure {
         $0.backgroundColor =  UIColor.darkGray.withAlphaComponent(0.8)

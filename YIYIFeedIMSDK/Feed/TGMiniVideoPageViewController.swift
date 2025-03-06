@@ -693,7 +693,7 @@ extension TGMiniVideoPageViewController: CustomPopListProtocol{
 
 class CommentListPresentationController: UIPresentationController {
     var heightPercent: CGFloat = 0.66
-    var dismissHandler: EmptyClosure?
+    var dismissHandler: TGEmptyClosure?
 
     private let background = UIView().configure {
         $0.backgroundColor = .clear
@@ -849,10 +849,10 @@ class MiniVideoNavBar: UIView {
     }()
     
     var filterDidApplied: ((TGFeedListType) -> Void)?
-    var backButtonDidTapped: EmptyClosure?
-    var filterButtonDidTapped: EmptyClosure?
-    var searchButtonDidTapped: EmptyClosure?
-    var moreButtonDidTapped: EmptyClosure?
+    var backButtonDidTapped: TGEmptyClosure?
+    var filterButtonDidTapped: TGEmptyClosure?
+    var searchButtonDidTapped: TGEmptyClosure?
+    var moreButtonDidTapped: TGEmptyClosure?
     var createPostButtonDidTapped: ((UIButton) -> Void)?
     init() {
         super.init(frame: .zero)

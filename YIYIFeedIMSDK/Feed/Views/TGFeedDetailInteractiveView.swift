@@ -116,16 +116,16 @@ class TGFeedDetailInteractiveView: UIView {
     let reactionView = TGUserReactionView()
     var voucherBottomView = VoucherBottomView()
 
-    var onCommentTouched: EmptyClosure?
-    var onGiftTouched: EmptyClosure?
-    var onMoreTouched: EmptyClosure?
-    var onFollowTouched: EmptyClosure?
-    var onForwardTouched: EmptyClosure?
-    var onVoucherTouched: EmptyClosure?
+    var onCommentTouched: TGEmptyClosure?
+    var onGiftTouched: TGEmptyClosure?
+    var onMoreTouched: TGEmptyClosure?
+    var onFollowTouched: TGEmptyClosure?
+    var onForwardTouched: TGEmptyClosure?
+    var onVoucherTouched: TGEmptyClosure?
     var reactionHandler: TGReactionHandler?
     var onLocationViewTapped: ((String, String) -> Void)?
     var onTopicViewTapped: ((Int) -> Void)?
-    var reactionSuccess: EmptyClosure?
+    var reactionSuccess: TGEmptyClosure?
     var onTapReactionList: ((Int) -> Void)?
     var translateHandler: ((Bool) -> Void)?
     var onTapHiddenUpdate: ((Bool) -> Void)?

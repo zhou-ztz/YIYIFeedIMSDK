@@ -19,7 +19,7 @@ class TeamDetailViewModel: NSObject {
     var allMembers: [TeamMember] = []
     var onShowSuccess: ((String?) -> Void)?
     var onShowFail: ((String?) -> Void)?
-    var onReloadMembers: EmptyClosure?
+    var onReloadMembers: TGEmptyClosure?
     var onReloadData: ((SettingType) -> Void)?
     var selectedType: SettingType = .none
     var p2PSessions: [String] = []
@@ -340,7 +340,7 @@ class TeamDetailViewModel: NSObject {
         
     }
     
-    func uploadGroupImage(_ uploadFilepath: String, onHideLoading: EmptyClosure?) {
+    func uploadGroupImage(_ uploadFilepath: String, onHideLoading: TGEmptyClosure?) {
         selectedType = .groupIcon
         let task = V2NIMUploadFileTask()
         let uploadParams = V2NIMUploadFileParams()
@@ -508,7 +508,7 @@ class TeamDetailViewModel: NSObject {
         }
     }
     
-    func transferGroup(to userName: String, isLeaving: Bool, onDismiss: @escaping EmptyClosure) {
+    func transferGroup(to userName: String, isLeaving: Bool, onDismiss: @escaping TGEmptyClosure) {
         
         NIMSDK.shared().v2TeamService.transferTeamOwner(teamId, teamType: .TEAM_TYPE_NORMAL, accountId: userName, leave: isLeaving) { [weak self] in
             onDismiss()
@@ -518,7 +518,7 @@ class TeamDetailViewModel: NSObject {
         }
     }
     
-    func dismissGroup(onDismiss: @escaping EmptyClosure) {
+    func dismissGroup(onDismiss: @escaping TGEmptyClosure) {
         NIMSDK.shared().v2TeamService.dismissTeam(teamId, teamType: .TEAM_TYPE_NORMAL) { [weak self] in
             self?.onShowSuccess?(nil)
             onDismiss()
@@ -527,7 +527,7 @@ class TeamDetailViewModel: NSObject {
         }
     }
     
-    func quitGroup(onDismiss: @escaping EmptyClosure) {
+    func quitGroup(onDismiss: @escaping TGEmptyClosure) {
         NIMSDK.shared().v2TeamService.leaveTeam(teamId, teamType: .TEAM_TYPE_NORMAL) {[weak self] in
             self?.onShowSuccess?(nil)
             onDismiss()
