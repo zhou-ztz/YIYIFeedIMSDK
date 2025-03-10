@@ -33,7 +33,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         let apnsCername = ""
         let pkCername = ""
         //appKey
-        let option = NIMSDKOption(appKey: NIMAppKey)
+        let option = NIMSDKOption(appKey: appKey)
         option.apnsCername = apnsCername
         option.pkCername = pkCername
         /// 使用 v2 版本
@@ -51,13 +51,13 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         NIMSDK.shared().v2UserService.add(self)
         
         /// 会议组件 初始化
-        initMeetingkit()
+        initMeetingkit(appKey: appKey)
     
     }
     
-    func initMeetingkit() {
+    func initMeetingkit(appKey: String) {
         let config = NEMeetingKitConfig()
-        config.appKey = NIMAppKey
+        config.appKey = appKey
         //config.appName = "RewardsLink"
         let language =  TGLocalizationManager.getCurrentLanguage()
         if language == TGLanguageIdentifier.chineseSimplified.rawValue || language == TGLanguageIdentifier.chineseTraditional.rawValue {
@@ -80,8 +80,16 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         } failure: { error in
             print("im logout fail = \(error.detail), code = \(error.code)")
         }
-
+        NEMeetingKit.getInstance().getAccountService().logout { code, msg, result in
+            
+        }
+        
     }
+    
+    func stopBroadcastExtension() {
+        NEMeetingKit.getInstance().getMeetingService().stopBroadcastExtension()
+    }
+    
     
     public func imLogin(with accid: String, imToken: String, success: @escaping ()->Void, failure: @escaping ()->Void){
 
@@ -110,14 +118,25 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     /// V2NIMLoginListener
     func onLoginFailed(_ error: V2NIMError) {
         print("IM onLoginFailed")
+        RLSDKManager.shared.imDelegate?.onLoginFailed()
     }
-    
+    /** 登出状态，SDK初始化时，或调用logout接口后，或登录已终止（被踢下线或遇到无法继续登录的错误）。建议：在此状态时调用login接口。
+    V2NIM_LOGIN_STATUS_LOGOUT                           = 0,
+    /// 已登录
+    V2NIM_LOGIN_STATUS_LOGINED                          = 1,
+    /// 登录中（包括连接到服务器和与服务器进行登录鉴权）
+    V2NIM_LOGIN_STATUS_LOGINING                         = 2,
+    /// 未登录，但登录未终止，SDK会尝试重新登录。建议：不需要在此状态时调用login接口
+    V2NIM_LOGIN_STATUS_UNLOGIN                          = 3,
+    */
     func onLoginStatus(_ status: V2NIMLoginStatus) {
         print("IM onLoginStatus = \(status.rawValue)")
+        RLSDKManager.shared.imDelegate?.onLoginStatus(status.rawValue)
     }
     
     func onKickedOffline(_ detail: V2NIMKickedOfflineDetail) {
         print("IM onKickedOffline = \(detail.description)")
+        RLSDKManager.shared.imDelegate?.onKickedOffline()
     }
     
     func onLoginClientChanged(_ change: V2NIMLoginClientChange, clients: [V2NIMLoginClient]?) {

@@ -30,5 +30,7 @@ public class RLLoginParma: NSObject {
     public var countryCode: String = "MY"
     
     public var languageCode: String = "en"
+    /// 请求头 appname
+    public var appName: String = ""
     
 }

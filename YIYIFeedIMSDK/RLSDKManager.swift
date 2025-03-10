@@ -64,6 +64,12 @@ public protocol TGMessageDelegate: AnyObject {
     func openRedPackect(transactionType: TGTransactionType, fromUser: String, toUser: String, numberOfMember: Int, teamId: String?, completion: TGTransactionFinishClosure?)
     ///  openMsgRequestChat
     func openMsgRequestChat(userinfoJsonString: String)
+    /// 被踢下线
+    func onKickedOffline()
+    /// 登陆失败
+    func onLoginFailed()
+    /// 登陆状态
+    func onLoginStatus(_ status: Int)
 }
 
 public class RLSDKManager: NSObject {
@@ -71,6 +77,7 @@ public class RLSDKManager: NSObject {
     public static let shared = RLSDKManager()
     
     var loginParma: RLLoginParma?
+    var appKey: String = ""
     
     public weak var imDelegate: TGMessageDelegate?
     // 云信 appKey
@@ -78,6 +85,9 @@ public class RLSDKManager: NSObject {
         RLNIMSDKManager.shared.setupNIMSDK(appKey: appKey)
         IMNotificationCenter.sharedCenter.start()
         setupIQKeyboardManager()
+        UIImage.swizzleImageNamed
+        UIButton.swizzleButtonImageMethods
+        self.appKey = appKey
     }
     
     public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping ()->Void){
@@ -116,5 +126,13 @@ public class RLSDKManager: NSObject {
         TGIMUnreadCountManager.shared.getRequestlistCountAllUnreadCount { count in
             completion(count)
         }
+    }
+    /// im 退出登陆
+    public func outLoginIM() {
+        RLNIMSDKManager.shared.logout()
+    }
+    /// 停止屏幕共享扩展进程
+    public func stopBroadcastExtension() {
+        RLNIMSDKManager.shared.stopBroadcastExtension()
     }
 }

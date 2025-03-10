@@ -24,13 +24,13 @@ class TGNetworkManager {
         let accessToken = UserDefaults.standard.string(forKey: "TG_ACCESS_TOKEN") ?? ""
         return [
             "Authorization" : "Bearer \(accessToken)",
-            "X-Client-App-Name": "rewards_link",
+            "X-Client-App-Name": RLSDKManager.shared.loginParma?.appName ?? "rewards_link",
             "X-Client-Type": "iOS",
-            "X-Device-Language": "zh-CN",
+            "X-Device-Language": TGLocalizationManager.getCurrentLanguage(),
             "Accept": "application/json",
             "X-Client-Version": "2.0.4",
             "Content-Type": "application/json",
-            "Accept-Language": "zh-CN"
+            "Accept-Language": TGLocalizationManager.getCurrentLanguage()
         ]
     }()
     
