@@ -65,7 +65,7 @@ public protocol TGMessageDelegate: AnyObject {
     ///  openMsgRequestChat
     func openMsgRequestChat(userinfoJsonString: String)
     /// 被踢下线
-    func onKickedOffline()
+    func onKickedOffline(clientType: Int, reason: Int)
     /// 登陆失败
     func onLoginFailed()
     /// 登陆状态

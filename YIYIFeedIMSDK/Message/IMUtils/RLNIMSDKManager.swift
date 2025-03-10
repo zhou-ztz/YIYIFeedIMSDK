@@ -133,10 +133,13 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         print("IM onLoginStatus = \(status.rawValue)")
         RLSDKManager.shared.imDelegate?.onLoginStatus(status.rawValue)
     }
-    
+    /*V2NIM_KICKED_OFFLINE_REASON_CLIENT_EXCLUSIVE        = 1,  ///<被另外一个客户端踢下线 (互斥客户端一端登录挤掉上一个登录中的客户端)
+     V2NIM_KICKED_OFFLINE_REASON_SERVER                  = 2,  ///<被服务器踢下线
+     V2NIM_KICKED_OFFLINE_REASON_CLIENT                  = 3,  ///<被另外一个客户端手动选择踢下线
+     */
     func onKickedOffline(_ detail: V2NIMKickedOfflineDetail) {
         print("IM onKickedOffline = \(detail.description)")
-        RLSDKManager.shared.imDelegate?.onKickedOffline()
+        RLSDKManager.shared.imDelegate?.onKickedOffline(clientType: detail.clientType.rawValue, reason: detail.reason.rawValue)
     }
     
     func onLoginClientChanged(_ change: V2NIMLoginClientChange, clients: [V2NIMLoginClient]?) {
