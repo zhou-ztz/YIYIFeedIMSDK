@@ -178,3 +178,14 @@ class MessageDetailModel: Mappable {
 //        return object
 //    }
 }
+
+class TGMessageRequestCountModel: Mappable {
+    var count: Int = 0
+    
+    required init?(map: Map) {
+    }
+    
+    func mapping(map: Map) {
+        count <- map["count"]
+    }
+}

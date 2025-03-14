@@ -36,9 +36,9 @@ class TGIMUnreadCountManager: NSObject {
             group.leave()
         }
         group.enter()
-        TGIMNetworkManager.getRequestMessage(limit: 200, after: 0) { requestList, error in
-            if let requestList = requestList {
-                count = count + requestList.count
+        TGIMNetworkManager.getRequestUnreadCount { model, error in
+            if let model = model {
+                count = count + model.count
             }
             group.leave()
         }

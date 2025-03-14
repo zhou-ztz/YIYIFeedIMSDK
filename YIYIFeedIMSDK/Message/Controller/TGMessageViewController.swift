@@ -38,6 +38,7 @@ public class TGMessageViewController: TGViewController {
         checkWebIsOnline()
         commonUI()
         NotificationCenter.default.addObserver(self, selector: #selector(updateConversationUnreadCount), name: NSNotification.Name("updateConversationUnreadCount"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(checkWebIsOnline), name: NSNotification.Name("checkWebIsOnline"), object: nil)
     }
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -137,7 +138,7 @@ public class TGMessageViewController: TGViewController {
     }
     
     ///判断网页端是否在线
-    func checkWebIsOnline(){
+    @objc func checkWebIsOnline(){
         if let clients = NIMSDK.shared().v2LoginService.getLoginClients(), clients.count > 0 {
             for client in clients {
                 if client.type == .LOGIN_CLIENT_TYPE_WEB {

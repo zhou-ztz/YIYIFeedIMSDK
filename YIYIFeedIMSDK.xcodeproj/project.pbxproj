@@ -223,6 +223,8 @@
 		B193FCE02D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B193FC9A2D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m */; };
 		B193FCE12D6EB5A500BEB3F7 /* TZImagePickerController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B193FCA02D6EB5A500BEB3F7 /* TZImagePickerController.bundle */; };
 		B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */; };
+		B193FD2E2D81753600BEB3F7 /* TGIMClientsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD2D2D81753600BEB3F7 /* TGIMClientsViewController.swift */; };
+		B193FD302D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD2F2D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift */; };
 		B1DA58EE2D37882800F83914 /* TGIMUnreadCountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */; };
 		B1DA58FA2D38B76A00F83914 /* TGMessageRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */; };
 		B1DA58FC2D38D25B00F83914 /* TGMessageRequestViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */; };
@@ -767,6 +769,8 @@
 		B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZLEditVideoController.m; sourceTree = "<group>"; };
 		B193FCF82D703B4B00BEB3F7 /* YIYIFeedIMSDK.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = YIYIFeedIMSDK.modulemap; sourceTree = "<group>"; };
 		B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMMediaRecordController.swift; sourceTree = "<group>"; };
+		B193FD2D2D81753600BEB3F7 /* TGIMClientsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMClientsViewController.swift; sourceTree = "<group>"; };
+		B193FD2F2D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNTESMutiClientsCell.swift; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1212,6 +1216,7 @@
 				B193FC0F2D65ACCD00BEB3F7 /* TGIMAudioLanguageController.swift */,
 				B193FC152D65B88200BEB3F7 /* TGVoiceToTextIMViewController.swift */,
 				B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */,
+				B193FD2D2D81753600BEB3F7 /* TGIMClientsViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1368,6 +1373,7 @@
 				B193FBFD2D63061E00BEB3F7 /* TGIMNotificationCell.swift */,
 				B193FC062D646F1400BEB3F7 /* TGUserSearchListMoreCell.swift */,
 				B193FC112D65AD2A00BEB3F7 /* TGProfileLanguageListCell.swift */,
+				B193FD2F2D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -2436,6 +2442,7 @@
 				8A9F0D932CF430FE0021462C /* TGNIMInputEmoticonManager.swift in Sources */,
 				8A9F0D9B2CF4464F0021462C /* SCCustomNavigationBar.swift in Sources */,
 				8A9F0EA22CF6F7D00021462C /* TimerHolder.swift in Sources */,
+				B193FD2E2D81753600BEB3F7 /* TGIMClientsViewController.swift in Sources */,
 				D7FEF9C22D55BE8C00FF87E8 /* TGAlertContentView.swift in Sources */,
 				D711C84D2D1BEAA1004EA26B /* TGFeedSDKManager.swift in Sources */,
 				D711C84E2D1BEAA1004EA26B /* TGUtil.swift in Sources */,
@@ -2691,6 +2698,7 @@
 				8A4BB3B12D111EA900AAB4B8 /* TGGalleryViewController.swift in Sources */,
 				8A9F0DBE2CF451E90021462C /* ImageCompress.swift in Sources */,
 				B1EABCAD2D35081000EB7868 /* IMSendMsgIndicator.swift in Sources */,
+				B193FD302D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift in Sources */,
 				D7FEF9C02D55BC2D00FF87E8 /* ScreenExtensions.swift in Sources */,
 				F53D556A2D0AB0FA0021BF2C /* (null) in Sources */,
 				8A9F0D682CF42A290021462C /* RLTableView.swift in Sources */,

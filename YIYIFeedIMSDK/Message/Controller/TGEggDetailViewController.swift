@@ -85,7 +85,7 @@ class TGEggDetailViewController: TGViewController {
         redPacketFromLabel.textColor = .white
         
         avatarImageView.image = UIImage(named: "avatar")
-        avatarImageView.contentMode = .scaleAspectFit
+        avatarImageView.contentMode = .scaleAspectFill
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         

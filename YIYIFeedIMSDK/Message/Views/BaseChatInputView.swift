@@ -76,7 +76,8 @@ class BaseChatInputView: UIView {
     var menuHeight = 50.0
     var contentHeight = 234.0 + TSBottomSafeAreaHeight
     
-    var maxTextViewHeight = 108.0
+    var maxTextViewHeight = 100.0
+    var textViewHeight: CGFloat = 40
     
     var conversationType: V2NIMConversationType = .CONVERSATION_TYPE_P2P
 
@@ -85,7 +86,7 @@ class BaseChatInputView: UIView {
         stack.distribution = .fill
         stack.axis = .horizontal
         stack.spacing = 6
-        stack.alignment = .center
+        stack.alignment = .bottom
         return stack
     }()
     
@@ -277,7 +278,7 @@ class BaseChatInputView: UIView {
         barStackView.snp.makeConstraints { make in
             make.left.equalTo(8)
             make.top.equalTo(5)
-            make.height.equalTo(40)
+            //make.height.equalTo(40)
             make.right.equalTo(-8)
         }
         textfieldView.snp.makeConstraints { make in
@@ -289,6 +290,8 @@ class BaseChatInputView: UIView {
             make.left.equalTo(8)
             make.bottom.top.equalTo(0)
             make.right.equalTo(-44)
+            make.height.equalTo(40)
+            
         }
         
         stickerBtn.snp.makeConstraints { make in
@@ -543,6 +546,24 @@ class BaseChatInputView: UIView {
             self.delegate?.moreLanguageButtonTapped?()
         }
     }
+    
+    func updateUI(textHeight: CGFloat) {
+        
+        if textHeight > maxTextViewHeight {
+            textViewHeight = maxTextViewHeight
+        } else if textHeight < 40  {
+            textViewHeight = 40
+        } else {
+            textViewHeight = textHeight
+        }
+        textView.snp.remakeConstraints { make in
+            make.left.equalTo(8)
+            make.bottom.top.equalTo(0)
+            make.right.equalTo(-44)
+            make.height.equalTo(textViewHeight)
+            
+        }
+    }
 }
 
 extension BaseChatInputView: UITextViewDelegate {
@@ -562,9 +583,11 @@ extension BaseChatInputView: UITextViewDelegate {
         let selectedRange = textView.markedTextRange
         if selectedRange == nil {
             HTMLManager.shared.formatTextViewAttributeText(textView)
-            return
+           // return
         }
-        
+
+        let height = textView.text.heightWithConstrainedWidth(width: ScreenWidth - 152, font: UIFont.systemFont(ofSize: 16))
+        self.updateUI(textHeight: height)
         delegate?.textFieldDidChange(textView)
     }
     
@@ -693,53 +716,6 @@ extension BaseChatInputView: ChatMoreViewDelegate {
     }
 }
 
-//extension BaseChatInputView: TGInputEmoticonContainerViewDelegate {
-//    func selectedEmoticon(emoticonID: String, emotCatalogID: String, description: String) {
-//        if emoticonID.isEmpty { // 删除键
-//            textView.deleteBackward()
-//            print("delete ward")
-//        } else {
-//            if let font = textView.font {
-//                let attribute = TGNEEmotionTool.getAttWithStr(
-//                    str: description,
-//                    font: font,
-//                    CGPoint(x: 0, y: -4)
-//                )
-//                print("attribute : ", attribute)
-//                let mutaAttribute = NSMutableAttributedString()
-//                if let origin = textView.attributedText {
-//                    mutaAttribute.append(origin)
-//                }
-//                attribute.enumerateAttribute(
-//                    NSAttributedString.Key.attachment,
-//                    in: NSMakeRange(0, attribute.length)
-//                ) { value, range, stop in
-//                    if let neAttachment = value as? TGNEEmotionAttachment {
-//                        print("ne attachment bounds ", neAttachment.bounds)
-//                    }
-//                }
-//                mutaAttribute.append(attribute)
-//                mutaAttribute.addAttribute(
-//                    NSAttributedString.Key.font,
-//                    value: font,
-//                    range: NSMakeRange(0, mutaAttribute.length)
-//                )
-//                textView.attributedText = mutaAttribute
-//                textView.scrollRangeToVisible(NSMakeRange(textView.attributedText.length, 1))
-//            }
-//        }
-//    }
-//    
-//    func didPressSend(sender: UIButton) {
-//        guard let text = getRealSendText(textView.attributedText) else {
-//            return
-//        }
-//        delegate?.sendText(text: text, attribute: textView.attributedText)
-//        textView.text = ""
-//    }
-//    
-//    
-//}
 // MARK: 录音
 extension BaseChatInputView: UIGestureRecognizerDelegate {
     

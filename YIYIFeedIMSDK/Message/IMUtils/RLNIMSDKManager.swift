@@ -117,7 +117,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     
     /// V2NIMLoginListener
     func onLoginFailed(_ error: V2NIMError) {
-        print("IM onLoginFailed")
+        print("IM onLoginFailed = \(error.nserror.localizedDescription)")
         RLSDKManager.shared.imDelegate?.onLoginFailed()
     }
     /** 登出状态，SDK初始化时，或调用logout接口后，或登录已终止（被踢下线或遇到无法继续登录的错误）。建议：在此状态时调用login接口。
@@ -143,7 +143,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     }
     
     func onLoginClientChanged(_ change: V2NIMLoginClientChange, clients: [V2NIMLoginClient]?) {
-        
+        NotificationCenter.default.post(name: NSNotification.Name("checkWebIsOnline"), object: nil)
     }
 }
 

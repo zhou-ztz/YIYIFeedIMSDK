@@ -103,7 +103,7 @@ import UIKit
     var isFirstTimeLaunch: Bool = false
     var previousCenter: CGPoint?
     private var isButtonsAnimating = false
-    var isCamera: Bool = false
+    public var isCamera: Bool = false
     
     var stickersViewController = StickersViewController()
 

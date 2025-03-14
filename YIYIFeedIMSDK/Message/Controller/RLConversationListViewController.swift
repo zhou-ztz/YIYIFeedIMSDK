@@ -63,16 +63,22 @@ public class RLConversationListViewController: TGViewController {
         tableView.mj_header = SCRefreshHeader(refreshingTarget: self, refreshingAction: #selector(getConversationList))
         tableView.mj_footer = SCRefreshFooter(refreshingTarget: self, refreshingAction: #selector(loadmoreConversationList))
         tableView.mj_footer.isHidden = true
-        
+        getConversationList()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateWebLoggedInHeader(notice:)), name: Notification.Name(rawValue: "isWebLoggedIn"), object: nil)
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getConversationList()
     }
     
     deinit{
 
+    }
+    @objc func updateWebLoggedInHeader(notice: NSNotification) {
+        guard let flag: Bool = (notice.userInfo?["isLogIn"] ?? false) as? Bool else { return }
+        
+        isWebLoggedIn = flag
+        tableView.reloadData()
     }
     
     @objc func getConversationList() {
@@ -112,6 +118,11 @@ public class RLConversationListViewController: TGViewController {
                 }
             }
         }
+    }
+    
+    @objc func isWebLoggedInTapped () {
+//        let vc = TGIMClientsViewController()
+//        self.navigationController?.pushViewController(vc, animated: true)
     }
 
 }
@@ -215,18 +226,6 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
             let isMute = recentSession.mute
             let mute = UIContextualAction(style: .normal, title: "") { [weak self] (action, sourceView, completionHandler) in
                 
-//                NIMSDK.shared().v2ConversationService.muteConversation(recentSession.conversationId, mute: isMute) {[weak self] in
-//                    DispatchQueue.main.async {
-//                        self?.tableView.setEditing(false, animated: true)
-//                        self?.tableView.reloadRow(at: indexPath, with: .none)
-//                    }
-//                    completionHandler(true)
-//                } failure: {[weak self] error in
-//                    DispatchQueue.main.async {
-//                        self?.tableView.setEditing(false, animated: true)
-//                    }
-//                }
-                
                 if recentSession.type == .CONVERSATION_TYPE_TEAM {
                     let teamId = MessageUtils.conversationTargetId(recentSession.conversationId)
                     let muteMode: V2NIMTeamMessageMuteMode = isMute ? .TEAM_MESSAGE_MUTE_MODE_OFF : .TEAM_MESSAGE_MUTE_MODE_ON
@@ -272,6 +271,37 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
+    }
+    
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if isWebLoggedIn {
+            let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.width, height: 40))
+            headerView.backgroundColor = UIColor(hex: 0xefefef)
+            let label = UILabel(frame: CGRect(x: 16, y: 0, width: headerView.width, height: headerView.height))
+            label.font = UIFont.systemRegularFont(ofSize: 14)
+            label.textColor = UIColor.lightGray
+            label.text = String(format: "multiport_logged_in".localized, "rw_multiport_platform_web".localized)
+            
+            let imageView = UIImageView(frame: CGRect(x: headerView.width - 25, y: 8, width: 25, height: 25))
+            imageView.image = UIImage(named: "ic_calendar_right_angle")
+            imageView.contentMode = .scaleAspectFit
+            
+            headerView.addSubview(label)
+            headerView.addSubview(imageView)
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(isWebLoggedInTapped))
+            headerView.addGestureRecognizer(tap)
+            
+            return headerView
+        }
+        return nil
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if isWebLoggedIn {
+            return 40
+        }
+        return 0
     }
 }
 

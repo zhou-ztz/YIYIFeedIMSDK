@@ -165,6 +165,7 @@ public class TGChatViewController: TGViewController {
     /// 置顶view
     var pinnedView: IMPinnedView?
     var pinnedAlert: TGAlertController?
+    let pinnedViewHeight = 50.0
     
     lazy var nonfriendBottomView = NonFriendBottomView()
     lazy var leaveGroupBottomView = LeaveGroupBottomView()
@@ -193,6 +194,8 @@ public class TGChatViewController: TGViewController {
     var mentionsUsernames = [AutoMentionsUser]()
     
     var dependVC : UIViewController!
+    
+    var keyBoardHeight: CGFloat = TSBottomSafeAreaHeight
   
     public init(conversationId: String, conversationType: Int) {
         let type = V2NIMConversationType(rawValue: conversationType) ?? .CONVERSATION_TYPE_P2P
@@ -274,6 +277,7 @@ public class TGChatViewController: TGViewController {
             .userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         
         print("chat view key board size : ", keyboardRect)
+        keyBoardHeight = keyboardRect.size.height
         layoutInputView(offset: keyboardRect.size.height)
         weak var weakSelf = self
         UIView.animate(withDuration: 0.25, animations: {
@@ -918,17 +922,21 @@ public class TGChatViewController: TGViewController {
         UIView.animate(withDuration: 0.15, animations: {
             
             var frame = self.chatInputView.frame
-            frame.origin.y = self.backBaseView.bounds.height - self.normalInputHeight - offset
+           // frame.origin.y = self.backBaseView.bounds.height - self.normalInputHeight - offset
+            frame.origin.y = self.backBaseView.bounds.height - (self.chatInputView.textViewHeight + 10) - offset
             self.chatInputView.frame = frame
             self.scrollTableViewToBottom()
-            var contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: offset - TSBottomSafeAreaHeight, right: 0)
+            
+            let insetBottom = offset - TSBottomSafeAreaHeight + (self.chatInputView.textViewHeight + 10 - self.normalInputHeight)
+            
+            var contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: insetBottom, right: 0)
             if self.viewmodel.isReplying {
                 self.replyView?.snp.remakeConstraints { make in
                     make.bottom.equalTo(self.chatInputView.snp.top)
                     make.height.equalTo(rePlyHeight)
                     make.left.right.equalTo(0)
                 }
-                contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: offset - TSBottomSafeAreaHeight + rePlyHeight, right: 0)
+                contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: insetBottom + rePlyHeight, right: 0)
             }
             self.tableView.contentInset = contentInsets
             self.tableView.scrollIndicatorInsets = contentInsets
@@ -1299,7 +1307,7 @@ public class TGChatViewController: TGViewController {
             allStackView.insertArrangedSubview(pinnedView!, at: 1)
             pinnedView?.snp.makeConstraints { make in
                 make.left.right.equalToSuperview()
-                make.height.equalTo(50)
+                make.height.equalTo(pinnedViewHeight)
             }
             pinnedView?.delegate = self
             pinnedView?.addAction(action: { [weak self] in
@@ -1376,14 +1384,10 @@ public class TGChatViewController: TGViewController {
     
     func updateUI(isPinned: Bool = false){
         backBaseView.layoutIfNeeded()
-        if isPinned {
-            tableView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight - 50)
-            chatInputView.frame = CGRect(x: 0, y: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight - 50.0, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
-        } else {
-            
-            tableView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight)
-            chatInputView.frame = CGRect(x: 0, y: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
-        }
+        let inputY = backBaseView.bounds.height - (chatInputView.textViewHeight + 10) - TSBottomSafeAreaHeight
+        let chatInputViewY: CGFloat = isPinned ? inputY - pinnedViewHeight : inputY
+        tableView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: chatInputViewY)
+        chatInputView.frame = CGRect(x: 0, y: chatInputViewY, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
     }
     
     @objc func handleCustomNotification(_ notification: Notification) {
@@ -2534,7 +2538,23 @@ extension TGChatViewController: ChatInputViewDelegate {
     }
     
     func textFieldDidChange(_ textField: UITextView) {
+        let offset = keyBoardHeight
+        var frame = self.chatInputView.frame
+        frame.origin.y = self.backBaseView.bounds.height - (self.chatInputView.textViewHeight + 10) - offset
+        self.chatInputView.frame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.size.width, height: (self.chatInputView.textViewHeight + 10) + self.chatInputView.contentHeight)
+        let insetBottom = offset - TSBottomSafeAreaHeight + (self.chatInputView.textViewHeight + 10 - self.normalInputHeight)
         
+        var contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: insetBottom, right: 0)
+        if self.viewmodel.isReplying {
+            self.replyView?.snp.remakeConstraints { make in
+                make.bottom.equalTo(self.chatInputView.snp.top)
+                make.height.equalTo(rePlyHeight)
+                make.left.right.equalTo(0)
+            }
+            contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: insetBottom + rePlyHeight, right: 0)
+        }
+        self.tableView.contentInset = contentInsets
+        self.tableView.scrollIndicatorInsets = contentInsets
     }
     
     func textFieldDidEndEditing(_ textField: UITextView) {
@@ -2547,9 +2567,8 @@ extension TGChatViewController: ChatInputViewDelegate {
     
     // MARK: Audio
     func onStartRecording() {
-        //RLAuthManager.shared.checkRecordPermission()
-        if NIMSDK.shared().mediaManager.isPlaying() {
-            NIMSDK.shared().mediaManager.stopPlay()
+        if let audioPlayer = self.viewmodel.audioPlayer , audioPlayer.isPlaying {
+            audioPlayer.stop()
         }
         chatInputView.recognizedText = ""
         chatInputView.recording = true
@@ -2928,7 +2947,5 @@ extension TGChatViewController: TGJoinMeetingViewModelDelegate {
     func leaveMeetingRoom() {
         self.timer?.stopTimer()
         self.timeView?.removeFromSuperview()
-    }
-    
-    
+    } 
 }

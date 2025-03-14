@@ -202,7 +202,7 @@ class TGIMNetworkManager: NSObject {
         }
     }
     
-    ///  获取 个人请求添加好友消息列表
+    ///  获取 个人请求消息列表
     class func getRequestMessage(limit: Int = 20, after: Int = 0, completion: @escaping (_ requestList: [TGMessageRequestModel]?, _ error: Error?) ->Void ) {
         let path = "api/v2/user/message/pendingRequest?limit=\(limit)&after=\(after)"
         TGNetworkManager.shared.request(
@@ -219,6 +219,34 @@ class TGIMNetworkManager: NSObject {
                 let pinned = Mapper<TGMessageRequestModel>().mapArray(JSONString: jsonString)
                 DispatchQueue.main.async {
                     completion(pinned, nil)
+                }
+            } else {
+                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    completion(nil, nserror)
+                }
+            }
+            
+            
+        }
+    }
+    // 获取 个人请求消息列表未读数
+    class func getRequestUnreadCount(completion: @escaping (_ requestList: TGMessageRequestCountModel?, _ error: Error?) ->Void ) {
+        let path = "api/v2/user/message/pendingRequestCount"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .GET,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(nil, error)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<TGMessageRequestCountModel>().map(JSONString: jsonString)
+                DispatchQueue.main.async {
+                    completion(model, nil)
                 }
             } else {
                 let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])

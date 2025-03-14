@@ -36,6 +36,8 @@ class TGMessageRequestListController: TGViewController {
         tb.backgroundColor = .white
         return tb
     }()
+    
+    var requestUnreadCount: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +79,10 @@ class TGMessageRequestListController: TGViewController {
             self?.tableRefresh()
         }
         viewmodel.getTeamJoinActions { error in
+        }
+        
+        TGIMNetworkManager.getRequestUnreadCount {[weak self] model, error in
+            self?.requestUnreadCount = model?.count ?? 0
         }
     }
     
@@ -140,7 +146,9 @@ class TGMessageRequestListController: TGViewController {
                 }
             }
             
-            self.sliderView.updateUnreadCount(count: self.viewmodel.requestList.count, index: 0)
+            
+            
+            self.sliderView.updateUnreadCount(count: self.requestUnreadCount, index: 0)
             self.sliderView.updateUnreadCount(count: self.viewmodel.filterNotifications.count, index: 1)
             self.tableView.reloadData()
         }

@@ -33,15 +33,14 @@ class TGMessageData: NSObject {
     var customAttachment: CustomAttachment?
     //是否置顶
     var isPinned: Bool = false
-    // 文本是否在 底部
-   // var atBottom: Bool = true
+
     var messageList: [TGMessageData] = []
     // 是否被翻译
     var isTranslated: Bool = false
-    //  p2p 对方是否已读
+    // 对方是否已读
     var unreadCount: Int = 1
     var readCount: Int = 0
-    //modifyTime
+    
     init(nimMessageModel: V2NIMMessage? = nil, showName: Bool? = nil, messageType: V2NIMMessageType = .MESSAGE_TYPE_TEXT, messageTime: TimeInterval = 0, type: TGChatMessageType, replyText: String = "") {
         self.nimMessageModel = nimMessageModel
         self.showName = showName
@@ -54,9 +53,6 @@ class TGMessageData: NSObject {
             self.customType = attachmentType
             self.customAttachment = attachment
         }
-//        if let message = nimMessageModel , message.messageType == .MESSAGE_TYPE_TEXT {
-//            atBottom = MessageUtils.timeShowAtBottom(messageModel: message)
-//        }
     }
     
     convenience init(_ messageModel: V2NIMMessage) {
