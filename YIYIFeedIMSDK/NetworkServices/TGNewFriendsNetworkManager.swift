@@ -80,7 +80,7 @@ class TGNewFriendsNetworkManager: NSObject {
         }
     }
     
-    /// 搜索好友 user/follow-mutual
+    /// 关注的商家用户
     class func searchMyMerchant(offset: Int?, keyWordString: String?, extras:String = "", filterMerchants: String = "", completion: @escaping ((_ users: [UserInfoModel]?, _ error: Error?) -> Void)){
         let path = "api/v2/user/followings"
         var parameter: [String: Any] = ["offset": 0, "extras":extras, "limit": TGNewFriendsNetworkManager.limit]
@@ -167,4 +167,37 @@ class TGNewFriendsNetworkManager: NSObject {
         }
     }
 
+    /// 关注 、取消关注
+    class func followUser(_ type: FollowStatus, userID: Int, completion: @escaping (_ status: Bool) -> Void) {
+        let path = "api/v2/user/followings/\(userID.stringValue)"
+        var method: HTTPMethod = .PUT
+        if type == .follow {
+            method = .PUT
+        } else {
+            method = .DELETE
+        }
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: method,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(false)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                DispatchQueue.main.async {
+                    completion(true)
+                }
+            } else {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+            }
+            
+        }
+    }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import ObjectMapper
 
 class PictureModeler {
 
@@ -63,21 +64,21 @@ class PaidPictureModel: PictureModeler {
         super.init()
         assert(model.file >= 0)
         file = model.file
-//        url = model.file.imageUrl()
+        url = model.file.imageUrl()
         originalSize = model.size
         shouldShowLongicon = true
         mimeType = model.mimeType
     }
 
-//    /// 初始化帖子列表图片
-//    init(topicPostImageModel model: TopicPostImageModel) {
-//        super.init()
-//        file = model.id
-//        url = model.id.imageUrl()
-//        originalSize = model.size
-//        shouldShowLongicon = true
-//        mimeType = model.mimeType
-//    }
+    /// 初始化帖子列表图片
+    init(topicPostImageModel model: TopicPostImageModel) {
+        super.init()
+        file = model.id
+        url = model.id.imageUrl()
+        originalSize = model.size
+        shouldShowLongicon = true
+        mimeType = model.mimeType
+    }
 
 
 //    // MARK: - 等我把 ImageObject 删了，就可以吧这两个方法也删了
@@ -109,5 +110,24 @@ class PaidPictureModel: PictureModeler {
 //        vendor = object.vendor
 //        url = object.storageIdentity.imageUrl()
 //    }
+}
+
+class TopicPostImageModel: Mappable {
+
+    /// 图片 id
+    var id = 0
+    /// 图片大小
+    var size: CGSize = .zero
+    /// 图片类型
+    var mimeType: String = ""
+
+    required init?(map: Map) {
+    }
+
+    func mapping(map: Map) {
+        id <- map["id"]
+        size <- (map["size"], CGSizeTransform())
+        mimeType <- map["mime"]
+    }
 }
 

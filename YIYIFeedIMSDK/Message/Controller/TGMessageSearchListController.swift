@@ -275,16 +275,12 @@ class TGMessageSearchListController: TGViewController {
         SVProgressHUD.show()
         let extras = TGAppUtil.getUserID(remarkName: keyword)
         TGNewFriendsNetworkManager.searchMyFriend(offset: 0, keyWordString: keyword, extras: extras) {[weak self] userModels, error in
-            
+            SVProgressHUD.dismiss()
             guard let users = userModels, let self = self else {
-                DispatchQueue.main.async {
-                    SVProgressHUD.dismiss()
-                }
                 return
             }
             self.searchUserList = users
             DispatchQueue.main.async {
-                SVProgressHUD.dismiss()
                 self.refresh()
             }
         }

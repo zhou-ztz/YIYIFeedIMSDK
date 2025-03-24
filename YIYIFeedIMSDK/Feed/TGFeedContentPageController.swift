@@ -101,6 +101,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
         }
         
         interactiveView.onVoucherTouched = { [weak self] in
+            RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: dataModel.tagVoucher?.taggedVoucherId ?? 0)
 //            let vc = VoucherDetailViewController()
 //            vc.voucherId = dataModel.tagVoucher?.taggedVoucherId ?? 0
 //            self?.navigationController?.pushViewController(vc, animated: true)
@@ -111,11 +112,13 @@ class TGFeedContentPageController: TGBaseContentPageController {
         interactiveView.onTapHiddenUpdate = self.onTapHiddenUpdate
         
         interactiveView.onLocationViewTapped = { [unowned self] (locationID, locationName) in
+            RLSDKManager.shared.feedDelegate?.onLocationViewTapped(locationID: locationID, locationName: locationName)
 //            let locationVC = TSLocationDetailVC(locationID: locationID, locationName: locationName)
 //            self.navigationController?.pushViewController(locationVC, animated: true)
         }
         
         interactiveView.onTopicViewTapped = { [unowned self] topicID in
+            RLSDKManager.shared.feedDelegate?.onTopicViewTapped(groupId: topicID)
 //            let topicVC = TopicPostListVC(groupId: topicID)
 //            if #available(iOS 11, *) {
 //                self.navigationController?.pushViewController(topicVC, animated: true)
@@ -147,6 +150,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
         }
         
         interactiveView.onSearchPageTapped =  { [unowned self] hashtagString in
+            RLSDKManager.shared.feedDelegate?.onSearchPageTapped(hashtag: hashtagString)
 //            let vc = RLSearchResultVC()
 //            vc.initialSearchType = .feed
 //            let nav = TSNavigationController(rootViewController: vc).fullScreenRepresentation
@@ -191,7 +195,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
     
     private func updateInteractiveView(isEdit: Bool? = nil) {
         interactiveView.updateTimeAndView(date: dataModel.time , views: (dataModel.toolModel?.viewCount).orZero, isEdit: isEdit ?? false)
-//        interactiveView.updateUser(user: dataModel.userInfo)
+        interactiveView.updateUser(user: dataModel.userInfo)
         interactiveView.updateUserAvatar(avatar: dataModel.avatarInfo)
         interactiveView.updateSponsorStatus(dataModel.isSponsored)
         //Rewardslink hidden topic view
@@ -217,11 +221,11 @@ class TGFeedContentPageController: TGBaseContentPageController {
             interactiveView.updateTranslateText()
         }
         
-//        if let user = UserInfoModel.retrieveUser(username: (dataModel.userInfo?.username).orEmpty) {
-//            interactiveView.updateFollowButton(user.followStatus)
-//        } else {
-//            interactiveView.updateFollowButton(dataModel.userInfo?.followStatus ?? .unfollow)
-//        }
+        if let user = UserInfoModel.retrieveUser(username: (dataModel.userInfo?.username).orEmpty) {
+            interactiveView.updateFollowButton(user.followStatus)
+        } else {
+            interactiveView.updateFollowButton(dataModel.userInfo?.followStatus ?? .unfollow)
+        }
         //评论按钮显示/隐藏逻辑
         if let isCommentDisabled = dataModel.toolModel?.isCommentDisabled {
             interactiveView.updateCommentStatus(isCommentDisabled: isCommentDisabled)
@@ -250,30 +254,16 @@ class TGFeedContentPageController: TGBaseContentPageController {
         
         view.layoutIfNeeded()
         
-//        NotificationCenter.default.add(observer: self, name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil) { [weak self] (noti) in
-//            guard let self = self else { return }
-//            guard let userInfo = noti.userInfo, let followStatus = userInfo["follow"] as? FollowStatus, let uid = userInfo["userid"] as? String else { return }
-//            guard var object = self.dataModel.userInfo else { return }
-//            
-//            if object.userIdentity == uid.toInt() {
-//                if followStatus == .unfollow {
-//                    object.follower = false
-//                } else if followStatus == .follow {
-//                    object.follower = true
-//                }
-//                self.dataModel.userInfo = object
-//                self.interactiveView.updateFollowButton(self.dataModel.userInfo!.followStatus)
-//            }
-//        }
-//        
-//        NotificationCenter.default.addObserver(self, selector: #selector(showReactionBottomSheet), name: NSNotification.Name.Reaction.show, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(newChangeFollowStatus(_:)), name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(showReactionBottomSheet), name: NSNotification.Name.Reaction.show, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.setClearNavBar(shadowColor: .clear)
         //进入页面时将状态栏的字体改为白色
-//        UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
+        UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -287,6 +277,21 @@ class TGFeedContentPageController: TGBaseContentPageController {
         }
         //        TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         //        TGKeyboardToolbar.share.theme = .white
+    }
+    
+    @objc func newChangeFollowStatus(_ notification: Notification) {
+        guard let userInfo = notification.userInfo, let followStatus = userInfo["follow"] as? FollowStatus, let uid = userInfo["userid"] as? String else { return }
+        guard var object = self.dataModel.userInfo else { return }
+        
+        if object.userIdentity == uid.toInt() {
+            if followStatus == .unfollow {
+                object.follower = false
+            } else if followStatus == .follow {
+                object.follower = true
+            }
+            self.dataModel.userInfo = object
+            self.interactiveView.updateFollowButton(self.dataModel.userInfo!.followStatus)
+        }
     }
     
     func setGesture(for controller: TGFeedDetailImageController) {
@@ -345,32 +350,35 @@ class TGFeedContentPageController: TGBaseContentPageController {
     // MARK: - 记录转发
     private func forwardFeed() {
         let feedId = self.dataModel.idindex
-//        self.showLoading()
-//        FeedListNetworkManager.forwardFeed(feedId: feedId) { [weak self] (errMessage, statusCode, status) in
-//            guard let self = self else { return }
-//            defer {
-//                DispatchQueue.main.async {
-//                    self.dismissLoading()
-//                    self.updateForwardCount()
-//                }
-//                //上报动态转发事件
+       // self.showLoading()
+        TGFeedNetworkManager.shared.forwardFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+            guard let self = self else { return }
+            defer {
+                DispatchQueue.main.async {
+                   // self.dismissLoading()
+                    self.updateForwardCount()
+                }
+                //上报动态转发事件
+                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedId.stringValue, itemType: self.dataModel.feedType == .miniVideo ? "shortvideo"  : "image", behaviorType: "forward", moduleId: "feed", pageId: "feed")
 //                EventTrackingManager.instance.trackEvent(
 //                    itemId: feedId.stringValue,
 //                    itemType: self.dataModel.feedType == .miniVideo ? ItemType.shortvideo.rawValue   : ItemType.image.rawValue,
 //                    behaviorType: BehaviorType.forward,
 //                    moduleId: ModuleId.feed.rawValue,
 //                    pageId: PageId.feed.rawValue)
-//                
-//            }
-//            guard status == true else {
-//                if statusCode == 241 {
-//                    self.showDialog(image: nil, title: "fail_to_pin_title".localized, message: "fail_to_pin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
-//                } else {
-//                    self.showError(message: errMessage)
-//                }
-//                return
-//            }
-//        }
+                
+            }
+            guard status == true else {
+                if statusCode == 241 {
+                    self.showDialog(image: nil, title: "fail_to_pin_title".localized, message: "fail_to_pin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                } else {
+                    UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
+
+                }
+                return
+            }
+        }
+
     }
     
     override func finishRefresh() {
@@ -483,98 +491,94 @@ extension TGFeedContentPageController: CustomPopListProtocol {
             self.present(activityVC, animated: true, completion: nil)
         case .save(isSaved: let isSaved):
             let isCollect = (self.dataModel.toolModel?.isCollect).orFalse ? false : true
-//            TSMomentNetworkManager().colloction(isCollect ? 1 : 0, feedIdentity: self.dataModel.idindex, feedItem: self.dataModel) { [weak self] (result) in
-//                if result == true {
-//                    self?.dataModel.toolModel?.isCollect = isCollect
-//                    DispatchQueue.main.async {
-//                        if isCollect {
-//                            self?.showTopFloatingToast(with: "success_save".localized, desc: "")
-//                        }
-//                    }
-//                }
-//                
-//            }
+            TGFeedNetworkManager.shared.colloction(isCollect ? 1 : 0, feedIdentity: self.dataModel.idindex, feedItem: self.dataModel) {[weak self] result in
+                if result == true {
+                    self?.dataModel.toolModel?.isCollect = isCollect
+                    DispatchQueue.main.async {
+                        if isCollect {
+                            self?.showTopFloatingToast(with: "success_save".localized, desc: "")
+                        }
+                    }
+                }
+            }
+
         case .reportPost:
-//            guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: self.dataModel) else { return }
-//            let reportVC: ReportViewController = ReportViewController(reportTarget: reportTarget)
-//            self.present(TSNavigationController(rootViewController: reportVC).fullScreenRepresentation,
-//                         animated: true,
-//                         completion: nil)
+            guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: self.dataModel) else { return }
+            let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
+            self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                         animated: true,
+                         completion: nil)
             break
         case .edit:
-//            let model = self.dataModel
-//            let pictures =  model.pictures.map{ RejectDetailModelImages(fileId: $0.file, imagePath: $0.url ?? "", isSensitive: false, sensitiveType: "")   }
-//            
-//            var vc = TSReleasePulseViewController(isHiddenshowImageCollectionView: false)
-//            
-//            vc.selectedModelImages = pictures
-//            
-//            vc.preText = model.content
-//            
-//            vc.feedId = model.idindex.stringValue
-//            vc.isFromEditFeed = true
-//            
-//            vc.tagVoucher = model.tagVoucher
-//            
-//            if let extenVC = self.configureReleasePulseViewController(detailModel: model, viewController: vc) as? TSReleasePulseViewController{
-//                vc = extenVC
-//            }
-//            
-//            let navigation = TSNavigationController(rootViewController: vc).fullScreenRepresentation
-//            self.present(navigation, animated: true, completion: nil)
+            let model = self.dataModel
+            let pictures =  model.pictures.map{ RejectDetailModelImages(fileId: $0.file, imagePath: $0.url ?? "", isSensitive: false, sensitiveType: "")   }
+            let vc = TGReleasePulseViewController(type: .photo)
+            vc.selectedModelImages = pictures
+            
+            vc.preText = model.content
+            
+            vc.feedId = model.idindex.stringValue
+            vc.isFromEditFeed = true
+            
+            vc.tagVoucher = model.tagVoucher
+
+            _ = self.configureReleasePulseViewController(detailModel: model, releasePulseVC: vc)
+            
+            let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
+            self.present(navigation, animated: true, completion: nil)
             break
         case .deletePost:
-//            self.showRLDelete(title: "rw_delete_action_title".localized, message: "rw_delete_action_desc".localized, dismissedButtonTitle: "delete".localized, onDismissed: { [weak self] in
-//                guard let self = self else { return }
-//                TSMomentNetworkManager().deleteMoment(self.dataModel.idindex) { [weak self] (result) in
-//                    guard let self = self else { return }
-//                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "feedDelete"), object: nil, userInfo: ["feedId": self.dataModel.idindex])
-//                    self.onDelete?()
-//                }
-//            }, cancelButtonTitle: "cancel".localized)
+            self.showRLDelete(title: "rw_delete_action_title".localized, message: "rw_delete_action_desc".localized, dismissedButtonTitle: "delete".localized, onDismissed: { [weak self] in
+                guard let self = self else { return }
+                TGFeedNetworkManager.shared.deleteMoment(self.dataModel.idindex) { [weak self] result in
+                    guard let self = self else { return }
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "feedDelete"), object: nil, userInfo: ["feedId": self.dataModel.idindex])
+                    self.onDelete?()
+                }
+
+            }, cancelButtonTitle: "cancel".localized)
             break
         case .pinTop(isPinned: let isPinned):
-//            let feedId = self.dataModel.idindex
-//            
-//            let networkManager: (Int, @escaping (String, Int, Bool?) -> Void) -> Void = isPinned ? FeedListNetworkManager.unpinFeed: FeedListNetworkManager.pinFeed
-//            
-//            networkManager(feedId) { [weak self] (errMessage, statusCode, status) in
-//                guard let self = self else { return }
-//                guard status == true else {
-//                    if statusCode == 241 {
-//                        self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
-//                    } else {
-//                        self.showError(message: errMessage)
-//                    }
-//                    return
-//                }
-//                
-//                let newPined = !isPinned
-//                
-//                self.dataModel.isPinned = newPined
-//                self.showError(message: newPined ? "feed_pinned".localized : "feed_unpinned".localized)
-//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
-//            }
+            let feedId = self.dataModel.idindex
+            
+            TGFeedNetworkManager.shared.pinFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+                guard let self = self else { return }
+                guard status == true else {
+                    if statusCode == 241 {
+                        self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                    } else {
+                        UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
+                    }
+                    return
+                }
+                
+                let newPined = !isPinned
+                
+                self.dataModel.isPinned = newPined
+                UIViewController.showBottomFloatingToast(with: newPined ? "feed_pinned".localized : "feed_unpinned".localized, desc: "")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
+            }
+            
             break
         case .comment(isCommentDisabled: let isCommentDisabled):
-//            let feedId = self.dataModel.idindex
-//            
-//            let newValue = self.dataModel.toolModel?.isCommentDisabled ?? true ? 0 : 1
-//            
-//            TSMomentNetworkManager().commentPrivacy(newValue, feedIdentity: feedId) { [weak self] success in
-//                guard let self = self else { return }
-//                if success {
-//                    self.dataModel.toolModel?.isCommentDisabled = newValue == 1
-//                    DispatchQueue.main.async {
-//                        if newValue == 1 {
-//                            self.showTopIndicator(status: .success, "disable_comment_success".localized)
-//                        } else {
-//                            self.showTopIndicator(status: .success, "enable_comment_success".localized)
-//                        }
-//                        self.updateInteractiveView(isEdit: true)
-//                    }
-//                }
-//            }
+            let feedId = self.dataModel.idindex
+            
+            let newValue = self.dataModel.toolModel?.isCommentDisabled ?? true ? 0 : 1
+            TGFeedNetworkManager.shared.commentPrivacy(newValue, feedIdentity: feedId) {[weak self] success in
+                guard let self = self else { return }
+                if success {
+                    self.dataModel.toolModel?.isCommentDisabled = newValue == 1
+                    DispatchQueue.main.async {
+                        if newValue == 1 {
+                            self.showTopFloatingToast(with: "disable_comment_success".localized)
+                        } else {
+                            self.showTopFloatingToast(with: "enable_comment_success".localized)
+                           // self.showTopIndicator(status: .success, "enable_comment_success".localized)
+                        }
+                        self.updateInteractiveView(isEdit: true)
+                    }
+                }
+            }
             break
         default:
             break

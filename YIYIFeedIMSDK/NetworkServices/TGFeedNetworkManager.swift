@@ -332,6 +332,23 @@ class TGFeedNetworkManager: NSObject {
         
     }
     
+    func forwardFeed(feedId: Int, completion: @escaping (String, Int, Bool?) -> Void) {
+        let path = "api/v2/feeds/\(feedId)/forward/record"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion("network_problem".localized, 0, false)
+                return
+            }
+            completion("", 0 , true)
+           
+        }
+    }
+    
     func colloction(_ newState: Int, feedIdentity: Int, feedItem: FeedListCellModel?, complete: @escaping ((_ result: Bool) -> Void)) -> Void {
         
         let collectPath = newState == 1 ? "/collections" : "/uncollect"
@@ -355,12 +372,12 @@ class TGFeedNetworkManager: NSObject {
     
     func commentPrivacy(_ newCommentState: Int, feedIdentity: Int, complete: @escaping ((_ result: Bool) -> Void)) -> Void {
         
-        let path = "api/v2/feeds/comments/disable"
-        
+        let path = "api/v2/feeds/\(feedIdentity)/comments/disable"
+        let parametars: [String : Any] = ["disable": newCommentState == 1 ? "1" : "0"]
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,
-            params: nil,
+            params: parametars,
             headers: nil
         ) { data, _, error in
             guard let data = data, error == nil else {
@@ -539,14 +556,9 @@ class TGFeedNetworkManager: NSObject {
         params["privacy"] = privacy
         params["feed_from"] = 3
         params["hot_feed"] = "\(isHotFeed)"
-        var arrayImages: Array<Dictionary<String, Any>> = []
+        
         if let arrImg = images, arrImg.isEmpty == false {
-            for id in arrImg {
-                var dic: Dictionary<String, Any> = [:]
-                dic["id"] = id
-                arrayImages.append(dic)
-            }
-            params["images"] = arrayImages
+            params["images"] = arrImg
         }
 
         if let topics = topics {
@@ -803,4 +815,82 @@ class TGFeedNetworkManager: NSObject {
         }
 
     }
+    
+    //
+    func getReportTypes(completion: @escaping (_ model: TGReportIncidentTypeModel?, _ msg: String?, _ status: Bool) -> Void ) {
+        let path = "api/v2/report/type"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .GET,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(nil, "network_problem".localized, false)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<TGReportIncidentTypeModel>().map(JSONString: jsonString)
+                DispatchQueue.main.async {
+                    completion(model, nil, true)
+                }
+            } else {
+                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    completion(nil, nserror.localizedDescription, false)
+                }
+            }
+           
+        }
+    }
+    
+    func report(type: ReportTargetType, reportTargetId: Int, reportType: Int, reason: String, files: [Int], completion: @escaping (_ msg: String?, _ status: Bool) -> Void) {
+        var path = ""
+        switch type {
+        case .Comment(commentType: let commentType, sourceId: _, groupId: _):
+            path = "api/v2/report/comments/\(reportTargetId.stringValue)"
+            if commentType == .post {
+                path = "api/v2/plus-group/reports/comments/\(reportTargetId.stringValue)"
+            }
+        case .Post:
+            path = "api/v2/plus-group/reports/posts/\(reportTargetId.stringValue)"
+        case .Moment, .Live:
+            path = "api/v2/feeds/\(reportTargetId.stringValue)/reports"
+        case .User:
+            path = "api/v2/report/users/\(reportTargetId.stringValue)"
+        case .Group:
+            path = "api/v2/plus-group/groups/\(reportTargetId.stringValue)/reports"
+        case .Topic:
+            path = "api/v2/user/report-feed-topics/\(reportTargetId.stringValue)"
+        case .News:
+            path = "api/v2/news/\(reportTargetId.stringValue)/reports"
+        }
+        // 2.配置参数
+        var parameters: [String: Any] = [String: Any]()
+        // 有的地方传的参数叫content，有的地方传的参数叫reason，topic：message，不用判断的解决方案
+        parameters.updateValue(reason, forKey: "reason")
+        parameters.updateValue(reason, forKey: "content")
+        parameters.updateValue(reason, forKey: "message")
+        // By Kit Foong (New added report type and images params)
+        parameters.updateValue(reportType, forKey: "report_type")
+        if files.isEmpty == false && files.count > 0 {
+            parameters.updateValue(files, forKey: "images")
+        }
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: parameters,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion("network_problem".localized, false)
+                return
+            }
+            completion("" , true)
+           
+        }
+        
+    }
+    
+    
 }

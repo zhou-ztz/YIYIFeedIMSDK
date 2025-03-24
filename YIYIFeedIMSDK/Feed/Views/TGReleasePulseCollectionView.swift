@@ -88,7 +88,7 @@ class TGReleasePulseCollectionView: UICollectionView, UICollectionViewDataSource
         cell?.payinfoSetBtn.isHidden = true
         // 如果不是最大张数，最后一个item显示的是+按钮
         var isLast = false
-        if let lastImage = imageDatas.last as? UIImage, lastImage == UIImage(named: "IMG_edit_photo_frame") {
+        if let lastImage = imageDatas.last as? UIImage, lastImage == UIImage(named: "img_edit_photo_frame_tg") {
             // 在这里可以执行针对最后一个元素为指定图像的操作
             isLast = true
         }

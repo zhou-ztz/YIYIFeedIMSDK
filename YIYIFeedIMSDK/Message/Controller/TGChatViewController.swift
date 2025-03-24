@@ -11,6 +11,7 @@ import AVFoundation
 import Photos
 import PhotosUI
 import MobileCoreServices
+import SVProgressHUD
 
 
 //@_implementationOnly import IMEngine
@@ -1528,7 +1529,9 @@ public class TGChatViewController: TGViewController {
         guard let attachment = self.eggAttachment, let eggId = Int(attachment.eggId) else { return }
         self.view.isUserInteractionEnabled = false
         let isGroup = self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P ? false : true
+        SVProgressHUD.show()
         TGIMNetworkManager.openEgg(eggId: eggId, isGroup: isGroup) { [weak self] eggResponse, error in
+            SVProgressHUD.dismiss()
             guard let self = self else { return }
             self.view.isUserInteractionEnabled = true
             if error == nil {

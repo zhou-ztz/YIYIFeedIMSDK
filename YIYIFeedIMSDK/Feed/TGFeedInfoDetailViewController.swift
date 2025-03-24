@@ -422,6 +422,40 @@ public class TGFeedInfoDetailViewController: TGViewController {
         TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
         TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: placeholderText)
     }
+    
+    // MARK: - 记录转发
+    private func forwardFeed() {
+        guard let model = model else { return }
+        let feedmodel = FeedListCellModel(from: model)
+        let feedId = feedmodel.idindex
+        //self.showLoading()
+        TGFeedNetworkManager.shared.forwardFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+            guard let self = self else { return }
+            defer {
+                DispatchQueue.main.async {
+                   // self.dismissLoading()
+                    self.loadFeedDetailInfo()
+                }
+                //上报动态转发事件
+//                EventTrackingManager.instance.trackEvent(
+//                    itemId: feedId.stringValue,
+//                    itemType: self.model?.feedType == .miniVideo ? ItemType.shortvideo.rawValue   : ItemType.image.rawValue,
+//                    behaviorType: BehaviorType.forward,
+//                    moduleId: ModuleId.feed.rawValue,
+//                    pageId: PageId.feed.rawValue)
+                
+            }
+            guard status == true else {
+                if statusCode == 241 {
+                    self.showDialog(image: nil, title: "fail_to_pin_title".localized, message: "fail_to_pin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                } else {
+                    UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
+                }
+                return
+            }
+        }
+
+    }
 }
 
 
@@ -529,7 +563,7 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
         switch itemType {
         case .message:
             // 记录转发数
-            //self.forwardFeed()
+            self.forwardFeed()
 
             if let model = self.model {
                 let feedmodel = FeedListCellModel(from: model)
@@ -545,7 +579,7 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
             break
         case .shareExternal:
             // 记录转发数
-            //            self.forwardFeed()
+            self.forwardFeed()
             
             if let model = self.model {
                 let feedmodel = FeedListCellModel(from: model)
@@ -560,123 +594,144 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
             }
             break
         case .save(isSaved: let isSaved):
-//            if let data = self.model {
-//                let isCollect = (data.toolModel?.isCollect).orFalse ? false : true
-//                TSMomentNetworkManager().colloction(isCollect ? 1 : 0, feedIdentity: data.idindex, feedItem: data) { [weak self] (result) in
-//                    if result == true {
-//                        self?.model?.toolModel?.isCollect = isCollect
-//                        DispatchQueue.main.async {
-//                            if isCollect {
-//                                self?.showTopFloatingToast(with: "success_save".localized, desc: "")
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            if let data = self.model {
+                let feedmodel = FeedListCellModel(from: data)
+                let isCollect = (feedmodel.toolModel?.isCollect).orFalse ? false : true
+
+                
+                TGFeedNetworkManager.shared.colloction(isCollect ? 1 : 0, feedIdentity: feedmodel.idindex, feedItem: feedmodel) {[weak self] result in
+                    if result == true {
+                        self?.feedModel?.toolModel?.isCollect = isCollect
+                        DispatchQueue.main.async {
+                            if isCollect {
+                                self?.showTopFloatingToast(with: "success_save".localized, desc: "")
+                            }
+                        }
+                    }
+                }
+            }
+           
+            
             break
         case .reportPost:
-            //            if let model = self.model {
-            //                guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: model) else { return }
-            //                let reportVC: ReportViewController = ReportViewController(reportTarget: reportTarget)
-            //                self.present(TSNavigationController(rootViewController: reportVC).fullScreenRepresentation,
-            //                             animated: true,
-            //                             completion: nil)
-            //            }
+            guard let data = model else {
+                return
+            }
+            let feedmodel = FeedListCellModel(from: data)
+            guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: feedmodel) else { return }
+            let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
+            self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                         animated: true,
+                         completion: nil)
             break
         case .edit:
-            //            guard let model = self.model, let avatarInfo = self.model?.avatarInfo else {
-            //                return
-            //            }
-            //           let pictures =  model.pictures.map{ RejectDetailModelImages(fileId: $0.file, imagePath: $0.url ?? "", isSensitive: false, sensitiveType: "")   }
-            //            var vc = TSReleasePulseViewController(isHiddenshowImageCollectionView: false)
-            //
-            //            vc.selectedModelImages = pictures
-            //
-            //            vc.preText = model.content
-            //
-            //            vc.feedId = model.idindex.stringValue
-            //            vc.isFromEditFeed = true
-            //
-            //            vc.tagVoucher = tagVoucher
-            //
-            //            if let extenVC = self.configureReleasePulseViewController(detailModel: model, viewController: vc) as? TSReleasePulseViewController{
-            //                vc = extenVC
-            //            }
-            //
-            //            let navigation = TSNavigationController(rootViewController: vc).fullScreenRepresentation
-            //            self.present(navigation, animated: true, completion: nil)
+            
+            guard let data = model else {
+                return
+            }
+            let model = FeedListCellModel(from: data)
+            let pictures =  model.pictures.map{ RejectDetailModelImages(fileId: $0.file, imagePath: $0.url ?? "", isSensitive: false, sensitiveType: "")   }
+            let vc = TGReleasePulseViewController(type: .photo)
+            vc.selectedModelImages = pictures
+            
+            vc.preText = model.content
+            
+            vc.feedId = model.idindex.stringValue
+            vc.isFromEditFeed = true
+            
+            vc.tagVoucher = model.tagVoucher
+
+            _ = self.configureReleasePulseViewController(detailModel: model, releasePulseVC: vc)
+            
+            let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
+            self.present(navigation, animated: true, completion: nil)
             break
         case .deletePost:
-            //            guard let model = model else { return }
-            //            self.showRLDelete(title: "rw_delete_action_title".localized, message: "rw_delete_action_desc".localized, dismissedButtonTitle: "delete".localized, onDismissed: { [weak self] in
-            //                guard let self = self else { return }
-            //                TSMomentNetworkManager().deleteMoment(self.model?.idindex ?? 0) { [weak self] (result) in
-            //                    guard let self = self else { return }
-            //                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "feedDelete"), object: nil, userInfo: ["feedId": feedId])
-            //                    self.navigationController?.popViewController(animated: true)
-            //                }
-            //            }, cancelButtonTitle: "cancel".localized)
+            guard let data = model else {
+                return
+            }
+            let model = FeedListCellModel(from: data)
+            self.showRLDelete(title: "rw_delete_action_title".localized, message: "rw_delete_action_desc".localized, dismissedButtonTitle: "delete".localized, onDismissed: { [weak self] in
+                guard let self = self else { return }
+                TGFeedNetworkManager.shared.deleteMoment(model.idindex) { [weak self] result in
+                    guard let self = self else { return }
+                    
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "feedDelete"), object: nil, userInfo: ["feedId": feedId])
+                    self.navigationController?.popViewController(animated: true)
+                }
+
+            }, cancelButtonTitle: "cancel".localized)
+            
             break
         case .pinTop(isPinned: let isPinned):
-            //            guard let feedId = self.model?.idindex else { return }
-            //
-            //            let networkManager: (Int, @escaping (String, Int, Bool?) -> Void) -> Void = isPinned ? FeedListNetworkManager.unpinFeed: FeedListNetworkManager.pinFeed
-            //
-            //            networkManager(feedId) { [weak self] (errMessage, statusCode, status) in
-            //
-            //                guard let self = self else { return }
-            //                guard status == true else {
-            //                    if statusCode == 241 {
-            //                        self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
-            //                    } else {
-            //                        self.showError(message: errMessage)
-            //                    }
-            //                    return
-            //                }
-            //                let newPined = !isPinned
-            //
-            //                self.model?.isPinned = newPined
-            //                self.showError(message: newPined ? "feed_pinned".localized : "feed_unpinned".localized)
-            //                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
-            //            }
+            guard let data = model else {
+                return
+            }
+            let model = FeedListCellModel(from: data)
+            let feedId = model.idindex
+            
+            TGFeedNetworkManager.shared.pinFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+                guard let self = self else { return }
+                guard status == true else {
+                    if statusCode == 241 {
+                        self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                    } else {
+                        UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
+                    }
+                    return
+                }
+                
+                let newPined = !isPinned
+                
+                self.feedModel?.isPinned = newPined
+                UIViewController.showBottomFloatingToast(with: newPined ? "feed_pinned".localized : "feed_unpinned".localized, desc: "")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
+            }
+           
             break
         case .comment(isCommentDisabled: let isCommentDisabled):
-            //            guard let feedId = self.model?.idindex else { return }
-            //
-            //            let newValue = self.model?.toolModel?.isCommentDisabled ?? true ? 0 : 1
-            //            TSMomentNetworkManager().commentPrivacy(newValue, feedIdentity: feedId) { [weak self] success in
-            //                guard let self = self else { return }
-            //                if success {
-            //                    self.model?.toolModel?.isCommentDisabled = newValue == 1
-            //                    DispatchQueue.main.async {
-            //                        if newValue == 1 {
-            //                            self.showTopIndicator(status: .success, "disable_comment_success".localized)
-            //                        } else {
-            //                            self.showTopIndicator(status: .success, "enable_comment_success".localized)
-            //                        }
-            //                        self.setBottomViewData()
-            //                    }
-            //                }
-            //            }
+            guard let data = model else {
+                return
+            }
+            let model = FeedListCellModel(from: data)
+            let feedId = model.idindex
+            
+            let newValue = model.toolModel?.isCommentDisabled ?? true ? 0 : 1
+            TGFeedNetworkManager.shared.commentPrivacy(newValue, feedIdentity: feedId) {[weak self] success in
+                guard let self = self else { return }
+                if success {
+                    self.feedModel?.toolModel?.isCommentDisabled = newValue == 1
+                    DispatchQueue.main.async {
+                        if newValue == 1 {
+                            self.showTopFloatingToast(with: "disable_comment_success".localized)
+                        } else {
+                            self.showTopFloatingToast(with: "enable_comment_success".localized)
+                           // self.showTopIndicator(status: .success, "enable_comment_success".localized)
+                        }
+                        self.setBottomViewData()
+                    }
+                }
+            }
+            
             break
         case .deleteComment(model: let model):
-            //            guard let feedModel = model.model as? FeedCommentListCellModel else { return }
-            //            self.showRLDelete(title: "delete_comment".localized, message: "rw_delete_comment_action_desc".localized, dismissedButtonTitle: "delete".localized, onDismissed: { [weak self] in
-            //                guard let self = self else { return }
-            //                self.deleteComment(with: feedModel)
-            //            }, cancelButtonTitle: "cancel".localized)
+//            guard let feedModel = model.model as? FeedCommentListCellModel else { return }
+//            self.showRLDelete(title: "delete_comment".localized, message: "rw_delete_comment_action_desc".localized, dismissedButtonTitle: "delete".localized, onDismissed: { [weak self] in
+//                guard let self = self else { return }
+//                self.deleteComment(with: feedModel)
+//            }, cancelButtonTitle: "cancel".localized)
             break
         case .reportComment(model: let model):
-            //            guard let feedModel = model.model as? FeedCommentListCellModel else { return }
-            //            let reportTarget = ReportTargetModel(feedCommentModel: feedModel)
-            //            let reportVC = ReportViewController(reportTarget: reportTarget)
-            //            self.present(TSNavigationController(rootViewController: reportVC).fullScreenRepresentation, animated: true, completion: nil)
+//            guard let feedModel = model.model as? FeedCommentListCellModel else { return }
+//            let reportTarget = ReportTargetModel(feedCommentModel: feedModel)
+//            let reportVC = TGReportViewController(reportTarget: reportTarget)
+//            self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation, animated: true, completion: nil)
             break
         case .livePinComment(model: let model):
-            //            guard let cell = model.target as? TSDetailCommentTableViewCell, let model = model.model as? FeedCommentListCellModel else { return }
-            //            DispatchQueue.main.async {
-            //                self.pinComment(in: cell, comment: model)
-            //            }
+//            guard let cell = model.target as? TSDetailCommentTableViewCell, let model = model.model as? FeedCommentListCellModel else { return }
+//            DispatchQueue.main.async {
+//                self.pinComment(in: cell, comment: model)
+//            }
             break
         case .liveUnPinComment(model: let model):
             //            guard let cell = model.target as? TSDetailCommentTableViewCell, let model = model.model as? FeedCommentListCellModel else { return }

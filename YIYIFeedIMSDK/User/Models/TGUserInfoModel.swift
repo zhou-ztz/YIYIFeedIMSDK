@@ -454,51 +454,59 @@ extension UserInfoModel {
         let followType: FollowStatus = self.follower == true ? .follow : .unfollow
         let userIdentity = self.userIdentity
         
-//        self.save()
+        self.save()
+        TGNewFriendsNetworkManager.followUser(followType, userID: userIdentity) { success in
+            if success {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": followType, "userid": "\(userIdentity)"])
+            } else {
+                UIViewController.showBottomFloatingToast(with: "network_is_not_available".localized, desc: "")
+            }
+            
+            // Remove from remark name list
+            // TODO: need to refine the logic
+            if success && followType == .unfollow {
+                if let userRemarkName =  UserDefaults.standard.array(forKey: "UserRemarkName") {
+                    var remarkNameArray = userRemarkName as! [[String:String]]
+                    remarkNameArray.removeAll { $0["userID"] == "\(userIdentity)"}
+                    
+                    UserDefaults.standard.set(remarkNameArray, forKey: "UserRemarkName")
+                }
+                RemarkNameManager.shared.removeRemarkName(for: userIdentity)
+            }
+            completion?(success)
+        }
         
-//        TSUserNetworkingManager().operateWithClosure(followType, userID: userIdentity) { (success) in
-//            if success {
-//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": followType, "userid": "\(userIdentity)"])
-//            } else {
-//                UIViewController.topMostController?.showError(message: "network_is_not_available".localized)
-//            }
-//
-//            // Remove from remark name list
-//            // TODO: need to refine the logic
-//            if success && followType == .unfollow {
-//                if let userRemarkName =  UserDefaults.standard.array(forKey: "UserRemarkName") {
-//                    var remarkNameArray = userRemarkName as! [[String:String]]
-//                    remarkNameArray.removeAll { $0["userID"] == "\(userIdentity)"}
-//
-//                    UserDefaults.standard.set(remarkNameArray, forKey: "UserRemarkName")
-//                }
-//                RemarkNameManager.shared.removeRemarkName(for: userIdentity)
-//            }
-//            completion?(success)
-//        }
     }
 }
 
 
 extension UserInfoModel {
-//    func save() {
-//        UserInfoStoreManager().add(list: [self])
-//    }
-//    
-//    static func retrieveUser(username: String?) -> UserInfoModel? {
-//        guard let username = username else { return nil }
-//        return UserInfoStoreManager().fetchByUsername(username: username)
-//    }
-//    
-//    static func retrieveUser(userId: Int?) -> UserInfoModel? {
-//        guard let userId = userId else { return nil }
-//        return UserInfoStoreManager().fetchById(id: userId)
-//    }
-//    
-//    static func retrieveUser(nickname: String?) -> UserInfoModel? {
-//        guard let nickname = nickname else { return nil }
-//        return UserInfoStoreManager().fetchByNickname(nickname: nickname)
-//    }
+    func save() {
+        guard let json = UserInfoModel.convert([self]) else { return }
+        RLSDKManager.shared.feedDelegate?.saveUserInfoModel(json: json)
+        //UserInfoStoreManager().add(list: [self])
+    }
+    
+    static func retrieveUser(username: String?) -> UserInfoModel? {
+        guard let username = username else { return nil }
+        let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: username, userId: nil, nickname: nil)
+        return UserInfoModel.convert(json)?.first
+       // return UserInfoStoreManager().fetchByUsername(username: username)
+    }
+    
+    static func retrieveUser(userId: Int?) -> UserInfoModel? {
+        guard let userId = userId else { return nil }
+        let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: nil, userId: userId, nickname: nil)
+        return UserInfoModel.convert(json)?.first
+      //  return UserInfoStoreManager().fetchById(id: userId)
+    }
+    
+    static func retrieveUser(nickname: String?) -> UserInfoModel? {
+        guard let nickname = nickname else { return nil }
+        let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: nil, userId: nil, nickname: nickname)
+        return UserInfoModel.convert(json)?.first
+       // return UserInfoStoreManager().fetchByNickname(nickname: nickname)
+    }
 }
 
 

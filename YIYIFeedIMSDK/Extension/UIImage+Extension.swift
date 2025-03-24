@@ -182,12 +182,14 @@ extension UIImage {
                 return image
             } else {
                 print("Failed to load image from SDKResource.bundle")
+                return UIImage(named: named)
+                
             }
         } else {
             print("SDKResource.bundle not found in framework")
+            return UIImage(named: named)
         }
-
-        return nil
+       
     }
     
     class func imageWithColor(_ color: UIColor!, cornerRadius: Double!) -> UIImage {

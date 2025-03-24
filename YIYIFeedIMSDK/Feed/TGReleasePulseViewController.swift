@@ -751,7 +751,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
                 self.showImageCollectionView.imageDatas.append(image ?? UIImage())
             }
             
-            let pi: UIImage? = postPhotoExtension.count < maxPhotoCount ? UIImage(named: "IMG_edit_photo_frame") : nil
+            let pi: UIImage? = postPhotoExtension.count < maxPhotoCount ? UIImage(named: "img_edit_photo_frame_tg") : nil
             if let pi = pi {
                 self.showImageCollectionView.imageDatas.append(pi)
             }
@@ -787,7 +787,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
                 }
             }
             
-            let pi: UIImage? = (selectedPHAssets.count + selectedModelImages.count) < maxPhotoCount ? UIImage(named: "IMG_edit_photo_frame") : nil
+            let pi: UIImage? = (selectedPHAssets.count + selectedModelImages.count) < maxPhotoCount ? UIImage.set_image(named: "img_edit_photo_frame_tg") : nil
             if let pi = pi {
                 self.showImageCollectionView.imageDatas.append(pi)
             }

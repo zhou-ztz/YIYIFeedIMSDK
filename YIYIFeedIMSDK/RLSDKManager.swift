@@ -72,6 +72,27 @@ public protocol TGMessageDelegate: AnyObject {
     func onLoginStatus(_ status: Int)
 }
 
+public protocol TGFeedDelegate: AnyObject {
+    /// 跳转优惠券详情
+    func didVoucherTouched(voucherId: Int)
+    /// 跳转 TSLocationDetailVC
+    func onLocationViewTapped(locationID: String, locationName: String)
+    /// 跳转 TopicPostListVC
+    func onTopicViewTapped(groupId: Int)
+    /// 跳转 搜索页面 RLSearchResultVC
+    func onSearchPageTapped(hashtag: String)
+    /// 上报埋点信息
+    func onTrackEvent(itemId: String,
+                    itemType: String,
+                    behaviorType: String,
+                    moduleId: String,
+                    pageId:String)
+    /// 保存本地
+    func saveUserInfoModel(json: String)
+    /// 获取本地用户信息
+    func getUserInfoModel(username: String?, userId: Int?, nickname: String?) -> String?
+}
+
 public class RLSDKManager: NSObject {
 
     public static let shared = RLSDKManager()
@@ -80,6 +101,7 @@ public class RLSDKManager: NSObject {
     var appKey: String = ""
     
     public weak var imDelegate: TGMessageDelegate?
+    public weak var feedDelegate: TGFeedDelegate?
     // 云信 appKey
     public func initSDK(appKey: String){
         RLNIMSDKManager.shared.setupNIMSDK(appKey: appKey)

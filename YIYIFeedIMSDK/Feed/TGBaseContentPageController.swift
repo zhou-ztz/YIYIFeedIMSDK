@@ -240,44 +240,4 @@ extension TGBaseContentPageController: UINavigationControllerDelegate {
     }
 }
 
-extension TGBaseContentPageController {
-    
-    /// 处理对于动态的一些配置
-    /// - Parameters:
-    ///   - detailModel: 动态内容
-    ///   - releasePulseVC: vc视图
-    /// - Returns:
-    func configureReleasePulseViewController(detailModel: FeedListCellModel, releasePulseVC: TGReleasePulseViewController) -> TGReleasePulseViewController{
-        //分享类型 - 所有人、朋友、我
-        if let privacyType = PrivacyType(rawValue: detailModel.privacy) {
-            releasePulseVC.rejectPrivacyType = privacyType
-        }
-        //话题
-        if detailModel.topics.count > 0 {
-            let topic = TGTopicCommonModel()
-            topic.id = detailModel.topics[0].topicId
-            topic.name = detailModel.topics[0].topicTitle
-            releasePulseVC.topics = [topic]
-        }
-        //位置签到
-        if let loc = detailModel.location {
-            let location = TGLocationModel()
-            location.locationID = loc.locationID
-            location.locationName = loc.locationName
-            location.locationLatitude = loc.locationLatitude
-            location.locationLongtitude = loc.locationLongtitude
-            location.address = loc.address ?? ""
-            releasePulseVC.rejectLocation = location
-        }
-        // Tagged 用户
-        let users = detailModel.tagUsers
-        releasePulseVC.selectedUsers = users
-        
-        // 标记 merchant 用户
-        let tagMerchants = detailModel.rewardsLinkMerchantUsers
-        releasePulseVC.selectedMerchants = tagMerchants
-        
-        return releasePulseVC
-    }
-    
-}
+

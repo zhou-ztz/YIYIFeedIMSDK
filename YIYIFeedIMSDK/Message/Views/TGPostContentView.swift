@@ -16,7 +16,7 @@ class TGPostContentView: UIView {
     }
     lazy var imageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     var shadowView: UIView = UIView()
@@ -103,16 +103,22 @@ class TGPostContentView: UIView {
     }
     
     private func commonInit() {
+        addSubview(shadowView)
         addSubview(imageView)
         addSubview(stackView)
         stackView.addArrangedSubview(bodyLabel)
         stackView.addArrangedSubview(postDescLabel)
         stackView.addArrangedSubview(postContentLabel)
+        shadowView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(10)
+            make.top.bottom.equalToSuperview().inset(8)
+        }
         
         imageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.width.equalTo(72)
             make.height.equalTo(64)
+            make.left.equalTo(15)
         }
         stackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -131,7 +137,6 @@ class TGPostContentView: UIView {
         shadowView.layer.cornerRadius = 4
         shadowView.layer.borderColor = UIColor(red: 220/255.0, green: 220/255.0, blue: 220/255.0, alpha: 1.0).cgColor
         shadowView.layer.borderWidth = 1
-        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.masksToBounds = true
         imageView.roundCorner(4)

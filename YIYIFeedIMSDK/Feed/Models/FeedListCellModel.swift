@@ -172,25 +172,25 @@ class FeedListCellModel {
     /// 活动动态是否可以编辑
     var campaignIsEdite: Bool = false
     
-//    var feedType: FeedContentType {
-//        if liveModel != nil, liveModel?.status == 1, pictures.count > 0 {
-//            return .live
-//        } else if (videoURL.isEmpty == false || localVideoFileURL?.isEmpty == false), pictures.count > 0 {
-//            if videoType == 2 {
-//                return .miniVideo
-//            }
-//            return .video
-//        } else if pictures.count > 0 {
-//            return .picture
-//        } else if repostId > 0, repostModel != nil {
-//            return .repost
-//        } else if sharedModel != nil {
-//            return .share
-//        } else {
-//            return .normalText
-//        }
-//    }
-//
+    var feedType: FeedContentType {
+        if liveModel != nil, liveModel?.status == 1, pictures.count > 0 {
+            return .live
+        } else if (videoURL.isEmpty == false || localVideoFileURL?.isEmpty == false), pictures.count > 0 {
+            if videoType == 2 {
+                return .miniVideo
+            }
+            return .video
+        } else if pictures.count > 0 {
+            return .picture
+        } else if repostId > 0, repostModel != nil {
+            return .repost
+        } else if sharedModel != nil {
+            return .share
+        } else {
+            return .normalText
+        }
+    }
+
     var topReactionList: [ReactionTypes?] = []
 
     var reactionType: ReactionTypes? = nil
@@ -342,8 +342,13 @@ extension FeedListCellModel {
         self.pictures = response.images?.map {
             let picture = PaidPictureModel()
             picture.url = $0.file?.imageUrl()
+            picture.file = $0.file ?? 0
+            //picture.originalSize = $0.size
+            picture.shouldShowLongicon = true
+            //picture.mimeType = model.mimeType
             return picture
         } ?? []
+        
         self.from = "\(response.feedFrom ?? 0)"
         self.hot = response.hot ?? 0
         self.privacy = response.privacy.orEmpty

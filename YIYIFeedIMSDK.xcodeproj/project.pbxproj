@@ -225,6 +225,24 @@
 		B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */; };
 		B193FD2E2D81753600BEB3F7 /* TGIMClientsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD2D2D81753600BEB3F7 /* TGIMClientsViewController.swift */; };
 		B193FD302D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD2F2D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift */; };
+		B193FD3A2D8801ED00BEB3F7 /* TGReportTargetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD392D8801ED00BEB3F7 /* TGReportTargetModel.swift */; };
+		B193FD3C2D88031300BEB3F7 /* TGReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD3B2D88031300BEB3F7 /* TGReportViewController.swift */; };
+		B193FD3E2D8803F700BEB3F7 /* ReportTargetControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD3D2D8803F700BEB3F7 /* ReportTargetControl.swift */; };
+		B193FD402D88045A00BEB3F7 /* TGReportIncidentTypeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD3F2D88045900BEB3F7 /* TGReportIncidentTypeModel.swift */; };
+		B193FD432D88054900BEB3F7 /* CustomTextfield.xib in Resources */ = {isa = PBXBuildFile; fileRef = B193FD422D88054900BEB3F7 /* CustomTextfield.xib */; };
+		B193FD442D88054900BEB3F7 /* CustomTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD412D88054900BEB3F7 /* CustomTextfield.swift */; };
+		B193FD462D88063300BEB3F7 /* UIControl+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD452D88063300BEB3F7 /* UIControl+Actions.swift */; };
+		B193FD482D88069A00BEB3F7 /* DynamicTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD472D88069A00BEB3F7 /* DynamicTextField.swift */; };
+		B193FD4A2D88073E00BEB3F7 /* VerifyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD492D88073E00BEB3F7 /* VerifyTextField.swift */; };
+		B193FD512D88088B00BEB3F7 /* ReportImageCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B193FD4F2D88088B00BEB3F7 /* ReportImageCollectionCell.xib */; };
+		B193FD522D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B193FD4B2D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard */; };
+		B193FD532D88088B00BEB3F7 /* ReportBottomSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4C2D88088B00BEB3F7 /* ReportBottomSheetVC.swift */; };
+		B193FD542D88088B00BEB3F7 /* ReportImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4E2D88088B00BEB3F7 /* ReportImageCollectionCell.swift */; };
+		B193FD552D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */; };
+		B193FD572D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD562D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift */; };
+		B193FD5C2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */; };
+		B1A889492D8D3FC800B678CB /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A889482D8D3FC800B678CB /* Notification+Extension.swift */; };
+		B1A8894B2D8D491400B678CB /* RemarkNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */; };
 		B1DA58EE2D37882800F83914 /* TGIMUnreadCountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */; };
 		B1DA58FA2D38B76A00F83914 /* TGMessageRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */; };
 		B1DA58FC2D38D25B00F83914 /* TGMessageRequestViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */; };
@@ -771,6 +789,24 @@
 		B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMMediaRecordController.swift; sourceTree = "<group>"; };
 		B193FD2D2D81753600BEB3F7 /* TGIMClientsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMClientsViewController.swift; sourceTree = "<group>"; };
 		B193FD2F2D81785A00BEB3F7 /* TGNTESMutiClientsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNTESMutiClientsCell.swift; sourceTree = "<group>"; };
+		B193FD392D8801ED00BEB3F7 /* TGReportTargetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReportTargetModel.swift; sourceTree = "<group>"; };
+		B193FD3B2D88031300BEB3F7 /* TGReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReportViewController.swift; sourceTree = "<group>"; };
+		B193FD3D2D8803F700BEB3F7 /* ReportTargetControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportTargetControl.swift; sourceTree = "<group>"; };
+		B193FD3F2D88045900BEB3F7 /* TGReportIncidentTypeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReportIncidentTypeModel.swift; sourceTree = "<group>"; };
+		B193FD412D88054900BEB3F7 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
+		B193FD422D88054900BEB3F7 /* CustomTextfield.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomTextfield.xib; sourceTree = "<group>"; };
+		B193FD452D88063300BEB3F7 /* UIControl+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Actions.swift"; sourceTree = "<group>"; };
+		B193FD472D88069A00BEB3F7 /* DynamicTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTextField.swift; sourceTree = "<group>"; };
+		B193FD492D88073E00BEB3F7 /* VerifyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyTextField.swift; sourceTree = "<group>"; };
+		B193FD4B2D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ReportBottomSheetVC.storyboard; sourceTree = "<group>"; };
+		B193FD4C2D88088B00BEB3F7 /* ReportBottomSheetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportBottomSheetVC.swift; sourceTree = "<group>"; };
+		B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportCategoryTableViewCell.swift; sourceTree = "<group>"; };
+		B193FD4E2D88088B00BEB3F7 /* ReportImageCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportImageCollectionCell.swift; sourceTree = "<group>"; };
+		B193FD4F2D88088B00BEB3F7 /* ReportImageCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ReportImageCollectionCell.xib; sourceTree = "<group>"; };
+		B193FD562D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveHalfScreenPresentation.swift; sourceTree = "<group>"; };
+		B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIndicatorWindowTop.swift; sourceTree = "<group>"; };
+		B1A889482D8D3FC800B678CB /* Notification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
+		B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemarkNameManager.swift; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -1449,10 +1485,16 @@
 				D7D9E5362D23E45400D8911F /* TGCustomPopListViewController.swift */,
 				D79714F72D266A4E009772B7 /* TGShareButton.swift */,
 				D706E1782D27E4F0000D4437 /* TGTextButton.swift */,
+				B193FD412D88054900BEB3F7 /* CustomTextfield.swift */,
+				B193FD422D88054900BEB3F7 /* CustomTextfield.xib */,
 				D7AD6A8E2D38D475006A3A1F /* Trimmer Helper */,
 				D7ED1C9B2D3E549600B7F95D /* TGImageScrollView.swift */,
 				D7FEF9C12D55BE8C00FF87E8 /* TGAlertContentView.swift */,
 				B193FBEE2D5F510F00BEB3F7 /* TGPlaceholder.swift */,
+				B193FD472D88069A00BEB3F7 /* DynamicTextField.swift */,
+				B193FD492D88073E00BEB3F7 /* VerifyTextField.swift */,
+				B193FD562D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift */,
+				B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -1480,6 +1522,7 @@
 				D74650092D4339CB00C7DD82 /* UIViewController+Navigator.swift */,
 				D7FEF9BD2D55B9E600FF87E8 /* View+Extensions.swift */,
 				D7FEF9BF2D55BC2D00FF87E8 /* ScreenExtensions.swift */,
+				B1A889482D8D3FC800B678CB /* Notification+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1507,11 +1550,13 @@
 				B1EABBC02D228CBF00EB7868 /* Country.swift */,
 				B1EABBF92D238E5000EB7868 /* TGLocalRemarkName.swift */,
 				D70949BA2D229C680000A4BA /* TGReactionHandler.swift */,
+				B193FD452D88063300BEB3F7 /* UIControl+Actions.swift */,
 				D7C4E9D22D2D21BF0043DD82 /* TGThrottler.swift */,
 				D7C4ECD82D2D371F0043DD82 /* LabelLineText.swift */,
 				B1EABC3C2D2E4B6400EB7868 /* TGURLParser.swift */,
 				B1EABC4C2D2E508300EB7868 /* TGCacher.swift */,
 				B193FC132D65AE7200BEB3F7 /* TGLocalizationManager.swift */,
+				B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1598,6 +1643,18 @@
 				B193FCB52D6EB5A500BEB3F7 /* ZLEditVideoController.m */,
 			);
 			path = TZImagePickerController;
+			sourceTree = "<group>";
+		};
+		B193FD502D88088B00BEB3F7 /* Report */ = {
+			isa = PBXGroup;
+			children = (
+				B193FD4B2D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard */,
+				B193FD4C2D88088B00BEB3F7 /* ReportBottomSheetVC.swift */,
+				B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */,
+				B193FD4E2D88088B00BEB3F7 /* ReportImageCollectionCell.swift */,
+				B193FD4F2D88088B00BEB3F7 /* ReportImageCollectionCell.xib */,
+			);
+			path = Report;
 			sourceTree = "<group>";
 		};
 		B1DA590C2D3A251500F83914 /* ChatDetail */ = {
@@ -2020,6 +2077,8 @@
 				D7C4ECDA2D2D3B2D0043DD82 /* RejectDetailModelImages.swift */,
 				D7AD6A982D38F4A4006A3A1F /* TGFeedReleaseModelResponse.swift */,
 				D7ED1C732D3E03E600B7F95D /* TGFeedReactionsModel.swift */,
+				B193FD392D8801ED00BEB3F7 /* TGReportTargetModel.swift */,
+				B193FD3F2D88045900BEB3F7 /* TGReportIncidentTypeModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2059,6 +2118,8 @@
 				D7ED1C952D3E46F600B7F95D /* TGFeedMerchantNamesListView.swift */,
 				D7ED1C972D3E47D100B7F95D /* TGUserReactionView.swift */,
 				D72627922D41041D001E0DA6 /* TGCommentLabel.swift */,
+				B193FD3D2D8803F700BEB3F7 /* ReportTargetControl.swift */,
+				B193FD502D88088B00BEB3F7 /* Report */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2091,6 +2152,7 @@
 				D7ED1C9D2D3E635800B7F95D /* TGResponsePageController.swift */,
 				D73AFB6B2D3F3A5C001C8458 /* TGCommentPageController.swift */,
 				D746FA682D4232340085F218 /* TGMiniVideoPageViewController.swift */,
+				B193FD3B2D88031300BEB3F7 /* TGReportViewController.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -2229,9 +2291,12 @@
 				8A4BB3312D08352B00AAB4B8 /* NMCJSBridge.js in Resources */,
 				B1EABC9E2D30F41900EB7868 /* TGNewContactTableViewCell.xib in Resources */,
 				D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */,
+				B193FD512D88088B00BEB3F7 /* ReportImageCollectionCell.xib in Resources */,
+				B193FD522D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard in Resources */,
 				D7B586982D27915600A52F1E /* icomoon.ttf in Resources */,
 				D764EC7B2D37869F00F62268 /* TGReleasePulseViewController.xib in Resources */,
 				8A9F0DFE2CF48B3B0021462C /* SDKResource.bundle in Resources */,
+				B193FD432D88054900BEB3F7 /* CustomTextfield.xib in Resources */,
 				8A9F0DF82CF48B3B0021462C /* Localizable.strings in Resources */,
 				D7ED1C842D3E314B00B7F95D /* TGFeedDetailInteractiveView.xib in Resources */,
 				8A9F0DF32CF48B3B0021462C /* reaction-wow.json in Resources */,
@@ -2296,6 +2361,7 @@
 				B1DA59292D3E191C00F83914 /* TGChatSettingView.swift in Sources */,
 				B1EABB9D2D1AA20100EB7868 /* IMStickerAttachment.swift in Sources */,
 				B1EABC2C2D27BC3500EB7868 /* TGShareContactsViewController.swift in Sources */,
+				B193FD482D88069A00BEB3F7 /* DynamicTextField.swift in Sources */,
 				8A4BB39A2D0FC92700AAB4B8 /* IMImageCollectionAttachment.swift in Sources */,
 				8A027A552CFD5F52008D1AC7 /* TGTeamMeetingPreviewCell.swift in Sources */,
 				B1EABC1D2D267E8400EB7868 /* TGRepostModel.swift in Sources */,
@@ -2353,6 +2419,7 @@
 				8A4BB3A52D1011A700AAB4B8 /* TGIMFilePreViewController.swift in Sources */,
 				8A4BB38D2D0FC92600AAB4B8 /* IMEggAttachment.swift in Sources */,
 				D7971DB22D2682E1009772B7 /* TGMiniVideoRecorderContainer.swift in Sources */,
+				B193FD3C2D88031300BEB3F7 /* TGReportViewController.swift in Sources */,
 				8A4BB3902D0FC92600AAB4B8 /* IMFileCollectionAttachment.swift in Sources */,
 				B1DA59562D40F5D400F83914 /* TGMeetingGroupViewController.swift in Sources */,
 				8A4BB34D2D0A92A900AAB4B8 /* VideoCallingCell.swift in Sources */,
@@ -2425,10 +2492,14 @@
 				B1DA59422D40E1AC00F83914 /* MeetingPayinfoView.swift in Sources */,
 				B1EABC362D2D3AD600EB7868 /* IMMeetingRoomAttachment.swift in Sources */,
 				B15E87492D433E0C0015E5C0 /* TGJoinMeetingViewController.swift in Sources */,
+				B193FD532D88088B00BEB3F7 /* ReportBottomSheetVC.swift in Sources */,
+				B193FD542D88088B00BEB3F7 /* ReportImageCollectionCell.swift in Sources */,
+				B193FD552D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift in Sources */,
 				8ABF5F3E2CF82395001DC11E /* IMNotificationCenter.swift in Sources */,
 				B1EABCA12D30F9CB00EB7868 /* TGNewContactPickerViewController.swift in Sources */,
 				8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */,
 				8A9F0D6D2CF42AC70021462C /* RLColor.swift in Sources */,
+				B193FD5C2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift in Sources */,
 				B1DA591A2D3A5A4400F83914 /* TGChatWallpaperViewController.swift in Sources */,
 				F596BF402D09A0080036274E /* TGDate.swift in Sources */,
 				B1EABC4B2D2E4FE700EB7868 /* VideoPlayerViewController.swift in Sources */,
@@ -2516,6 +2587,7 @@
 				8A9F0D7E2CF430E70021462C /* InputMoreCell.swift in Sources */,
 				D7ED1C882D3E339E00B7F95D /* ColorExtension.swift in Sources */,
 				B1EABC3D2D2E4B6400EB7868 /* TGURLParser.swift in Sources */,
+				B1A8894B2D8D491400B678CB /* RemarkNameManager.swift in Sources */,
 				B1EABBB32D1D62AC00EB7868 /* EggMessageCell.swift in Sources */,
 				8A4BB3AC2D111D1600AAB4B8 /* TGMediaPreviewViewController.swift in Sources */,
 				B193FC052D646DBD00BEB3F7 /* TGIMSearchUserListMoreVC.swift in Sources */,
@@ -2532,6 +2604,7 @@
 				B193FC1B2D66CE5300BEB3F7 /* IMTextTranslateAttachment.swift in Sources */,
 				B1EABC3B2D2E498100EB7868 /* TGChatMediaVideoPlayerViewController.swift in Sources */,
 				F5CD2C952CFEB76800EA7C7A /* TGAvatarView.swift in Sources */,
+				B1A889492D8D3FC800B678CB /* Notification+Extension.swift in Sources */,
 				D711C8692D1BEB1E004EA26B /* TGAccountRegex.swift in Sources */,
 				D7ED1C822D3E314200B7F95D /* TGFeedDetailInteractiveView.swift in Sources */,
 				D711C86A2D1BEB1E004EA26B /* TGCommonTool.swift in Sources */,
@@ -2552,6 +2625,7 @@
 				D7047C282D3A4D7800E6FCF6 /* BallBeatIndicator.swift in Sources */,
 				B1EABC552D2E774600EB7868 /* TGChatMediaViewController.swift in Sources */,
 				8A9F0D362CF0819E0021462C /* TGViewController.swift in Sources */,
+				B193FD462D88063300BEB3F7 /* UIControl+Actions.swift in Sources */,
 				8A9F0DC02CF451E90021462C /* FileUtils.swift in Sources */,
 				8A9F0D662CF429BE0021462C /* ConversationViewModel.swift in Sources */,
 				B1DA59232D3DF7C000F83914 /* TGFilesPreviewTableViewCell.swift in Sources */,
@@ -2567,6 +2641,7 @@
 				D7B5866F2D27915600A52F1E /* PhotoEditor+Drawing.swift in Sources */,
 				D76668E32D35154E0086F90E /* TGAtMechantListVC.swift in Sources */,
 				D7B586702D27915600A52F1E /* PhotoEditorCropViewController.swift in Sources */,
+				B193FD442D88054900BEB3F7 /* CustomTextfield.swift in Sources */,
 				B1DA59362D3F417700F83914 /* TGGroupInfoEditViewController.swift in Sources */,
 				D7B586712D27915600A52F1E /* PhotoEditor+Keyboard.swift in Sources */,
 				D7B586722D27915600A52F1E /* PhotoEditor+Crop.swift in Sources */,
@@ -2590,6 +2665,7 @@
 				D7B5867F2D27915600A52F1E /* PhotoEditor+Font.swift in Sources */,
 				B1EABC572D2E77C300EB7868 /* ChatMediaTagScrollView.swift in Sources */,
 				D7B586802D27915600A52F1E /* EmojiCollectionViewCell.swift in Sources */,
+				B193FD3E2D8803F700BEB3F7 /* ReportTargetControl.swift in Sources */,
 				D7B586812D27915600A52F1E /* CropRectView.swift in Sources */,
 				D7B586822D27915600A52F1E /* PhotoEditorViewController.swift in Sources */,
 				B193FC102D65ACCD00BEB3F7 /* TGIMAudioLanguageController.swift in Sources */,
@@ -2627,6 +2703,7 @@
 				B193FBDA2D5C4B9700BEB3F7 /* RedPacketView.swift in Sources */,
 				8A9F0D612CF427A90021462C /* TextMessageCell.swift in Sources */,
 				B1EABC6C2D2E8E5500EB7868 /* FeedCategoryOptions.swift in Sources */,
+				B193FD3A2D8801ED00BEB3F7 /* TGReportTargetModel.swift in Sources */,
 				B1EABC6E2D2E90E900EB7868 /* MessageCollectCell.swift in Sources */,
 				8A9F0D622CF427A90021462C /* ImageMessageCell.swift in Sources */,
 				D7ED1C762D3E1EF500B7F95D /* TGHeadingSelectionView.swift in Sources */,
@@ -2650,8 +2727,10 @@
 				B193FBE12D5C907100BEB3F7 /* TGReceiverTableCell.swift in Sources */,
 				F5CD2C732CFEB4C400EA7C7A /* FeedImageSliderView.swift in Sources */,
 				D711C86D2D1BEB81004EA26B /* Array+Extension.swift in Sources */,
+				B193FD4A2D88073E00BEB3F7 /* VerifyTextField.swift in Sources */,
 				B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */,
 				F5CD2C742CFEB4C400EA7C7A /* FeedCommentLabelModel.swift in Sources */,
+				B193FD572D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift in Sources */,
 				B1DA59322D3F3B2E00F83914 /* TGMembersViewController.swift in Sources */,
 				D706E1732D27CEEE000D4437 /* TGReleasePulseCollectionViewCell.swift in Sources */,
 				D7D9E5332D23C9F200D8911F /* TGAsyncOperation.swift in Sources */,
@@ -2737,6 +2816,7 @@
 				8A9F0DB02CF44FD20021462C /* RLSendFileManager.swift in Sources */,
 				D746500A2D4339CB00C7DD82 /* UIViewController+Navigator.swift in Sources */,
 				F5CD2C832CFEB51C00EA7C7A /* StoreManager.swift in Sources */,
+				B193FD402D88045A00BEB3F7 /* TGReportIncidentTypeModel.swift in Sources */,
 				D73AFB6C2D3F3A5C001C8458 /* TGCommentPageController.swift in Sources */,
 				F5CD2C842CFEB51C00EA7C7A /* TGAppTheme.swift in Sources */,
 				B1EABC122D23DEB800EB7868 /* TGCustomActionsheetTableViewCell.swift in Sources */,
