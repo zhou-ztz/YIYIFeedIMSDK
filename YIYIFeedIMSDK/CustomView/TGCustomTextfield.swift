@@ -6,7 +6,7 @@
 import UIKit
 
 
-class CustomTextfield: UIView {
+class TGCustomTextfield: UIView {
 
     @IBOutlet var container: UIView!
     @IBOutlet weak var contentView: UIView!
@@ -87,7 +87,7 @@ class CustomTextfield: UIView {
     
     func commonInit() {
         let bundle = Bundle(identifier: "com.yiyi.feedimsdk") ?? Bundle.main
-        bundle.loadNibNamed(String(describing: CustomTextfield.self), owner: self, options: nil)
+        bundle.loadNibNamed(String(describing: TGCustomTextfield.self), owner: self, options: nil)
         container.frame = self.bounds
         container.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         addSubview(container)
@@ -229,7 +229,7 @@ class CustomTextfield: UIView {
 }
 
 
-extension CustomTextfield: UITextFieldDelegate {
+extension TGCustomTextfield: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         hideError()
         if needBorder {

@@ -12,7 +12,7 @@ protocol ReportItemTappedDelegate: AnyObject {
   func reportItemTapped(indexPath: IndexPath?)
 }
 
-class ReportImageCollectionCell: UICollectionViewCell {
+class TGReportImageCollectionCell: UICollectionViewCell {
     static let identifier = "cell"
     
     @IBOutlet weak var imageView: UIImageView!

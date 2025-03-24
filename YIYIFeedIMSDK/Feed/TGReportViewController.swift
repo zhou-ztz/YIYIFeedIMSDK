@@ -318,7 +318,7 @@ extension TGReportViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleCollectionViewTap(_:)))
         self.collectionView?.addGestureRecognizer(tap)
         let bundle = Bundle(identifier: "com.yiyi.feedimsdk") ?? Bundle.main
-        self.collectionView?.register(UINib(nibName:"ReportImageCollectionCell", bundle: bundle), forCellWithReuseIdentifier: ReportImageCollectionCell.identifier)
+        self.collectionView?.register(UINib(nibName:"TGReportImageCollectionCell", bundle: bundle), forCellWithReuseIdentifier: TGReportImageCollectionCell.identifier)
         //self.collectionView?.register(ReportImageCollectionCell.self, forCellWithReuseIdentifier: ReportImageCollectionCell.identifier)
         inputView.addSubview(self.collectionView!)
         self.collectionView!.snp.makeConstraints { (make) in
@@ -666,7 +666,7 @@ extension TGReportViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReportImageCollectionCell.identifier, for: indexPath) as! ReportImageCollectionCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TGReportImageCollectionCell.identifier, for: indexPath) as! TGReportImageCollectionCell
         cell.delegate = self
         cell.selectedAtIndex = indexPath
         cell.setData(iconName: reportAttachments[indexPath.row])

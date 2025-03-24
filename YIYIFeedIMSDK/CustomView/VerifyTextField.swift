@@ -38,7 +38,7 @@ enum GenderType: Int {
     }
 }
 
-class VerifyTextField: CustomTextfield {
+class VerifyTextField: TGCustomTextfield {
     
     let datePicker: UIDatePicker = UIDatePicker()
     let picker: UIPickerView = UIPickerView()

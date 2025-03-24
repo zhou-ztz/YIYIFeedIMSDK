@@ -26,7 +26,7 @@ enum BankFieldType {
     case taxid
 }
 
-class DynamicTextField: CustomTextfield {
+class DynamicTextField: TGCustomTextfield {
        
     private(set) var minimumChar: Int = 0
     private(set) var maximumChar: Int = 0
