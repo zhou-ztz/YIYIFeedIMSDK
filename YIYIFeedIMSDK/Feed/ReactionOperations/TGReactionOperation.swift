@@ -41,13 +41,8 @@ final class TGReactionUpdateOperation: TGAsyncOperation, @unchecked Sendable  {
             self.state = State.finished
             
             if let feedItem = self.feedItem {
-//                //上报动态点赞事件
-//                EventTrackingManager.instance.trackEvent(
-//                    itemId: feedItem.idindex.stringValue,
-//                    itemType: feedItem.feedType == .miniVideo ? ItemType.shortvideo.rawValue   : ItemType.image.rawValue,
-//                    behaviorType: (reaction == .heart) ? BehaviorType.like : BehaviorType.unlike,
-//                    moduleId: ModuleId.feed.rawValue,
-//                    pageId: PageId.feed.rawValue)
+                //上报动态点赞事件
+                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedItem.idindex.stringValue, itemType: feedItem.feedType == .miniVideo ? TGItemType.shortvideo.rawValue : TGItemType.image.rawValue, behaviorType: (reaction == .heart) ? TGBehaviorType.like.rawValue : TGBehaviorType.unlike.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
             }
         }
     }

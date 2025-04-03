@@ -275,7 +275,7 @@ class TGFeedDetailImagePageController: UIPageViewController {
                 return
             }
             
-            let cellModel = FeedListCellModel(from: listModel)
+            let cellModel = FeedListCellModel(feedListModel: listModel)
             print(cellModel)
             complete?(cellModel, error)
         }
@@ -353,15 +353,12 @@ class TGFeedDetailImagePageController: UIPageViewController {
                     DispatchQueue.main.async {  self.refreshComplete() }
                     return
                 }
-                
-                let list = models.map{ FeedListCellModel(from: $0) }
-                
                 if refresh {
-                    self.datasource = list
+                    self.datasource = models
                 } else {
-                    self.datasource.append(contentsOf: list)
+                    self.datasource.append(contentsOf: models)
                 }
-                afterTime = list.last?.afterTime
+                afterTime = models.last?.afterTime
                 self.verticalPageHandler.resetPage()
                 
                 if refresh == true {

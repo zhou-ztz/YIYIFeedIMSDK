@@ -9,12 +9,15 @@ import UIKit
 
 class TextMessageCell: BaseMessageCell {
     
-    lazy var contentLabel: UILabel = {
-        let label = UILabel()
+    lazy var contentLabel: ActiveLabel = {
+        let label = ActiveLabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = RLColor.share.black3
         label.text = "未知消息类型"
         label.numberOfLines = 0
+        label.enabledTypes = [.mention, .hashtag, .url]
+        label.mentionColor = TGAppTheme.primaryColor
+        label.URLColor = TGAppTheme.primaryBlueColor
         return label
     }()
     
@@ -35,6 +38,7 @@ class TextMessageCell: BaseMessageCell {
         self.bubbleImage.addSubview(textView)
         self.textView.addSubview(contentLabel)
         self.textView.addSubview(timeTickStackView)
+       
     }
     
     override func setData(model: TGMessageData) {
@@ -108,6 +112,12 @@ class TextMessageCell: BaseMessageCell {
         self.contentLabel.layoutIfNeeded()
         self.textView.layoutIfNeeded()
         self.layoutIfNeeded()
+        if let bubbleViewTap = bubbleViewTap {
+            self.bubbleView.removeGestureRecognizer(bubbleViewTap)
+        }
+        contentLabel.handleURLTap({[weak self] url in
+            self?.delegate?.didTapTextUrl(textUrl: url.absoluteString)
+        })
     }
     
     func timeShowAtBottom(messageModel: TGMessageData) -> Bool {
@@ -144,3 +154,5 @@ class TextMessageCell: BaseMessageCell {
         return mutableAttributedString
     }
 }
+
+

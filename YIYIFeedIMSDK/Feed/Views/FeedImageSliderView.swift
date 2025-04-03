@@ -13,6 +13,7 @@ class FeedImageSliderView: UIView {
     private var pageControl: UIPageControl!
     
     private var imageUrls: [String] = []
+    var onImageTap: ((Int) -> Void)?
     
     init() {
         super.init(frame: .zero)
@@ -53,16 +54,18 @@ class FeedImageSliderView: UIView {
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().offset(-10)
         }
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap))
+            collectionView.addGestureRecognizer(tapGesture)
     }
     func set(imageUrls: [String]) {
         self.imageUrls = imageUrls
         pageControl.numberOfPages = imageUrls.count
         collectionView.reloadData()
-        
-        // 打印collectionView.contentSize
-        print("CollectionView ContentSize: \(collectionView.contentSize)")
     }
-
+    @objc private func handleImageTap() {
+        let currentIndex = Int(collectionView.contentOffset.x / collectionView.bounds.width)
+        onImageTap?(currentIndex)
+    }
 }
 
 extension FeedImageSliderView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

@@ -122,11 +122,11 @@ class TGTextToolBarView: UIView, UITextViewDelegate {
         messageInputView.sendTextView.delegate = self
     }
     
-    public func updateVoucherTag(_ tagVoucher: TagVoucher) {
-        let hasVoucher = (tagVoucher.taggedVoucherId ?? 0) > 0
+    public func updateVoucherTag(_ tagVoucher: TagVoucherModel) {
+        let hasVoucher = (tagVoucher.taggedVoucherId) > 0
         voucherBottomView.isHidden = !hasVoucher
         voucherBottomView.voucherLabel.text = tagVoucher.taggedVoucherTitle
-        self.voucherId = hasVoucher ? (tagVoucher.taggedVoucherId ?? 0) : 0
+        self.voucherId = hasVoucher ? (tagVoucher.taggedVoucherId) : 0
         self.setAllComponenSize(textView: messageInputView.sendTextView)
         voucherBottomView.snp.updateConstraints {
             $0.height.equalTo(hasVoucher ? 44 : 0)

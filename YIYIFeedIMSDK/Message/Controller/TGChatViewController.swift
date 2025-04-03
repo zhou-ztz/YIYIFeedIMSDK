@@ -293,11 +293,13 @@ public class TGChatViewController: TGViewController {
     }
     
     @objc func keyBoardWillHide(_ notification: Notification) {
+        keyBoardHeight = TSBottomSafeAreaHeight
         if chatInputView.currentType != .text {
             return
         }
         chatInputView.currentButton?.isSelected = false
         layoutInputView(offset: TSBottomSafeAreaHeight)
+        
     }
     
     private func scrollTableViewToBottom() {
@@ -379,7 +381,7 @@ public class TGChatViewController: TGViewController {
         } else {
             switch viewmodel.conversationType {
             case .CONVERSATION_TYPE_P2P:
-                TGNewFriendsNetworkManager.getUsersInfo(usersId: [], names: [self.viewmodel.sessionId]) {[weak self] users, error in
+                TGNewFriendsNetworkManager.getUsersInfo(usersId: [], names: [], userNames: [self.viewmodel.sessionId]) {[weak self] users, error in
                     guard let self = self, let model = users?.first else {
                         return
                     }
@@ -481,15 +483,19 @@ public class TGChatViewController: TGViewController {
     func updateNav(_ model: UserInfoModel) {
         guard let relationship = model.relationshipWithCurrentUser else { return }
         var showIM = false
-      //  let isMeWhitelist = TSCurrentUserInfo.share.userInfo?.whiteListType?.contains("outgoing_message") ?? false
+        let isMeWhitelist = RLSDKManager.shared.currentUserInfo?.whiteListType?.contains("outgoing_message") ?? false
         let isUserWhitelist = model.whiteListType?.contains("incoming_call") ?? false
-        switch relationship.status {
-        case .eachOther:
+        if isMeWhitelist {
             showIM = true
-        case .follow, .unfollow:
-            showIM = isUserWhitelist
-        case .oneself:
-            return
+        } else {
+            switch relationship.status {
+            case .eachOther:
+                showIM = true
+            case .follow, .unfollow:
+                showIM = isUserWhitelist
+            case .oneself:
+                return
+            }
         }
         if showIM {
             customNavigationBar.setRightViews(views: [videoCallBtn, enterInfoBtn])
@@ -842,7 +848,7 @@ public class TGChatViewController: TGViewController {
         let baseUrl: String = RLSDKManager.shared.loginParma?.apiBaseURL ?? "https://preprod-api-rewardslink.getyippi.cn/"
         let param = NMCWhiteBoardParam()
         param.uid = RLSDKManager.shared.loginParma?.uid ?? 0
-        param.appKey = NIMAppKey
+        param.appKey = RLSDKManager.shared.appKey
         param.channelName = channelName
         param.webViewUrl = baseUrl + kwebViewUrl
 
@@ -1762,6 +1768,10 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
 }
 //  MARK: BaseMessageCellDelegate
 extension TGChatViewController: BaseMessageCellDelegate {
+    func didTapTextUrl(textUrl: String) {
+        RLSDKManager.shared.imDelegate?.didPressSocialPost(urlString: textUrl)
+    }
+    
     /// 长按头像
     func longPressUserAvatar(cell: BaseMessageCell?, model: TGMessageData?) {
         if self.viewmodel.conversationType != .CONVERSATION_TYPE_TEAM { return }
@@ -1892,10 +1902,7 @@ extension TGChatViewController: BaseMessageCellDelegate {
                 if url.isFileURL {
                     self.openWithDocumentInterator(object: attach)
                 } else {
-                    let vc = TGWebViewController()
-                    vc.urlString = attach.url ?? ""
-                    vc.customNavigationBar.title = attach.name
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    RLSDKManager.shared.imDelegate?.openFileWebview(url: url, title: attach.name)
                 }
             } else {
                 self.viewmodel.downLoadfFile(filePath: path, url: attach.url ?? "")
@@ -2166,14 +2173,10 @@ extension TGChatViewController: UIDocumentInteractionControllerDelegate{
 extension TGChatViewController: TGChatViewModelDelegate {
     
     func onSend(_ message: V2NIMMessage, succeeded: Bool) {
-       // let row = viewmodel.messages.count - 1
         DispatchQueue.main.async { [weak self] in
             self?.tableView.removePlaceholderViews()
             self?.tableView.reloadData()
-//            let indexpath = IndexPath(row: row, section: 0)
-//            self?.tableView.insertRow(at: indexpath, with: .none)
             self?.scrollTableViewToBottom()
-            
         }
     }
     

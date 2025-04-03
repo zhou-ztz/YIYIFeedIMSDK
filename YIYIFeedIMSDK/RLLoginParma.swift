@@ -32,5 +32,8 @@ public class RLLoginParma: NSObject {
     public var languageCode: String = "en"
     /// 请求头 appname
     public var appName: String = ""
-    
+    /// 个人信息 json
+    public var userInfoJson: String = ""
+    /// webServerAddress
+    public var webServerAddress: String = ""
 }

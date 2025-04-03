@@ -191,10 +191,10 @@ class TGPlaceholder: UIView {
         switch type {
         case .needLocationAccess, .networkWithRetry, .customWithButton, .serverError, .network, .teenMode:
             if button.superview == nil {
-                var buttonTitle : String = type.buttonText ?? ""
+                let buttonTitle : String = type.buttonText ?? ""
                 
-                var buttonHeight = Int(round(buttonTitle.heightOfString(usingFont: UIFont.boldSystemFont(ofSize: 14)))) + 10
-                var buttonWidth = Int(round(buttonTitle.widthOfString(usingFont: UIFont.boldSystemFont(ofSize: 14)))) + 10
+                let buttonHeight = Int(round(buttonTitle.heightOfString(usingFont: UIFont.boldSystemFont(ofSize: 14)))) + 10
+                let buttonWidth = Int(round(buttonTitle.widthOfString(usingFont: UIFont.boldSystemFont(ofSize: 14)))) + 10
                       
                 stackView.addArrangedSubview(button)
                 button.snp.makeConstraints {

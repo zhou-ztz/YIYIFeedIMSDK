@@ -216,9 +216,9 @@ class FeedListCellModel {
         id = .feed(feedId: model.id)
         index = model.index
         userId = model.userId
-//        userName = model.userInfo.displayName
-//        avatarInfo = AvatarInfo(userModel: model.userInfo)
-//        avatarInfo?.type = .normal(userId: model.userInfo.userIdentity)
+        userName = model.userInfo.displayName
+        avatarInfo = AvatarInfo(userModel: model.userInfo)
+        avatarInfo?.type = .normal(userId: model.userInfo.userIdentity)
         content = model.content
         pictures = model.images?.map { PaidPictureModel(feedImageModel: $0) } ?? []
         toolModel = FeedListToolModel(feedListModel: model)
@@ -227,10 +227,10 @@ class FeedListCellModel {
         repostType = model.repostType
         repostId = model.repostId
 //        repostModel = model.repostModel
-//        sharedModel = model.sharedModel
+        sharedModel = model.sharedModel
         hot = model.hot
         location = model.location
-//        userInfo = model.userInfo
+        userInfo = model.userInfo
 
         time = model.create
         
@@ -238,10 +238,10 @@ class FeedListCellModel {
         // 如果存在视频时,视频的封面当做单张图片显示和处理同时设置播放地址
         if let video = model.feedVideo, video.width > 0 && video.height > 0 {
             let picture = PaidPictureModel()
-//            picture.url = video.videoCoverID.imageUrl()
+            picture.url = video.videoCoverID.imageUrl()
             picture.originalSize = CGSize(width: video.width, height: video.height)
             pictures = [picture]
-//            videoURL = video.videoID.imageUrl()
+            videoURL = video.videoID.imageUrl()
             videoHeight = Double(video.height)
             videoWidth = Double(video.width)
             videoType = video.type
@@ -249,8 +249,8 @@ class FeedListCellModel {
             videoId = video.videoID
             videoPath = video.videoPath
         }
-//        canAcceptReward = model.userInfo.isRewardAcceptEnabled ? 1 : 0
-//        liveModel = model.liveModel
+        canAcceptReward = model.userInfo.isRewardAcceptEnabled ? 1 : 0
+        liveModel = model.liveModel
         privacy = model.privacy
         isEdited = model.isEdited
         topReactionList = model.topReactionList ?? []
@@ -317,91 +317,5 @@ class FeedListToolModel {
         forwardCount = model.feedForwardCount
         isRewarded = model.hasReward
         isCommentDisabled = model.hasDisabled
-    }
-}
-
-extension FeedListCellModel {
-    /// 从 TGFeedResponse 转换为 FeedListCellModel
-    convenience init(from response: TGFeedResponse) {
-        self.init()
-        
-        // 基础字段
-        self.id = .feed(feedId: response.id ?? 0)
-        self.userId = response.userID ?? 0
-        self.idindex = response.id ?? 0
-        self.userName = response.user?.name ?? ""
-        self.avatarInfo = {
-            guard let avatar = response.user?.avatar else { return AvatarInfo() }
-            let avatarInfo = AvatarInfo()
-            avatarInfo.avatarURL = avatar.url ?? ""
-            let nickname = TGLocalRemarkName.getRemarkName(userId: "\(response.userID ?? 0)", username: response.user?.name ?? "", originalName: response.user?.name ?? "", label: nil)
-            avatarInfo.nickname = nickname
-            return avatarInfo
-        }()
-        self.content = response.feedContent ?? ""
-        self.pictures = response.images?.map {
-            let picture = PaidPictureModel()
-            picture.url = $0.file?.imageUrl()
-            picture.file = $0.file ?? 0
-            //picture.originalSize = $0.size
-            picture.shouldShowLongicon = true
-            //picture.mimeType = model.mimeType
-            return picture
-        } ?? []
-        
-        self.from = "\(response.feedFrom ?? 0)"
-        self.hot = response.hot ?? 0
-        self.privacy = response.privacy.orEmpty
-        self.isEdited = response.campaignIsEdite ?? false
-        if let createdAtString = response.createdAt {
-            if let createdAtDate = createdAtString.toDate("yyyy-MM-dd HH:mm:ss", region: .current) {
-                self.time = createdAtDate.date
-            }
-        }
-        self.afterTime = response.afterTime.orEmpty
-        self.isPinned = response.isPinned ?? false
-        self.isSponsored = (response.isSponsored ?? 0) == 1
-        self.canAcceptReward = response.user?.extra?.canAcceptReward ?? 0
-        
-        // 话题
-        self.topics = response.topics?.map { topic in
-            let topicModel = TopicListModel(topicId: 0, topicTitle: topic, topicFollow: true)
-            return topicModel
-        } ?? []
-        
-        self.toolModel = FeedListToolModel(feedListModel: FeedListModel(id: response.id ?? 0, userId: response.user?.id ?? 0, content: response.feedContent ?? "", from: response.feedFrom ?? 0, likeCount: response.likeCount ?? 0, viewCount: response.feedViewCount ?? 1, commentCount: response.feedCommentCount ?? 0, rewardCount: response.feedRewardCount ?? 0, create: (response.createdAt?.toBdayDate(by: "yyyy-MM-dd HH:mm:ss") ?? Date()) , hasCollect: response.hasCollect ?? false, hasLike: response.hasLike ?? false))
-        
-        // 视频
-        if let video = response.video {
-            self.videoURL = video.videoPath
-            // If video height/width is present in a nested property, parse it
-            self.videoHeight = response.user?.avatar?.dimension?.height.map(Double.init) ?? 0
-            self.videoWidth = response.user?.avatar?.dimension?.width.map(Double.init) ?? 0
-        }
-        
-        if let user = response.user {
-            var userInfo = UserInfoModel()
-            userInfo.name = response.user?.name ?? ""
-            userInfo.avatarUrl = response.user?.avatar?.url
-            userInfo.userIdentity = response.user?.id ?? 0
-            self.userInfo = userInfo
-        }
-        
-        // 转发信息
-        self.repostType = response.repostableType
-        self.repostId = response.repostableID ?? 0
-        
-        // 标签用户
-        self.tagUsers = response.tagUsers?.map {
-            var userInfo = UserInfoModel()
-            userInfo.name = $0.name ?? ""
-            return userInfo
-        } ?? []
-        
-        self.rewardsLinkMerchantUsers = response.rewardsLinkMerchantYippiUsers?.map {
-            var userInfo = UserInfoModel()
-            userInfo.name = $0.name ?? ""
-            return userInfo
-        } ?? []
     }
 }

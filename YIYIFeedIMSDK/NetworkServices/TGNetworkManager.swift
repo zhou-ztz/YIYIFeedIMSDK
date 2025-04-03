@@ -28,9 +28,14 @@ class TGNetworkManager {
             "X-Client-Type": "iOS",
             "X-Device-Language": TGLocalizationManager.getCurrentLanguage(),
             "Accept": "application/json",
-            "X-Client-Version": "2.0.4",
+            "X-Client-Version": "2.1.8",
             "Content-Type": "application/json",
-            "Accept-Language": TGLocalizationManager.getCurrentLanguage()
+            "X-Device-OS": UIDevice.current.systemVersion,
+            "IOS_DEVICE": "ios",
+            "X-Device-Model": TGDevice.modelName,
+            "Accept-Language": TGLocalizationManager.getCurrentLanguage(),
+            "X-Device-Country": UserDefaults.standard.string(forKey: "selected-country-code") ?? "MY",
+            "X-App-Favor": "ios"
         ]
     }()
     

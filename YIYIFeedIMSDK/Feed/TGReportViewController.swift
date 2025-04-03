@@ -503,12 +503,7 @@ extension TGReportViewController {
                 case .Moment:
                     break
                     //上报动态举报事件
-//                    EventTrackingManager.instance.trackEvent(
-//                        itemId: self.model.targetId.stringValue,
-//                        itemType: self.model.feedItem?.feedType == .miniVideo ? ItemType.shortvideo.rawValue   : ItemType.image.rawValue,
-//                        behaviorType: BehaviorType.dislike,
-//                        moduleId: ModuleId.feed.rawValue,
-//                        pageId: PageId.feed.rawValue)
+                    RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: self.model.targetId.stringValue, itemType: self.model.feedItem?.feedType == .miniVideo ? TGItemType.shortvideo.rawValue : TGItemType.image.rawValue, behaviorType: TGBehaviorType.dislike.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
                     
                 default: break
                     

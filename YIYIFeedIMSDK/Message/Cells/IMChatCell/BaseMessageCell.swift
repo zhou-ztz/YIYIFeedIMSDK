@@ -20,6 +20,7 @@ protocol BaseMessageCellDelegate: AnyObject {
     func selectionLanguageTapped(cell: BaseMessageCell?, model: TGMessageData?)
     func replyMessageTapped(cell: BaseMessageCell?, model: TGMessageData?)
     func meetingTapped(cell: BaseMessageCell?, model: TGMessageData?)
+    func didTapTextUrl(textUrl: String)
 }
 
 class BaseMessageCell: UITableViewCell {
@@ -131,6 +132,8 @@ class BaseMessageCell: UITableViewCell {
     }()
     
     private let pulseIndicator = IMSendMsgIndicator(radius: 8.0, color: RLColor.main.red)
+    
+    var bubbleViewTap: UIGestureRecognizer?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -161,7 +164,7 @@ class BaseMessageCell: UITableViewCell {
         timeTickStackView.addArrangedSubview(tickImage)
         
         setupLongPressGesture()
-        bubbleView.addAction { [weak self] in
+        bubbleViewTap = bubbleView.addAction { [weak self] in
             self?.delegate?.tapItemMessage(cell: self, model: self?.contentModel)
         }
         avatarHeaderView.addAction { [weak self] in

@@ -1,14 +1,95 @@
 //
-//  RejectDetailModelImages.swift
+//  TGRejectListModel.swift
 //  YIYIFeedIMSDK
 //
-//  Created by yiyikeji on 2025/1/7.
+//  Created by yiyikeji on 2025/4/1.
 //
 
-import Foundation
+import UIKit
 import ObjectMapper
 
-struct RejectDetailModelImages: Mappable {
+struct TGRejectModel: Mappable {
+    var data:[TGRejectListModel] = []
+    var links:[String:Any] = [:]
+    var meta:[String:Any] = [:]
+    
+    init?(map: Map) {
+    }
+    init() {
+    }
+    mutating func mapping(map: Map) {
+        data <- map["data"]
+        links <- map["links"]
+        meta <- map["meta"]
+    }
+}
+
+struct TGRejectListModel: Mappable {
+    
+    var id: Int = 0
+    var createdAt: Date = Date()
+    var data: [String:Any] = [:]
+    var sensitiveContent: String = ""
+    var cover: String = ""
+    var isVideo: Bool = false
+    
+    init?(map: Map) {
+    }
+    init() {
+    }
+    mutating func mapping(map: Map) {
+        id <- map["id"]
+        createdAt <- (map["created_at"], DateTransformer)
+        sensitiveContent <- map["sensitiveContent"]
+        cover <- map["cover"]
+        isVideo <- map["is_video"]
+    }
+}
+
+
+struct TGRejectDetailModel: Mappable {
+    var images = [TGRejectDetailModelImages]()
+    var textModel: TGRejectDetailModelText?
+    var video: TGRejectDetailModelVideo?
+    var at = [String]()
+    var location: TGRejectDetailModelLocation?
+    var privacy: String?
+    var topics = [TGRejectDetailModelTopics]()
+    var tagUsers: [UserInfoModel]?
+    var rewardsLinkMerchantUsers : [UserInfoModel]?
+    var tagVoucher: TagVoucherModel?
+    
+    init?(map: Map) {}
+    
+    mutating func mapping(map: Map) {
+        at     <- map["at"]
+        images <- map["images"]
+        textModel   <- map["text"]
+        video  <- map["video"]
+        location <- map["location"]
+        privacy  <- map["privacy"]
+        topics   <- map["topics"]
+        tagUsers   <- map["tag_users"]
+        rewardsLinkMerchantUsers   <- map["rewards_link_merchant_yippi_users"]
+        tagVoucher   <- map["tag_voucher"]
+    }
+}
+
+struct TGRejectDetailModelText: Mappable {
+    var feedContent: String?
+    var isSensitive: Bool = false
+    var sensitiveType: String?
+    
+    init?(map: Map) {}
+    
+    mutating func mapping(map: Map) {
+        feedContent   <- map["feedContent"]
+        isSensitive   <- map["isSensitive"]
+        sensitiveType <- map["sensitiveType"]
+    }
+}
+
+struct TGRejectDetailModelImages: Mappable {
     var fileId: Int = 0
     var imagePath: String?
     var isSensitive: Bool = false
@@ -30,7 +111,7 @@ struct RejectDetailModelImages: Mappable {
     }
 }
 
-struct RejectDetailModelVideo: Mappable {
+struct TGRejectDetailModelVideo: Mappable {
     var coverId: Int = 0
     var coverPath: String?
     var isSensitive: Bool = false
@@ -50,7 +131,7 @@ struct RejectDetailModelVideo: Mappable {
     }
 }
 
-struct RejectDetailModelLocation: Mappable {
+struct TGRejectDetailModelLocation: Mappable {
     var address: String?
     var lat: Float = 0.0
     var lid: String?
@@ -68,7 +149,7 @@ struct RejectDetailModelLocation: Mappable {
     }
 }
 
-struct RejectDetailModelTopics: Mappable {
+struct TGRejectDetailModelTopics: Mappable {
     var createdAt: String?
     var creatorUserId: Int = 0
     var desc: String?
@@ -76,9 +157,9 @@ struct RejectDetailModelTopics: Mappable {
     var followersCount: Int = 0
     var hotAt: String?
     var id: Int = 0
-    var logo: RejectDetailModelTopicsLogo?
+    var logo: TGRejectDetailModelTopicsLogo?
     var name: String?
-    var pivot: RejectDetailModelTopicsPivot?
+    var pivot: TGRejectDetailModelTopicsPivot?
     var status: String?
     var updatedAt: String?
 
@@ -100,7 +181,7 @@ struct RejectDetailModelTopics: Mappable {
     }
 }
 
-struct RejectDetailModelTopicsPivot: Mappable {
+struct TGRejectDetailModelTopicsPivot: Mappable {
     var feedId: Int = 0
     var topicId: Int = 0
 
@@ -112,8 +193,8 @@ struct RejectDetailModelTopicsPivot: Mappable {
     }
 }
 
-struct RejectDetailModelTopicsLogo: Mappable {
-    var dimension: RejectDetailModelTopicsLogoDimension?
+struct TGRejectDetailModelTopicsLogo: Mappable {
+    var dimension: TGRejectDetailModelTopicsLogoDimension?
     var mime: String?
     var size: String?
     var url: String?
@@ -130,7 +211,7 @@ struct RejectDetailModelTopicsLogo: Mappable {
     }
 }
 
-struct RejectDetailModelTopicsLogoDimension: Mappable {
+struct TGRejectDetailModelTopicsLogoDimension: Mappable {
     var height: Int = 0
     var width: Int = 0
 

@@ -60,7 +60,7 @@ class TeamMeetingViewModel: NSObject {
         let coreEngine = NERtcEngine.shared()
         let context = NERtcEngineContext()
         context.engineDelegate = self
-        context.appKey = NIMAppKey
+        context.appKey = RLSDKManager.shared.appKey
         coreEngine.setupEngine(with: context)
         coreEngine.enableAudioVolumeIndication(true, interval: 100, vad: true)
         NERtcEngine.shared().muteLocalAudio(false)

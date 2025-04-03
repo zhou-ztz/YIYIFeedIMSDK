@@ -352,3 +352,16 @@ class ApiState: NSObject,Codable {
         case url
     }
 }
+
+struct Avatar: Codable {
+    let size: Int?
+    let vendor: String?
+    let url: String?
+    let mime: String?
+    let dimension: Dimension?
+}
+
+struct Dimension: Codable {
+    let width: Int?
+    let height: Int?
+}

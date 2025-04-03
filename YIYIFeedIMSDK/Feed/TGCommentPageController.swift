@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Combine
 
-class TGCommentPageController: TGViewController {
+class TGCommentPageController: UIViewController {
 
     private var cancellables = Set<AnyCancellable>()
     var pageIndex = 0
@@ -39,12 +39,12 @@ class TGCommentPageController: TGViewController {
         return table
     }()
     
-    private var selectedComment: TGFeedCommentListModel?
+    private var selectedComment: FeedCommentListCellModel?
     private let fakeTextToolbar = MessageInputView()
     private let invisibleView = UIView().configure {
         $0.backgroundColor = .clear
     }
-    private var comments: [TGFeedCommentListModel] = []
+    private var comments: [FeedCommentListCellModel] = []
     
     init(theme: Theme, feedId: Int, feedOwnerId: Int, feedItem: FeedListCellModel?) {
         self.feedId = feedId
@@ -83,24 +83,24 @@ class TGCommentPageController: TGViewController {
     private func updateTheme() {
         switch theme {
         case .white:
-            self.backBaseView.backgroundColor = .white
+            self.view.backgroundColor = .white
             navigationController?.navigationBar.barTintColor = UIColor.white
             navigationController?.navigationBar.isTranslucent = false
             
         case .dark:
-            self.backBaseView.backgroundColor = TGAppTheme.materialBlack
+            self.view.backgroundColor = TGAppTheme.materialBlack
             navigationController?.navigationBar.barTintColor = TGAppTheme.materialBlack
             navigationController?.navigationBar.isTranslucent = false
         }
     }
     
     private func setup() {
-        self.backBaseView.addSubview(table)
+        self.view.addSubview(table)
         table.rowHeight = UITableView.automaticDimension
         table.estimatedRowHeight = 60;
         table.bindToEdges()
         
-        self.backBaseView.addSubview(fakeTextToolbar)
+        self.view.addSubview(fakeTextToolbar)
         fakeTextToolbar.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
         }
@@ -123,10 +123,10 @@ class TGCommentPageController: TGViewController {
     }
     
     private func getCommentList(isLoadMore: Bool) {
-        let after = isLoadMore ? comments.last?.id : nil
+        let after = isLoadMore ? comments.last?.id["commentId"] : nil
         TGFeedNetworkManager.shared.fetchFeedCommentsList(withFeedId: "\(self.feedId)", afterId: after, limit: 20) { [weak self] (contentListResponse, error) in
             guard let self = self else { return }
-            guard let commentModels = contentListResponse?.comments else { return }
+            guard let commentModels = contentListResponse else { return }
             defer {
                 self.table.reloadData()
                 if isLoadMore {
@@ -145,7 +145,7 @@ class TGCommentPageController: TGViewController {
             } else {
                 self.comments = commentModels
                 guard self.comments.count > 0 else {
-//                    self.table.show(placeholderView: .noComment, theme: self.theme, height: 100)
+                    self.table.show(placeholderView: .noComment, theme: self.theme, height: 100)
                     return
                 }
                 self.table.removePlaceholderViews()
@@ -154,55 +154,52 @@ class TGCommentPageController: TGViewController {
         }
     }
     
-    private func pinComment(in cell: FeedDetailCommentTableViewCell, comment: TGFeedCommentListModel) {
+    private func pinComment(in cell: FeedDetailCommentTableViewCell, comment: FeedCommentListCellModel) {
         
-        guard let commentId = comment.id, let cellIndex = self.comments.firstIndex(where: { $0.id == commentId }) else {
+        guard let commentId = comment.id["commentId"], let cellIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else {
             return
         }
-//        cell.showLoading()
-//        TSCommentNetWorkManager.pinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
-//            cell.hideLoading()
-//            guard let self = self else { return }
-//            DispatchQueue.main.async {
-//                guard let commentIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
-//                guard status == true else {
-//                    self.showError(message: message.orEmpty)
-//                    return
-//                }
-//                self.showError(message: "feed_live_pinned_comment".localized)
-//                
-//                self.comments[cellIndex].showTopIcon == true
-//                cell.setAsPinned(pinned: true, isDarkMode: false)
-//                self.table.moveRow(at: IndexPath(row: cellIndex, section: 0), to: IndexPath(row: 0, section: 0))
-//                self.comments.remove(at: cellIndex)
-//                self.comments.insert(comment, at: 0)
-//            }
-//        }
+        TGCommentNetWorkManager.shared.pinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
+            //            cell.hideLoading()
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                guard let commentIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
+                guard status == true else {
+                    self.showTopFloatingToast(with: message.orEmpty, desc: message.orEmpty)
+                    return
+                }
+                self.showTopFloatingToast(with: "feed_live_pinned_comment".localized, desc: message.orEmpty)
+                self.comments[cellIndex].showTopIcon = true
+                cell.setAsPinned(pinned: true, isDarkMode: false)
+                self.table.moveRow(at: IndexPath(row: cellIndex, section: 0), to: IndexPath(row: 0, section: 0))
+                self.comments.remove(at: cellIndex)
+                self.comments.insert(comment, at: 0)
+            }
+        }
     }
     
-    private func unpinComment(in cell: FeedDetailCommentTableViewCell, comment: TGFeedCommentListModel) {
-        guard let commentId = comment.id, let cellIndex = self.comments.firstIndex(where: { $0.id == commentId }) else {
+    private func unpinComment(in cell: FeedDetailCommentTableViewCell, comment: FeedCommentListCellModel) {
+        guard let commentId = comment.id["commentId"], let cellIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else {
             return
         }
-//        cell.showLoading()
-//        TSCommentNetWorkManager.unpinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
-//            cell.hideLoading()
-//            guard let self = self else { return }
-//            DispatchQueue.main.async {
-//                guard let commentIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
-//                guard status == true else {
-//                    self.showError(message: message.orEmpty)
-//                    return
-//                }
-//                self.showError(message: "feed_live_unpinned_comment".localized)
-//                
-//                self.comments[cellIndex].showTopIcon = false
-//                cell.setAsPinned(pinned: false, isDarkMode: false)
-//                self.table.moveRow(at: IndexPath(row: cellIndex, section: 0), to: IndexPath(row: self.comments.count - 1, section: 0))
-//                self.comments.remove(at: cellIndex)
-//                self.comments.append(comment)
-//            }
-//        }
+        //        cell.showLoading()
+        TGCommentNetWorkManager.shared.unpinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
+            //            cell.hideLoading()
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                guard let commentIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
+                guard status == true else {
+                    self.showTopFloatingToast(with: message.orEmpty, desc: message.orEmpty)
+                    return
+                }
+                self.showTopFloatingToast(with: "feed_live_unpinned_comment".localized, desc: message.orEmpty)
+                self.comments[cellIndex].showTopIcon = false
+                cell.setAsPinned(pinned: false, isDarkMode: false)
+                self.table.moveRow(at: IndexPath(row: cellIndex, section: 0), to: IndexPath(row: self.comments.count - 1, section: 0))
+                self.comments.remove(at: cellIndex)
+                self.comments.append(comment)
+            }
+        }
     }
 
 }
@@ -214,14 +211,9 @@ extension TGCommentPageController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FeedDetailCommentTableViewCell.identifier, for: indexPath) as! FeedDetailCommentTableViewCell
-//        cell.theme = theme
         cell.setData(data: comments[indexPath.row])
-//        cell.detailCommentcellType = .normal
-//        cell.isShowLine = false
-//        cell.setDatas(width: ScreenWidth)
-//        cell.cellDelegate = self
-//        cell.indexPath = indexPath
-        cell.setAsPinned(pinned: comments[indexPath.row].pinned, isDarkMode: false)
+        cell.cellDelegate = self
+        cell.setAsPinned(pinned: comments[indexPath.row].showTopIcon, isDarkMode: false)
         return cell
     }
     
@@ -238,56 +230,51 @@ extension TGCommentPageController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension TGCommentPageController: TGDetailCommentTableViewCellDelegate {
-    func repeatTap(cell: FeedDetailCommentTableViewCell, commnetModel: TGFeedCommentListModel) {
+    func repeatTap(cell: FeedDetailCommentTableViewCell, commnetModel: FeedCommentListCellModel) {
         
     }
     
     func didSelectName(userId: Int) {
-        
+        RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: userId)
     }
     
     func didSelectHeader(userId: Int) {
+        RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: userId)
+    }
+    
+    func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: FeedCommentListCellModel) {
+        guard  let currentUserInfo = UserInfoModel.retrieveCurrentUserSessionInfo() else {
+            return
+        }
+        // 显示举报评论弹窗
+        let isFeedOwner = currentUserInfo.userIdentity == self.feedOwnerId
+        let isCommentOwner = currentUserInfo.userIdentity == model.userId
         
+        if isCommentOwner {
+            self.navigationController?.presentPopVC(target: LivePinCommentModel(target: cell, requiredPinMessage: isFeedOwner, model: model), type: .selfComment, delegate: self)
+        } else {
+            self.navigationController?.presentPopVC(target: LivePinCommentModel(target: cell, requiredPinMessage: isFeedOwner, model: model), type: .normalComment , delegate: self)
+        }
     }
     
-    func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: TGFeedCommentListModel) {
-//        guard TSCurrentUserInfo.share.isLogin, let currentUserInfo = TSCurrentUserInfo.share.userInfo else {
-//            return
-//        }
-//        
-//        // 显示举报评论弹窗
-//        let isFeedOwner = currentUserInfo.userIdentity == self.feedOwnerId
-//        let isCommentOwner = currentUserInfo.userIdentity == model.userId
-//        
-//        if isCommentOwner {
-//            self.navigationController?.presentPopVC(target: LivePinCommentModel(target: cell, requiredPinMessage: isFeedOwner, model: model), type: .selfComment, delegate: self)
-//        } else {
-//            self.navigationController?.presentPopVC(target: LivePinCommentModel(target: cell, requiredPinMessage: isFeedOwner, model: model), type: .normalComment , delegate: self)
-//        }
-    }
-    
-    func didTapToReplyUser(in cell: FeedDetailCommentTableViewCell, model: TGFeedCommentListModel) {
-//        guard TSCurrentUserInfo.share.isLogin else { return }
-//        guard let userInfo = model.userInfo else { return }
-//        guard userInfo.isMe() == false else { return }
-//        self.selectedComment = model
-//        activeKeyboard()
+    func didTapToReplyUser(in cell: FeedDetailCommentTableViewCell, model: FeedCommentListCellModel) {
+        guard let userInfo = model.userInfo else { return }
+        guard userInfo.isMe() == false else { return }
+        self.selectedComment = model
+        activeKeyboard()
     }
     
     func needShowError() {
-        
+        self.showTopFloatingToast(with: "text_user_suspended", desc: "")
     }
 }
 
 extension TGCommentPageController: TGKeyboardToolbarDelegate {
     private func activeKeyboard() {
-//        guard TSCurrentUserInfo.share.isLogin == true else {
-//            TSRootViewController.share.guestJoinLandingVC()
-//            return
-//        }
+        
         TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
-        if let userInfo = self.selectedComment?.user {
-            TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: "reply_with_string".localized + "\(userInfo.name ?? "")")
+        if let userInfo = self.selectedComment?.userInfo {
+        TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: "reply_with_string".localized + "\(userInfo.name)")
         } else {
             TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: "rw_placeholder_comment".localized)
         }
@@ -296,31 +283,30 @@ extension TGCommentPageController: TGKeyboardToolbarDelegate {
     func keyboardToolbarSendTextMessage(message: String, bundleId: String?, inputBox: AnyObject?, contentType: CommentContentType) {
 //        guard TSCurrentUserInfo.share.isLogin, let currentUserInfo = TSCurrentUserInfo.share.userInfo else { return }
         
-//        self.showLoading()
+        self.showLoading()
         //上报动态评论事件
-//        EventTrackingManager.instance.trackEvent(
-//            itemId: feedId.stringValue,
-//            itemType: self.feedItem?.feedType == .miniVideo ? ItemType.shortvideo.rawValue   : ItemType.image.rawValue,
-//            behaviorType: BehaviorType.comment,
-//            moduleId: ModuleId.feed.rawValue,
-//            pageId: PageId.feed.rawValue)
+        RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedId.stringValue, itemType: feedItem?.feedType == .miniVideo ? TGItemType.shortvideo.rawValue : TGItemType.image.rawValue, behaviorType: TGBehaviorType.comment.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
         
         
-        TGFeedNetworkManager.shared.submitComment(for: .momment, content: message, sourceId: feedId, replyUserId: self.selectedComment?.user?.id, contentType: contentType) { [weak self] (commentModel, message, result) in
+        TGFeedNetworkManager.shared.submitComment(for: .momment, content: message, sourceId: feedId, replyUserId: self.selectedComment?.userInfo?.userIdentity, contentType: contentType) { [weak self] (commentModel, message, result) in
             
             DispatchQueue.main.async {
                 defer {
                     self?.selectedComment = nil
 //                    self?.dismissLoading()
                 }
-                guard result == true, let data = commentModel, let wself = self else {
+                guard result == true, let data = commentModel, let feedId = self?.feedId, let wself = self else {
                     UIViewController.showBottomFloatingToast(with: message ?? "please_retry_option".localized, desc: "", displayDuration: 4.0)
                     return
                 }
-                if let lastPinnedIndex = wself.comments.lastIndex(where: { $0.pinned == true }) {
-                    wself.comments.insert(data, at: lastPinnedIndex + 1)
+                let model = FeedCommentListCellModel(object: data, feedId: feedId)
+                model.replyUserInfo = self?.selectedComment?.userInfo
+                model.userId = UserInfoModel.retrieveCurrentUserSessionInfo()?.userIdentity ?? 0
+                
+                if let lastPinnedIndex = self?.comments.lastIndex(where: { $0.showTopIcon == true }) {
+                    self?.comments.insert(model, at: lastPinnedIndex + 1)
                 } else {
-                    wself.comments.insert(data, at: 0)
+                    self?.comments.insert(model, at: 0)
                 }
                 self?.onUpdateSegmentTitle()
                 self?.table.removePlaceholderViews()
@@ -347,28 +333,30 @@ extension TGCommentPageController: TGKeyboardToolbarDelegate {
 }
 
 extension TGCommentPageController {
-    private func reportComment(in cell: FeedDetailCommentTableViewCell, model: TGFeedCommentListModel) {
-//        let reportTarget = ReportTargetModel(feedCommentModel: model)
-//        let reportVC = ReportViewController(reportTarget: reportTarget)
-//        let nav = TSNavigationController(rootViewController: reportVC).fullScreenRepresentation
-//        self.present(nav, animated: true, completion: nil)
+    private func reportComment(in cell: FeedDetailCommentTableViewCell, model: FeedCommentListCellModel) {
+        
+        let reportTarget: ReportTargetModel = ReportTargetModel(feedCommentModel: model)
+        let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
+        self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                     animated: true,
+                     completion: nil)
     }
     
-    private func deleteComment(in cell: FeedDetailCommentTableViewCell, comment: TGFeedCommentListModel) {
-        guard let commentId = comment.id else {
+    private func deleteComment(in cell: FeedDetailCommentTableViewCell, comment: FeedCommentListCellModel) {
+        guard let commentId = comment.id["commentId"] else {
             return
         }
-//        TSCommentNetWorkManager.deleteComment(for: .momment, commentId: commentId, sourceId: feedId) { [weak self] (message, status) in
-//            DispatchQueue.main.async {
-//                if let indexPath = cell.indexPath, status == true {
-//                    self?.comments.removeAll(where: { $0.id["commentId"] == commentId })
-//                    self?.table.reloadData()
-//                    self?.onUpdateSegmentTitle()
-//                } else {
-//                    self?.showError(message: message.orEmpty)
-//                }
-//            }
-//        }
+        TGCommentNetWorkManager.shared.deleteComment(for: .momment, commentId: commentId, sourceId: feedId) { [weak self] (message, status) in
+            DispatchQueue.main.async {
+                if status == true {
+                    self?.comments.removeAll(where: { $0.id["commentId"] == commentId })
+                    self?.table.reloadData()
+                    self?.onUpdateSegmentTitle()
+                } else {
+                    self?.showTopFloatingToast(with: "", desc: message.orEmpty)
+                }
+            }
+        }
     }
 }
 
@@ -423,7 +411,7 @@ extension TGCommentPageController: CustomPopListProtocol {
             break
         case .copy(model: let model):
             let feedModel = model.model
-            UIPasteboard.general.string = feedModel.body ?? ""
+            UIPasteboard.general.string = feedModel.content
             UIViewController.showBottomFloatingToast(with: "rw_copy_to_clipboard".localized, desc: "")
             break
         default:

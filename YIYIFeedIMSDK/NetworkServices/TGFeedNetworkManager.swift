@@ -16,7 +16,7 @@ class TGFeedNetworkManager: NSObject {
       /// - Parameters:
       ///   - feedId: Feed ID
       ///   - completion: 回调，返回动态详情模型
-    func fetchFeedDetailInfo(withFeedId feedId: String, completion: @escaping (TGFeedResponse?, Error?) -> Void) {
+    func fetchFeedDetailInfo(withFeedId feedId: String, completion: @escaping (FeedListModel?, Error?) -> Void) {
         
         let path = "api/v2/feeds/\(feedId)"
         TGNetworkManager.shared.request(
@@ -29,17 +29,29 @@ class TGFeedNetworkManager: NSObject {
                 completion(nil, error)
                 return
             }
-            do {
-                let decoder = JSONDecoder()
-                let feedResponse = try decoder.decode(TGFeedResponse.self, from: data)
-                DispatchQueue.main.async {
-                    completion(feedResponse, nil)
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<FeedListModel>().map(JSONString: jsonString)
+                guard let originalModel = model else {
+                    return
                 }
-            } catch {
-                // 解析失败，返回错误
-                DispatchQueue.main.async {
-                    completion(nil, error)
+                let group = DispatchGroup()
+                group.enter()
+                self.requestUserInfo(to: [originalModel]) { (datas, message, status) in
+                    group.leave()
                 }
+                // 动态转发，好像移除了，暂时注释
+//                if originalModel.repostId > 0 {
+//                    group.enter()
+//                    FeedListNetworkManager.requestRepostFeedInfo(feedIDs: [originalModel.repostId]) { models in
+//                        group.leave()
+//                    }
+//                }
+                
+//                originalModel.save()
+                group.notify(queue: .main) {
+                    completion(originalModel, nil)
+                }
+
             }
             
         }
@@ -47,14 +59,14 @@ class TGFeedNetworkManager: NSObject {
     
     
     func getFeeds(mediaType: FeedMediaType = .image,
-    feedType: TGFeedListType = .hot,
-    limit: Int = 20,
-    after: Int? = nil,
-    afterTime: String? = nil,
-    country: String? = RLSDKManager.shared.loginParma?.countryCode,
-    language: String? = RLSDKManager.shared.loginParma?.languageCode,
-    campaignId: String?,
-    hashtagId: String?, completion: @escaping ([TGFeedResponse]?, Error?) -> Void) {
+                  feedType: TGFeedListType = .hot,
+                  limit: Int = 20,
+                  after: Int? = nil,
+                  afterTime: String? = nil,
+                  country: String? = RLSDKManager.shared.loginParma?.countryCode,
+                  language: String? = RLSDKManager.shared.loginParma?.languageCode,
+                  campaignId: String?,
+                  hashtagId: String?, completion: @escaping ([FeedListCellModel]?, Error?) -> Void) {
         
         let path = "api/v2/feeds/media"
         var params: [String: Any] = [:]
@@ -101,24 +113,55 @@ class TGFeedNetworkManager: NSObject {
                 completion(nil, error)
                 return
             }
-            do {
-                let decoder = JSONDecoder()
-                let feedResponse = try decoder.decode([TGFeedResponse].self, from: data)
-                DispatchQueue.main.async {
-                    completion(feedResponse, nil)
+            if let jsonString = String(data: data, encoding: .utf8), let models = Mapper<FeedListModel>().mapArray(JSONString: jsonString) {
+                
+                self.requestUserInfo(to: models) { (result, message, status) in
+                    
+                    guard let result = result else {
+                        completion(nil, nil)
+                        return
+                    }
+                
+                    completion(result.compactMap { FeedListCellModel(feedListModel: $0) }, nil)
                 }
-            } catch {
-                // 解析失败，返回错误
+            } else {
+                let nserror = NSError(domain: "TGFeedNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
                 DispatchQueue.main.async {
-                    completion(nil, error)
+                    completion(nil, nserror)
                 }
             }
-            
         }
     }
     
+     func requestUserInfo(to feeds: [FeedListModel], complete: @escaping ([FeedListModel]?, String?, Bool) -> Void) {
+        // 1.取出所有用户信息，过滤重复信息
+        let userIds = Array(Set(feeds.flatMap { $0.userIds() }))
+        // 2.发起网络请求
+        TGUserNetworkingManager.shared.getUserInfo(userIds) { (_, models, _) in
+            guard let models = models else {
+                // TODO: 错误信息应该使用后台返回信息，但由于这个 API 没有处理用户信息接口错误信息。
+                // 当然更不应该在调用 API 的地方处理后台返回错误信息。
+                // 就先写一个假的数据，等这 API 更新后再替换
+                complete(nil,  "network_problem".localized, false)
+                return
+            }
+            // 3.将用户信息和动态信息匹配
+            let userDic = models.toDictionary { $0.userIdentity }
+            for feed in feeds {
+                feed.set(userInfos: userDic)
+            }
+            
+            DispatchQueue.global().async {
+                models.forEach { user in
+                    user.save()
+                }
+            }
+            
+            complete(feeds, nil, true)
+        }
+    }
     
-    func fetchFeedCommentsList(withFeedId feedId: String, afterId: Int?, limit: Int, completion: @escaping (TGFeedContentResponse?, Error?) -> Void) {
+    func fetchFeedCommentsList(withFeedId feedId: String, afterId: Int?, limit: Int, completion: @escaping ([FeedCommentListCellModel]?, Error?) -> Void) {
         
         let path = "api/v2/feeds/\(feedId)/comments"
         var params: [String: Any] = [:]
@@ -139,43 +182,42 @@ class TGFeedNetworkManager: NSObject {
             }
             
             do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                var feedContentResponse = try decoder.decode(TGFeedContentResponse.self, from: data)
-                
-                // 处理数据，合并评论
-                var allComments: [TGFeedCommentListModel] = []
-                
-                // 处理置顶评论，设置 isPinned 为 true
-                if let pinnedComments = feedContentResponse.pinneds {
-                    for var comment in pinnedComments {
-                        comment.pinned = true // 设置置顶标志
-                        allComments.append(comment)
+                if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    var comments: [FeedListCommentModel] = []
+                    var commentList: [FeedListCommentModel] = []
+                    
+                    if let topCommentList = Mapper<FeedListCommentModel>().mapArray(JSONObject: jsonDict["pinneds"]) {
+                        for topComment in topCommentList {
+                            topComment.pinned = true
+                        }
+                        commentList += topCommentList
                     }
-                }
-                
-                // 处理普通评论，设置 isPinned 为 false
-                if let regularComments = feedContentResponse.comments {
-                    for var comment in regularComments {
-                        comment.pinned = false // 设置普通评论标志
-                        allComments.append(comment)
+                    
+                    if var normalCommentList = Mapper<FeedListCommentModel>().mapArray(JSONObject: jsonDict["comments"]) {
+                        let topComment = commentList
+                        if topComment.isEmpty {
+                            commentList += normalCommentList
+                        } else {
+                            normalCommentList = normalCommentList.filter { comment in
+                                !topComment.contains { $0.id == comment.id }
+                            }
+                            commentList += normalCommentList
+                        }
                     }
-                }
-                
-                // 更新合并后的评论列表
-                feedContentResponse.comments = allComments
-                
-                DispatchQueue.main.async {
-                    completion(feedContentResponse, nil)
+                    
+                    comments = commentList
+                    let returnComments = comments.map { FeedCommentListCellModel(feedListCommentModel: $0) }
+                    completion(returnComments, nil)
+                } else {
+                    completion(nil, nil)
                 }
             } catch {
-                // 解析失败，返回错误
-                DispatchQueue.main.async {
-                    completion(nil, error)
-                }
+                print("JSON 解析失败: \(error)")
+                completion(nil, error)
             }
         }
     }
+    
     /// 提交评论
     ///
     /// - Parameters:
@@ -184,7 +226,7 @@ class TGFeedNetworkManager: NSObject {
     ///   - sourceId: 评论的对象的id(必填)
     ///   - replyUserId: 若该评论是回复别人，则需传入被回复的用户的id(选填)
     ///   - complete: 请求回调，请求成功则通过comment字段返回服务器上关于该评论的数据
-    func submitComment(for type: TGCommentType, content: String, sourceId: Int, replyUserId: Int?, contentType: CommentContentType, complete: @escaping ((_ comment: TGFeedCommentListModel?, _ msg: String?, _ status: Bool) -> Void)) -> Void {
+    func submitComment(for type: TGCommentType, content: String, sourceId: Int, replyUserId: Int?, contentType: CommentContentType, complete: @escaping ((_ comment: TGCommentModel?, _ msg: String?, _ status: Bool) -> Void)) -> Void {
         
         let path = "api/v2/feeds/\(sourceId)/comments"
         
@@ -207,17 +249,13 @@ class TGFeedNetworkManager: NSObject {
                 return
             }
             do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let feedContentResponse = try decoder.decode(TGCommentModelResponse.self, from: data)
-                DispatchQueue.main.async {
-                    complete(feedContentResponse.comment, feedContentResponse.message,  true)
+                if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    let comment = Mapper<TGCommentModel>().map(JSONObject: jsonDict["comment"])
+                    complete(comment, "", true)
                 }
             } catch {
-                // 解析失败，返回错误
-                DispatchQueue.main.async {
-                    complete(nil, "error_data_server_return".localized, false)
-                }
+                print("JSON 解析失败: \(error)")
+                complete(nil, "error_data_server_return".localized, false)
             }
             
         }
@@ -242,7 +280,7 @@ class TGFeedNetworkManager: NSObject {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let response = try decoder.decode(TGCommentModelResponse.self, from: data)
+                let response = try decoder.decode(TGBaseModelResponse.self, from: data)
                 DispatchQueue.main.async {
                     if response.code == 31 {
                         complete(response.message, response.message, false)
@@ -276,23 +314,11 @@ class TGFeedNetworkManager: NSObject {
             params: parameters,
             headers: nil
         ) { data, _, error in
-            guard let data = data, error == nil else {
+            guard error == nil else {
                 complete("network_problem".localized, false)
                 return
             }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let feedContentResponse = try decoder.decode(TGCommentModelResponse.self, from: data)
-                DispatchQueue.main.async {
-                    complete(feedContentResponse.message, true)
-                }
-            } catch {
-                // 解析失败，返回错误
-                DispatchQueue.main.async {
-                    complete("error_data_server_return".localized, false)
-                }
-            }
+            complete(nil, true)
             
         }
     }
@@ -637,7 +663,7 @@ class TGFeedNetworkManager: NSObject {
     }
     
     
-    func editRejectShortVideo(feedID: String, shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: VideoType, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func editRejectShortVideo(feedID: String, shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds/reject/\(feedID)"
         
@@ -720,7 +746,7 @@ class TGFeedNetworkManager: NSObject {
         }
     }
     
-    func postShortVideo(shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: VideoType, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping((_ feedId: Int?, _ error: NSError?) -> Void)) {
+    func postShortVideo(shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping((_ feedId: Int?, _ error: NSError?) -> Void)) {
         var param: [String: Any] = Dictionary()
 
         if let content = feedContent {
@@ -891,6 +917,96 @@ class TGFeedNetworkManager: NSObject {
         }
         
     }
+    
+    
+    func fetchFeedRejectList(withPage page: String, limit: Int, completion: @escaping (TGRejectModel?, Error?) -> Void) {
+        
+        let path = "api/v2/feeds/reject/list"
+        var params: [String: Any] = [:]
+        params.updateValue(limit, forKey: "limit")
+        params.updateValue(page, forKey: "page")
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .GET,
+            params: params,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(nil, error)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<TGRejectModel>().map(JSONString: jsonString)
+                DispatchQueue.main.async {
+                    completion(model, nil)
+                }
+            } else {
+                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    completion(nil, nserror)
+                }
+            }
+        }
+    }
+    
+    func fetchFeedRejectDetail(withFeedId feedId: String, completion: @escaping (TGRejectDetailModel?, Error?) -> Void) {
+        
+        let path = "api/v2/feeds/reject/\(feedId)"
+        let params: [String: Any] = [:]
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .GET,
+            params: params,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(nil, error)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<TGRejectDetailModel>().map(JSONString: jsonString)
+                DispatchQueue.main.async {
+                    completion(model, nil)
+                }
+            } else {
+                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    completion(nil, nserror)
+                }
+            }
+        }
+    }
+    
+    func readAllNoti(completion: @escaping (BaseModelResponse?, Error?) -> Void) {
+        
+        let path = "api/v2/user/notifications?type=feed_reject"
+        let params: [String: Any] = [:]
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .PATCH,
+            params: params,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(nil, error)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<BaseModelResponse>().map(JSONString: jsonString)
+                completion(model, nil)
+            } else {
+                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    completion(nil, nserror)
+                }
+            }
+        }
+    }
+    
+    
     
     
 }

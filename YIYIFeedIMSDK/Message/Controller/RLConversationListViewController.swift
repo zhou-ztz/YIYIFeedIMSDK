@@ -63,7 +63,8 @@ public class RLConversationListViewController: TGViewController {
         tableView.mj_header = SCRefreshHeader(refreshingTarget: self, refreshingAction: #selector(getConversationList))
         tableView.mj_footer = SCRefreshFooter(refreshingTarget: self, refreshingAction: #selector(loadmoreConversationList))
         tableView.mj_footer.isHidden = true
-        getConversationList()
+       // getConversationList()
+        tableView.mj_header.beginRefreshing()
         NotificationCenter.default.addObserver(self, selector: #selector(updateWebLoggedInHeader(notice:)), name: Notification.Name(rawValue: "isWebLoggedIn"), object: nil)
     }
     

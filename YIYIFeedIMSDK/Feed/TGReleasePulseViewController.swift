@@ -109,7 +109,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     /// 选择图片数据对应数据
     var selectedModelImages: [Any] = []
     
-    var shortVideoAsset: ShortVideoAsset? {
+    var shortVideoAsset: TGShortVideoAsset? {
         didSet {
             reloadShortVideoAsset()
         }
@@ -159,7 +159,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     // By Kit Foong (Check is it mini program)
     var isMiniProgram: Bool = false
     var isFromShareExtension: Bool = false
-    var postPhotoExtension =  [PostPhotoExtension]()
+    var postPhotoExtension =  [TGPostPhotoExtension]()
     //动态ID
     var feedId: String?
     //是否从(驳回动态/编辑)页面来
@@ -762,7 +762,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
             
         }else {
             for item in selectedModelImages {
-                if let imageItem = item as? RejectDetailModelImages {
+                if let imageItem = item as? TGRejectDetailModelImages {
                     self.showImageCollectionView.imageDatas.append(imageItem.imagePath ?? "")
                 }
                 if let image = item as? UIImage {
@@ -815,7 +815,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
                                 options.isSynchronous = true
                                 manager.requestImageData(for: asset, options: options) { data, uti, _, _ in
                                     if let data = data {
-                                        self?.postPhotoExtension.append(PostPhotoExtension(data: data as Data, type: uti))
+                                        self?.postPhotoExtension.append(TGPostPhotoExtension(data: data as Data, type: uti))
                                     }
                                 }
                             }
@@ -834,7 +834,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
                         }
                     } else {
                         if index < self.selectedModelImages.count {
-                            if let imageModel = self.selectedModelImages[index] as? RejectDetailModelImages {
+                            if let imageModel = self.selectedModelImages[index] as? TGRejectDetailModelImages {
                                 self.editPhotoVC(imageURL: imageModel.imagePath ?? "", photo: nil)
                             }
                             if let image = self.selectedModelImages[index] as? UIImage {
@@ -898,7 +898,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
         }
     }
     
-    func editPhotoVC(asset: PHAsset?, photo: PostPhotoExtension?){
+    func editPhotoVC(asset: PHAsset?, photo: TGPostPhotoExtension?){
         var image: UIImage!
         
         if isFromShareExtension {
@@ -929,7 +929,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
             }
         }
     }
-    func editPhotoVC(image: UIImage?, photo: PostPhotoExtension?){
+    func editPhotoVC(image: UIImage?, photo: TGPostPhotoExtension?){
         
         DispatchQueue.main.async{
             if let photoEditor = TGAppUtil.shared.createPhotoEditor(for: image) {
@@ -938,7 +938,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
             }
         }
     }
-    func editPhotoVC(imageURL: String?, photo: PostPhotoExtension?){
+    func editPhotoVC(imageURL: String?, photo: TGPostPhotoExtension?){
         
         guard let imageURL = URL(string: imageURL ?? "") else {
 //            printIfDebug("Failed to load image data from URL")
@@ -1025,34 +1025,28 @@ extension TGReleasePulseViewController {
             if campaignDict != nil {
                 TGPostTaskManager.shared.addTask(postModel, type: .campaign)
             } else {
-                TGPostTaskManager.shared.addTask(postModel)
+                TGPostTaskManager.shared.addTask(postModel, type: .normalType)
             }
         }else {
-            let post = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: privacyType.rawValue, repostModel: repostModel, shareModel: sharedModel, topics: topics, taggedLocation: taggedLocation, phAssets: postPHAssets, postPhoto: postPhotoExtension, video: nil, soundId: nil, videoType: nil, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: selectedModelImages, rejectNeedsUploadVideo: nil, videoCoverId: nil, videoDataId: nil, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher)
+            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: privacyType.rawValue, repostModel: repostModel, shareModel: sharedModel, topics: topics, taggedLocation: taggedLocation, phAssets: postPHAssets, postPhoto: postPhotoExtension, video: nil, soundId: nil, videoType: nil, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: selectedModelImages, rejectNeedsUploadVideo: nil, videoCoverId: nil, videoDataId: nil, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher)
             if campaignDict != nil {
-                TGPostTaskManager.shared.addTask(post, type: .campaign)
+                TGPostTaskManager.shared.addTask(postModel, type: .campaign)
             } else {
-                TGPostTaskManager.shared.addTask(post)
+                TGPostTaskManager.shared.addTask(postModel, type: .normalType)
             }
         }
-     
-//        //        if isFromEditFeed == true {
-//        //            TSRootViewController.share.presentFeedHome(atIndex: 1)
-//        //        }else{
-//        //            self.navigationController?.dismiss(animated: true, completion: nil)
-//        //        }
         DispatchQueue.main.async {
             if self.isFromEditFeed == true {
-//                TSRootViewController.share.presentFeedHome(atIndex: 1, isEditPost: true)
+                RLSDKManager.shared.feedDelegate?.didPresentFeedHome()
             } else {
                 self.isPost = true
                 self.navigationController?.dismiss(animated: true, completion: nil)
             }
         }
-//        // 活动的动态发布
-//        if campaignDict != nil {
-//            NotificationCenter.default.post(name: PostTaskManager.PopViewNotification, object: nil)
-//        }
+        // 活动的动态发布
+        if campaignDict != nil {
+            NotificationCenter.default.post(name: TGPostTaskManager.PopViewNotification, object: nil)
+        }
     }
 }
 
@@ -1622,7 +1616,7 @@ extension TGReleasePulseViewController {
             let asset = AVURLAsset(url: url)
             let coverImage = FileUtils.generateAVAssetVideoCoverImage(avAsset: asset)
             let releasePulseVC = TGReleasePulseViewController(type: .miniVideo)
-            releasePulseVC.shortVideoAsset = ShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
+            releasePulseVC.shortVideoAsset = TGShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
             let navigation = TGNavigationController(rootViewController: releasePulseVC).fullScreenRepresentation
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
                 self.present(navigation, animated: true, completion: nil)
@@ -1743,7 +1737,7 @@ extension TGReleasePulseViewController: MiniVideoCoverPickerDelegate {
             return
         }
         self.isVideoDataChanged = true
-        self.shortVideoAsset = ShortVideoAsset(coverImage: image, asset: asset.asset, videoFileURL: asset.videoFileURL)
+        self.shortVideoAsset = TGShortVideoAsset(coverImage: image, asset: asset.asset, videoFileURL: asset.videoFileURL)
     }
 }
 //extension TGReleasePulseViewController: SuggestVoucherDelegate {

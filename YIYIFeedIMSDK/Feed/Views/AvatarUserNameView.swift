@@ -67,8 +67,8 @@ class AvatarUserNameView: UIView {
         
     }
     
-    public func setData(data: TGFeedResponse){
-        avatarView.sd_setImage(with: URL(string: data.user?.avatar?.url ?? ""), placeholderImage: UIImage.set_image(named: "IMG_pic_default_secret"))
-        nameLabel.text = data.user?.name ?? ""
+    public func setData(data: FeedListCellModel){
+        avatarView.sd_setImage(with: URL(string: data.avatarInfo?.avatarURL ?? ""), placeholderImage: UIImage.set_image(named: "IMG_pic_default_secret"))
+        nameLabel.text = data.avatarInfo?.username ?? ""
     }
 }

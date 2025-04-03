@@ -507,6 +507,12 @@ extension UserInfoModel {
         return UserInfoModel.convert(json)?.first
        // return UserInfoStoreManager().fetchByNickname(nickname: nickname)
     }
+    
+    //测试获取自己的信息
+    static func retrieveCurrentUserSessionInfo() -> UserInfoModel? {
+        return RLSDKManager.shared.currentUserInfo
+    }
+    
 }
 
 

@@ -69,7 +69,7 @@ class TGMomentDetailNavTitle: UIView {
     }
     
     func update(model object: UserInfoModel) {
-//        LocalRemarkName.getRemarkName(userId: "\(object.userIdentity)", username: nil, originalName: object.name, label: nameLabel)
+        TGLocalRemarkName.getRemarkName(userId: "\(object.userIdentity)", username: nil, originalName: object.name, label: nameLabel)
         avatar.avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: object.sex)
         avatar.avatarInfo = object.avatarInfo()
         
@@ -77,7 +77,7 @@ class TGMomentDetailNavTitle: UIView {
         
         addTap { (_) in
             //跳转到个人信息页面
-//            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": object.userIdentity])
+            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": object.userIdentity])
         }
         
         layoutIfNeeded()

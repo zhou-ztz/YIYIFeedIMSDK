@@ -8,6 +8,55 @@
 import UIKit
 import WebKit
 
+public typealias WebViewBackClosure = () -> Void
+
+private struct TGWebViewControllerUX {
+    static let timeoutInterval = 10
+}
+
+enum WebViewType {
+    case pinInfo
+    case aboutVerification
+    case publicFigure
+    case deactivateAccount
+    case tnc
+    case privatePolicy
+    case earnYipps
+    case srsUtilitiesTnc
+    case walletHistoryFaq
+    case communityGuidelines
+    case referral
+    case liveRanking
+    
+    var urlString : String {
+        switch self {
+        case .pinInfo:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_security_pin_info_url_cn".localized : "rw_security_pin_info_url".localized
+        case .aboutVerification:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_text_about_verification_cn".localized : "rw_text_about_verification".localized
+        case .publicFigure:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_settings_public_figure_form_url_cn".localized : "rw_settings_public_figure_form_url".localized
+        case .deactivateAccount:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_setting_deactivate_account_link_cn".localized : "rw_setting_deactivate_account_link".localized
+        case .tnc:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_setting_term_link_china".localized : "rw_setting_term_link".localized
+        case .privatePolicy:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_setting_privacy_policy_link_china".localized : "rw_setting_privacy_policy_link".localized
+        case .earnYipps:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_yipps_wanted_how_to_get_web_link_cn".localized : "rw_yipps_wanted_how_to_get_web_link".localized
+        case .srsUtilitiesTnc:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_srs_utilities_tnc_cn".localized : "rw_srs_utilities_tnc".localized
+        case .walletHistoryFaq:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_wallet_history_faq_link_cn".localized : "rw_wallet_history_faq_link".localized
+        case .communityGuidelines:
+            return "rw_community_guidelines".localized
+        case .referral:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_re_learn_more_web_link_cn".localized : "rw_re_learn_more_web_link".localized
+        case .liveRanking:
+            return TGLocationManager.shared.isChina() || TGLocalizationManager.isUsingChinese() ? "rw_livestarranking_faq_link_cn".localized : "rw_livestarranking_faq_link".localized
+        }
+    }
+}
 
 class TGWebViewController: TGViewController {
 

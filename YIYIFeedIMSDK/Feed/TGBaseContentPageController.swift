@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDelegate {
+public class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDelegate {
 
     var currentIndex = 0
     var isLast = false
@@ -44,7 +44,7 @@ class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDele
         }
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         guard currentIndex == 0 || isLast else { return }
@@ -71,7 +71,7 @@ class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDele
         self.navigationController?.delegate = self
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.tutorialView.play()
@@ -212,7 +212,7 @@ class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDele
 
     func finishRefresh() {}
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer == refreshGesture {
             let translation = (gestureRecognizer as! UIPanGestureRecognizer).translation(in: view)
             guard translation.y < 0 || isLast else {
@@ -227,15 +227,15 @@ class TGBaseContentPageController: UIPageViewController, UIGestureRecognizerDele
 
 extension TGBaseContentPageController: UINavigationControllerDelegate {
     
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         
     }
     
-    func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+    public func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactionController
     }
     
-    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    public func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return CustomNavigationAnimator(transitionType: operation)
     }
 }

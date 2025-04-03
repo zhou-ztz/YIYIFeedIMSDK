@@ -104,6 +104,14 @@ class TGLocationManager: NSObject {
         //Add block to the queue to be executed asynchronously
         self.operationQueue.addOperation(block)
     }
+
+    func getCountryCode() -> String {
+        return UserDefaults.selectedCountryCode ?? "MY"
+    }
+    
+    func isChina() -> Bool {
+        return getCountryCode() == "CN"
+    }
 }
 
 extension TGLocationManager: CLLocationManagerDelegate  {

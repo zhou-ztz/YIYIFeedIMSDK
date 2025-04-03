@@ -19,7 +19,7 @@ enum PayInfoType: Int {
     case edit
     case lock
 }
-struct PostPhotoExtension  {
+public struct TGPostPhotoExtension  {
     var data: Data?
     var type: String?
 }
@@ -40,7 +40,7 @@ class TGReleasePulseCollectionView: UICollectionView, UICollectionViewDataSource
     /// 是否开启设置付费
     var shoudSetPayInfo: Bool = false
     
-    var imageShare: [PostPhotoExtension] = Array()
+    var imageShare: [TGPostPhotoExtension] = Array()
     var fromShare: Bool = false
 
     required init?(coder aDecoder: NSCoder) {

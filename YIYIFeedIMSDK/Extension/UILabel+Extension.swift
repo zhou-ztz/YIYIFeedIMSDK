@@ -1,6 +1,10 @@
 import Foundation
 import UIKit
 
+enum LabelImagePosition {
+    case front, back
+}
+
 enum LabelStyle {
     case bold(size: CGFloat, color: UIColor)
     case semibold(size: CGFloat, color: UIColor)
@@ -55,6 +59,25 @@ extension UILabel {
         let attributedText = NSMutableAttributedString(string: text)
         attributedText.addAttribute(NSAttributedString.Key.underlineStyle , value: NSUnderlineStyle.single.rawValue, range: textRange)
         self.attributedText = attributedText
+    }
+    func setTextWithIcon(text: String, image: UIImage, imagePosition: LabelImagePosition, imageSize: CGSize, yOffset: CGFloat = 0.0) {
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = image
+        imageAttachment.bounds = CGRect(x: 0, y: yOffset, width: imageSize.width, height: imageSize.height)
+        let attachmentString = NSAttributedString(attachment: imageAttachment)
+        let completeText = NSMutableAttributedString(string: "")
+        let textAfterIcon = NSAttributedString(string: text)
+        switch imagePosition {
+        case .front:
+            completeText.append(attachmentString)
+            completeText.append(NSMutableAttributedString(string: " "))
+            completeText.append(textAfterIcon)
+        case .back:
+            completeText.append(textAfterIcon)
+            completeText.append(NSMutableAttributedString(string: " "))
+            completeText.append(attachmentString)
+        }
+        self.attributedText = completeText
     }
 }
 

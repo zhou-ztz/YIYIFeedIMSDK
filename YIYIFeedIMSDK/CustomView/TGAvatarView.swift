@@ -476,25 +476,23 @@ class AvatarInfo {
         liveId = model.liveFeedId
     }
 
-//    init(avatarURL: String, verifiedInfo: TSUserVerifiedModel?) {
-//        self.avatarURL = avatarURL
-//        verifiedType = verifiedInfo?.type ?? ""
-//        verifiedIcon = verifiedInfo?.icon ?? ""
-//    }
-//    
-//    init(model: UserInfoType) {
-//        avatarURL =  model.avatarUrl.orEmpty.smallPicUrl(showingSize: CGSize(width: 150, height: 150))
-//        verifiedType = model.verificationType.orEmpty
-//        verifiedIcon = model.verificationIcon.orEmpty
-//        sex = model.sex
-//        avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: sex)
-//        type = .normal(userId: model.userIdentity)
-//        username = model.username
-//        nickname = model.name
-//        frameIcon = model.profileFrameIcon
-//        frameColor = model.profileFrameColorHex
-//        liveId = model.liveFeedId
-//    }
+    init(avatarURL: String) {
+        self.avatarURL = avatarURL
+    }
+    
+    init(model: UserInfoType) {
+        avatarURL =  model.avatarUrl.orEmpty.smallPicUrl(showingSize: CGSize(width: 150, height: 150))
+        verifiedType = model.verificationType.orEmpty
+        verifiedIcon = model.verificationIcon.orEmpty
+        sex = model.sex
+        avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: sex)
+        type = .normal(userId: model.userIdentity)
+        username = model.username
+        nickname = model.name
+        frameIcon = model.profileFrameIcon
+        frameColor = model.profileFrameColorHex
+        liveId = model.liveFeedId
+    }
 }
 
 extension AvatarInfo {

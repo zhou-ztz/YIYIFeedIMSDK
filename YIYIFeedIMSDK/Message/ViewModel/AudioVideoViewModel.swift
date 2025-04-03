@@ -50,7 +50,7 @@ class AudioVideoViewModel: NSObject {
         let coreEngine = NERtcEngine.shared()
         let context = NERtcEngineContext()
         context.engineDelegate = self
-        context.appKey = NIMAppKey
+        context.appKey = RLSDKManager.shared.appKey
         coreEngine.setupEngine(with: context)
         
         NERtcEngine.shared().adjustPlaybackSignalVolume(200)

@@ -243,6 +243,7 @@
 		B193FD5C2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */; };
 		B1A889492D8D3FC800B678CB /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A889482D8D3FC800B678CB /* Notification+Extension.swift */; };
 		B1A8894B2D8D491400B678CB /* RemarkNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */; };
+		B1A889562D93AE7600B678CB /* TGEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A889552D93AE7600B678CB /* TGEventType.swift */; };
 		B1DA58EE2D37882800F83914 /* TGIMUnreadCountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */; };
 		B1DA58FA2D38B76A00F83914 /* TGMessageRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */; };
 		B1DA58FC2D38D25B00F83914 /* TGMessageRequestViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */; };
@@ -434,6 +435,8 @@
 		D746FA8A2D4242C20085F218 /* TGMiniVideoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746FA892D4242C20085F218 /* TGMiniVideoControlView.swift */; };
 		D746FA8C2D424FB50085F218 /* TGLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746FA8B2D424FB50085F218 /* TGLocationView.swift */; };
 		D746FA8E2D424FFC0085F218 /* TGTopicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746FA8D2D424FFC0085F218 /* TGTopicView.swift */; };
+		D758DCFA2D9A8FD60081A787 /* TGPlaceHolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D758DCF92D9A8FD60081A787 /* TGPlaceHolderView.swift */; };
+		D758DCFC2D9A96920081A787 /* TGReactionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D758DCFB2D9A96920081A787 /* TGReactionTableViewCell.swift */; };
 		D764EC7B2D37869F00F62268 /* TGReleasePulseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D764EC7A2D37869F00F62268 /* TGReleasePulseViewController.xib */; };
 		D76668D72D34FCFE0086F90E /* TGPTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668D62D34FCFE0086F90E /* TGPTableViewCell.swift */; };
 		D76668D92D34FD500086F90E /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668D82D34FD500086F90E /* Date+Extension.swift */; };
@@ -442,6 +445,10 @@
 		D76668DF2D3507730086F90E /* TGMyFriendListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668DE2D3507730086F90E /* TGMyFriendListCell.swift */; };
 		D76668E32D35154E0086F90E /* TGAtMechantListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668E22D35154E0086F90E /* TGAtMechantListVC.swift */; };
 		D76668E62D351D490086F90E /* TGPostProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668E52D351D490086F90E /* TGPostProgressBar.swift */; };
+		D775B4742D9658290062FF01 /* TGSimpleCommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4732D9658290062FF01 /* TGSimpleCommentModel.swift */; };
+		D775B4762D9670970062FF01 /* TGComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4752D9670970062FF01 /* TGComment.swift */; };
+		D775B4782D9671490062FF01 /* TGCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4772D9671490062FF01 /* TGCommentViewModel.swift */; };
+		D775B47A2D9699D00062FF01 /* TGCommentNetWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4792D9699D00062FF01 /* TGCommentNetWorkManager.swift */; };
 		D79714EE2D26686C009772B7 /* TimeInterval+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79714ED2D26686C009772B7 /* TimeInterval+Extension.swift */; };
 		D79714F32D266918009772B7 /* TGBaseRecorderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79714F22D266918009772B7 /* TGBaseRecorderContainer.swift */; };
 		D79714F62D2669AC009772B7 /* TGMarkableProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79714F52D2669AC009772B7 /* TGMarkableProgressView.swift */; };
@@ -501,7 +508,7 @@
 		D7C4E9E22D2D29C90043DD82 /* ActiveBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D62D2D29C90043DD82 /* ActiveBuilder.swift */; };
 		D7C4E9E42D2D29C90043DD82 /* ActiveLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = D7C4E9D72D2D29C90043DD82 /* ActiveLabel.h */; };
 		D7C4ECD92D2D371F0043DD82 /* LabelLineText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4ECD82D2D371F0043DD82 /* LabelLineText.swift */; };
-		D7C4ECDB2D2D3B2D0043DD82 /* RejectDetailModelImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4ECDA2D2D3B2D0043DD82 /* RejectDetailModelImages.swift */; };
+		D7D349212D94F1BF0085DEB6 /* TGUserNetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D349202D94F1BF0085DEB6 /* TGUserNetworkingManager.swift */; };
 		D7D9E5312D23C9D800D8911F /* TGReactionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9E5302D23C9D800D8911F /* TGReactionOperation.swift */; };
 		D7D9E5332D23C9F200D8911F /* TGAsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9E5322D23C9F200D8911F /* TGAsyncOperation.swift */; };
 		D7D9E5372D23E45400D8911F /* TGCustomPopListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9E5362D23E45400D8911F /* TGCustomPopListViewController.swift */; };
@@ -531,6 +538,11 @@
 		D7ED1C9A2D3E53F900B7F95D /* TGFeedDetailImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED1C992D3E53F900B7F95D /* TGFeedDetailImageController.swift */; };
 		D7ED1C9C2D3E549600B7F95D /* TGImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED1C9B2D3E549600B7F95D /* TGImageScrollView.swift */; };
 		D7ED1C9E2D3E635800B7F95D /* TGResponsePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED1C9D2D3E635800B7F95D /* TGResponsePageController.swift */; };
+		D7F2C6F32D9BBBB2005EEFFD /* TGRejectedListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F2C6F22D9BBBB2005EEFFD /* TGRejectedListTableViewCell.swift */; };
+		D7F2C6F72D9BBBDB005EEFFD /* TGImageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F2C6F62D9BBBDB005EEFFD /* TGImageSliderView.swift */; };
+		D7F2C6F92D9BBC2F005EEFFD /* TGRejectListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F2C6F82D9BBC2F005EEFFD /* TGRejectListModel.swift */; };
+		D7F2C6FD2D9BBFE1005EEFFD /* TGRejectListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F2C6FC2D9BBFE1005EEFFD /* TGRejectListController.swift */; };
+		D7F2C6FF2D9BC053005EEFFD /* TGRejectedDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F2C6FE2D9BC053005EEFFD /* TGRejectedDetailController.swift */; };
 		D7FEF9BE2D55B9E600FF87E8 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FEF9BD2D55B9E600FF87E8 /* View+Extensions.swift */; };
 		D7FEF9C02D55BC2D00FF87E8 /* ScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FEF9BF2D55BC2D00FF87E8 /* ScreenExtensions.swift */; };
 		D7FEF9C22D55BE8C00FF87E8 /* TGAlertContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FEF9C12D55BE8C00FF87E8 /* TGAlertContentView.swift */; };
@@ -545,7 +557,7 @@
 		F5CD2C712CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6C2CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift */; };
 		F5CD2C722CFEB4C400EA7C7A /* PictureModeler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C602CFEB4C400EA7C7A /* PictureModeler.swift */; };
 		F5CD2C732CFEB4C400EA7C7A /* FeedImageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C692CFEB4C400EA7C7A /* FeedImageSliderView.swift */; };
-		F5CD2C742CFEB4C400EA7C7A /* FeedCommentLabelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentLabelModel.swift */; };
+		F5CD2C742CFEB4C400EA7C7A /* FeedCommentListCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentListCellModel.swift */; };
 		F5CD2C752CFEB4C400EA7C7A /* SharedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C612CFEB4C400EA7C7A /* SharedViewModel.swift */; };
 		F5CD2C762CFEB4C400EA7C7A /* FeedListCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5E2CFEB4C400EA7C7A /* FeedListCellModel.swift */; };
 		F5CD2C772CFEB4C400EA7C7A /* TopicListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */; };
@@ -553,7 +565,6 @@
 		F5CD2C7A2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6E2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift */; };
 		F5CD2C7B2CFEB4C400EA7C7A /* FeedListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */; };
 		F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */; };
-		F5CD2C7D2CFEB4C400EA7C7A /* TGFeedResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */; };
 		F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */; };
 		F5CD2C7F2CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */; };
 		F5CD2C832CFEB51C00EA7C7A /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C802CFEB51C00EA7C7A /* StoreManager.swift */; };
@@ -807,6 +818,7 @@
 		B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIndicatorWindowTop.swift; sourceTree = "<group>"; };
 		B1A889482D8D3FC800B678CB /* Notification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemarkNameManager.swift; sourceTree = "<group>"; };
+		B1A889552D93AE7600B678CB /* TGEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGEventType.swift; sourceTree = "<group>"; };
 		B1DA58ED2D37882800F83914 /* TGIMUnreadCountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIMUnreadCountManager.swift; sourceTree = "<group>"; };
 		B1DA58F92D38B76A00F83914 /* TGMessageRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestCell.swift; sourceTree = "<group>"; };
 		B1DA58FB2D38D25B00F83914 /* TGMessageRequestViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMessageRequestViewmodel.swift; sourceTree = "<group>"; };
@@ -999,6 +1011,8 @@
 		D746FA892D4242C20085F218 /* TGMiniVideoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMiniVideoControlView.swift; sourceTree = "<group>"; };
 		D746FA8B2D424FB50085F218 /* TGLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGLocationView.swift; sourceTree = "<group>"; };
 		D746FA8D2D424FFC0085F218 /* TGTopicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGTopicView.swift; sourceTree = "<group>"; };
+		D758DCF92D9A8FD60081A787 /* TGPlaceHolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGPlaceHolderView.swift; sourceTree = "<group>"; };
+		D758DCFB2D9A96920081A787 /* TGReactionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReactionTableViewCell.swift; sourceTree = "<group>"; };
 		D764EC7A2D37869F00F62268 /* TGReleasePulseViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TGReleasePulseViewController.xib; sourceTree = "<group>"; };
 		D76668D62D34FCFE0086F90E /* TGPTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGPTableViewCell.swift; sourceTree = "<group>"; };
 		D76668D82D34FD500086F90E /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
@@ -1007,6 +1021,10 @@
 		D76668DE2D3507730086F90E /* TGMyFriendListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMyFriendListCell.swift; sourceTree = "<group>"; };
 		D76668E22D35154E0086F90E /* TGAtMechantListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAtMechantListVC.swift; sourceTree = "<group>"; };
 		D76668E52D351D490086F90E /* TGPostProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGPostProgressBar.swift; sourceTree = "<group>"; };
+		D775B4732D9658290062FF01 /* TGSimpleCommentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGSimpleCommentModel.swift; sourceTree = "<group>"; };
+		D775B4752D9670970062FF01 /* TGComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGComment.swift; sourceTree = "<group>"; };
+		D775B4772D9671490062FF01 /* TGCommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentViewModel.swift; sourceTree = "<group>"; };
+		D775B4792D9699D00062FF01 /* TGCommentNetWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentNetWorkManager.swift; sourceTree = "<group>"; };
 		D79714ED2D26686C009772B7 /* TimeInterval+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extension.swift"; sourceTree = "<group>"; };
 		D79714F22D266918009772B7 /* TGBaseRecorderContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGBaseRecorderContainer.swift; sourceTree = "<group>"; };
 		D79714F52D2669AC009772B7 /* TGMarkableProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMarkableProgressView.swift; sourceTree = "<group>"; };
@@ -1066,7 +1084,7 @@
 		D7C4E9DB2D2D29C90043DD82 /* RegexParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexParser.swift; sourceTree = "<group>"; };
 		D7C4E9DC2D2D29C90043DD82 /* StringTrimExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringTrimExtension.swift; sourceTree = "<group>"; };
 		D7C4ECD82D2D371F0043DD82 /* LabelLineText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelLineText.swift; sourceTree = "<group>"; };
-		D7C4ECDA2D2D3B2D0043DD82 /* RejectDetailModelImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RejectDetailModelImages.swift; sourceTree = "<group>"; };
+		D7D349202D94F1BF0085DEB6 /* TGUserNetworkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGUserNetworkingManager.swift; sourceTree = "<group>"; };
 		D7D9E5302D23C9D800D8911F /* TGReactionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReactionOperation.swift; sourceTree = "<group>"; };
 		D7D9E5322D23C9F200D8911F /* TGAsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAsyncOperation.swift; sourceTree = "<group>"; };
 		D7D9E5362D23E45400D8911F /* TGCustomPopListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCustomPopListViewController.swift; sourceTree = "<group>"; };
@@ -1096,6 +1114,11 @@
 		D7ED1C992D3E53F900B7F95D /* TGFeedDetailImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedDetailImageController.swift; sourceTree = "<group>"; };
 		D7ED1C9B2D3E549600B7F95D /* TGImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGImageScrollView.swift; sourceTree = "<group>"; };
 		D7ED1C9D2D3E635800B7F95D /* TGResponsePageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGResponsePageController.swift; sourceTree = "<group>"; };
+		D7F2C6F22D9BBBB2005EEFFD /* TGRejectedListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRejectedListTableViewCell.swift; sourceTree = "<group>"; };
+		D7F2C6F62D9BBBDB005EEFFD /* TGImageSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGImageSliderView.swift; sourceTree = "<group>"; };
+		D7F2C6F82D9BBC2F005EEFFD /* TGRejectListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRejectListModel.swift; sourceTree = "<group>"; };
+		D7F2C6FC2D9BBFE1005EEFFD /* TGRejectListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRejectListController.swift; sourceTree = "<group>"; };
+		D7F2C6FE2D9BC053005EEFFD /* TGRejectedDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRejectedDetailController.swift; sourceTree = "<group>"; };
 		D7FEF9BD2D55B9E600FF87E8 /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
 		D7FEF9BF2D55BC2D00FF87E8 /* ScreenExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenExtensions.swift; sourceTree = "<group>"; };
 		D7FEF9C12D55BE8C00FF87E8 /* TGAlertContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAlertContentView.swift; sourceTree = "<group>"; };
@@ -1105,12 +1128,11 @@
 		F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedNetworkManager.swift; sourceTree = "<group>"; };
 		F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNetworkManager.swift; sourceTree = "<group>"; };
 		F5CD2C582CFEB40500EA7C7A /* ServerResponseDataTransforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponseDataTransforms.swift; sourceTree = "<group>"; };
-		F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentLabelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCommentLabelModel.swift; sourceTree = "<group>"; };
+		F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentListCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCommentListCellModel.swift; sourceTree = "<group>"; };
 		F5CD2C5E2CFEB4C400EA7C7A /* FeedListCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListCellModel.swift; sourceTree = "<group>"; };
 		F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListModel.swift; sourceTree = "<group>"; };
 		F5CD2C602CFEB4C400EA7C7A /* PictureModeler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureModeler.swift; sourceTree = "<group>"; };
 		F5CD2C612CFEB4C400EA7C7A /* SharedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViewModel.swift; sourceTree = "<group>"; };
-		F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedResponse.swift; sourceTree = "<group>"; };
 		F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListModel.swift; sourceTree = "<group>"; };
 		F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSPostLocationModel.swift; sourceTree = "<group>"; };
 		F5CD2C662CFEB4C400EA7C7A /* AvatarUserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUserNameView.swift; sourceTree = "<group>"; };
@@ -1557,6 +1579,7 @@
 				B1EABC4C2D2E508300EB7868 /* TGCacher.swift */,
 				B193FC132D65AE7200BEB3F7 /* TGLocalizationManager.swift */,
 				B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */,
+				B1A889552D93AE7600B678CB /* TGEventType.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2030,12 +2053,32 @@
 			path = FeedType;
 			sourceTree = "<group>";
 		};
+		D7F2C6F02D9BBAA9005EEFFD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D7F2C6F22D9BBBB2005EEFFD /* TGRejectedListTableViewCell.swift */,
+				D7F2C6F62D9BBBDB005EEFFD /* TGImageSliderView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D7F2C6F12D9BBAA9005EEFFD /* Rejected */ = {
+			isa = PBXGroup;
+			children = (
+				D7F2C6F02D9BBAA9005EEFFD /* Views */,
+				D7F2C6FC2D9BBFE1005EEFFD /* TGRejectListController.swift */,
+				D7F2C6FE2D9BC053005EEFFD /* TGRejectedDetailController.swift */,
+			);
+			path = Rejected;
+			sourceTree = "<group>";
+		};
 		F5BAEB222CF8085E007977D9 /* NetworkServices */ = {
 			isa = PBXGroup;
 			children = (
 				B1EABBF42D22B01E00EB7868 /* TGNewFriendsNetworkManager.swift */,
 				B1EABB982D1A53D500EB7868 /* TGStickerNetworkManager.swift */,
 				8A4BB33F2D084FDC00AAB4B8 /* TGIMNetworkManager.swift */,
+				D7D349202D94F1BF0085DEB6 /* TGUserNetworkingManager.swift */,
 				F5CD2C562CFEB40500EA7C7A /* TGFeedNetworkManager.swift */,
 				F5CD2C572CFEB40500EA7C7A /* TGNetworkManager.swift */,
 				D72E9B672D2B737600ACC703 /* TGNetworkURLPath.swift */,
@@ -2043,6 +2086,7 @@
 				B1EABC502D2E6D7A00EB7868 /* TGDownloadNetworkNanger.swift */,
 				D7AD6A9A2D38FED7006A3A1F /* TGUploadNetworkManager.swift */,
 				D7AD6A9E2D390EBF006A3A1F /* TGOBSManager.swift */,
+				D775B4792D9699D00062FF01 /* TGCommentNetWorkManager.swift */,
 			);
 			path = NetworkServices;
 			sourceTree = "<group>";
@@ -2059,12 +2103,11 @@
 		F5CD2C652CFEB4C400EA7C7A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentLabelModel.swift */,
+				F5CD2C5D2CFEB4C400EA7C7A /* FeedCommentListCellModel.swift */,
 				F5CD2C5E2CFEB4C400EA7C7A /* FeedListCellModel.swift */,
 				F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */,
 				F5CD2C602CFEB4C400EA7C7A /* PictureModeler.swift */,
 				F5CD2C612CFEB4C400EA7C7A /* SharedViewModel.swift */,
-				F5CD2C622CFEB4C400EA7C7A /* TGFeedResponse.swift */,
 				F5CD2C632CFEB4C400EA7C7A /* TopicListModel.swift */,
 				F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */,
 				F57A36EF2D004FBD00159F31 /* TGFeedCommentListModel.swift */,
@@ -2074,11 +2117,14 @@
 				D706E17A2D27EA4E000D4437 /* TGTopicCommonModel.swift */,
 				D706E17C2D27EA8B000D4437 /* TGTopicModel.swift */,
 				D706E17E2D27EC79000D4437 /* TGRepostModel.swift */,
-				D7C4ECDA2D2D3B2D0043DD82 /* RejectDetailModelImages.swift */,
 				D7AD6A982D38F4A4006A3A1F /* TGFeedReleaseModelResponse.swift */,
 				D7ED1C732D3E03E600B7F95D /* TGFeedReactionsModel.swift */,
 				B193FD392D8801ED00BEB3F7 /* TGReportTargetModel.swift */,
 				B193FD3F2D88045900BEB3F7 /* TGReportIncidentTypeModel.swift */,
+				D775B4732D9658290062FF01 /* TGSimpleCommentModel.swift */,
+				D775B4752D9670970062FF01 /* TGComment.swift */,
+				D775B4772D9671490062FF01 /* TGCommentViewModel.swift */,
+				D7F2C6F82D9BBC2F005EEFFD /* TGRejectListModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2120,6 +2166,8 @@
 				D72627922D41041D001E0DA6 /* TGCommentLabel.swift */,
 				B193FD3D2D8803F700BEB3F7 /* ReportTargetControl.swift */,
 				B193FD502D88088B00BEB3F7 /* Report */,
+				D758DCF92D9A8FD60081A787 /* TGPlaceHolderView.swift */,
+				D758DCFB2D9A96920081A787 /* TGReactionTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2127,6 +2175,7 @@
 		F5CD2C6F2CFEB4C400EA7C7A /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				D7F2C6F12D9BBAA9005EEFFD /* Rejected */,
 				D746FA832D4238CC0085F218 /* Player */,
 				D7ED1C6C2D3DFE4B00B7F95D /* FeedType */,
 				D7ED1C682D3DF95900B7F95D /* ImageDetailPage */,
@@ -2367,6 +2416,7 @@
 				B1EABC1D2D267E8400EB7868 /* TGRepostModel.swift in Sources */,
 				8A4BB31A2D0824DC00AAB4B8 /* IMRecordStateView.swift in Sources */,
 				8A4BB39B2D0FC92700AAB4B8 /* IMVideoCollectionAttachment.swift in Sources */,
+				D775B4762D9670970062FF01 /* TGComment.swift in Sources */,
 				8A9F0D3C2CF0911A0021462C /* RLSDKManager.swift in Sources */,
 				D7D9E5372D23E45400D8911F /* TGCustomPopListViewController.swift in Sources */,
 				B1EABCAF2D351D3200EB7868 /* TGChatroomplayerViewController.swift in Sources */,
@@ -2453,6 +2503,7 @@
 				8A4BB3B72D114C9D00AAB4B8 /* TGNearByLocalContainerCell.swift in Sources */,
 				D7971DB42D2683DE009772B7 /* TGVideoRecordButton.swift in Sources */,
 				D79714F82D266A4E009772B7 /* TGShareButton.swift in Sources */,
+				D775B4742D9658290062FF01 /* TGSimpleCommentModel.swift in Sources */,
 				8A9F0D4E2CF427560021462C /* RLConversationListViewController.swift in Sources */,
 				F5CD2C902CFEB5C200EA7C7A /* View+Extension.swift in Sources */,
 				B1EABBF52D22B01E00EB7868 /* TGNewFriendsNetworkManager.swift in Sources */,
@@ -2488,6 +2539,7 @@
 				D706E17B2D27EA4E000D4437 /* TGTopicCommonModel.swift in Sources */,
 				8A4BB38F2D0FC92600AAB4B8 /* IMWhiteboardAttachment.swift in Sources */,
 				8A4BB3B52D11479B00AAB4B8 /* TGInputLocalContainerCell.swift in Sources */,
+				D758DCFC2D9A96920081A787 /* TGReactionTableViewCell.swift in Sources */,
 				8A9F0D3E2CF093580021462C /* RLLoginParma.swift in Sources */,
 				B1DA59422D40E1AC00F83914 /* MeetingPayinfoView.swift in Sources */,
 				B1EABC362D2D3AD600EB7868 /* IMMeetingRoomAttachment.swift in Sources */,
@@ -2526,11 +2578,13 @@
 				D746FA692D4232340085F218 /* TGMiniVideoPageViewController.swift in Sources */,
 				B1EABC5C2D2E899800EB7868 /* FavoriteMsgModel.swift in Sources */,
 				D706E1792D27E4F0000D4437 /* TGTextButton.swift in Sources */,
+				D7F2C6F72D9BBBDB005EEFFD /* TGImageSliderView.swift in Sources */,
 				8A4BB3A12D1001D800AAB4B8 /* UIButton+Extension.swift in Sources */,
 				8A9F0DAE2CF44D6F0021462C /* UIViewController+Extension.swift in Sources */,
 				8A4BB39F2D0FFD7B00AAB4B8 /* TGAlertController.swift in Sources */,
 				D7C4E9D12D2D20560043DD82 /* TGLocationPOICell.swift in Sources */,
 				B193FC122D65AD2A00BEB3F7 /* TGProfileLanguageListCell.swift in Sources */,
+				D7F2C6FF2D9BC053005EEFFD /* TGRejectedDetailController.swift in Sources */,
 				D797238C2D269E49009772B7 /* TGBaseCameraViewController.swift in Sources */,
 				B193FBED2D5F367C00BEB3F7 /* MiniProgramMessageCell.swift in Sources */,
 				D7B0BF0D2D1D09BA00021E87 /* TGCommentModel.swift in Sources */,
@@ -2572,7 +2626,9 @@
 				B193FCD62D6EB5A500BEB3F7 /* TZImagePickerController.m in Sources */,
 				B193FCD72D6EB5A500BEB3F7 /* LZImageCropping.m in Sources */,
 				B193FCD82D6EB5A500BEB3F7 /* NSBundle+TZImagePicker.m in Sources */,
+				D775B47A2D9699D00062FF01 /* TGCommentNetWorkManager.swift in Sources */,
 				B193FCD92D6EB5A500BEB3F7 /* UIView+Layout.m in Sources */,
+				D775B4782D9671490062FF01 /* TGCommentViewModel.swift in Sources */,
 				B193FCDA2D6EB5A500BEB3F7 /* TZImageManager.m in Sources */,
 				B193FCDB2D6EB5A500BEB3F7 /* TZImageRequestOperation.m in Sources */,
 				B193FCDC2D6EB5A500BEB3F7 /* TZAssetModel.m in Sources */,
@@ -2603,6 +2659,7 @@
 				8A4BB3AF2D111DCB00AAB4B8 /* TGMediaGalleryPageViewController.swift in Sources */,
 				B193FC1B2D66CE5300BEB3F7 /* IMTextTranslateAttachment.swift in Sources */,
 				B1EABC3B2D2E498100EB7868 /* TGChatMediaVideoPlayerViewController.swift in Sources */,
+				D758DCFA2D9A8FD60081A787 /* TGPlaceHolderView.swift in Sources */,
 				F5CD2C952CFEB76800EA7C7A /* TGAvatarView.swift in Sources */,
 				B1A889492D8D3FC800B678CB /* Notification+Extension.swift in Sources */,
 				D711C8692D1BEB1E004EA26B /* TGAccountRegex.swift in Sources */,
@@ -2671,6 +2728,7 @@
 				B193FC102D65ACCD00BEB3F7 /* TGIMAudioLanguageController.swift in Sources */,
 				D7B586832D27915600A52F1E /* GradientView.swift in Sources */,
 				D7ED1C6B2D3DF9BC00B7F95D /* TGFeedDetailImagePageController.swift in Sources */,
+				D7D349212D94F1BF0085DEB6 /* TGUserNetworkingManager.swift in Sources */,
 				D7B586842D27915600A52F1E /* UIImageView+Alpha.swift in Sources */,
 				D7B586852D27915600A52F1E /* UIView+Image.swift in Sources */,
 				D7B586862D27915600A52F1E /* UIImage+Size.swift in Sources */,
@@ -2713,6 +2771,7 @@
 				8A9F0D7A2CF430E60021462C /* BaseChatInputView.swift in Sources */,
 				D7FEF9BE2D55B9E600FF87E8 /* View+Extensions.swift in Sources */,
 				D7ED1C8E2D3E3C4000B7F95D /* TGFeedCommentDetailShopView.swift in Sources */,
+				D7F2C6F32D9BBBB2005EEFFD /* TGRejectedListTableViewCell.swift in Sources */,
 				D706E1752D27D1B8000D4437 /* TGCustomActionsheetView.swift in Sources */,
 				B193FBEF2D5F510F00BEB3F7 /* TGPlaceholder.swift in Sources */,
 				8A9F0D7B2CF430E70021462C /* OperationCell.swift in Sources */,
@@ -2722,6 +2781,7 @@
 				F5CD2C712CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift in Sources */,
 				F5CD2C722CFEB4C400EA7C7A /* PictureModeler.swift in Sources */,
 				B1EABB902D19664600EB7868 /* IMStickerCollectionCell.swift in Sources */,
+				B1A889562D93AE7600B678CB /* TGEventType.swift in Sources */,
 				D7ED1C782D3E270300B7F95D /* TGBaseContentPageController.swift in Sources */,
 				B1EABC212D2682A300EB7868 /* TGMiniProgramShareModel.swift in Sources */,
 				B193FBE12D5C907100BEB3F7 /* TGReceiverTableCell.swift in Sources */,
@@ -2729,7 +2789,7 @@
 				D711C86D2D1BEB81004EA26B /* Array+Extension.swift in Sources */,
 				B193FD4A2D88073E00BEB3F7 /* VerifyTextField.swift in Sources */,
 				B193FD072D71861200BEB3F7 /* TGIMMediaRecordController.swift in Sources */,
-				F5CD2C742CFEB4C400EA7C7A /* FeedCommentLabelModel.swift in Sources */,
+				F5CD2C742CFEB4C400EA7C7A /* FeedCommentListCellModel.swift in Sources */,
 				B193FD572D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift in Sources */,
 				B1DA59322D3F3B2E00F83914 /* TGMembersViewController.swift in Sources */,
 				D706E1732D27CEEE000D4437 /* TGReleasePulseCollectionViewCell.swift in Sources */,
@@ -2763,7 +2823,6 @@
 				D79714EE2D26686C009772B7 /* TimeInterval+Extension.swift in Sources */,
 				D76668D92D34FD500086F90E /* Date+Extension.swift in Sources */,
 				F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */,
-				F5CD2C7D2CFEB4C400EA7C7A /* TGFeedResponse.swift in Sources */,
 				D7AD6A9F2D390EBF006A3A1F /* TGOBSManager.swift in Sources */,
 				F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */,
 				F5CD2C7F2CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift in Sources */,
@@ -2772,7 +2831,6 @@
 				B1EABB8E2D19615900EB7868 /* TGAppUtil.swift in Sources */,
 				D746FA8C2D424FB50085F218 /* TGLocationView.swift in Sources */,
 				B1EABB802D195C0000EB7868 /* TGSticker.swift in Sources */,
-				D7C4ECDB2D2D3B2D0043DD82 /* RejectDetailModelImages.swift in Sources */,
 				8A9F0DAD2CF44D6F0021462C /* String+Extension.swift in Sources */,
 				8A4BB3B12D111EA900AAB4B8 /* TGGalleryViewController.swift in Sources */,
 				8A9F0DBE2CF451E90021462C /* ImageCompress.swift in Sources */,
@@ -2791,6 +2849,7 @@
 				B1DA59212D3DF30500F83914 /* TGFilesPreviewTableViewController.swift in Sources */,
 				D711C8552D1BEADE004EA26B /* TGTextToolBarView.swift in Sources */,
 				D746FA872D423CF60085F218 /* TGMiniVideoControlVC.swift in Sources */,
+				D7F2C6FD2D9BBFE1005EEFFD /* TGRejectListController.swift in Sources */,
 				B1EABC4D2D2E508300EB7868 /* TGCacher.swift in Sources */,
 				D711C8562D1BEADE004EA26B /* TGKBNewsInputAccessoryView.swift in Sources */,
 				D711C8572D1BEADE004EA26B /* TGKeyboardToolbar.swift in Sources */,
@@ -2839,6 +2898,7 @@
 				8A9F0D9F2CF44CD20021462C /* RLCurrentUserInfo.swift in Sources */,
 				B1EABBFC2D23D49E00EB7868 /* ContactsSearchView.swift in Sources */,
 				B1EABC232D2683A300EB7868 /* TGChatFriendListViewController.swift in Sources */,
+				D7F2C6F92D9BBC2F005EEFFD /* TGRejectListModel.swift in Sources */,
 				8A4BB3352D08352B00AAB4B8 /* NMCWhiteBoardManager.swift in Sources */,
 				8A4BB3992D0FC92600AAB4B8 /* IMLocationCollectionAttachment.swift in Sources */,
 				B1EABBAE2D1BF30000EB7868 /* TGChooseCollectionViewCell.swift in Sources */,

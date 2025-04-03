@@ -150,8 +150,8 @@ class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtocol {
 //            $0.top.bottom.equalToSuperview().inset(10)
 //        }
         
-        let dummyViewOne = UIView()
-        let dummyViewTwo = UIView()
+//        let dummyViewOne = UIView()
+//        let dummyViewTwo = UIView()
         let buttonStackView = UIStackView(frame: .zero)
         buttonStackView.axis = .horizontal
         buttonStackView.distribution = .fillEqually
@@ -198,9 +198,9 @@ class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtocol {
 //                TSRootViewController.share.guestJoinLandingVC()
 //                return
 //            }
-            guard let self = self else { return }
+//            guard let self = self else { return }
          
-//            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchant.merchantId.stringValue])
+            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchant.merchantId.stringValue])
         }
         
         if isDarkBackground {

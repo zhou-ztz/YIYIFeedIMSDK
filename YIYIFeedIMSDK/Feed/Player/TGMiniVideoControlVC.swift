@@ -63,7 +63,7 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //开始记录停留时间
-//        stayBeginTimestamp = Date().timeStamp
+        stayBeginTimestamp = Date().timeStamp
         TGMiniVideoListPlayerManager.shared.setPlayerView(self.control.previewView)
         TGMiniVideoListPlayerManager.shared.playWithVideo(self.model)
         TGMiniVideoListPlayerManager.shared.onCurrentPlayStatusUpdateHandler = { [weak self] status in
@@ -157,7 +157,7 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
     @objc func showReactionBottomSheet() {
         let vc = TGResponsePageController(theme: .white, feed: model, defaultSegment: 1, onToolbarUpdate: self.parentVC?.onToolbarUpdate)
         vc.titleLabel.text = ""
-        let nav = TGNavigationController(rootViewController: vc)
+        let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .custom
         nav.transitioningDelegate = self
         nav.view.backgroundColor = .clear
@@ -167,22 +167,15 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
 
 extension TGMiniVideoControlVC {
     func behaviorUserFeedStayData() {
-//        if stayBeginTimestamp != "" {
-//            stayEndTimestamp = Date().timeStamp
-//            let stay = stayEndTimestamp.toInt()  - stayBeginTimestamp.toInt()
-//            if stay > 5 {
-//                self.stayBeginTimestamp = ""
-//                self.stayEndTimestamp = ""
-//                EventTrackingManager.instance.trackEvent(
-//                    itemId: self.model.idindex.stringValue,
-//                    itemType: ItemType.shortvideo.rawValue,
-//                    behaviorType: BehaviorType.stay,
-//                    moduleId: ModuleId.feed.rawValue,
-//                    pageId: PageId.feed.rawValue,
-//                    behaviorValue: stay.stringValue
-//                )
-//            }
-//        }
+        if stayBeginTimestamp != "" {
+            stayEndTimestamp = Date().timeStamp
+            let stay = stayEndTimestamp.toInt()  - stayBeginTimestamp.toInt()
+            if stay > 5 {
+                self.stayBeginTimestamp = ""
+                self.stayEndTimestamp = ""
+                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: self.model.idindex.stringValue, itemType: TGItemType.shortvideo.rawValue, behaviorType: TGBehaviorType.stay.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: stay.stringValue, traceInfo: nil)
+            }
+        }
     }
 }
 
@@ -199,23 +192,19 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
                 self?.updateDataSouce(feed)
             }
         }
-        let nav = TGNavigationController(rootViewController: vc)
-//        nav.modalPresentationStyle = .custom
-//        nav.transitioningDelegate = self
-//        nav.view.backgroundColor = .clear
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .custom
+        nav.transitioningDelegate = self
+        nav.view.backgroundColor = .clear
         self.present(nav, animated: true, completion: nil)
-//        EventTrackingManager.instance.track(event: .innerFeedViewClicks, with: ["Clicked": "Comment Btn"])
-//        //上报动态点击事件
-//        //sceneId: type?.rawValue ?? "",
-//        EventTrackingManager.instance.trackEvent(
-//            itemId: model.idindex.stringValue,
-//            itemType: model.feedType == .miniVideo ? ItemType.shortvideo.rawValue : ItemType.image.rawValue,
-//            behaviorType: BehaviorType.click,
-//            moduleId: ModuleId.feed.rawValue,
-//            pageId: PageId.feed.rawValue)
-//        
-//        self.stayBeginTimestamp = ""
-//        self.stayEndTimestamp = ""
+        RLSDKManager.shared.feedDelegate?.track(event: TGEvent.innerFeedViewClicks, with: ["Clicked": "Comment Btn"])
+        
+        //上报动态点击事件
+        //sceneId: type?.rawValue ?? "",
+        RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: model.idindex.stringValue, itemType: model.feedType == .miniVideo ? TGItemType.shortvideo.rawValue : TGItemType.image.rawValue, behaviorType: TGBehaviorType.click.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
+        
+        self.stayBeginTimestamp = ""
+        self.stayEndTimestamp = ""
         
     }
     
@@ -300,11 +289,11 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
         TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(model.idindex)") { [weak self] (feedInfo, error) in
           
             DispatchQueue.main.async {
-                guard let listModel = feedInfo, let weakself = self else {
+                guard let feedInfo = feedInfo, let weakself = self else {
 //                    self?.showTopIndicator(status: .faild, "system_error_msg".localized)
                     return
                 }
-                let cellModel = FeedListCellModel(from: listModel)
+                let cellModel = FeedListCellModel(feedListModel: feedInfo)
                 view.updateReactionList(cellModel)
                 
                 if weakself.model.idindex == cellModel.idindex {

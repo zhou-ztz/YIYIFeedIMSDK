@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TGReactionController: TGViewController {
+class TGReactionController: UIViewController {
 
     private(set) var theme: Theme = .dark
     
@@ -29,7 +29,9 @@ class TGReactionController: TGViewController {
         v.distribution = .fill
         v.alignment = .fill
     }
-
+    lazy var placeHolder: TGPlaceHolderView = {
+        return TGPlaceHolderView(offset: TSNavigationBarHeight - 50, heading: "", detail: "", lottieName: "feed-loading", theme: theme)
+    }()
     var feedId: Int!
 
     private var isNavTransparent: Bool = false
@@ -51,15 +53,15 @@ class TGReactionController: TGViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setup()
+        
         updateTheme()
         pageHandler.pageController = pagecontroller
         
-//        view.addSubview(placeHolder)
-//        placeHolder.bindToEdges()
-//        view.layoutIfNeeded()
-//
-//        placeHolder.play()
+        view.addSubview(placeHolder)
+        placeHolder.bindToEdges()
+        view.layoutIfNeeded()
+
+        placeHolder.play()
         
         fetch()
         
@@ -80,17 +82,20 @@ class TGReactionController: TGViewController {
             DispatchQueue.main.async {
                 defer {
                     self?.onLoaded?(model?.stats?.first?.count)
-//                    self?.placeHolder.removeFromSuperview()
+                    self?.placeHolder.removeFromSuperview()
                 }
                 guard let self = self, let model = model else { return }
-//                    self.removePlaceholderView()
+                    self.removePlaceholderView()
                     self.setup(with: model.stats, reactionLists: model.data)
                     self.reactionStats = model.stats
             
             }
         }
     }
-
+    func removePlaceholderView() {
+        self.placeHolder.removeFromSuperview()
+    }
+    
 //    override func placeholderButtonDidTapped() {
 //        fetch()
 //    }
@@ -120,13 +125,8 @@ class TGReactionController: TGViewController {
 //            showEmptyData()
         }
                 
-//        view.backgroundColor = .white
         view.addSubview(contentstack)
-        contentstack.snp.makeConstraints { v in
-            v.top.left.right.equalToSuperview()
-//            v.bottom.lessThanOrEqualToSuperview()
-            v.bottom.equalToSuperview()
-        }
+        contentstack.bindToEdges()
 
         addChild(pagecontroller)
         contentstack.addArrangedSubview(pagecontroller.view)

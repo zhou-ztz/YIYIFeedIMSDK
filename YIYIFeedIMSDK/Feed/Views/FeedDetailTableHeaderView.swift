@@ -10,14 +10,13 @@ import AVFoundation
 
 class FeedDetailTableHeaderView: UIView {
     
-    var followStatusClickCall: (() -> ())?
     var deleteStatusClickCall: (() -> ())?
     var mediaViewClickCall: (() -> ())?
     var onTranslated: TGEmptyClosure?
-    var onTapPictureClickCall: (() -> ())?
+    var onTapPictureClickCall: ((Int, String) -> ())?
     
     // views
-    private var contentView: UIStackView = {
+    var contentView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -28,28 +27,14 @@ class FeedDetailTableHeaderView: UIView {
         return stack
     }()
     
-    let headerStackView: UIStackView = UIStackView().configure {
-        $0.axis = .horizontal
+    public let headerStackView: UIStackView = UIStackView().configure {
+        $0.axis = .vertical
         $0.distribution = .fill
         $0.spacing = 5
     }
-    
-    var avatarView: AvatarUserNameView = AvatarUserNameView(frame: .zero, avatarWidth: 40.0)
-    
-    private let followButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setTitle("关注", for: .normal)
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        button.backgroundColor = .white
-        button.roundCorner(10)
-        return button
-    }()
-    
-    
+
     private let deleteButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("删除", for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.backgroundColor = .white
@@ -61,11 +46,13 @@ class FeedDetailTableHeaderView: UIView {
     
     private var originalTexts: String = ""
     private var translatedTexts: String = ""
+  
+    private var currentPrimaryButtonState: SocialButtonState = .follow
     
     //动态图片/视频view
     private var mediaContentView: UIView = UIView()
     
-    private var imagesSliderView: FeedImageSliderView = FeedImageSliderView()
+    var imagesSliderView: FeedImageSliderView = FeedImageSliderView()
     
     private let feedVideoIcon = UIImageView().configure {
         $0.image = UIImage(named: "ic_feed_video_icon")
@@ -144,27 +131,7 @@ class FeedDetailTableHeaderView: UIView {
             make.top.bottom.equalToSuperview()
             make.left.right.equalToSuperview().inset(10)
         }
-        
         contentView.addArrangedSubview(headerStackView)
-        headerStackView.snp.makeConstraints { make in
-            make.height.equalTo(40)
-        }
-        
-        headerStackView.addArrangedSubview(avatarView)
-        self.addSubview(followButton)
-        followButton.snp.makeConstraints { make in
-            make.width.equalTo(60)
-            make.height.equalTo(28)
-            make.centerY.equalTo(headerStackView)
-            make.right.equalToSuperview().inset(10)
-        }
-        
-        self.addSubview(deleteButton)
-        deleteButton.snp.makeConstraints { make in
-            make.edges.equalTo(followButton)
-        }
-        
-        
         contentView.addArrangedSubview(mediaContentView)
         mediaContentView.snp.makeConstraints { make in
             make.height.equalTo(350)
@@ -201,65 +168,41 @@ class FeedDetailTableHeaderView: UIView {
             make.height.equalTo(10)
         }
         commentCountWrapperView.addArrangedSubview(bottomMarginview)
-        self.followButton.addAction {
-            self.followStatusClickCall?()
-        }
+        
         self.deleteButton.addAction {
             self.deleteStatusClickCall?()
         }
-        self.imagesSliderView.addAction {
-            self.onTapPictureClickCall?()
+        
+        self.imagesSliderView.onImageTap = { index in
+            let transitionId = UUID().uuidString
+            self.onTapPictureClickCall?(index, transitionId)
         }
     }
     
-    public func setData(data: TGFeedResponse){
+    public func setData(model: FeedListCellModel){
         
-        originalTexts = data.feedContent ?? ""
-        contentLabel.text = data.feedContent ?? ""
+        originalTexts = model.content
+        contentLabel.text = model.content
         
-        avatarView.setData(data: data)
-        loadTranslateButton(feedId: data.id?.stringValue ?? "")
-        let viewCountLabel = "\(data.feedViewCount ?? 0) \("number_of_browsed".localized) "
+        loadTranslateButton(feedId: model.idindex.stringValue)
+        let viewCountLabel = "\((model.toolModel?.viewCount).orZero) \("number_of_browsed".localized) "
         var feedDate = ""
-      
-        if let timeModel = data.updatedAt?.toBdayDate(by: "yyyy-MM-dd HH:mm:ss") {
-            let timeStamp = timeModel.timeAgoDisplay()
+        
+        if let timeModel = model.time {
+            let timeStamp = timeModel.timeAgoDisplay(dateFormat: "MMMM dd")
             feedDate = timeStamp
         }
         viewAndDateLabel.text = viewCountLabel + " • " + feedDate + " • "
         
-       
-        if let images = data.images {
-            imagesSliderView.set(imageUrls: images.map{ image in
-                let apiBaseURL = RLSDKManager.shared.loginParma?.apiBaseURL ?? ""
-                let downloadFileUrl = "api/v2/files/"
-                let fileId = "\(image.file ?? 0)"
-                return apiBaseURL + downloadFileUrl + fileId
-            })
-        }
-    
+        imagesSliderView.set(imageUrls: model.pictures.map{ image in
+            let apiBaseURL = RLSDKManager.shared.loginParma?.apiBaseURL ?? ""
+            let downloadFileUrl = "api/v2/files/"
+            let fileId = image.file.stringValue
+            return apiBaseURL + downloadFileUrl + fileId
+        })
         
         commentLabel.text  =  "0" + "comment_counts".localized
         
-//        if data.isFans == 1 {
-//            //已关注
-//            self.followButton.setTitle("已关注", for: .normal)
-//            self.followButton.setTitleColor(SCColor.share.backGroundGray, for: .normal)
-//            self.followButton.backgroundColor = SCColor.share.lightGray
-//            self.followButton.applyBorder(color: .clear, width: 1)
-//            
-//        }else if data.isFans == 0 {
-//            //未关注
-//            self.followButton.setTitle("未关注", for: .normal)
-//            self.followButton.setTitleColor(SCColor.share.themeRed, for: .normal)
-//            self.followButton.backgroundColor = .white
-//            self.followButton.applyBorder(color: SCColor.share.themeRed, width: 1)
-//        }
-//        if data.author?.uid == SCCurrentUserInfo.shared.uid {
-//            //是自己的账户
-//            self.followButton.isHidden = true
-//            self.deleteButton.isHidden = false
-//        }
     }
     func setCommentLabel(count: Int?, isCommentDisabled: Bool) {
         if let count = count, count > 0 && isCommentDisabled == false {

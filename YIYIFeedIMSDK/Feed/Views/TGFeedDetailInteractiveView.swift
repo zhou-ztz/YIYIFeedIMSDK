@@ -211,7 +211,6 @@ class TGFeedDetailInteractiveView: UIView {
             $0.centerY.equalToSuperview()
         }
       
-        let toolbarFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width * 0.48, height: 50)
         toolbar.backgroundColor = .clear
         toolbar.set(items: [TGToolbarItemModel(image: "IMG_home_ico_love_white" , title: "", index: 0, titleShouldHide: false), TGToolbarItemModel(image: "IMG_home_ico_comment_normal_white", title: "", index: 1, titleShouldHide: false), TGToolbarItemModel(image: "IMG_home_ico_forward_normal_white", title: "", index: 2, titleShouldHide: false) ])
         
@@ -370,8 +369,9 @@ class TGFeedDetailInteractiveView: UIView {
                 HTMLManager.shared.handleMentionTap(name: name, attributedText: self.htmlAttributedText)
             }
             
-            self.readMoreLabel.onHttpTagTapped = { [weak self] url in
+            self.readMoreLabel.onHttpTagTapped = { url in
 //                self?.deeplink(urlString: url, isDismiss: true)
+                RLSDKManager.shared.imDelegate?.didPressSocialPost(urlString: url)
             }
             readMoreLabel.onTextNumberOfLinesTapped = {[weak self] showLinesStyle in
                 guard let self = self, let model = self.feedItem, model.rewardsMerchantUsers.count > 0 else { return }
@@ -645,7 +645,7 @@ class TGFeedDetailInteractiveView: UIView {
                 DispatchQueue.main.async {
                     // 确保 self.toolbar 不为 nil
                     if let toolbar = self?.toolbar {
-                        toolbar.setTitle(feedInfo.likeCount?.stringValue ?? "", At: 0)
+                        toolbar.setTitle(feedInfo.likeCount.abbreviated, At: 0)
                     }
                 }
             }

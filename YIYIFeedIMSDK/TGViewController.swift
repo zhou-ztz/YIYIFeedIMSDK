@@ -52,6 +52,14 @@ public class TGViewController: UIViewController {
         return imageView
     }()
     
+    //记录页面进入开始时间
+    var stayBeginTimestamp: String = ""
+    //记录页面离开时间
+    var stayEndTimestamp: String = ""
+    
+    var stayTimer : Timer?
+    var eventStartTime : Int = 0
+    
     func setNavigationBar(){
         
         view.addSubview(allStackView)

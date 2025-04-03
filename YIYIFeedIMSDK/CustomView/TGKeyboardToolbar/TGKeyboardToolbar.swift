@@ -485,7 +485,7 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
         self.textToolBarView?.messageInputView.sendTextView.text = input
     }
     
-    func setTagVoucher(_ tagVoucher: TagVoucher) {
+    func setTagVoucher(_ tagVoucher: TagVoucherModel) {
         textToolBarView?.updateVoucherTag(tagVoucher)
     }
 }

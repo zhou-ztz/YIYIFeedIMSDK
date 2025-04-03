@@ -77,6 +77,8 @@ class SocialPostMessageCell: BaseMessageCell {
         infoLbl.textAlignment = .left
         infoLbl.numberOfLines = 0
         infoLbl.enabledTypes = [.mention, .hashtag, .url]
+        infoLbl.mentionColor = TGAppTheme.primaryColor
+        infoLbl.URLColor = TGAppTheme.primaryBlueColor
         return infoLbl
     }()
     
@@ -192,7 +194,7 @@ class SocialPostMessageCell: BaseMessageCell {
         labelView.backgroundColor = !message.isSelf ? UIColor(hex: 0xf9f9f9) : UIColor(hex: 0xeef8ff)
         
         self.loadingView.startAnimating()
-        displayImage.isHidden = !self.needShowImage()
+        //displayImage.isHidden = !self.needShowImage()
         liveLabel.isHidden = !self.isLiveVideo()
         playImage.isHidden = !self.isVideo()
         infoLabel.isHidden = self.isDescNil()
@@ -205,13 +207,14 @@ class SocialPostMessageCell: BaseMessageCell {
         
         titleLabel.text = attachment.postUrl
         
-        if let localExt = message.localExtension?.toDictionary, let _ = localExt["title"] as? String, let desc = localExt["description"] as? String, let image = localExt["image"] as? String {
-            self.updateUI(image: image, title: attachment.postUrl, desc: desc)
+        guard let decodedUrl = attachment.postUrl.removingPercentEncoding else {
+            return
+        }
+        
+        if let localExt = message.localExtension?.toDictionary, let title = localExt["title"] as? String, let desc = localExt["description"] as? String, let image = localExt["image"] as? String {
+            self.updateUIWithContent(image: image, title: title.count > 0 ? title : attachment.postUrl, desc: desc, content:decodedUrl)
         } else {
             if attachment.imageURL != "" || attachment.title != "" || attachment.desc != "" {
-                guard let decodedUrl = attachment.postUrl.removingPercentEncoding else {
-                    return
-                }
                 
                 HTMLManager.shared.removeHtmlTag(htmlString: attachment.desc, completion: { [weak self] (content, _) in
                     guard let self = self else { return }
@@ -220,7 +223,7 @@ class SocialPostMessageCell: BaseMessageCell {
             } else {
                 TGURLParser.parse(attachment.postUrl, completion: { title, description, imageUrl in
                     DispatchQueue.main.async {
-                        self.updateUI(image: imageUrl, title: self.attachment.postUrl, desc: description)
+                        self.updateUIWithContent(image: imageUrl, title: title, desc: description, content:decodedUrl)
                         let localExtension = ["title":title,
                                         "description":description,
                                               "image":imageUrl].toJSON ?? ""
@@ -231,7 +234,6 @@ class SocialPostMessageCell: BaseMessageCell {
                 })
             }
         }
-        
     }
     
     private func updateUI(image: String, title: String, desc: String) {

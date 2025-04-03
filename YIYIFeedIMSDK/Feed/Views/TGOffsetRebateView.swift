@@ -7,91 +7,107 @@
 
 import UIKit
 
+
 class TGOffsetRebateView: UIView {
+    // MARK: - UI Components
+    private let contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemRed
+        return view
+    }()
     
-    private var contentView: UIView!
-    private var rebateView: UIView!
-    private var rebateLabel: UILabel!
-    private var offsetLabel: UILabel!
-      
+    private let stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.distribution = .fillEqually
+        return stack
+    }()
+    
+    private let rebateContainerView = UIView()
+    private let offsetContainerView = UIView()
+    
+    private let rebateView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private let rebateLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 11)
+        label.textColor = TGAppTheme.red
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.25
+        return label
+    }()
+    
+    private let offsetLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 11)
+        label.textColor = .white
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.25
+        return label
+    }()
+    
+    // MARK: - Properties
     var rebate: String? {
-        didSet {
-            let temp = Float(rebate ?? "0") ?? 0
-            self.rebateLabel.text = "\("text_rebate_value".localized.replacingFirstOccurrence(of: "%1$s", with: temp.cleanValue))%"
-        }
+        didSet { updateRebateText() }
     }
     
     var offset: String? {
-        didSet {
-            let temp = Float(offset ?? "0") ?? 0
-            self.offsetLabel.text = "\("text_offset_value".localized.replacingFirstOccurrence(of: "%1$s", with: temp.cleanValue))%"
-        }
+        didSet { updateOffsetText() }
     }
     
-    init() {
-        super.init(frame: .zero)
-        setupUI()
+    // MARK: - Initialization
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupUI()
+        setupView()
+        setupConstraints()
     }
     
+    // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        contentView.clipsToBounds = true
-        contentView.layer.masksToBounds = true
-        contentView.layer.cornerRadius = contentView.frame.height / 2
-        
-        rebateView.clipsToBounds = true
-        rebateView.layer.masksToBounds = true
-        rebateView.layer.cornerRadius = rebateView.frame.height / 2
+        contentView.layer.cornerRadius = contentView.bounds.height / 2
+        rebateView.layer.cornerRadius = 8
     }
     
-    private func setupUI() {
-        // Initialize contentView
-        contentView = UIView()
-        contentView.backgroundColor = .clear
-        contentView.layer.cornerRadius = 20 // Set a fixed radius for simplicity
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(contentView)
+    // MARK: - Setup
+    private func setupView() {
+        addSubview(contentView)
+        contentView.addSubview(stackView)
         
-        // Set up rebateView
-        rebateView = UIView()
-        rebateView.backgroundColor = .clear
-        rebateView.layer.cornerRadius = 12 // Set a fixed radius for rebateView
-        rebateView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(rebateView)
+        stackView.addArrangedSubview(rebateContainerView)
+        stackView.addArrangedSubview(offsetContainerView)
         
-        // Set up rebateLabel
-        rebateLabel = UILabel()
-        rebateLabel.textAlignment = .center
-        rebateLabel.font = UIFont.systemFont(ofSize: 11)
-        rebateLabel.textColor = TGAppTheme.red
-        rebateLabel.translatesAutoresizingMaskIntoConstraints = false
+        rebateContainerView.addSubview(rebateView)
         rebateView.addSubview(rebateLabel)
-        
-        // Set up offsetLabel
-        offsetLabel = UILabel()
-        offsetLabel.textAlignment = .center
-        offsetLabel.font = UIFont.systemFont(ofSize: 11)
-        offsetLabel.textColor = .white
-        offsetLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(offsetLabel)
-        
-        // Use SnapKit to create constraints
+        offsetContainerView.addSubview(offsetLabel)
+    }
+    
+    private func setupConstraints() {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalTo(self).multipliedBy(0.6) // Adjust contentView height ratio
+        }
+        
+        stackView.snp.makeConstraints { make in
+            make.edges.equalTo(contentView)
         }
         
         rebateView.snp.makeConstraints { make in
-            make.top.equalTo(contentView.snp.top).offset(3)
-            make.left.equalTo(contentView.snp.left).offset(3)
-            make.right.equalTo(contentView.snp.right).offset(-3)
-            make.height.equalTo(24)
+            make.top.equalTo(rebateContainerView).offset(3)
+            make.leading.equalTo(rebateContainerView).offset(3)
+            make.trailing.equalTo(rebateContainerView)
+            make.bottom.equalTo(rebateContainerView).offset(-3)
         }
         
         rebateLabel.snp.makeConstraints { make in
@@ -99,17 +115,18 @@ class TGOffsetRebateView: UIView {
         }
         
         offsetLabel.snp.makeConstraints { make in
-            make.top.equalTo(rebateView.snp.bottom).offset(5)
-            make.left.equalTo(contentView.snp.left).offset(5)
-            make.right.equalTo(contentView.snp.right).offset(-5)
-            make.bottom.equalTo(contentView.snp.bottom).offset(-5)
+            make.edges.equalTo(offsetContainerView).inset(5)
         }
-        
-        // Final UI Setup
-        contentView.backgroundColor = TGAppTheme.red
-        rebateView.clipsToBounds = true
-        rebateView.layer.masksToBounds = true
-        rebateView.layer.cornerRadius = rebateView.frame.height / 2
     }
-
+    
+    // MARK: - Text Updates
+    private func updateRebateText() {
+        let value = Float(rebate ?? "0") ?? 0
+        rebateLabel.text = "text_rebate_value".localized.replacingOccurrences(of: "%1$s", with: String(format: "%.1f", value)) + "%"
+    }
+    
+    private func updateOffsetText() {
+        let value = Float(offset ?? "0") ?? 0
+        offsetLabel.text = "text_offset_value".localized.replacingOccurrences(of: "%1$s", with: String(format: "%.1f", value)) + "%"
+    }
 }

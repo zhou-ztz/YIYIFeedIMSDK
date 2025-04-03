@@ -14,9 +14,9 @@ struct LivePinCommentModel: Equatable {
     
     var target: Any
     var requiredPinMessage: Bool
-    var model: TGFeedCommentListModel
+    var model: FeedCommentListCellModel
     
-    init(target: Any, requiredPinMessage: Bool = true, model: TGFeedCommentListModel) {
+    init(target: Any, requiredPinMessage: Bool = true, model: FeedCommentListCellModel) {
         self.target = target
         self.requiredPinMessage = requiredPinMessage
         self.model = model

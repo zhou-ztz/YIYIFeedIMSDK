@@ -8,6 +8,7 @@
 import UIKit
 import NIMSDK
 import NERtcSDK
+import Toast
 
 class RLAudioCallController: RLAudioVideoCallViewController {
     
@@ -52,12 +53,12 @@ class RLAudioCallController: RLAudioVideoCallViewController {
         return label
     }()
     
-    lazy var userProfileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+    lazy var userProfileImageView: TGAvatarView = {
+        let imageView = TGAvatarView()
+       // imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 53 // 根据实际需要调整
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .white
+       // imageView.backgroundColor = .white
         return imageView
     }()
     
@@ -222,7 +223,7 @@ class RLAudioCallController: RLAudioVideoCallViewController {
             make.width.height.equalTo(106)
             make.top.equalTo(TSNavigationBarHeight + 20)
         }
-        
+        userProfileImageView.circleCorner()
         usernameLabel.snp.makeConstraints { make in
             make.left.equalTo(10)
             make.right.equalTo(-10)
@@ -332,13 +333,13 @@ class RLAudioCallController: RLAudioVideoCallViewController {
         let dict = ["type": type.rawValue, "data": data] as [String : Any]
         let customInfo = dict.toJSON
         viewmodel.switchAudioVideoMode(serverExtension: customInfo ?? "") { [weak self] error in
-            if let error = error {
-                
+            if let error = error?.nserror {
+                UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
             } else {
                 if self?.viewmodel.callInfo.callType == .SIGNALLING_CHANNEL_TYPE_VIDEO {
                     self?.switchToAudio()
                 } else {
-                    //self?.view.makeToast("request_switching_sent".localized, duration: 2, position: CSToastPositionCenter)
+                    self?.view.makeToast("request_switching_sent".localized, duration: 2, position: CSToastPositionCenter)
                 }
             }
         }
@@ -496,7 +497,9 @@ class RLAudioCallController: RLAudioVideoCallViewController {
             smallVideoView.isHidden = true
             switchCameraBtn.isHidden = true
         }
-  
+        MessageUtils.getAvatarIcon(sessionId: viewmodel.callInfo.callee ?? "", conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in
+            self?.userProfileImageView.avatarInfo = avatarInfo
+        }
     }
     
     func waitToCallInterface () {
@@ -526,7 +529,9 @@ class RLAudioCallController: RLAudioVideoCallViewController {
 
         muteBtn.isEnabled = false
         disableCameraBtn.isEnabled = false
-
+        MessageUtils.getAvatarIcon(sessionId: viewmodel.callInfo.callee ?? "", conversationType: .CONVERSATION_TYPE_P2P) {[weak self] avatarInfo in
+            self?.userProfileImageView.avatarInfo = avatarInfo
+        }
     }
     
     func connectingInterface () {
@@ -656,7 +661,7 @@ class RLAudioCallController: RLAudioVideoCallViewController {
             let customInfo = dict.toJSON
             
             NIMSDK.shared().v2SignallingService.sendControl(self.viewmodel.channelInfo?.channelInfo.channelId ?? "", receiverAccountId: self.viewmodel.callInfo.callee ?? "", serverExtension: customInfo) {
-               // self.view.makeToast(String("rejected"),duration: 2, position: CSToastPositionCenter)
+                self.view.makeToast(String("rejected"),duration: 2, position: CSToastPositionCenter)
             } failure: { error in
                 
             }

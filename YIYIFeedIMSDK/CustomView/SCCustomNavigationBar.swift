@@ -124,7 +124,9 @@ class SCCustomNavigationBar: UIView {
             item.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.height.equalTo(30)
-                make.width.greaterThanOrEqualTo(30)
+                if item is UIButton {
+                    make.width.greaterThanOrEqualTo(30)
+                }
             }
         }
         

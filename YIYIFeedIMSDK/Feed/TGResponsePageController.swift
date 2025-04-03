@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 private enum ResponseSegment: Int {
     case comment = 0
     case reaction = 1
@@ -20,7 +19,7 @@ private enum ResponseSegment: Int {
         }
     }
 }
-class TGResponsePageController: TGViewController {
+class TGResponsePageController: UIViewController {
 
     private var segments: [ResponseSegment] = [.comment, .reaction]
     fileprivate var activeSegments: ResponseSegment = .comment
@@ -80,18 +79,18 @@ class TGResponsePageController: TGViewController {
 
         setup()
         updateTheme()
-//        self.setLeftAlignedNavigationItemView(titleLabel)
+        self.setLeftAlignedNavigationItemView(titleLabel)
         self.edgesForExtendedLayout = []
 
         closeButton.setImage(UIImage(named: "ic_gray_close"))
         closeButton.contentEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(didReciveAvatarDidClick), name: NSNotification.Name.AvatarButton.DidClick, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didReciveAvatarDidClick), name: NSNotification.Name.AvatarButton.DidClick, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AvatarButton.DidClick, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AvatarButton.DidClick, object: nil)
     }
 
     private func updateTheme() {
@@ -142,19 +141,22 @@ class TGResponsePageController: TGViewController {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftPaddingView)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
         
+        let  view = UIView(frame: CGRect(x: 100, y: 100, width: 100, height: 30))
+        view.backgroundColor = .red
+        self.view.addSubview(view)
         closeButton.addTap { [weak self] (_) in
             self?.dismiss(animated: true, completion: nil)
         }
 
         addChild(commentController)
         addChild(reactionController)
-
-        view.addSubview(commentController.view)
-        view.addSubview(reactionController.view)
-
+        
+        self.view.addSubview(commentController.view)
+        self.view.addSubview(reactionController.view)
+        
         commentController.didMove(toParent: self)
         reactionController.didMove(toParent: self)
-
+        
         commentController.view.bindToEdges()
         reactionController.view.bindToEdges()
         

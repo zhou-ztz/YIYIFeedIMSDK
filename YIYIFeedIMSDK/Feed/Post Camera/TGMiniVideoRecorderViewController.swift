@@ -396,7 +396,7 @@ extension TGMiniVideoRecorderViewController: TGBaseCameraViewControllerDelegate 
                                             }
                                         }else{
                                             let releasePulseVC = TGReleasePulseViewController(type: .miniVideo)
-                                            releasePulseVC.shortVideoAsset = ShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
+                                            releasePulseVC.shortVideoAsset = TGShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
                                             self.navigationController?.pushViewController(releasePulseVC, animated: true)
                                             
                                         }} else {

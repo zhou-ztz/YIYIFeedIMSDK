@@ -67,24 +67,16 @@ class TGMiniVideoControlView: UIView {
         setGestures()
         
  
-        readMoreLabel.onHashTagTapped = { [weak self] hashtag in
-            
-//                let vc = RLSearchResultVC()
-//                vc.initialSearchType = .feed
-//                self?.parentViewController?.navigationController?.pushViewController(vc, animated: true)
-//                vc.changeKeyword(keyword: hashtag.withHashtagPrefix())
-//                vc.searchComplete = { [weak self] text in
-//
-//                }
-            
+        readMoreLabel.onHashTagTapped = { hashtag in
+            RLSDKManager.shared.feedDelegate?.onSearchPageTapped(hashtag: hashtag.withHashtagPrefix())
         }
         
         readMoreLabel.onUsernameTapped = { name in
             HTMLManager.shared.handleMentionTap(name: name, attributedText: self.htmlAttributedText)
         }
         
-        readMoreLabel.onHttpTagTapped = {[weak self] url in
-//                self?.deeplink(urlString: url)
+        readMoreLabel.onHttpTagTapped = { url in
+            RLSDKManager.shared.imDelegate?.didPressSocialPost(urlString: url)
         }
         
         readMoreLabel.onTextNumberOfLinesTapped = {[weak self] showLinesStyle in
@@ -149,11 +141,10 @@ class TGMiniVideoControlView: UIView {
     
     func setFeed(_ feed: FeedListCellModel?, _ isTranslate: Bool) {
         guard let feed = feed else { return }
-        
         self.updateFeed(feed, isTranslate)
         if let imageUrl = feed.pictures.first?.url, let url = URL(string: imageUrl) {
             // By Kit Foong (Update Image full screen by checking video height and width)
-            var aspectRatio = feed.videoHeight / feed.videoWidth
+            let aspectRatio = feed.videoHeight / feed.videoWidth
             if aspectRatio >= 1.25 {
                 coverImageView.contentMode = .scaleAspectFill
             } else {
@@ -169,7 +160,6 @@ class TGMiniVideoControlView: UIView {
     
     func updateFeed(_ feed: FeedListCellModel?, _ isTranslate: Bool = false) {
         guard let feed = feed else { return }
-        
         self.model = feed
 
         readMoreLabel.numberOfLines = 2
@@ -262,7 +252,7 @@ class TGMiniVideoControlView: UIView {
                     self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList)
                     self.readMoreLabel.setAttributeText(attString: attributedText, allowTruncation: true)
                 } else {
-                    self.readMoreLabel.setText(text:  self.originalTexts, allowTruncation: true)
+                    self.readMoreLabel.setText(text: self.originalTexts, allowTruncation: true)
                 }
                 
                 button.isSelected = false
@@ -361,7 +351,7 @@ class TGMiniVideoControlView: UIView {
         } else {
             voucherBottomView.isHidden = true
             voucherBottomView.snp.updateConstraints({ make in
-                make.height.equalTo(0)
+                make.height.equalTo(1)
             })
         }
     }
@@ -848,7 +838,6 @@ extension TGMiniVideoControlView {
         locationAndMerchantView.addArrangedSubview(locationView)
         locationAndMerchantView.addArrangedSubview(feedMerchantNamesView)
         
-
         contentStackview.addArrangedSubview(readMoreLabel)
         contentStackview.addArrangedSubview(locationAndMerchantScrollView)
         contentStackview.addArrangedSubview(feedShopView)
@@ -880,17 +869,17 @@ extension TGMiniVideoControlView {
         
         locationAndMerchantView.bindToEdges()
         
-        feedMerchantNamesView.momentMerchantDidClick = { [weak self] merchantData in
-//               NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
+        feedMerchantNamesView.momentMerchantDidClick = { merchantData in
+            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
         }
         
         feedShopView.momentMerchantDidClick = { [weak self] merchantData in
-//            guard let self = self, let parentViewController = self.parentViewController else { return }
-//            
-//            let appId = merchantData.wantedMid
-//            var path = merchantData.wantedPath
-//            path = path + "?id=\(appId)"
-//            print("=path = \(path)")
+            guard let self = self, let parentViewController = self.parentViewController else { return }
+            
+            let appId = merchantData.wantedMid
+            var path = merchantData.wantedPath
+            path = path + "?id=\(appId)"
+            print("=path = \(path)")
 //            guard let extras = TSAppConfig.share.localInfo.mpExtras else { return }
 //            miniProgramExecutor.startApplet(type: .normal(appId: extras), param: ["path": path], parentVC: parentViewController)
         }
@@ -898,7 +887,6 @@ extension TGMiniVideoControlView {
         readMoreLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview()
         }
-        
         
         dateDotView.snp.makeConstraints {
             $0.width.height.equalTo(2)
@@ -1064,26 +1052,26 @@ extension TGMiniVideoControlView {
 //            return
 //        }
         
-//        guard var object = model?.userInfo else { return }
-//        
-//        guard let relationship = object.relationshipWithCurrentUser else {
-////            TSRootViewController.share.guestJoinLandingVC()
-//            return
-//        }
-//        if relationship.status == .eachOther {
-////            let session = NIMSession(object.username, type: .P2P)
-////            let vc = IMChatViewController(session: session, unread: 0)
-////            self.parentViewController?.navigationController?.pushViewController(vc, animated: true)
-//        } else {
-//            object.updateFollow { (success) in
-//                DispatchQueue.main.async {
-//                    if success {
-//                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": object.follower, "userid": "\(object.userIdentity)"])
-//                        self.updatePrimaryButton()
-//                    }
-//                }
-//            }
-//        }
+        guard var object = model?.userInfo else { return }
+        
+        guard let relationship = object.relationshipWithCurrentUser else {
+//            TSRootViewController.share.guestJoinLandingVC()
+            return
+        }
+        if relationship.status == .eachOther {
+//            let session = NIMSession(object.username, type: .P2P)
+//            let vc = IMChatViewController(session: session, unread: 0)
+//            self.parentViewController?.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            object.updateFollow { (success) in
+                DispatchQueue.main.async {
+                    if success {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": object.follower, "userid": "\(object.userIdentity)"])
+                        self.updatePrimaryButton()
+                    }
+                }
+            }
+        }
     }
     
     func updateSponsorStatus(_ isShow: Bool) {
@@ -1097,20 +1085,8 @@ extension TGMiniVideoControlView {
     private func updatePrimaryButton() {
         guard let relationship = self.model?.userInfo?.relationshipWithCurrentUser else { return }
         primaryButton.isHidden = false
-        //        switch relationship.status {
-        //            case .unfollow:
-        //            primaryButton.backgroundColor = AppTheme.primaryRedColor
-        //            primaryButton.isEnabled = true
-        //        case .follow, .eachOther:
-        //            primaryButton.backgroundColor = UIColor(hex: 0xB4B4B4)
-        //            primaryButton.isEnabled = false
-        //        default:
-        //            primaryButton.backgroundColor = UIColor(hex: 0xB4B4B4)
-        //            primaryButton.isEnabled = false
-        //            break
-        //        }
-        guard let followStatus = self.model?.userInfo?.followStatus else { return }
         
+        guard let followStatus = self.model?.userInfo?.followStatus else { return }
         
         var followStatusDidChanged:Bool = false
         var actionTitle: String = "profile_follow".localized
@@ -1231,17 +1207,14 @@ extension TGMiniVideoControlView {
     // MARK: - 转发后获取最新转发数
     private func updateForwardCount(_ dontTriggerObservers: Bool = false) {
         guard let feedId = model?.idindex else { return }
-//        FeedListNetworkManager.getMomentFeed(id: feedId) { [weak self] (listModel, errorMsg, status, networkResult) in
-//            
-//            guard let listModel = listModel, let self = self else {
-//                return
-//            }
-//            let cellModel = FeedListCellModel(feedListModel: listModel)
-//            self.model = cellModel
-//            
-//            self.setBottomViewData()
-//        }
+        TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") { [weak self] (feedInfo, error) in
         
+            guard let feedInfo = feedInfo, let self = self else {
+                return
+            }
+            self.model = FeedListCellModel(feedListModel: feedInfo)
+            self.setBottomViewData()
+        }
     }
     // MARK: - 记录转发
     private func forwardFeed() {
@@ -1258,12 +1231,7 @@ extension TGMiniVideoControlView {
                     self.updateForwardCount()
                 }
                 //上报动态转发事件
-//                EventTrackingManager.instance.trackEvent(itemId: feedId.stringValue,
-//                    itemType: self.model?.feedType == .miniVideo ? ItemType.shortvideo.rawValue : ItemType.image.rawValue,
-//                    behaviorType: BehaviorType.forward,
-//                    moduleId: ModuleId.feed.rawValue,
-//                    pageId: PageId.feed.rawValue)
-                
+                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedId.stringValue, itemType: self.model?.feedType == .miniVideo ? TGItemType.shortvideo.rawValue : TGItemType.image.rawValue, behaviorType: TGBehaviorType.forward.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
                 
             }
 //            guard status == true else {
@@ -1332,11 +1300,11 @@ extension TGMiniVideoControlView: CustomPopListProtocol{
             }
         case .reportPost:
             if let model = self.model {
-//                guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: model) else { return }
-//                let reportVC: ReportViewController = ReportViewController(reportTarget: reportTarget)
-//                self.parentViewController?.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
-//                                                   animated: true,
-//                                                   completion: nil)
+                guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: model) else { return }
+                let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
+                self.parentViewController?.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                             animated: true,
+                             completion: nil)
             }
         default:
             break

@@ -9,44 +9,20 @@ import SnapKit
 
 class SCRefreshHeader: MJRefreshHeader {
     
-    lazy var detailInfoLabel: UILabel = {
-        let lab = UILabel()
-        lab.text = "下拉刷新"
-        lab.textColor = UIColor(hex: 0xb3b3b3)
-        lab.font = UIFont.systemFont(ofSize: 12)
-        return lab
-    }()
-    var indicator = UIActivityIndicatorView()
+    private let pulseIndicator = BallPulseIndicator(radius: 20.0, color: TGAppTheme.red)
     override var state: MJRefreshState {
         didSet {
             switch state {
             case .idle:
-                detailInfoLabel.textAlignment = .center
-                detailInfoLabel.text = "下拉刷新"
-                indicator.isHidden = true
-                indicator.stopAnimating()
-                layoutIfNeeded()
+                self.pulseIndicator.stopAnimating()
                 
             case .pulling:
-                detailInfoLabel.textAlignment = .center
-                detailInfoLabel.text = "正在加载"
-                indicator.isHidden = false
-                indicator.startAnimating()
-                layoutIfNeeded()
+                self.pulseIndicator.startAnimating()
                                 
             case .refreshing:
-                detailInfoLabel.textAlignment = .center
-                detailInfoLabel.text = "正在加载"
-                indicator.isHidden = false
-                indicator.startAnimating()
-                layoutIfNeeded()
+                self.pulseIndicator.startAnimating()
                 
-            default:
-                detailInfoLabel.textAlignment = .center
-                detailInfoLabel.text = "刷新成功"
-                indicator.isHidden = true
-                indicator.stopAnimating()
-                layoutIfNeeded()
+            default: break
             }
         }
     }
@@ -60,19 +36,14 @@ class SCRefreshHeader: MJRefreshHeader {
     override func prepare() {
         super.prepare()
         
-        let stackview = UIStackView(arrangedSubviews: [indicator, detailInfoLabel])
-        stackview.axis = .horizontal
-        stackview.alignment = .fill
-        stackview.distribution = .fill
-        stackview.spacing = 3
-  
-        self.addSubview(stackview)
-        
-        stackview.snp.makeConstraints { c in
+        addSubview(pulseIndicator)
+        pulseIndicator.snp.makeConstraints { c in
             c.center.equalToSuperview()
-            //c.left.top.greaterThanOrEqualToSuperview().inset(10)
+            c.width.equalTo(45)
+            c.height.equalTo(20)
+            //c.top.left.greaterThanOrEqualToSuperview().inset(5)
         }
-        
+
         self.backgroundColor = UIColor.clear
         
         self.layoutIfNeeded()
@@ -89,4 +60,5 @@ class SCRefreshHeader: MJRefreshHeader {
     override func scrollViewContentOffsetDidChange(_ change: [AnyHashable : Any]!) {
         super.scrollViewContentOffsetDidChange(change)
     }
+
 }

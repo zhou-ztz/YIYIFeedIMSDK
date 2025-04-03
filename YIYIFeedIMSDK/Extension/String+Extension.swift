@@ -589,6 +589,14 @@ extension String {
         return self.replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "\n\r", with: "\n").replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\n", with: "                                                                                            ")
     }
     
+    func withHashtagPrefix() -> String {
+        var newString = self
+        if !newString.hasPrefix("#") {
+            newString.insert("#", at: self.startIndex)
+        }
+        return newString
+    }
+    
     func isValidURL() -> Bool {
         var escapedString = self.removingPercentEncoding
         

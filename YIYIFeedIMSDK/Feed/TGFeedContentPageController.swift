@@ -10,7 +10,7 @@ import Lottie
 
 typealias onToolbarUpdate = ((FeedListCellModel) -> Void)
 
-class TGFeedContentPageController: TGBaseContentPageController {
+public class TGFeedContentPageController: TGBaseContentPageController {
     private let animateView = AnimationView()
     private(set) var dataModel = FeedListCellModel()
     private var pageHandler = PageHandler()
@@ -64,9 +64,9 @@ class TGFeedContentPageController: TGBaseContentPageController {
             self.openCommentView()
         }
         
-        interactiveView.onGiftTouched = { [unowned self] in
-
-        }
+//        interactiveView.onGiftTouched = { [unowned self] in
+//
+//        }
         
         interactiveView.onForwardTouched =  { [unowned self] in
 //            if TSCurrentUserInfo.share.isLogin == false {
@@ -85,11 +85,6 @@ class TGFeedContentPageController: TGBaseContentPageController {
         }
         
         interactiveView.onFollowTouched = { [weak self] in
-//            guard TSCurrentUserInfo.share.isLogin == true else {
-//                self?.isClickComment = false
-//                TSRootViewController.share.guestJoinLandingVC()
-//                return
-//            }
             guard var user = dataModel.userInfo else { return }
             user.updateFollow(completion: { [weak self] (success) in
                 if success {
@@ -100,32 +95,20 @@ class TGFeedContentPageController: TGBaseContentPageController {
             })
         }
         
-        interactiveView.onVoucherTouched = { [weak self] in
+        interactiveView.onVoucherTouched = {
             RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: dataModel.tagVoucher?.taggedVoucherId ?? 0)
-//            let vc = VoucherDetailViewController()
-//            vc.voucherId = dataModel.tagVoucher?.taggedVoucherId ?? 0
-//            self?.navigationController?.pushViewController(vc, animated: true)
         }
         
         interactiveView.translateHandler = self.translateHandler
         
         interactiveView.onTapHiddenUpdate = self.onTapHiddenUpdate
         
-        interactiveView.onLocationViewTapped = { [unowned self] (locationID, locationName) in
+        interactiveView.onLocationViewTapped = { (locationID, locationName) in
             RLSDKManager.shared.feedDelegate?.onLocationViewTapped(locationID: locationID, locationName: locationName)
-//            let locationVC = TSLocationDetailVC(locationID: locationID, locationName: locationName)
-//            self.navigationController?.pushViewController(locationVC, animated: true)
         }
         
-        interactiveView.onTopicViewTapped = { [unowned self] topicID in
+        interactiveView.onTopicViewTapped = { topicID in
             RLSDKManager.shared.feedDelegate?.onTopicViewTapped(groupId: topicID)
-//            let topicVC = TopicPostListVC(groupId: topicID)
-//            if #available(iOS 11, *) {
-//                self.navigationController?.pushViewController(topicVC, animated: true)
-//            } else {
-//                let nav = TSNavigationController(rootViewController: topicVC).fullScreenRepresentation
-//                self.present(nav, animated: true, completion: nil)
-//            }
         }
         
         interactiveView.reactionSuccess = { [weak self] in
@@ -136,12 +119,12 @@ class TGFeedContentPageController: TGBaseContentPageController {
             TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(dataModel.idindex)") { feedInfo, error in
                 guard let feedInfo = feedInfo else { return }
                
-                let cellModel = FeedListCellModel(from: feedInfo)
+                let cellModel = FeedListCellModel(feedListModel: feedInfo)
                 
                 self.dataModel = cellModel
                 self.interactiveView.updateUserReactionView(topReactionList: cellModel.topReactionList, totalReactions: (cellModel.toolModel?.diggCount).orZero)
                 self.onToolbarUpdated?(cellModel)
-//                self?.view.layoutIfNeeded()
+                self.view.layoutIfNeeded()
             }
         }
         
@@ -149,16 +132,8 @@ class TGFeedContentPageController: TGBaseContentPageController {
             self.showReactionBottomSheet()
         }
         
-        interactiveView.onSearchPageTapped =  { [unowned self] hashtagString in
+        interactiveView.onSearchPageTapped =  { hashtagString in
             RLSDKManager.shared.feedDelegate?.onSearchPageTapped(hashtag: hashtagString)
-//            let vc = RLSearchResultVC()
-//            vc.initialSearchType = .feed
-//            let nav = TSNavigationController(rootViewController: vc).fullScreenRepresentation
-//            if let nav = nav as? TSNavigationController {
-//                nav.setCloseButton(backImage: true)
-//            }
-//            self.parent?.present(nav, animated: true, completion: nil)
-//            vc.changeKeyword(keyword: hashtagString)
         }
         
         if dataModel.tagVoucher?.taggedVoucherId != nil && dataModel.tagVoucher?.taggedVoucherId != 0 {
@@ -174,7 +149,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
     
     func openCommentView() {
         defer {
-//            EventTrackingManager.instance.track(event: .innerFeedViewClicks, with: ["Clicked": "Comment Btn"])
+            RLSDKManager.shared.feedDelegate?.track(event: TGEvent.innerFeedViewClicks, with: ["Clicked": "Comment Btn"])
         }
         TGKeyboardToolbar.share.theme = .white
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
@@ -186,7 +161,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
             self?.interactiveView.updateCommentStatus(isCommentDisabled: toolbar.isCommentDisabled)
             self?.onToolbarUpdated?(feed)
         }
-        let nav = TGNavigationController(rootViewController: respondVC)
+        let nav = UINavigationController(rootViewController: respondVC)
         nav.modalPresentationStyle = .custom
         nav.transitioningDelegate = self
         nav.view.backgroundColor = .clear
@@ -240,7 +215,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         view.insertSubview(interactiveView, belowSubview: refreshView)
         interactiveView.bindToEdges()
@@ -259,14 +234,14 @@ class TGFeedContentPageController: TGBaseContentPageController {
         NotificationCenter.default.addObserver(self, selector: #selector(showReactionBottomSheet), name: NSNotification.Name.Reaction.show, object: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.setClearNavBar(shadowColor: .clear)
         //进入页面时将状态栏的字体改为白色
         UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 //        self.setWhiteNavBar(normal: true)
         //离开页面还原
@@ -275,8 +250,6 @@ class TGFeedContentPageController: TGBaseContentPageController {
         } else {
             UIApplication.shared.setStatusBarStyle(.default, animated: true)
         }
-        //        TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
-        //        TGKeyboardToolbar.share.theme = .white
     }
     
     @objc func newChangeFollowStatus(_ notification: Notification) {
@@ -297,10 +270,6 @@ class TGFeedContentPageController: TGBaseContentPageController {
     func setGesture(for controller: TGFeedDetailImageController) {
         controller.onSingleTapView = { [weak self] in self?.toggleInteractiveView() }
         controller.onDoubleTapView = { [weak self] in
-//            guard TSCurrentUserInfo.share.isLogin == true else {
-//                TSRootViewController.share.guestJoinLandingVC()
-//                return
-//            }
             self?.executeLike()
             self?.interactiveView.reactionHandler?.didSelectIcon = ReactionTypes.heart.rawValue
             self?.interactiveView.reactionHandler?.onSelect(reaction: .heart)
@@ -341,7 +310,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
         let feedId = self.dataModel.idindex
         TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") {  [weak self] (feedInfo, error) in
             guard let cellModel = feedInfo, let self = self else { return }
-            self.dataModel = FeedListCellModel(from: cellModel)
+            self.dataModel = FeedListCellModel(feedListModel: cellModel)
             self.interactiveView.updateCount(comment: (self.dataModel.toolModel?.commentCount).orZero, like: (self.dataModel.toolModel?.diggCount).orZero, forwardCount: (self.dataModel.toolModel?.forwardCount).orZero)
             self.interactiveView.updateCommentStatus(isCommentDisabled: self.dataModel.toolModel?.isCommentDisabled)
         }
@@ -350,7 +319,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
     // MARK: - 记录转发
     private func forwardFeed() {
         let feedId = self.dataModel.idindex
-       // self.showLoading()
+        self.showLoading()
         TGFeedNetworkManager.shared.forwardFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
             guard let self = self else { return }
             defer {
@@ -359,13 +328,7 @@ class TGFeedContentPageController: TGBaseContentPageController {
                     self.updateForwardCount()
                 }
                 //上报动态转发事件
-                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedId.stringValue, itemType: self.dataModel.feedType == .miniVideo ? "shortvideo"  : "image", behaviorType: "forward", moduleId: "feed", pageId: "feed")
-//                EventTrackingManager.instance.trackEvent(
-//                    itemId: feedId.stringValue,
-//                    itemType: self.dataModel.feedType == .miniVideo ? ItemType.shortvideo.rawValue   : ItemType.image.rawValue,
-//                    behaviorType: BehaviorType.forward,
-//                    moduleId: ModuleId.feed.rawValue,
-//                    pageId: PageId.feed.rawValue)
+                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedId.stringValue, itemType: self.dataModel.feedType == .miniVideo ? TGItemType.shortvideo.rawValue  : TGItemType.image.rawValue, behaviorType: TGBehaviorType.forward.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
                 
             }
             guard status == true else {
@@ -398,8 +361,10 @@ class TGFeedContentPageController: TGBaseContentPageController {
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         let respondVC = TGResponsePageController(theme: .white, feed: self.dataModel, defaultSegment: 1, onToolbarUpdate: self.onToolbarUpdated)
         respondVC.titleLabel.text = ""
-        let nav = TGNavigationController(rootViewController: respondVC)
+        let nav = UINavigationController(rootViewController: respondVC)
+        nav.modalPresentationStyle = .custom
         nav.transitioningDelegate = self
+        nav.view.backgroundColor = .clear
         self.present(nav, animated: true, completion: nil)
     }
 }
@@ -451,7 +416,7 @@ private class PageHandler: NSObject, UIPageViewControllerDelegate, UIPageViewCon
 }
 
 extension TGFeedContentPageController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+    public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         let controller = CustomSizePresentationController(presentedViewController: presented, presenting: presenting)
         controller.heightPercent = 0.7
         return controller
@@ -482,8 +447,8 @@ extension TGFeedContentPageController: CustomPopListProtocol {
             // 记录转发数
             self.forwardFeed()
             let messagePopModel = TGmessagePopModel(momentModel: self.dataModel)
-            let fullUrlString = ""
-//            let fullUrlString = "\(TSUtil.getWebServerAddress())feeds/\(String(messagePopModel.feedId))"
+            let webServerAddress = RLSDKManager.shared.loginParma?.webServerAddress ?? ""
+            let fullUrlString = "\(webServerAddress)feeds/\(String(messagePopModel.feedId))"
             // By Kit Foong (Hide Yippi App from share)
             let items: [Any] = [URL(string: fullUrlString), messagePopModel.titleSecond, ShareExtensionBlockerItem()]
             let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -511,7 +476,7 @@ extension TGFeedContentPageController: CustomPopListProtocol {
             break
         case .edit:
             let model = self.dataModel
-            let pictures =  model.pictures.map{ RejectDetailModelImages(fileId: $0.file, imagePath: $0.url ?? "", isSensitive: false, sensitiveType: "")   }
+            let pictures =  model.pictures.map{ TGRejectDetailModelImages(fileId: $0.file, imagePath: $0.url ?? "", isSensitive: false, sensitiveType: "")   }
             let vc = TGReleasePulseViewController(type: .photo)
             vc.selectedModelImages = pictures
             

@@ -6,12 +6,22 @@
 //
 
 import Foundation
-
+import ObjectMapper
 // MARK: - Response Model
-struct TGCommentModelResponse: Codable {
-    
+struct TGBaseModelResponse: Codable {
     var message: String?
-    var comment: TGFeedCommentListModel?
+    var code: Int?
+}
+
+
+class BaseModelResponse: Mappable {
+    var message: String?
     var code: Int?
     
+    required init?(map: Map) { }
+    
+    func mapping(map: Map) {
+        message <- map["message"]
+        code <- map["code"]
+    }
 }

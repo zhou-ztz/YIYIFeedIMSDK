@@ -257,17 +257,17 @@ extension FeedListModel {
     var topReactionList: [ReactionTypes]? {
         return StringArrayTransformer.transformToJSON(topReactions)?.compactMap { ReactionTypes.initialize(with: $0) }
     }
-//    // objectbox: transient
-//    var userInfo: UserInfoModel {
-//        return self.user ?? UserInfoModel.retrieveUser(userId: userId) ?? UserInfoModel()
-//    }
-//    /// 转发信息
-//    // objectbox: transient
-//    var repostModel: TSRepostModel? {
+    // objectbox: transient
+    var userInfo: UserInfoModel {
+        return self.user ?? UserInfoModel.retrieveUser(userId: userId) ?? UserInfoModel()
+    }
+    /// 转发信息
+    // objectbox: transient
+//    var repostModel: TGRepostModel? {
 //        guard repostId > 0 else {
 //            return nil
 //        }
-//        return TSRepostModel.retrieveRepost(repostId)
+//        return TGRepostModel.retrieveRepost(repostId)
 //    }
     /// 动态相关用户的 id
     func userIds() -> [Int] {

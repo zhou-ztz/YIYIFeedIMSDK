@@ -10,7 +10,7 @@ import CoreMedia
 import AVFoundation
 import AliyunPlayer
 
-class TGMiniVideoPageViewController: TGBaseContentPageController {
+public class TGMiniVideoPageViewController: TGBaseContentPageController {
 
     private(set) var videos: [FeedListCellModel]
     private(set) var type: TGFeedListType
@@ -105,7 +105,7 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
                 TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") { feedInfo, error in
                     guard let feedInfo = feedInfo else { return }
                    
-                    let cellModel = FeedListCellModel(from: feedInfo)
+                    let cellModel = FeedListCellModel(feedListModel: feedInfo)
 //                    let cellModel = FeedListCellModel(feedListModel: model)
                     self.videos = [cellModel]
                     //处理重复add uid的情况，先清除播放列表再添加，不然可能会导致串流
@@ -123,6 +123,9 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
     }
     
     func initPlayerSource(_ videos: [FeedListCellModel]) {
+        guard videos.count > 0 else {
+            return
+        }
         TGMiniVideoListPlayerManager.shared.initPlayerSource(videos)
     }
     
@@ -130,11 +133,11 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
         return super.preferredStatusBarStyle
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 //        if videos.count > 0 {
 //            self.hero.isEnabled = true
@@ -212,7 +215,7 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
         print("deinit MiniVideoPageViewController")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.setClearNavBar(shadowColor: .clear)
 //        self.navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -232,7 +235,7 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
         UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 //        self.setWhiteNavBar(normal: true)
         if self.navigationController?.isBeingDismissed == true {
@@ -251,18 +254,18 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
 //        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         ///关闭右滑跳转个人详情页面
-        self.pushDestination = { [weak self] in
-            guard let self = self else { return nil }
+//        self.pushDestination = { [weak self] in
+//            guard let self = self else { return nil }
 //            if let user = self.videos[self.currentIndex].userInfo {
 //                let vc = UIStoryboard.init(name: "Profile", bundle: nil).instantiateViewController(withIdentifier: "HomePageViewController") as! HomePageViewController
 //                vc.model = HomepageModel(userIdentity: user.userIdentity)
 //                return vc
 //            }
-            return nil
-        }
+//            return nil
+//        }
 //        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {
 //             DispatchQueue.main.async {
 //                 print("minivideo  =========== \(self.avPlayer) ")
@@ -280,7 +283,7 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
     }
     
     // 单独处理视频类型的逻辑
-    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    public override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer == refreshGesture {
             let translation = (gestureRecognizer as! UIPanGestureRecognizer).translation(in: view)
             guard translation.y < 0 || currentIndex == 0 else {
@@ -319,14 +322,14 @@ class TGMiniVideoPageViewController: TGBaseContentPageController {
         self.currentView?.onPanAtBottom(sender: sender)
     }
     
-    override var shouldAutorotate: Bool {
+    public override var shouldAutorotate: Bool {
         return false
     }
 
 }
 
 extension TGMiniVideoPageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let currentVC = viewController as? TGMiniVideoControlVC else { return nil }
         var index = currentVC.index
         if index == 0 {
@@ -340,7 +343,7 @@ extension TGMiniVideoPageViewController: UIPageViewControllerDelegate, UIPageVie
         return vc
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let currentVC = viewController as? TGMiniVideoControlVC else { return nil }
         var index = currentVC.index
         if index >= videos.count - 1 {
@@ -353,7 +356,7 @@ extension TGMiniVideoPageViewController: UIPageViewControllerDelegate, UIPageVie
         return vc
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard completed else {
             return
         }
@@ -364,7 +367,7 @@ extension TGMiniVideoPageViewController: UIPageViewControllerDelegate, UIPageVie
         self.isLast = currentIndex == videos.count - 1
     }
     
-    func presentationCount(for pageViewController: UIPageViewController) -> Int {
+    public func presentationCount(for pageViewController: UIPageViewController) -> Int {
         return self.videos.count
     }
 }
@@ -375,7 +378,6 @@ extension TGMiniVideoPageViewController {
         guard !videos.isEmpty else {
             return
         }
-        
         let initialVC = TGMiniVideoControlVC(model: self.videos[currentIndex])
         initialVC.type = type
         initialVC.index = self.currentIndex
@@ -413,9 +415,7 @@ extension TGMiniVideoPageViewController {
 //                DispatchQueue.main.async {  self.refreshComplete() }
                 return
             }
-            let list = models.map{ FeedListCellModel(from: $0) }
-            
-            self.videos = list
+            self.videos = models
             self.currentIndex = 0
             DispatchQueue.main.async {
                 self.reloadPageData()
@@ -440,12 +440,11 @@ extension TGMiniVideoPageViewController {
             }
                 
             guard let self = self, let models = resultsModel else { return }
-            let list = models.map{ FeedListCellModel(from: $0) }
-            self.videos = list
+            self.videos = models
             self.currentIndex = 0
             DispatchQueue.main.async {
                 self.reloadPageData()
-                self.initPlayerSource(list)
+                self.initPlayerSource(models)
             }
         }
     }
@@ -478,8 +477,7 @@ extension TGMiniVideoPageViewController {
                 if models.count == 0 {
                     UIViewController.showBottomFloatingToast(with: "", desc: "no_more_data_tips".localized)
                 } else {
-                    let list = models.map{ FeedListCellModel(from: $0) }
-                    self.videos.append(contentsOf: list)
+                    self.videos.append(contentsOf: models)
                     self.initPlayerSource(self.videos)
                     self.dataSource = nil
                     self.dataSource = self
@@ -611,7 +609,7 @@ extension TGMiniVideoPageViewController: CustomPopListProtocol{
             let asset = AVURLAsset(url: url)
             let coverImage = FileUtils.generateAVAssetVideoCoverImage(avAsset: asset)
             var vc = TGReleasePulseViewController(type: .miniVideo)
-            vc.shortVideoAsset = ShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
+            vc.shortVideoAsset = TGShortVideoAsset(coverImage: coverImage, asset: nil, videoFileURL: url)
             vc.feedId = model.idindex.stringValue
             vc.coverId = model.videoCoverId
             vc.videoId = model.videoId

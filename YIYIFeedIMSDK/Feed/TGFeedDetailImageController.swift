@@ -15,7 +15,7 @@ enum FeedDetailImageControllerState {
     case zoomable
 }
 
-class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate {
+public class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate {
     private let zoomView: TGImageScrollView = TGImageScrollView(frame: .zero)
 
     private(set) lazy var imageView = {
@@ -57,7 +57,7 @@ class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate
         fatalError()
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         reloadGifUrlPath()
         
@@ -92,13 +92,13 @@ class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate
         self.backBaseView.layoutIfNeeded()
         
     }
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //开始记录停留时间
 //        stayBeginTimestamp = Date().timeStamp
         
     }
-    override func viewDidDisappear(_ animated: Bool) {
+    public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 //        self.behaviorUserFeedStayData()
     }
@@ -133,18 +133,8 @@ class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate
         }
         
     }
-//    func setImage(with url: String?) {
-//        guard let url = try? url.orEmpty.asURL() else { return }
-////        imageView.yy_setImage(with: url, placeholder: nil)
-//
-//
-////        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.progressiveLoad], context: [.imageThumbnailPixelSize: CGSize(width: 100, height: 100)], progress: nil, completed: nil, usingFailedURLCache: true, refreshCached: true, shouldDecodeImmediately: false, options: options)
-//
-//
-//
-//    }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         // https://developer.apple.com/documentation/uikit/touches_presses_and_gestures/coordinating_multiple_gesture_recognizers/preferring_one_gesture_over_another
         if gestureRecognizer == self.singleTap && otherGestureRecognizer == self.doubleTapGesture {
             return true
@@ -155,22 +145,15 @@ class TGFeedDetailImageController: TGViewController, UIGestureRecognizerDelegate
 
 
 extension TGFeedDetailImageController {
-//    func behaviorUserFeedStayData() {
-//        if stayBeginTimestamp != "" {
-//            stayEndTimestamp = Date().timeStamp
-//            let stay = stayEndTimestamp.toInt()  - stayBeginTimestamp.toInt()
-//            if stay > 5 {
-//                self.stayBeginTimestamp = ""
-//                self.stayEndTimestamp = ""
-//                EventTrackingManager.instance.trackEvent(
-//                    itemId: self.model?.idindex.stringValue ?? "",
-//                    itemType: ItemType.shortvideo.rawValue,
-//                    behaviorType: BehaviorType.stay,
-//                    moduleId: ModuleId.feed.rawValue,
-//                    pageId: PageId.feed.rawValue,
-//                    behaviorValue: stay.stringValue
-//                )
-//            }
-//        }
-//    }
+    func behaviorUserFeedStayData() {
+        if stayBeginTimestamp != "" {
+            stayEndTimestamp = Date().timeStamp
+            let stay = stayEndTimestamp.toInt()  - stayBeginTimestamp.toInt()
+            if stay > 5 {
+                self.stayBeginTimestamp = ""
+                self.stayEndTimestamp = ""
+                RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: self.model?.idindex.stringValue ?? "", itemType: TGItemType.shortvideo.rawValue, behaviorType: TGBehaviorType.stay.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: stay.stringValue, traceInfo: nil)
+            }
+        }
+    }
 }

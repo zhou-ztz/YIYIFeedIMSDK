@@ -391,6 +391,16 @@ class BaseChatInputView: UIView {
             delegate?.sendText(text: text, attribute: textView.attributedText)
             textView.text = ""
             sendButton.setImage(UIImage.set_image(named: "speech"), for: .normal)
+            textViewHeight = 40
+            textView.snp.remakeConstraints { make in
+                make.left.equalTo(8)
+                make.bottom.top.equalTo(0)
+                make.right.equalTo(-44)
+                make.height.equalTo(textViewHeight)
+                
+            }
+            
+            delegate?.textFieldDidChange(textView)
         }
 
         
@@ -585,7 +595,6 @@ extension BaseChatInputView: UITextViewDelegate {
             HTMLManager.shared.formatTextViewAttributeText(textView)
            // return
         }
-
         let height = textView.text.heightWithConstrainedWidth(width: ScreenWidth - 152, font: UIFont.systemFont(ofSize: 16))
         self.updateUI(textHeight: height)
         delegate?.textFieldDidChange(textView)
@@ -617,6 +626,10 @@ extension BaseChatInputView: UITextViewDelegate {
                 muta.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)], range: NSMakeRange(0, text.count))
                 textView.attributedText = muta
                 textView.selectedRange = NSMakeRange(text.count - 1, 0)
+                ///计算高度
+                let height = textView.text.heightWithConstrainedWidth(width: ScreenWidth - 152, font: UIFont.systemFont(ofSize: 16))
+                self.updateUI(textHeight: height)
+                delegate?.textFieldDidChange(textView)
                 return false
             }
         }

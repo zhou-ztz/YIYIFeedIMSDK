@@ -24,6 +24,8 @@ class MsgCollectionViewController: TGViewController {
     var isShow: Bool = false
     var isFirstLoad: Bool = true
     
+    var interactionController: UIDocumentInteractionController!
+    
     lazy var placehoderView: UIView = {
         let placehoder = UIView(frame: self.backBaseView.bounds)
         placehoder.backgroundColor = .white
@@ -526,6 +528,15 @@ class MsgCollectionViewController: TGViewController {
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true)
     }
+    
+    //MARK: 打开其他应用
+    func openWithDocumentInterator(path: String, name: String){
+        let url = URL(fileURLWithPath: path)
+        self.interactionController = UIDocumentInteractionController(url: url)
+        self.interactionController.delegate = self
+        self.interactionController.name = name
+        self.interactionController.presentPreview(animated: true)
+    }
 }
 
 extension MsgCollectionViewController:  MessageCollectDelegate {
@@ -668,10 +679,12 @@ extension MsgCollectionViewController: BaseCollectViewDelegate {
         
         if FileManager.default.fileExists(atPath: path) {
             let url = URL(fileURLWithPath: path)
-            //url: url, type: .defaultType, title: model.name
-            let vc = TGWebViewController()
-            vc.urlString = url.absoluteString
-            self.navigationController?.pushViewController(vc, animated: true)
+            if url.isFileURL {
+                openWithDocumentInterator(path: path, name: model.name)
+            } else {
+                //url: url, type: .defaultType, title: model.name
+                RLSDKManager.shared.imDelegate?.openFileWebview(url: url, title: model.name)
+            }
         } else {
             let vc: CollectionFileMsgViewController = CollectionFileMsgViewController(model: model)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -733,6 +746,15 @@ extension MsgCollectionViewController: BaseCollectViewDelegate {
         guard let url = url else { return }
         self.showShareContent(url)
     }
+    
+    //MARK: 打开其他应用
+//    func openWithDocumentInterator(object: V2NIMMessageFileAttachment) {
+//        let url = URL(fileURLWithPath: object.path ?? "")
+//        self.interactionController = UIDocumentInteractionController(url: url)
+//        self.interactionController.delegate = self
+//        self.interactionController.name = object.name
+//        self.interactionController.presentPreview(animated: true)
+//    }
 }
 
 extension MsgCollectionViewController: UITableViewDelegate, UITableViewDataSource {
@@ -860,7 +882,7 @@ extension MsgCollectionViewController: ActionListDelegate {
   
     func forwardTextIM() {
         if self.selectData.count == 0 {
-            //self.showError(message: "favourite_msg_delete_at_least".localized)
+            UIViewController.showBottomFloatingToast(with: "favourite_msg_delete_at_least".localized, desc: "")
             return
         }
         let messageIds: [String] = self.selectData.compactMap { model in
@@ -873,14 +895,26 @@ extension MsgCollectionViewController: ActionListDelegate {
             NIMSDK.shared().v2MessageService.getMessageList(byIds: messageIds) { messages in
                 let accountId = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
                 for contact in contacts {
-                    for originalMessage in messages {
-                        let conversationId = contact.isTeam ? "\(accountId)|2|\(contact.userName)" : "\(accountId)|1|\(contact.userName)"
-                        
-                        let message = V2NIMMessageCreator.createForwardMessage(originalMessage)
-                        NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: nil) { _ in
-                            
-                        } failure: { _ in
-                            
+                    let conversationId = contact.isTeam ? "\(accountId)|2|\(contact.userName)" : "\(accountId)|1|\(contact.userName)"
+                    /// 如果本地能全部查询到，直接转发
+                    if messageIds.count == messages.count {
+                        for originalMessage in messages {
+                            let message = V2NIMMessageCreator.createForwardMessage(originalMessage)
+                            NIMSDK.shared().v2MessageService.send(message, conversationId: conversationId, params: nil) { _ in
+                                
+                            } failure: { _ in
+                                
+                            }
+                        }
+                    } else {
+                        for model in self.selectData {
+                            if let v2Message = CollectionMsgDataManager.collectionManager.messageModel(model: model) {
+                                NIMSDK.shared().v2MessageService.send(v2Message, conversationId: conversationId, params: nil) { _ in
+                                    
+                                } failure: { _ in
+                                    
+                                }
+                            }
                         }
                     }
                 }
@@ -925,3 +959,15 @@ extension MsgCollectionViewController {
     }
 }
 
+
+extension MsgCollectionViewController: UIDocumentInteractionControllerDelegate{
+    
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
+    }
+
+    func documentInteractionControllerWillBeginPreview(_ controller: UIDocumentInteractionController) {
+        controller.dismissPreview(animated: true)
+    }
+
+}

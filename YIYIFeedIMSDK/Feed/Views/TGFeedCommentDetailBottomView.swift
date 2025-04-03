@@ -86,14 +86,13 @@ class TGFeedCommentDetailBottomView: UIView {
         
         addSubview(contentView)
         contentView.snp.makeConstraints {
-            $0.top.equalTo(0)
-            $0.bottom.right.equalToSuperview()
+            $0.top.bottom.right.equalToSuperview()
             $0.leading.equalToSuperview().inset(15)
         }
         
         contentView.addArrangedSubview(commentView)
         commentView.snp.makeConstraints {
-            $0.width.equalToSuperview().multipliedBy(0.5)
+            $0.width.equalTo(UIScreen.main.bounds.width * 0.5)
         }
         commentView.addSubview(commentButton)
         commentButton.addAction {
@@ -117,36 +116,8 @@ class TGFeedCommentDetailBottomView: UIView {
         }
       
         contentView.addArrangedSubview(toolbar)
-      
     }
     
-    public func loadToolbar(model: TGFeedResponse?, canAcceptReward: Bool, reactionType: ReactionTypes?) {
-        guard let model = model else { return }
-        toolbar.backgroundColor = colorStyle == .normal ? .white : .black
-        if let reaction = reactionType {
-            toolbar.setImage(reaction.imageName, At: 0)
-            toolbar.setTitle(reaction.title, At: 0)
-        } else {
-            toolbar.setImage(colorStyle == .normal ? "IMG_home_ico_love" : "IMG_home_ico_love_white" , At: 0)
-            toolbar.setTitle("love_reaction".localized, At: 0)
-        }
-        
-        // 设置点赞数量
-        toolbar.setTitle(model.likeCount?.abbreviated ?? "", At: 0)
-        // 设置评论按钮
-        toolbar.setTitle(model.feedCommentCount?.abbreviated ?? "", At: 1)
-        // 设置转发按钮
-        toolbar.setTitle(model.feedForwardCount?.abbreviated ?? "", At: 2)
-        
-        if model.disableComment == 1 {
-            toolbar.item(isHidden: true, at: 1)
-            commentView.isHidden = true
-        } else {
-            toolbar.item(isHidden: false, at: 1)
-            commentView.isHidden = false
-        }
-        toolbar.delegate = self
-    }
     public func loadToolbar(model: FeedListToolModel?, canAcceptReward: Bool, reactionType: ReactionTypes?) {
         guard let model = model else { return }
         toolbar.backgroundColor = colorStyle == .normal ? .white : .black
@@ -157,7 +128,6 @@ class TGFeedCommentDetailBottomView: UIView {
             toolbar.setImage(colorStyle == .normal ? "IMG_home_ico_love" : "IMG_home_ico_love_white" , At: 0)
             toolbar.setTitle("love_reaction".localized, At: 0)
         }
-        
         // 设置点赞数量
         toolbar.setTitle(model.diggCount.abbreviated, At: 0)
         // 设置评论按钮
@@ -174,7 +144,7 @@ class TGFeedCommentDetailBottomView: UIView {
         }
         toolbar.delegate = self
     }
-    
+   
 }
 
 extension TGFeedCommentDetailBottomView : TGToolbarViewDelegate {

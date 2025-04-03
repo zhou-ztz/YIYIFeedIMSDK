@@ -50,7 +50,7 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
         }
     }
     /// 当前评论的数据模型
-    var tgCommentModel: TGFeedCommentListModel? {
+    var tgCommentModel: FeedCommentListCellModel? {
         didSet {
             guard let model = tgCommentModel else {
                 return
@@ -128,10 +128,10 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
             }
         })
     }
-    func setTGSourceData (commentModel: TGFeedCommentListModel) {
+    func setTGSourceData (commentModel: FeedCommentListCellModel) {
         self.text = nil
         self.delegate = self
-        HTMLManager.shared.removeHtmlTag(htmlString: commentModel.body ?? "", completion: { [weak self] (content, userIdList) in
+        HTMLManager.shared.removeHtmlTag(htmlString: commentModel.content, completion: { [weak self] (content, userIdList) in
             guard let self = self else { return }
             self.userIdList = userIdList
             self.content = content
@@ -140,17 +140,17 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
                 self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList)
             }
             
-//            if let replyUser = commentModel.replyUser {
-//                self.replyCommentName = replyUser.name
-//                self.replyTemplates = self.showType == .simple ? " " + "reply_str".localized + " " : "reply_str".localized + " "
-//            } else {
-//                self.replyCommentName = nil
-//                self.replyTemplates = ""
-//            }
+            if let replyUser = commentModel.replyUserInfo {
+                self.replyCommentName = replyUser.name
+                self.replyTemplates = self.showType == .simple ? " " + "reply_str".localized + " " : "reply_str".localized + " "
+            } else {
+                self.replyCommentName = nil
+                self.replyTemplates = ""
+            }
             
             switch self.showType {
             case .detail:
-                self.commentName = (commentModel.user?.name).orEmpty
+                self.commentName = (commentModel.userInfo?.name).orEmpty
                 self.setDetailAttributedString(commentModel: commentModel)
             case .simple:
                 self.commentName = ""
@@ -162,27 +162,6 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
     ///
     /// - Parameter commentModel: 数据模型
     private func setAttributedString(commentModel: FeedCommentListCellModel) {
-        let normalFont = UIFont.systemFont(ofSize: RLFont.ContentText.sectionTitle.rawValue)
-        let boldFont = UIFont.boldSystemFont(ofSize: RLFont.ContentText.sectionTitle.rawValue)
-        
-        if replyCommentName == nil || replyCommentName?.isEmpty == true {
-            let attributedName = NSMutableAttributedString().differentColorAndSizeString(first: (firstString: commentName as NSString, firstColor: colors.highlightColor, font: normalFont), second: (secondString: "\(normalTemplates)\(content)" as NSString, secondColor: colors.normalColor, font: normalFont))
-            self.setAttributedText(attributedName)
-            let range = (attributedName.string as NSString).range(of: commentName)
-            self.addLink(withLinkData: commentName, linkColor: colors.highlightColor, underLineStyle: .init(rawValue: 0), range: range)
-            return
-        }
-
-        let replyName = NSMutableAttributedString().differentColorAndSizeString(first: (firstString: commentName as NSString, firstColor: colors.highlightColor, font: normalFont), second: (secondString:  replyTemplates as NSString, secondColor: colors.normalColor, font: normalFont))
-        let beReplyName = NSMutableAttributedString().differentColorAndSizeString(first: (firstString: replyCommentName! as NSString, firstColor: colors.highlightColor, font: boldFont), second: (secondString: "\(normalTemplates)\(content)" as NSString, secondColor: colors.normalColor, font: normalFont))
-        replyName.append( beReplyName)
-        self.setAttributedText(replyName)
-        let commentNameRange = (replyName.string as NSString).range(of: commentName)
-        let replyNameRange = (replyName.string as NSString).range(of: replyCommentName!)
-        self.addLink(withLinkData: commentName, linkColor: colors.highlightColor, underLineStyle: .init(rawValue: 0), range: commentNameRange)
-        self.addLink(withLinkData: replyCommentName!, linkColor: colors.highlightColor, underLineStyle: .init(rawValue: 0), range: replyNameRange)
-    }
-    private func setAttributedString(commentModel: TGFeedCommentListModel) {
         let normalFont = UIFont.systemFont(ofSize: RLFont.ContentText.sectionTitle.rawValue)
         let boldFont = UIFont.boldSystemFont(ofSize: RLFont.ContentText.sectionTitle.rawValue)
         
@@ -249,48 +228,7 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
         }
     }
     
-    private func setDetailAttributedString(commentModel: TGFeedCommentListModel) {
-        if replyCommentName == nil || replyCommentName?.isEmpty == true {
-            if commentModel.contentType == "sticker"{
-                self.append(contentImage())
-            } else {
-                self.setAttributedText(NSAttributedString(string: content, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: RLFont.SubInfo.footnote.rawValue), NSAttributedString.Key.foregroundColor: colors.normalColor]))
-                // 匹配相关的at
-                let matchs = TGUtil.findAllTSAt(inputStr: content)
-                for match in matchs {
-                    let matchContent = content.subString(with: match.range)
-                    /// 按照上边的texts的拼接方式进行增加content前边的偏移量
-                    addLink(withLinkData: matchContent, linkColor: TGAppTheme.blue, underLineStyle: .init(rawValue: 0), range: NSRange(location: match.range.location, length: match.range.length))
-                }
-            }
-            return
-        }
-
-        let normalFont = UIFont.systemFont(ofSize: RLFont.SubInfo.footnote.rawValue)
-        let boldFont = UIFont.boldSystemFont(ofSize: RLFont.SubInfo.footnote.rawValue)
-        
-        let reply = NSMutableAttributedString().differentColorAndSizeString(first: (firstString: replyTemplates as NSString, firstColor: colors.normalColor, font: normalFont), second: (secondString: "" as NSString, secondColor: colors.normalColor, font: normalFont))
-        
-        let body = (commentModel.contentType == "sticker" ? normalTemplates + "\n" : normalTemplates + content) as NSString
-        
-        let beReplyName = NSMutableAttributedString().differentColorAndSizeString(first: (firstString: (replyCommentName!) as NSString, firstColor: colors.highlightColor, font: boldFont), second: (secondString: body, secondColor: colors.normalColor, font: normalFont))
-        reply.append(beReplyName)
-        self.setAttributedText(reply)
-        let commentNameRange = (reply.string as NSString).range(of: replyCommentName!)
-        self.addLink(withLinkData: replyCommentName!, linkColor: colors.highlightColor, underLineStyle: .init(rawValue: 0), range: commentNameRange)
-        
-        if commentModel.contentType == "sticker" {
-            self.append(contentImage())
-        } else {
-            // 匹配相关的at
-            let matchs = TGUtil.findAllTSAt(inputStr: content)
-            for match in matchs {
-                let matchContent = content.subString(with: match.range)
-                /// 按照上边的texts的拼接方式进行增加content前边的偏移量
-                addLink(withLinkData: matchContent, linkColor: TGAppTheme.blue, underLineStyle: .init(rawValue: 0), range: NSRange(location: 3 + (replyCommentName?.count)! + 2 + match.range.location, length: match.range.length))
-            }
-        }
-    }
+   
     
     func contentImage() -> SDAnimatedImageView {
         let imageView = SDAnimatedImageView()

@@ -144,15 +144,13 @@ public class TGMessageViewController: TGViewController {
                 if client.type == .LOGIN_CLIENT_TYPE_WEB {
                     //is web login
                     isWebLoggedIn = true
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil,
-                                                    userInfo: ["isLogIn": true])
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil, userInfo: ["isLogIn": true])
                     break
                 }
             }
         } else {
             isWebLoggedIn = false
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil,
-                                            userInfo:  ["isLogIn": false])
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil, userInfo:  ["isLogIn": false])
         }
     }
 

@@ -12,7 +12,7 @@ protocol TGDetailCommentTableViewCellDelegate: NSObjectProtocol {
     /// 点击重新发送按钮
     ///
     /// - Parameter commnetModel: 数据模型
-    func repeatTap(cell: FeedDetailCommentTableViewCell, commnetModel: TGFeedCommentListModel)
+    func repeatTap(cell: FeedDetailCommentTableViewCell, commnetModel: FeedCommentListCellModel)
 
     /// 点击了名字
     ///
@@ -25,9 +25,9 @@ protocol TGDetailCommentTableViewCellDelegate: NSObjectProtocol {
     func didSelectHeader(userId: Int)
 
     /// 长按了评论
-    func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: TGFeedCommentListModel) -> Void
+    func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: FeedCommentListCellModel) -> Void
     
-    func didTapToReplyUser(in cell:FeedDetailCommentTableViewCell, model: TGFeedCommentListModel)
+    func didTapToReplyUser(in cell:FeedDetailCommentTableViewCell, model: FeedCommentListCellModel)
 
     func needShowError()
 }
@@ -39,7 +39,7 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
     
     weak var cellDelegate: TGDetailCommentTableViewCellDelegate?
 
-    var commnetModel: TGFeedCommentListModel?
+    var commnetModel: FeedCommentListCellModel?
     
     var likeButtonClickCall: (() -> ())?
     
@@ -58,7 +58,7 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
     }()
     
     
-    lazy var contentLabel: TGCommentLabel = {
+    lazy var commentDetailLabel: TGCommentLabel = {
         let lab = TGCommentLabel()
         lab.textColor = MainColor.normal.minor
         lab.font = UIFont.systemFont(ofSize: 14)
@@ -105,6 +105,7 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = .white
+        self.selectionStyle = .none
         self.setUI()
     }
     required init?(coder: NSCoder) {
@@ -147,8 +148,8 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
             make.left.equalTo(pinnedIcon.snp.right).offset(4)
             make.centerY.equalToSuperview()
         }
-        contentView.addSubview(contentLabel)
-        contentLabel.snp.makeConstraints { make in
+        contentView.addSubview(commentDetailLabel)
+        commentDetailLabel.snp.makeConstraints { make in
             make.left.equalTo(nameLabel.snp.left)
             make.right.equalToSuperview().offset(-10)
             make.top.equalTo(nameLabel.snp.bottom).offset(6)
@@ -184,24 +185,32 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         
     }
     
-    public func setData(data: TGFeedCommentListModel){
+    public func setData(data: FeedCommentListCellModel){
         commnetModel = data
         
         let avatarInfo = AvatarInfo()
         avatarInfo.type = AvatarInfo.UserAvatarType.normal(userId: data.userId)
-        avatarInfo.avatarURL = data.user?.avatar?.url
-        avatarInfo.verifiedIcon = (data.user?.verified?.icon).orEmpty
-        avatarInfo.verifiedType = (data.user?.verified?.type).orEmpty
+        avatarInfo.avatarURL = data.userInfo?.avatarUrl
+        avatarInfo.verifiedIcon = (data.userInfo?.verificationIcon).orEmpty
+        avatarInfo.verifiedType = (data.userInfo?.verificationType).orEmpty
         avatarView.avatarInfo = avatarInfo
-        nameLabel.text = data.user?.name ?? ""
-        contentLabel.text = data.body ?? ""
-        
-        if let timeModel = data.createdAt?.toBdayDate(by: "yyyy-MM-dd HH:mm:ss") {
-            dateLabel.text =  TGDate().dateString(.normal, nDate: timeModel)
+        if data.userInfo == nil {
+            nameLabel.text = "default_delete_user_name".localized
+        } else {
+            nameLabel.text = data.userInfo!.name
         }
-        contentLabel.tgCommentModel = commnetModel
-        let height = CGFloat(contentLabel.getSizeWithWidth(width - 10 - 40 - 10 - 15).height)
-        contentLabel.snp.updateConstraints { make in
+        commentDetailLabel.linesSpacing = 0
+        commentDetailLabel.showType = .detail
+        commentDetailLabel.commentModel = data
+        commentDetailLabel.sizeToFit()
+        commentDetailLabel.labelDelegate = self
+        commentDetailLabel.linesSpacing = 4.0
+        
+     
+        dateLabel.text = TGDate().dateString(.normal, nDate: data.createDate ?? Date())
+     
+        let height = CGFloat(commentDetailLabel.getSizeWithWidth(width - 10 - 40 - 10 - 15).height)
+        commentDetailLabel.snp.updateConstraints { make in
             make.height.equalTo(height).priority(.high) // 设置优先级
         }
         
@@ -217,8 +226,8 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
     
     /// 点击名字
     @objc fileprivate func didTapName() {
-        if let userInfo = self.commnetModel?.user {
-            self.cellDelegate?.didSelectHeader(userId: userInfo.id ?? 0)
+        if let userInfo = self.commnetModel?.userInfo {
+            self.cellDelegate?.didSelectHeader(userId: userInfo.userIdentity)
         } else {
             self.cellDelegate?.needShowError()
         }
@@ -234,8 +243,8 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         }
     }
     func didSelect(didSelectId: Int) {
-        guard let userId = self.commnetModel?.replyUser else { return }
-        self.cellDelegate?.didSelectName(userId: userId)
+        guard let userId = self.commnetModel?.type["replyUserId"] else { return }
+        self.cellDelegate?.didSelectName(userId: userId.toInt())
     }
     
     func didTapToReply() {

@@ -93,9 +93,10 @@ class RLAudioVideoCallViewController: TGViewController {
         }
     }
     func startByCallee () {
-       // self.playReceiverRing()
+        self.playReceiverRing()
     }
     func startByCaller () {
+        self.playConnectRing()
         self.doStartByCaller()
     }
     
@@ -204,6 +205,77 @@ class RLAudioVideoCallViewController: TGViewController {
             }
         }
         
+    }
+    
+    // MARK: Ring
+    func playConnectRing () {
+        self.player?.stop()
+        let url = Bundle.main.url(forResource: "yippi_ringtone", withExtension: "wav")
+        do {
+            if let url = url {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.numberOfLoops = 20
+                player?.play()
+            }
+        } catch {
+            
+        }
+    }
+    
+    func playHangUpRing () {
+        self.player?.stop()
+        let url = Bundle.main.url(forResource: "video_chat_tip_ended", withExtension: "aac")
+        do {
+            if let url = url {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.numberOfLoops = 20
+                player?.play()
+            }
+        } catch {
+            
+        }
+    }
+    
+    func playOnCallRing () {
+        self.player?.stop()
+        let url = Bundle.main.url(forResource: "video_chat_tip_ended", withExtension: "aac")
+        do {
+            if let url = url {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.play()
+            }
+        } catch {
+            
+        }
+    }
+    
+    func playTimeoutRing () {
+        self.player?.stop()
+        let url = Bundle.main.url(forResource: "video_chat_tip_ended", withExtension: "aac")
+        do {
+            if let url = url {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.play()
+            }
+        } catch {
+            
+        }
+    }
+    
+    func playReceiverRing () {
+        self.player?.stop()
+        let url = Bundle.main.url(forResource: "yippi_ringtone", withExtension: "wav")
+        do {
+            if let url = url {
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+                try AVAudioSession.sharedInstance().setActive(true)
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.numberOfLoops = 20
+                player?.play()
+            }
+        } catch {
+            
+        }
     }
     
 }

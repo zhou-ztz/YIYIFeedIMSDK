@@ -12,6 +12,53 @@ import SwiftEntryKit
 
 public typealias TGEmptyClosure = () -> Void
 
+private class NavLeftAlignWrapperView: UIView {
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: .greatestFiniteMagnitude, height: UIView.noIntrinsicMetric)
+    }
+
+    init(custom view: UIView) {
+        super.init(frame: .zero)
+
+        addSubview(view)
+        view.snp.makeConstraints { v in
+            v.top.bottom.equalToSuperview()
+            v.left.right.equalToSuperview().inset(8)
+        }
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
+}
+private class TitleView: UIView {
+    let titleLabel = UILabel()
+
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: .greatestFiniteMagnitude, height: UIView.noIntrinsicMetric)
+    }
+
+    init(text: String, color: UIColor) {
+        super.init(frame: .zero)
+
+        addSubview(titleLabel)
+
+        titleLabel.textColor = color
+        titleLabel.text = text
+        titleLabel.font = .boldSystemFont(ofSize: 17)
+        titleLabel.textAlignment = .left
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        titleLabel.snp.makeConstraints { v in
+            v.top.bottom.right.equalToSuperview()
+            v.left.equalToSuperview().inset(8)
+        }
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
 
 extension UIViewController {
     
@@ -96,6 +143,31 @@ extension UIViewController {
             self.present(alert, animated: false, completion: nil)
         }
     }
+    func showLoading(with title: String = "", description: String = "", theme: Theme = .white, backgroundColor: UIColor = .clear) {
+        let view = TGPlaceHolderView(offset: 0, heading: title, detail: description, lottieName: "feed-loading", theme: theme)
+        view.backgroundColor = backgroundColor
+        view.tag = 10001
+        UIApplication.shared.windows.first?.addSubview(view)
+        view.bindToEdges()
+    }
+    
+    func dismissLoading() {
+        if let view = UIApplication.shared.windows.first?.viewWithTag(10001) {
+            view.removeFromSuperview()
+        }
+    }
+    
+    func setLeftAlignedNavigationItemView(_ customView: UIView) {
+
+        self.navigationItem.titleView = NavLeftAlignWrapperView(custom: customView)
+    }
+
+    func setLeftAlignedNavigationItemTitle(text: String,
+                                           color: UIColor) {
+
+        let titleView = TitleView(text: text, color: color)
+        self.navigationItem.titleView = titleView
+    }
     func presentPopVC(target: Any, type: TGPopUpType, delegate: CustomPopListProtocol? = nil) {
         var items: [TGPopUpItem] = []
         switch type {
@@ -137,7 +209,7 @@ extension UIViewController {
             guard let target = target as? LivePinCommentModel else { return }
             let model = target.model
             if target.requiredPinMessage {
-                items = [model.pinned == true ? .liveUnPinComment(model: target) : .livePinComment(model: target), .deleteComment(model: target), .copy(model: target)]
+                items = [model.showTopIcon ? .liveUnPinComment(model: target) : .livePinComment(model: target), .deleteComment(model: target), .copy(model: target)]
             } else {
                 items = [.deleteComment(model: target), .copy(model: target)]
             }
@@ -145,7 +217,7 @@ extension UIViewController {
             guard let target = target as? LivePinCommentModel else { return }
             let model = target.model
             if target.requiredPinMessage {
-                items = [model.pinned == true ? .liveUnPinComment(model: target) : .livePinComment(model: target), .reportComment(model: target), .copy(model: target)]
+                items = [model.showTopIcon == true ? .liveUnPinComment(model: target) : .livePinComment(model: target), .reportComment(model: target), .copy(model: target)]
             } else {
                 items = [.reportComment(model: target), .copy(model: target)]
             }

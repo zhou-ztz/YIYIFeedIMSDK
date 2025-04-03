@@ -26,6 +26,16 @@ extension UIImage {
             return kUTTypeJPEG as String
         }
     }
+    public convenience init?(contentsOfURL url:String) {
+        guard let imgUrl = URL(string: url) else { return nil }
+        do {
+            let imgData = try Data(contentsOf: imgUrl)
+            self.init(data: imgData)
+        } catch {
+            return nil
+        }
+    }
+    
     class func gif(data: Data, speedMultiplier: Double = 0.0) -> UIImage? {
         // Create source from data
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {

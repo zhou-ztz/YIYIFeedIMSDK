@@ -58,10 +58,9 @@ protocol UserInfoType: Mappable  {
 
 extension UserInfoType {
     
-//    func isMe() -> Bool {
-//        guard CurrentUserSessionInfo != nil else { return false }
-//        return userIdentity == CurrentUserSessionInfo?.userIdentity
-//    }
+    func isMe() -> Bool {
+        return userIdentity == Int(RLSDKManager.shared.loginParma?.uid ?? 0)
+    }
     
     func avatarInfo() -> AvatarInfo {
         let avatarInfo = AvatarInfo()
@@ -77,18 +76,18 @@ extension UserInfoType {
 }
 
 extension UserInfoType {
-//    func toType<A>(type: A.Type) -> A? where A: Mappable {
-//        if self is UserInfoModel, let res = self as? A, res is UserInfoModel {
-//            return res
-//        }
-//
+    func toType<A>(type: A.Type) -> A? where A: Mappable {
+        if self is UserInfoModel, let res = self as? A, res is UserInfoModel {
+            return res
+        }
+
 //        if self is UserSessionInfo, let res = self as? A, res is UserSessionInfo {
 //            return res
 //        }
-//        
-//        let model = Mapper<A>().map(JSONString: self.toJSONString().orEmpty)
-//        return model
-//    }
+        
+        let model = Mapper<A>().map(JSONString: self.toJSONString().orEmpty)
+        return model
+    }
 }
 
 
