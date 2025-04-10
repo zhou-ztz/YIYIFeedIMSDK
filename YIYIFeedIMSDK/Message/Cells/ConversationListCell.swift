@@ -180,7 +180,7 @@ class ConversationListCell: UITableViewCell {
         self.conversation = conversation
         let sessionId = MessageUtils.conversationTargetId(conversation.conversationId)
         MessageUtils.getAvatarIcon(sessionId: sessionId, conversationType: conversation.type) {[weak self] avatarInfo in
-            let info = AvatarInfo()
+            let info = TGAvatarInfo()
             info.avatarURL = avatarInfo.avatarURL
             info.verifiedType = avatarInfo.verifiedType
             info.verifiedIcon = avatarInfo.verifiedIcon

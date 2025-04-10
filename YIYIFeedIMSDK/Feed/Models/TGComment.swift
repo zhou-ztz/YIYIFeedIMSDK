@@ -44,9 +44,9 @@ class TGCommentModel: Mappable {
         return TGCommentType(rawValue: self.commentTableType)
     }
     
-    var user: UserInfoModel?
-    var targetUser: UserInfoModel?
-    var replyUser: UserInfoModel?
+    var user: TGUserInfoModel?
+    var targetUser: TGUserInfoModel?
+    var replyUser: TGUserInfoModel?
 
     // MARK: - Mappable
     required init?(map: Map) { }

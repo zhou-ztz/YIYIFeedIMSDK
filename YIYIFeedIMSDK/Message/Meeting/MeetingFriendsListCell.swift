@@ -31,7 +31,7 @@ class MeetingFriendsListCell: UITableViewCell {
         $0.text = "meeting_private_group".localized
     }
     
-    var userInfo: UserInfoModel? = nil
+    var userInfo: TGUserInfoModel? = nil
     var currentChooseArray: [ContactData] = []
     var originData = NSMutableArray()
     
@@ -46,7 +46,7 @@ class MeetingFriendsListCell: UITableViewCell {
         didSet {
             guard let model = contactData else { return }
 
-            let avatarInfo = AvatarInfo()
+            let avatarInfo = TGAvatarInfo()
             avatarInfo.avatarURL = model.imageUrl
             avatarInfo.verifiedIcon = model.verifiedIcon
             avatarInfo.verifiedType = model.verifiedType
@@ -87,7 +87,7 @@ class MeetingFriendsListCell: UITableViewCell {
     var team: V2NIMTeam? {
         didSet {
             guard let model = team else { return }
-            let avatarInfo = AvatarInfo()
+            let avatarInfo = TGAvatarInfo()
             avatarInfo.avatarURL = model.avatar
             
             avatarInfo.avatarPlaceholderType =  .group

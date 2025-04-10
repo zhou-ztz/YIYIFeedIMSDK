@@ -90,7 +90,7 @@ class TGMessageSearchListController: TGViewController {
         return stackView
     }()
 
-    var searchUserList: [UserInfoModel] = []
+    var searchUserList: [TGUserInfoModel] = []
     var searchData: [TGIMSearchLocalHistoryObject] = []
     var searchSession: [V2NIMConversation] = []
     var keyWord: String = ""

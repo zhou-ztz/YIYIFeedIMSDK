@@ -18,7 +18,7 @@ class TGTopicModel: Mappable {
     /// 创建者id
     var userId = 0
     /// 创建者信息
-    var userInfo = UserInfoModel()
+    var userInfo = TGUserInfoModel()
     /// 发帖权限:member,administrator,founder 所有，administrator,founder 管理员和圈主，administrator圈主
     var permissions = ""
     /// 简介
@@ -38,7 +38,7 @@ class TGTopicModel: Mappable {
     /// 关注状态
     var followStatus = false
     /// 话题参与者数据
-    var menber: [UserInfoModel] = []
+    var menber: [TGUserInfoModel] = []
     var menberID: [Int] = []
 
     init() {
@@ -71,11 +71,11 @@ extension TGTopicModel {
         self.name = name
     }
 
-    func setUserInfo(user: UserInfoModel) {
+    func setUserInfo(user: TGUserInfoModel) {
         self.userInfo = user
     }
 
-    func setMenber(menber: [UserInfoModel]) {
+    func setMenber(menber: [TGUserInfoModel]) {
         self.menber = menber
     }
 }

@@ -19,7 +19,7 @@ enum FriendsActionType: String {
 class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, TGChatChooseFriendCellDelegate, UIScrollViewDelegate  {
 
     /// 数据源
-    var dataSource: [UserInfoModel] = []
+    var dataSource: [TGUserInfoModel] = []
     /// 当前页面新选择的数据
     var choosedDataSource = NSMutableArray()
     /// 进入当前页面之前就已经选择的数据（主要是存储从群详情页和查看群成员页面跳转过来的时候一并传递过来的已有群成员数据）
@@ -108,7 +108,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
             rightButtonTitle = "choice_delete".localized
             customNavigationBar.title = "group_remove_member".localized
             for (index, item) in originDataSource.enumerated().reversed() {
-                let userinfo: UserInfoModel = item as! UserInfoModel
+                let userinfo: TGUserInfoModel = item as! TGUserInfoModel
                 if userinfo.userIdentity == Int(ownerId) {
                     originDataSource.removeObject(at: index)
                 }
@@ -250,7 +250,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         cell?.ischangeGroupMember = ischangeGroupMember
         cell?.selectionStyle = .none
         if ischangeGroupMember == .delete {
-            cell?.setUserInfoData(model: searchDataSource[indexPath.row] as! UserInfoModel)
+            cell?.setUserInfoData(model: searchDataSource[indexPath.row] as! TGUserInfoModel)
         } else {
             cell?.setUserInfoData(model: dataSource[indexPath.row])
         }
@@ -269,7 +269,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         /// 需要先判断当前页面是不是增加成员页面
         if ischangeGroupMember == .add {
             for (_, model) in originDataSource.enumerated() {
-                let userinfo: UserInfoModel = model as! UserInfoModel
+                let userinfo: TGUserInfoModel = model as! TGUserInfoModel
                 if userinfo.userIdentity == cell.userInfo?.userIdentity {
                     return
                 }
@@ -277,7 +277,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         }
         if cell.chatButton.isSelected {
             for (index, model) in choosedDataSource.enumerated() {
-                let userinfo: UserInfoModel = model as! UserInfoModel
+                let userinfo: TGUserInfoModel = model as! TGUserInfoModel
                 if userinfo.userIdentity == cell.userInfo?.userIdentity {
                     choosedDataSource.removeObject(at: index)
                     break
@@ -317,7 +317,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
             } else {
                 searchDataSource.removeAllObjects()
                 for (_, item) in dataSource.enumerated() {
-                    let usermodel: UserInfoModel = item as! UserInfoModel
+                    let usermodel: TGUserInfoModel = item as! TGUserInfoModel
                     if usermodel.name.range(of: keyword) != nil {
                         searchDataSource.add(usermodel)
                     }
@@ -354,7 +354,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         }
     }
 
-    func processRefresh(datas: [UserInfoModel]?, message: Error?) {
+    func processRefresh(datas: [TGUserInfoModel]?, message: Error?) {
         friendListTableView.mj_footer.resetNoMoreData()
         // 获取数据成功
         if let datas = datas {
@@ -409,10 +409,10 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
     }
 
     // MARK: - TSChatChooseFriendCellDelegate
-    func chatButtonClick(chatbutton: UIButton, userModel: UserInfoModel) {
+    func chatButtonClick(chatbutton: UIButton, userModel: TGUserInfoModel) {
         if ischangeGroupMember == .add {
             for (_, model) in originDataSource.enumerated() {
-                let userinfo: UserInfoModel = model as! UserInfoModel
+                let userinfo: TGUserInfoModel = model as! TGUserInfoModel
                 if userinfo.userIdentity == userModel.userIdentity {
                     return
                 }
@@ -468,7 +468,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
     func populateHeadImage(_ chooseArray: NSMutableArray) {
         
         for (index, model) in chooseArray.enumerated() {
-            let usermodel: UserInfoModel = model as! UserInfoModel
+            let usermodel: TGUserInfoModel = model as! TGUserInfoModel
             let headerButton: UIButton = UIButton(frame: CGRect(x: index * (headerWidth + headerSpace) + headerSpace, y: (49 - headerWidth) / 2, width: headerWidth, height: headerWidth))
             headerButton.layer.masksToBounds = true
             headerButton.layer.cornerRadius = CGFloat(headerWidth) / 2.0
@@ -531,7 +531,7 @@ class TGChatFriendListViewController: TGViewController, UITextFieldDelegate, UIT
         if ischangeGroupMember == .delete {
             searchDataSource.removeAllObjects()
             for (_, item) in dataSource.enumerated() {
-                let usermodel: UserInfoModel = item as UserInfoModel
+                let usermodel: TGUserInfoModel = item as TGUserInfoModel
                 if usermodel.name.range(of: keyword) != nil {
                     searchDataSource.add(usermodel)
                 }

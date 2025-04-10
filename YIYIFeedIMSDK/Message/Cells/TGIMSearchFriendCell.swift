@@ -62,7 +62,7 @@ class TGIMSearchFriendCell: UICollectionViewCell {
     
     // MARK: - 数据刷新
     
-    func refreshUserInfo(_ user: UserInfoModel) {
+    func refreshUserInfo(_ user: TGUserInfoModel) {
         textLabel.text = user.displayName
         avatarImageView.avatarInfo = user.avatarInfo()
     }

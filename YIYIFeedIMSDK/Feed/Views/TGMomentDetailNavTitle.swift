@@ -68,7 +68,7 @@ class TGMomentDetailNavTitle: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func update(model object: UserInfoModel) {
+    func update(model object: TGUserInfoModel) {
         TGLocalRemarkName.getRemarkName(userId: "\(object.userIdentity)", username: nil, originalName: object.name, label: nameLabel)
         avatar.avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: object.sex)
         avatar.avatarInfo = object.avatarInfo()

@@ -243,7 +243,7 @@ extension TGCommentPageController: TGDetailCommentTableViewCellDelegate {
     }
     
     func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: FeedCommentListCellModel) {
-        guard  let currentUserInfo = UserInfoModel.retrieveCurrentUserSessionInfo() else {
+        guard  let currentUserInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo() else {
             return
         }
         // 显示举报评论弹窗
@@ -301,7 +301,7 @@ extension TGCommentPageController: TGKeyboardToolbarDelegate {
                 }
                 let model = FeedCommentListCellModel(object: data, feedId: feedId)
                 model.replyUserInfo = self?.selectedComment?.userInfo
-                model.userId = UserInfoModel.retrieveCurrentUserSessionInfo()?.userIdentity ?? 0
+                model.userId = TGUserInfoModel.retrieveCurrentUserSessionInfo()?.userIdentity ?? 0
                 
                 if let lastPinnedIndex = self?.comments.lastIndex(where: { $0.showTopIcon == true }) {
                     self?.comments.insert(model, at: lastPinnedIndex + 1)

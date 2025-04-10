@@ -188,8 +188,8 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
     public func setData(data: FeedCommentListCellModel){
         commnetModel = data
         
-        let avatarInfo = AvatarInfo()
-        avatarInfo.type = AvatarInfo.UserAvatarType.normal(userId: data.userId)
+        let avatarInfo = TGAvatarInfo()
+        avatarInfo.type = TGAvatarInfo.UserAvatarType.normal(userId: data.userId)
         avatarInfo.avatarURL = data.userInfo?.avatarUrl
         avatarInfo.verifiedIcon = (data.userInfo?.verificationIcon).orEmpty
         avatarInfo.verifiedType = (data.userInfo?.verificationType).orEmpty

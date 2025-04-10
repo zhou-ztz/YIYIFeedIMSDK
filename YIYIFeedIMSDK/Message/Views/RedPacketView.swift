@@ -101,7 +101,7 @@ class RedPacketView: UIView {
         }
     }
     
-    func updateInfo(avatarInfo: AvatarInfo, name: String, message: String, uids: NSArray? = nil, completion: (() -> Void)? = nil) {
+    func updateInfo(avatarInfo: TGAvatarInfo, name: String, message: String, uids: NSArray? = nil, completion: (() -> Void)? = nil) {
         avatarView.avatarInfo = avatarInfo
         nameLabel.text = "title_sender_send_packet".localized.replacingFirstOccurrence(of: "%s", with: name)
         let currentId = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""

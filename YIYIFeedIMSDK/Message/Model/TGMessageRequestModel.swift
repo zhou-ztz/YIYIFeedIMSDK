@@ -19,7 +19,7 @@ class TGMessageRequestModel: Mappable {
     var deletedAt = Date()
     var syncAt = Date()
     var after: Int = 0
-    var user: UserInfoModel?
+    var user: TGUserInfoModel?
     var messageDetail: MessageDetailModel?
     
     required init?(map: Map) {
@@ -54,7 +54,7 @@ class TGMessageRequestModel: Mappable {
 //        self.requestID = object.requestID
 //        self.after = object.after
 //        
-//        let userobj = UserInfoModel.retrieveUser(userId: object.userId.orEmpty.toInt())
+//        let userobj = TGUserInfoModel.retrieveUser(userId: object.userId.orEmpty.toInt())
 //        self.user = userobj
 //        
 //        if nil != object.messageDetail, object.isInvalidated == false {
@@ -94,7 +94,7 @@ class MessageDetailModel: Mappable {
     var updatedAt = Date()
     var deletedAt = Date()
     var readAt = Date()
-    var user: UserInfoModel?
+    var user: TGUserInfoModel?
     
     required init?(map: Map) {
     }
@@ -127,7 +127,7 @@ class MessageDetailModel: Mappable {
 //        self.readAt = object.readAt
 //        
 //        
-//        let userobj = UserInfoModel.retrieveUser(username: object.username)
+//        let userobj = TGUserInfoModel.retrieveUser(username: object.username)
 //        self.user = userobj
 //    }
 //    

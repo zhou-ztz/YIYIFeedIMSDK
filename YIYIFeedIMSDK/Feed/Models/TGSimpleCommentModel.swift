@@ -9,8 +9,8 @@ import UIKit
 
 struct TSSimpleCommentModel {
     
-    var userInfo: UserInfoModel?
-    var replyUserInfo: UserInfoModel?
+    var userInfo: TGUserInfoModel?
+    var replyUserInfo: TGUserInfoModel?
     var content: String = ""
     var createdAt: NSDate? = nil
     var id: Int = 0
@@ -28,13 +28,13 @@ struct TSSimpleCommentModel {
         self.createdAt = NSDate(timeIntervalSince1970: Date().timeIntervalSince1970)
 //        self.userInfo = CurrentUser
         if let replyUserId = replyUserId {
-            self.replyUserInfo = UserInfoModel.retrieveUser(userId: replyUserId)
+            self.replyUserInfo = TGUserInfoModel.retrieveUser(userId: replyUserId)
         }
         self.status = status
         self.contentType = contentType
     }
     
-    init(userInfo: UserInfoModel?, replyUserInfo: UserInfoModel?, content: String, createdAt: NSDate?,
+    init(userInfo: TGUserInfoModel?, replyUserInfo: TGUserInfoModel?, content: String, createdAt: NSDate?,
          id: Int, commentMark: Int64, status: Int, isTop: Bool, contentType: CommentContentType) {
         self.userInfo = userInfo
         self.replyUserInfo = replyUserInfo

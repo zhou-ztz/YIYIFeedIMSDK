@@ -10,14 +10,14 @@ import SnapKit
 import ObjectMapper
 import ObjectBox
 
-struct UserInfoModel: UserInfoType, Mappable, Entity {
+public struct TGUserInfoModel: UserInfoType, Mappable, Entity {
 
     // objectbox: id = { "assignable": true }
     var id: Id = 0
-    var userIdentity: Int = 0
+    public var userIdentity: Int = 0
     
     // objectbox: transient
-    var name: String {
+    public var name: String {
         get {
             return TGLocalRemarkName.getRemarkName(userId: userIdentity.stringValue, username: username, originalName: displayName, label: nil)
         }
@@ -25,19 +25,19 @@ struct UserInfoModel: UserInfoType, Mappable, Entity {
             displayName = newValue
         }
     }
-    var displayName: String = ""
+    public var displayName: String = ""
 
     
-    var username: String = ""
+    public var username: String = ""
 
     // objectbox: transient
-    var remarkName: String? {
+    public var remarkName: String? {
 //        return LocalRemarkName.getRemarkName(userId: "\(self.userIdentity)", username: self.username, originalName: self.name, label: nil)
         return ""
     }
 
-    var phone: String?
-    var mobi: String?
+    public var phone: String?
+    public var mobi: String?
 
     var email: String?
     var sex: Int = 0 /// The user's gender, 0 - Unknown, 1 - Man, 2 - Woman.
@@ -45,18 +45,18 @@ struct UserInfoModel: UserInfoType, Mappable, Entity {
     var location: String?
     var createDate: Date?
     var updateDate: Date?
-    var avatarUrl: String?
+    public var avatarUrl: String?
     var avatarMime: String?
     var coverUrl: String?
     var coverMime: String?
     var following: Bool = false
-    var follower: Bool = false
+    public var follower: Bool = false
     var friendsCount: Int = 0
     // objectbox: uid = 2137440975907188736
     var otpDevice: Bool = false
 
     // verification
-    var verificationIcon: String?
+    public var verificationIcon: String?
     var verificationType: String?
 
     // extra
@@ -134,7 +134,7 @@ struct UserInfoModel: UserInfoType, Mappable, Entity {
     /// 用户签到显示积分相关内容 true=显示积分，false=隐藏积分
     var checkinShowPoint: Bool = false
     init() { }
-    init?(map: Map) { }
+    public init?(map: Map) { }
 
     init(id: Id,
          userIdentity: Int,
@@ -275,7 +275,7 @@ struct UserInfoModel: UserInfoType, Mappable, Entity {
         self.checkinShowPoint = checkinShowPoint
     }
 
-    mutating func mapping(map: Map) {
+    mutating public func mapping(map: Map) {
         userIdentity <- map["id"]
         if map["user_id"].isKeyPresent {
             userIdentity <- map["user_id"]
@@ -366,18 +366,18 @@ struct UserInfoModel: UserInfoType, Mappable, Entity {
         checkinShowPoint <- map["show_point"]
         
     }
-    static func convert(_ object: [UserInfoModel]?) -> String? {
+    static public func convert(_ object: [TGUserInfoModel]?) -> String? {
         guard let object = object else { return nil }
         return object.toJSONString()
     }
     
-    static func convert(_ json: String?) -> [UserInfoModel]? {
+    static public func convert(_ json: String?) -> [TGUserInfoModel]? {
         guard let json = json else { return nil }
-        return Mapper<UserInfoModel>().mapArray(JSONString: json)
+        return Mapper<TGUserInfoModel>().mapArray(JSONString: json)
     }
 }
 
-extension UserInfoModel {
+extension TGUserInfoModel {
     // objectbox: transient
     var isBannedUser: Bool {
         return deleteDate.isEmpty == false
@@ -480,36 +480,36 @@ extension UserInfoModel {
 }
 
 
-extension UserInfoModel {
+extension TGUserInfoModel {
     func save() {
-        guard let json = UserInfoModel.convert([self]) else { return }
+        guard let json = TGUserInfoModel.convert([self]) else { return }
         RLSDKManager.shared.feedDelegate?.saveUserInfoModel(json: json)
         //UserInfoStoreManager().add(list: [self])
     }
     
-    static func retrieveUser(username: String?) -> UserInfoModel? {
+    static func retrieveUser(username: String?) -> TGUserInfoModel? {
         guard let username = username else { return nil }
         let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: username, userId: nil, nickname: nil)
-        return UserInfoModel.convert(json)?.first
+        return TGUserInfoModel.convert(json)?.first
        // return UserInfoStoreManager().fetchByUsername(username: username)
     }
     
-    static func retrieveUser(userId: Int?) -> UserInfoModel? {
+    static func retrieveUser(userId: Int?) -> TGUserInfoModel? {
         guard let userId = userId else { return nil }
         let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: nil, userId: userId, nickname: nil)
-        return UserInfoModel.convert(json)?.first
+        return TGUserInfoModel.convert(json)?.first
       //  return UserInfoStoreManager().fetchById(id: userId)
     }
     
-    static func retrieveUser(nickname: String?) -> UserInfoModel? {
+    static func retrieveUser(nickname: String?) -> TGUserInfoModel? {
         guard let nickname = nickname else { return nil }
         let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: nil, userId: nil, nickname: nickname)
-        return UserInfoModel.convert(json)?.first
+        return TGUserInfoModel.convert(json)?.first
        // return UserInfoStoreManager().fetchByNickname(nickname: nickname)
     }
     
     //测试获取自己的信息
-    static func retrieveCurrentUserSessionInfo() -> UserInfoModel? {
+    static func retrieveCurrentUserSessionInfo() -> TGUserInfoModel? {
         return RLSDKManager.shared.currentUserInfo
     }
     

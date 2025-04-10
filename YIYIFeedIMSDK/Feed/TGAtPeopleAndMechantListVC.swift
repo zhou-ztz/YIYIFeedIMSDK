@@ -13,7 +13,7 @@ enum UserInfoModelType {
 }
 class TGAtPeopleAndMechantListVC: TGViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
 
-    var selectedBlock: ((UserInfoModel?,UserInfoModelType) -> Void)?
+    var selectedBlock: ((TGUserInfoModel?,UserInfoModelType) -> Void)?
     let topView = UIView().configure {
         $0.backgroundColor = .white
     }

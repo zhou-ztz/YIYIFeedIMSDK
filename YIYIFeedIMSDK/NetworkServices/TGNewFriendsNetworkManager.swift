@@ -12,7 +12,7 @@ class TGNewFriendsNetworkManager: NSObject {
     
     static let limit = 15
     /// 搜索已经加入 TS+ 的用户
-    class func searchContacts(phones: [String], completion: @escaping ([UserInfoModel]?, Error?) -> Void){
+    class func searchContacts(phones: [String], completion: @escaping ([TGUserInfoModel]?, Error?) -> Void){
         let path = "api/v2/user/find-by-phone"
         let parameter = ["phones": phones]
         TGNetworkManager.shared.request(
@@ -27,8 +27,8 @@ class TGNewFriendsNetworkManager: NSObject {
             }
             do {
                // let decoder = JSONDecoder()
-                let users = Mapper<UserInfoModel>().mapArray(JSONString: "")
-               // let response = try decoder.decode([UserInfoModel].self, from: data)
+                let users = Mapper<TGUserInfoModel>().mapArray(JSONString: "")
+               // let response = try decoder.decode([TGUserInfoModel].self, from: data)
                 DispatchQueue.main.async {
                     completion(users, nil)
                 }
@@ -43,7 +43,7 @@ class TGNewFriendsNetworkManager: NSObject {
     }
     
     /// 搜索好友 user/follow-mutual
-    class func searchMyFriend(offset: Int?, keyWordString: String?, extras:String = "", filterMerchants: String = "", completion: @escaping ((_ users: [UserInfoModel]?, _ error: Error?) -> Void)){
+    class func searchMyFriend(offset: Int?, keyWordString: String?, extras:String = "", filterMerchants: String = "", completion: @escaping ((_ users: [TGUserInfoModel]?, _ error: Error?) -> Void)){
         let path = "api/v2/user/follow-mutual"
         var parameter: [String: Any] = ["offset": 0, "extras":extras]
         parameter["keyword"] = keyWordString
@@ -66,7 +66,7 @@ class TGNewFriendsNetworkManager: NSObject {
                 return
             }
             if let jsonString = String(data: data, encoding: .utf8) {
-                let users = Mapper<UserInfoModel>().mapArray(JSONString: jsonString)
+                let users = Mapper<TGUserInfoModel>().mapArray(JSONString: jsonString)
                 DispatchQueue.main.async {
                     completion(users, nil)
                 }
@@ -81,7 +81,7 @@ class TGNewFriendsNetworkManager: NSObject {
     }
     
     /// 关注的商家用户
-    class func searchMyMerchant(offset: Int?, keyWordString: String?, extras:String = "", filterMerchants: String = "", completion: @escaping ((_ users: [UserInfoModel]?, _ error: Error?) -> Void)){
+    class func searchMyMerchant(offset: Int?, keyWordString: String?, extras:String = "", filterMerchants: String = "", completion: @escaping ((_ users: [TGUserInfoModel]?, _ error: Error?) -> Void)){
         let path = "api/v2/user/followings"
         var parameter: [String: Any] = ["offset": 0, "extras":extras, "limit": TGNewFriendsNetworkManager.limit]
         parameter["keyword"] = keyWordString
@@ -104,7 +104,7 @@ class TGNewFriendsNetworkManager: NSObject {
                 return
             }
             if let jsonString = String(data: data, encoding: .utf8) {
-                let users = Mapper<UserInfoModel>().mapArray(JSONString: jsonString)
+                let users = Mapper<TGUserInfoModel>().mapArray(JSONString: jsonString)
                 DispatchQueue.main.async {
                     completion(users, nil)
                 }
@@ -119,7 +119,7 @@ class TGNewFriendsNetworkManager: NSObject {
     }
     
     /// 获取指定的多个用户信息
-    class func getUsersInfo(usersId: [Int], names: [String] = [], userNames: [String] = [], completion: @escaping (_ users: [UserInfoModel]?, _ error: Error?) -> Void) {
+    class func getUsersInfo(usersId: [Int], names: [String] = [], userNames: [String] = [], completion: @escaping (_ users: [TGUserInfoModel]?, _ error: Error?) -> Void) {
         
         let usersId = usersId.filter { $0 > 0 }
         let names = names.filter { return $0.isEmpty == false }
@@ -153,7 +153,7 @@ class TGNewFriendsNetworkManager: NSObject {
                 return
             }
             if let jsonString = String(data: data, encoding: .utf8) {
-                let users = Mapper<UserInfoModel>().mapArray(JSONString: jsonString)
+                let users = Mapper<TGUserInfoModel>().mapArray(JSONString: jsonString)
                 DispatchQueue.main.async {
                     completion(users, nil)
                 }

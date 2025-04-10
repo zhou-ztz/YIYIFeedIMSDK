@@ -43,7 +43,7 @@ class TGUtil {
         return regx!.matches(in: inputStr, options: NSRegularExpression.MatchingOptions.reportProgress, range: NSRange(inputStr.startIndex..., in: inputStr))
     }
     //动态根据tagUsers获取ids
-    class func generateMatchingUserIDs(tagUsers: [UserInfoModel], atStrings: [String]) -> [Int] {
+    class func generateMatchingUserIDs(tagUsers: [TGUserInfoModel], atStrings: [String]) -> [Int] {
         
         var matchingUserIDs = Set<Int>()
         
@@ -114,4 +114,258 @@ class TGUtil {
              print("文件不存在")
          }
      }
+    /// 跳转到用户中心
+    class func pushUserHomeName(name: String) {
+        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uname": name])
+    }
+    
+    class func pushUserHomeId(uid: String) {
+        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": uid])
+    }
+    
+    class func checkAuthorizeStatusByType(type: TGPermissionType, isShowBottom: Bool = false, viewController: UIViewController?, completion: @escaping TGEmptyClosure) {
+        let photoStatus = PHPhotoLibrary.authorizationStatus()
+        let cameraStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+        let audioStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.audio)
+        let locationStatus = CLLocationManager.authorizationStatus()
+        let contactStatus = CNContactStore.authorizationStatus(for: CNEntityType.contacts)
+        
+        switch type {
+        case .album:
+            if photoStatus == .notDetermined {
+                PHPhotoLibrary.requestAuthorization({ (newState) in
+                    if #available(iOS 14, *) {
+                        guard newState == .authorized || newState == .limited else {
+                            return
+                        }
+                    } else {
+                        guard newState == .authorized else {
+                            return
+                        }
+                    }
+                    
+                    completion()
+                })
+                return
+            }
+            
+            switch photoStatus {
+            case .denied, .restricted:
+                // 2.取消了授权
+                showPermissionAlert(title: isShowBottom ? "album_permission".localized : "rw_photos_limited_permission_fail".localized, message: isShowBottom ? "rw_album_permission_read_write".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+            case .notDetermined:
+                break
+            case .authorized, .limited:
+                completion()
+            default: break
+            }
+            break
+        case .camera:
+            if cameraStatus == .notDetermined {
+                AVCaptureDevice.requestAccess(for: AVMediaType.video, completionHandler: { (granted) in
+                    guard granted == true else {
+                        return
+                    }
+                    completion()
+                })
+                return
+            }
+            
+            switch cameraStatus {
+            case .denied, .restricted:
+                // 2.取消了授权
+                showPermissionAlert(title: isShowBottom ? "camera_permission".localized : "rw_camera_limited_video_chat_fail".localized, message: isShowBottom ? "rw_camera_allow_permission".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+            case .notDetermined:
+                break
+            case .authorized:
+                completion()
+            default: break
+            }
+            break
+        case .cameraAlbum:
+            if cameraStatus == .notDetermined {
+                AVCaptureDevice.requestAccess(for: AVMediaType.video, completionHandler: { (granted) in
+                    PHPhotoLibrary.requestAuthorization({ (newState) in
+                        if #available(iOS 14, *) {
+                            if newState == .authorized || newState == .limited && granted {
+                                completion()
+                            }
+                        } else {
+                            if newState == .authorized && granted {
+                                completion()
+                            }
+                        }
+                    })
+                })
+            }
+            
+            switch cameraStatus {
+            case .denied, .restricted:
+                // 2.取消了授权
+                showPermissionAlert(title: isShowBottom ? "camera_permission".localized : "rw_camera_limited_video_chat_fail".localized, message: isShowBottom ? "rw_camera_allow_permission".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+            case .notDetermined:
+                break
+            case .authorized:
+                if photoStatus == .notDetermined {
+                    PHPhotoLibrary.requestAuthorization({ (newState) in
+                        if #available(iOS 14, *) {
+                            guard newState == .authorized || newState == .limited else {
+                                return
+                            }
+                        } else {
+                            guard newState == .authorized else {
+                                return
+                            }
+                        }
+                        
+                        completion()
+                    })
+                    return
+                }
+                
+                switch photoStatus {
+                case .denied, .restricted:
+                    // 2.取消了授权
+                    showPermissionAlert(title: isShowBottom ? "album_permission".localized : "rw_photos_limited_permission_fail".localized, message: isShowBottom ? "rw_album_permission_read_write".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+                case .notDetermined:
+                    break
+                case .authorized, .limited:
+                    completion()
+                default: break
+                }
+            default: break
+            }
+            break
+        case .audio:
+            if audioStatus == .notDetermined {
+                AVCaptureDevice.requestAccess(for: AVMediaType.audio, completionHandler: { (granted) in
+                    guard granted == true else {
+                        return
+                    }
+                    completion()
+                })
+                return
+            }
+            
+            switch audioStatus {
+            case .denied, .restricted:
+                // 2.取消了授权
+                showPermissionAlert(title: isShowBottom ? "microphone_permission".localized : "rw_audio_limited_video_chat_fail".localized, message: isShowBottom ? "mircrophone_permission".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+            case .notDetermined:
+                break
+            case .authorized:
+                completion()
+            default: break
+            }
+            break
+        case .videoCall:
+            if cameraStatus == .notDetermined {
+                AVCaptureDevice.requestAccess(for: AVMediaType.video, completionHandler: { (cameraGranted) in
+                    AVCaptureDevice.requestAccess(for: AVMediaType.audio, completionHandler: { (audioGranted) in
+                        if audioGranted && cameraGranted {
+                            completion()
+                        }
+                    })
+                })
+            }
+            
+            switch cameraStatus {
+            case .denied, .restricted:
+                // 2.取消了授权
+                showPermissionAlert(title: isShowBottom ? "camera_permission".localized : "rw_camera_limited_video_chat_fail".localized, message: isShowBottom ? "rw_camera_allow_permission".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+            case .notDetermined:
+                break
+            case .authorized:
+                if audioStatus == .notDetermined {
+                    AVCaptureDevice.requestAccess(for: AVMediaType.audio, completionHandler: { (granted) in
+                        guard granted == true else {
+                            return
+                        }
+                        completion()
+                    })
+                    return
+                }
+                
+                switch audioStatus {
+                case .denied, .restricted:
+                    // 2.取消了授权
+                    showPermissionAlert(title: isShowBottom ? "microphone_permission".localized : "rw_audio_limited_video_chat_fail".localized, message: isShowBottom ? "mircrophone_permission".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+                case .notDetermined:
+                    break
+                case .authorized:
+                    completion()
+                }
+            default: break
+            }
+            break
+        case .location:
+            if locationStatus == .notDetermined {
+                TGLocationManager.shared.runLocationBlock {
+                    completion()
+                    return
+                }
+            }
+            
+            switch locationStatus {
+            case .authorizedWhenInUse, .authorizedAlways:
+                completion()
+            case .denied, .restricted:
+                showPermissionAlert(title: isShowBottom ? "location_permission".localized : "rw_location_limited_permission_fail".localized, message: isShowBottom ? "rw_location_limited_permission_fail".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+            case .notDetermined:
+                break
+            }
+            break
+        case .contacts:
+            if contactStatus == .notDetermined {
+                CNContactStore().requestAccess(for: .contacts, completionHandler: { (access, accessError) -> Void in
+                    guard access == true else {
+                        return
+                    }
+                    completion()
+                })
+                return
+            }
+            
+            switch contactStatus {
+            case .denied, .restricted:
+                // 2.取消了授权
+                showPermissionAlert(title: isShowBottom ?  "contact_permission".localized :"rw_contacts_limited_permission_fail".localized, message: isShowBottom ? "rw_contacts_limited_permission_fail".localized : "", isShowBottom: isShowBottom, viewController: viewController)
+                break
+            case .notDetermined:
+                break
+            case .authorized:
+                completion()
+                break
+            @unknown default:
+                // Check for iOS 18 specific 'limited' status
+//                if #available(iOS 18, *) {
+//                    if contactStatus == .limited {
+//                        completion()
+//                    }
+//                }
+                break
+            }
+            break
+        default:
+            break
+        }
+    }
+    
+    /// 检查App权限,提示弹窗在方法内处理
+    class func showPermissionAlert(title: String = "", message: String = "", isShowBottom: Bool = false, viewController: UIViewController?) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "settings".localized, style: UIAlertAction.Style.default, handler: { action in
+            let url = URL(string: UIApplication.openSettingsURLString)
+            if UIApplication.shared.canOpenURL(url!) {
+                UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "cancel".localized, style: UIAlertAction.Style.cancel, handler: nil))
+        
+        guard let viewController = viewController else {
+            return
+        }
+        
+        viewController.present(alert, animated: true, completion: nil)
+    }
 }

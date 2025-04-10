@@ -30,7 +30,7 @@ class TGNewContactPickerViewController: TGViewController {
     ///索引
     var indexDataSource = [String]()
     /// 数据源
-    var dataSource: [UserInfoModel] = []
+    var dataSource: [TGUserInfoModel] = []
     /// 分组好的数据源
     var sortedDataSource: [[ContactData]] = []
     var allData = [ContactData]()
@@ -374,7 +374,7 @@ class TGNewContactPickerViewController: TGViewController {
         tableView.mj_header.endRefreshing()
     }
     
-    private func updateFriendListData(model: [UserInfoModel]?) {
+    private func updateFriendListData(model: [TGUserInfoModel]?) {
         if let excludeIds = configuration.excludeIds {
             if var models = model {
                 models.forEach { userInfo in

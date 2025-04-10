@@ -23,7 +23,7 @@ class TGContactPickerCell: TGChatChooseFriendCell {
             
             if model.userName == "rw_text_all_people".localized {
                 avatarImageView.avatarPlaceholderType = .unknown
-                avatarImageView.avatarInfo = AvatarInfo()
+                avatarImageView.avatarInfo = TGAvatarInfo()
             }
             
             MessageUtils.getAvatarIcon(sessionId: model.userName, conversationType: model.isTeam ? .CONVERSATION_TYPE_TEAM : .CONVERSATION_TYPE_P2P) { [weak self] avatarInfo in

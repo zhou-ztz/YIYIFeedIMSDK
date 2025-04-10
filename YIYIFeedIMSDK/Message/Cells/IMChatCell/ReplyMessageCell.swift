@@ -325,7 +325,7 @@ class ReplyMessageCell: BaseMessageCell {
             self.titleLabel.isHidden = false
             self.descriptionLabel.isHidden = false
             self.titleLabel.text = "contact".localized
-            let avatarInfo = AvatarInfo()
+            let avatarInfo = TGAvatarInfo()
             avatarInfo.avatarURL = attachment.image
             self.avatar.avatarInfo = avatarInfo
             self.avatar.isHidden = false

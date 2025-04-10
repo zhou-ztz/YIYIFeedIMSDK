@@ -18,7 +18,7 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
     private var isFetching: Bool = false
 
     //isModal判断有时会失误，增加一个参数用来指定当前Controller的跳转是否为NavPush方式
-    var isControllerPush: Bool?
+    public var isControllerPush: Bool?
 
     //用来做列表播放的list对象
     private var listPlayer: AliListPlayer = AliListPlayer()
@@ -31,11 +31,11 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
             }
         }
     }
-    var onDataChanged: ((FeedListCellModel) -> Void)?
+    public var onDataChanged: ((FeedListCellModel) -> Void)?
     //当用户操作视频后需要让个人中心页面更新数据
-    var needReloadHomaPageData: (() -> Void)?
-    var isTranslateText: Bool = false
-    var translateHandler: ((Bool) -> Void)?
+    public var needReloadHomaPageData: (() -> Void)?
+    public var isTranslateText: Bool = false
+    public var translateHandler: ((Bool) -> Void)?
     
     var campaignId: String = ""
     var hashtagId: String = ""
@@ -47,8 +47,7 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
 //    }()
     
     var onPassPlayer: ((AVPlayer?, CMTime?) -> Void)? = nil
-    private var isMovingForward: Bool = false
-    var tagVoucher: TagVoucherModel? = nil
+    public var tagVoucher: TagVoucherModel? = nil
 //    private let taskManager = PostTaskManager.shared
     
     var bottomStackView = UIStackView().configure {
@@ -57,19 +56,19 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
         $0.spacing = 5
         $0.axis = .vertical
     }
-    
-    init(type: TGFeedListType, videos: [FeedListCellModel], focus selectedVideoIndex: Int, onToolbarUpdate: onToolbarUpdate?, avPlayer: AVPlayer? = nil, isTranslateText: Bool = false, campaignId: String = "", hashtagId: String = "",  translateHandler: ((Bool) -> Void)? = nil, tagVoucher: TagVoucherModel? = nil) {
+
+    public init(type: TGFeedListType, videos: [FeedListCellModel], focus selectedVideoIndex: Int, onToolbarUpdate: onToolbarUpdate?, avPlayer: AVPlayer? = nil, isTranslateText: Bool = false, campaignId: String = "", hashtagId: String = "",  translateHandler: ((Bool) -> Void)? = nil, tagVoucher: Any? = nil) {
         self.type = type
         self.videos = videos
         self.onToolbarUpdate = onToolbarUpdate
         self.isTranslateText = isTranslateText
         self.translateHandler = translateHandler
-        self.tagVoucher = tagVoucher
+        self.tagVoucher = tagVoucher as? TagVoucherModel
         super.init(transitionStyle: .scroll, navigationOrientation: .vertical, options: nil)
         self.disablePanAtBottom = true
         self.delegate = self
         self.dataSource = self
-        self.initPlayerSource(videos)
+        self.initPlayerSource(self.videos)
         currentIndex = selectedVideoIndex
         currentView?.type = self.type
         self.campaignId = campaignId
@@ -84,29 +83,10 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
                 self.reloadPageData(false)
             } else {
                 
-//                FeedListNetworkManager.getMomentFeed(id: feedId) { [weak self] (model, message, status, _) in
-//                    defer {
-//                        self?.placeHolder.makeHidden()
-//                    }
-//                    guard let self = self, let model = model, status else {
-//                        return
-//                    }
-//                    
-//                    let cellModel = FeedListCellModel(feedListModel: model)
-//                    self.videos = [cellModel]
-//                    //处理重复add uid的情况，先清除播放列表再添加，不然可能会导致串流
-//                    TGMiniVideoListPlayerManager.shared.clearPlayerSource()
-//                    self.initPlayerSource(self.videos)
-//                    //lixiaodong 在clear播放列表之后返回需要重新加载播放资源
-//                    UserDefaults.standard.setValue(true, forKey: "minivideo-ableReInit")
-//                    self.ableLoadMore = false
-//                    self.reloadPageData()
-//                }
                 TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") { feedInfo, error in
                     guard let feedInfo = feedInfo else { return }
                    
                     let cellModel = FeedListCellModel(feedListModel: feedInfo)
-//                    let cellModel = FeedListCellModel(feedListModel: model)
                     self.videos = [cellModel]
                     //处理重复add uid的情况，先清除播放列表再添加，不然可能会导致串流
                     TGMiniVideoListPlayerManager.shared.clearPlayerSource()
@@ -189,13 +169,13 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
 //                currentView.didEnterBackground()
 //            }
 //        }
-//        
+//
 //        NotificationCenter.default.add(observer: self, name: UIApplication.willEnterForegroundNotification) { [weak self] in
 //            if let currentView = self?.currentView {
 //                currentView.enterForeground()
 //            }
 //        }
-//        
+//
 //        NotificationCenter.default.add(observer: self, name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil) { [weak self] (noti) in
 //            guard let self = self else { return }
 //            guard let userInfo = noti.userInfo, let followStatus = userInfo["follow"] as? FollowStatus, let uid = userInfo["userid"] as? String else { return }
@@ -218,7 +198,7 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.setClearNavBar(shadowColor: .clear)
-//        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
         TGKeyboardToolbar.share.theme = .white
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         
@@ -251,7 +231,7 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
         } else {
             UIApplication.shared.setStatusBarStyle(.default, animated: true)
         }
-//        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     public override func viewDidAppear(_ animated: Bool) {

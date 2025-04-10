@@ -97,12 +97,21 @@ public protocol TGFeedDelegate: AnyObject {
     func track(event: TGEvent, with: [String: String])
     /// 保存本地
     func saveUserInfoModel(json: String)
+    /// 保存本地
+    func saveFeedListModel(json: String)
     /// 获取本地用户信息
     func getUserInfoModel(username: String?, userId: Int?, nickname: String?) -> String?
     
     /// 给小程序发送事件
     func sendEventToMiniProgram(detail: [String: Any], miniProgramType: String)
+    /// 打开voucher list
+    func openVoucherSelection(completion: @escaping (Int, String) -> Void)
     
+    /// 跳转deep link
+    func didOpenDeepLink(deepLink: String)
+    
+    /// 动态点击跳转
+    func didOpenNavigationURL(url: URL)
 }
 
 public class RLSDKManager: NSObject {
@@ -112,7 +121,7 @@ public class RLSDKManager: NSObject {
     var loginParma: RLLoginParma?
     var appKey: String = ""
     
-    var currentUserInfo: UserInfoModel?
+    var currentUserInfo: TGUserInfoModel?
     
     public weak var imDelegate: TGMessageDelegate?
     public weak var feedDelegate: TGFeedDelegate?
@@ -128,7 +137,7 @@ public class RLSDKManager: NSObject {
     
     public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping ()->Void){
         self.loginParma = parma
-        currentUserInfo = UserInfoModel.convert(parma.userInfoJson)?.first
+        currentUserInfo = TGUserInfoModel.convert(parma.userInfoJson)?.first
         RLNIMSDKManager.shared.imLogin(with: self.loginParma?.imAccid ?? "", imToken: self.loginParma?.imToken ?? "") {
             if let xToken = self.loginParma?.xToken {
                 UserDefaults.standard.setValue(xToken , forKey: "TG_ACCESS_TOKEN")

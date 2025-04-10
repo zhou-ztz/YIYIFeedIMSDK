@@ -126,7 +126,7 @@ class AddGroupSettingViewController: TGViewController {
     }
     
     func getMembers(){
-        members.append(NIMSDK.shared().loginManager.currentAccount())
+        members.append(NIMSDK.shared().v2LoginService.getLoginUser() ?? "")
         for model in choosedDataSource {
             members.append(model.userName)
         }

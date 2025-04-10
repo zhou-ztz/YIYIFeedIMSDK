@@ -47,7 +47,7 @@ class TGFeedNetworkManager: NSObject {
 //                    }
 //                }
                 
-//                originalModel.save()
+                originalModel.save()
                 group.notify(queue: .main) {
                     completion(originalModel, nil)
                 }
@@ -471,7 +471,7 @@ class TGFeedNetworkManager: NSObject {
     }
     
     
-    func releasePost(feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func releasePost(feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds"
         
@@ -570,7 +570,7 @@ class TGFeedNetworkManager: NSObject {
     
     
     
-    func editRejectFeed(feedID: String, feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func editRejectFeed(feedID: String, feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds/reject/\(feedID)"
         
@@ -663,7 +663,7 @@ class TGFeedNetworkManager: NSObject {
     }
     
     
-    func editRejectShortVideo(feedID: String, shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func editRejectShortVideo(feedID: String, shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds/reject/\(feedID)"
         
@@ -746,7 +746,7 @@ class TGFeedNetworkManager: NSObject {
         }
     }
     
-    func postShortVideo(shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [UserInfoModel]?, tagMerchants: [UserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping((_ feedId: Int?, _ error: NSError?) -> Void)) {
+    func postShortVideo(shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping((_ feedId: Int?, _ error: NSError?) -> Void)) {
         var param: [String: Any] = Dictionary()
 
         if let content = feedContent {

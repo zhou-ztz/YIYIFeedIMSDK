@@ -62,8 +62,8 @@ extension UserInfoType {
         return userIdentity == Int(RLSDKManager.shared.loginParma?.uid ?? 0)
     }
     
-    func avatarInfo() -> AvatarInfo {
-        let avatarInfo = AvatarInfo()
+    func avatarInfo() -> TGAvatarInfo {
+        let avatarInfo = TGAvatarInfo()
         avatarInfo.avatarURL = self.avatarUrl
         avatarInfo.verifiedIcon = self.verificationIcon.orEmpty
         avatarInfo.verifiedType = self.verificationType.orEmpty
@@ -77,7 +77,7 @@ extension UserInfoType {
 
 extension UserInfoType {
     func toType<A>(type: A.Type) -> A? where A: Mappable {
-        if self is UserInfoModel, let res = self as? A, res is UserInfoModel {
+        if self is TGUserInfoModel, let res = self as? A, res is TGUserInfoModel {
             return res
         }
 

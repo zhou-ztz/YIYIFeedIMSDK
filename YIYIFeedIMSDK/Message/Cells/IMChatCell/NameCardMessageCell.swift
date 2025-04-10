@@ -14,7 +14,7 @@ class NameCardMessageCell: BaseMessageCell {
     
     lazy var profileView: TGAvatarView = {
         let view = TGAvatarView(type: .custom(avatarWidth: 50, showBorderLine: false))
-        let avatar = AvatarInfo()
+        let avatar = TGAvatarInfo()
         avatar.avatarPlaceholderType = .unknown
         view.avatarInfo = avatar
         return view

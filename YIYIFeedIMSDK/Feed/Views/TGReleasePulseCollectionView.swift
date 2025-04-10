@@ -20,8 +20,12 @@ enum PayInfoType: Int {
     case lock
 }
 public struct TGPostPhotoExtension  {
-    var data: Data?
-    var type: String?
+    public var data: Data?
+    public var type: String?
+    public init(data: Data? = nil, type: String? = nil) {
+        self.data = data
+        self.type = type
+    }
 }
 class TGReleasePulseCollectionView: UICollectionView, UICollectionViewDataSource, UICollectionViewDelegate {
 

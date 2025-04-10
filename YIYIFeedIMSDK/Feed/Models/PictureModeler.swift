@@ -9,25 +9,25 @@ import Foundation
 import UIKit
 import ObjectMapper
 
-class PictureModeler {
+public class PictureModeler {
 
-    var file: Int = 0
+    public var file: Int = 0
     /// 图片网络链接
-    var url: String?
+    public var url: String?
     /// 文件供应商
-    var vendor: String = "local"
+    public var vendor: String = "local"
     /// 图片缓存地址
-    var cache: String?
+    public var cache: String?
     /// 图片原始的大小
-    var originalSize = CGSize.zero
+    public var originalSize = CGSize.zero
     /// 加载图片时是否要清空旧的图片缓存
-    var shouldClearCache = false
+    public var shouldClearCache = false
     /// 是否需要显示长图标识
-    var shouldShowLongicon = false
+    public var shouldShowLongicon = false
     /// 没有被显示的图片的数量，小于 0 则不显示数量蒙层
-    var unshowCount = 0
+    public var unshowCount = 0
     /// 图片类型
-    var mimeType: String = ""
+    public var mimeType: String = ""
 
     // MARK: Object
 //    func object() -> PictureObject {
@@ -44,7 +44,7 @@ class PictureModeler {
 //    }
 }
 
-class PaidPictureModel: PictureModeler {
+public class PaidPictureModel: PictureModeler {
     override init() {
         super.init()
     }

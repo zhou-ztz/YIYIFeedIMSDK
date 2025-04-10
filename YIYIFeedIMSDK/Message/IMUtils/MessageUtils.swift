@@ -178,8 +178,8 @@ class MessageUtils: NSObject {
     }
     
     /// 获取用户头像信息
-    class func getAvatarIcon(sessionId: String, conversationType: V2NIMConversationType, completion: @escaping (AvatarInfo) -> Void) {
-        let avatarInfo = AvatarInfo()
+    class func getAvatarIcon(sessionId: String, conversationType: V2NIMConversationType, completion: @escaping (TGAvatarInfo) -> Void) {
+        let avatarInfo = TGAvatarInfo()
         avatarInfo.avatarURL = ""
         avatarInfo.verifiedIcon = ""
         avatarInfo.verifiedType = ""

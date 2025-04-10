@@ -112,7 +112,7 @@ class TGReactionTableViewCell: UITableViewCell {
     }
     
     func setAvatar(urlPath: String, username: String, verifiedIcon: String?, userId: Int) {
-        let avatarInfo = AvatarInfo(
+        let avatarInfo = TGAvatarInfo(
             avatarURL: urlPath
         )
         avatarInfo.verifiedIcon = verifiedIcon ?? ""

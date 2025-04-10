@@ -23,7 +23,7 @@ class NewContactsListCell: UITableViewCell {
     /// 聊天按钮
     var chatButton: UIButton!
     
-    var userInfo: UserInfoModel? = nil
+    var userInfo: TGUserInfoModel? = nil
     var currentChooseArray: [ContactData] = []
     var originData = NSMutableArray()
     
@@ -45,7 +45,7 @@ class NewContactsListCell: UITableViewCell {
 //                    
 //                }
 //            }
-            let avatarInfo = AvatarInfo()
+            let avatarInfo = TGAvatarInfo()
             avatarInfo.avatarURL = model.imageUrl
             avatarInfo.avatarPlaceholderType = model.isTeam ? .group : .unknown
             avatarInfo.type = .normal(userId: model.userId)
@@ -93,7 +93,7 @@ class NewContactsListCell: UITableViewCell {
     var team: NIMTeam? {
         didSet {
             guard let model = team else { return }
-            let avatarInfo = AvatarInfo()
+            let avatarInfo = TGAvatarInfo()
             avatarInfo.avatarURL = model.avatarUrl
             
             avatarInfo.avatarPlaceholderType =  .group

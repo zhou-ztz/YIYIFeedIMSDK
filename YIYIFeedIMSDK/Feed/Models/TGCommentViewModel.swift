@@ -20,8 +20,8 @@ class TGCommentViewModel: NSObject {
     
     var id: Int = 0
     var userId: Int = 0
-    var user: UserInfoModel?
-    var replyUser: UserInfoModel?
+    var user: TGUserInfoModel?
+    var replyUser: TGUserInfoModel?
     var content: String = ""
     var createDate: Date?
     var isTop = false
@@ -38,14 +38,14 @@ class TGCommentViewModel: NSObject {
         self.type = type
         self.content = content
         self.userId = Int(RLSDKManager.shared.loginParma?.uid ?? 0 )
-        self.user = UserInfoModel.retrieveUser(userId: self.userId)
+        self.user = TGUserInfoModel.retrieveUser(userId: self.userId)
         if let replyUserId = replyUserId {
-            self.replyUser = UserInfoModel.retrieveUser(userId: replyUserId)
+            self.replyUser = TGUserInfoModel.retrieveUser(userId: replyUserId)
         }
         self.status = status
         self.contentType = contentType
     }
-    init(id: Int, userId: Int, type: TGCommentType, user: UserInfoModel?, replyUser: UserInfoModel?, content: String, createDate: Date?, status: TGCommentSendtatus, isTop: Bool = false, contentType: CommentContentType) {
+    init(id: Int, userId: Int, type: TGCommentType, user: TGUserInfoModel?, replyUser: TGUserInfoModel?, content: String, createDate: Date?, status: TGCommentSendtatus, isTop: Bool = false, contentType: CommentContentType) {
         self.id = id
         self.userId = userId
         self.type = type

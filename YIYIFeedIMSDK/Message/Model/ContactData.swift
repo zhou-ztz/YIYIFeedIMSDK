@@ -35,7 +35,7 @@ class ContactData: NSObject {
 }
 
 extension ContactData {
-    convenience init(model: AvatarInfo) {
+    convenience init(model: TGAvatarInfo) {
         self.init(userId: -1, userName: model.username.orEmpty, imageUrl: model.avatarURL.orEmpty, isTeam: true, displayname: model.nickname.orEmpty, isBannedUser: false, verifiedType: model.verifiedType, verifiedIcon: model.verifiedIcon)
     }
     
@@ -47,14 +47,14 @@ extension ContactData {
         self.init(userId: -1, userName: team.teamId, imageUrl: team.avatar.orEmpty, isTeam: true, displayname: team.name, isBannedUser: false, verifiedType: "", verifiedIcon: "")
     }
     
-    convenience init(model: UserInfoModel) {
+    convenience init(model: TGUserInfoModel) {
         self.init(userId: model.userIdentity, userName: model.username, imageUrl: model.avatarUrl.orEmpty, isTeam: false, displayname: model.name, isBannedUser: model.isBannedUser, verifiedType: model.verificationType.orEmpty, verifiedIcon: model.verificationIcon.orEmpty)
     }
 //    convenience init(model: TGUserInfoModel) {
 //        self.init(userId: model.id, userName: model.username, imageUrl: model.avatar?.url ?? "", isTeam: false, displayname: model.name.orEmpty, isBannedUser: false, verifiedType: model.verified?.type ?? "", verifiedIcon: model.verified?.icon ?? "")
 //    }
     
-    convenience init(model: UserInfoModel, remarkName: String) {
+    convenience init(model: TGUserInfoModel, remarkName: String) {
         self.init(userId: model.userIdentity, userName: model.username, imageUrl: model.avatarUrl.orEmpty, isTeam: false, displayname: model.name, remarkName: remarkName, isBannedUser: model.isBannedUser, verifiedType: model.verificationType.orEmpty, verifiedIcon: model.verificationIcon.orEmpty)
     }
     

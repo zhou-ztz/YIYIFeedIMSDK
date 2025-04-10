@@ -17,7 +17,7 @@ class TGUserNetworkingManager: NSObject {
     /// - Parameters:
     ///   - userIdentities: 用户标识数组
     ///   - complete: 结果
-    func getUserInfo(_ userIdentities: [Int], complete: @escaping ((_ info: Any?, _ userInfoModels: [UserInfoModel]?, _ error: NSError?) -> Void)) {
+    func getUserInfo(_ userIdentities: [Int], complete: @escaping ((_ info: Any?, _ userInfoModels: [TGUserInfoModel]?, _ error: NSError?) -> Void)) {
         //assert(!userIdentities.isEmpty, "查询用户信息数组为空")
         if userIdentities.isEmpty {
             complete(nil, nil, NSError(domain: "查询用户信息数组为空", code: -1, userInfo: nil))
@@ -32,12 +32,12 @@ class TGUserNetworkingManager: NSObject {
                 complete(nil, nil, error)
                 return
             }
-            var tempUserInfoModels = [UserInfoModel]()
-            if let jsonString = String(data: data, encoding: .utf8), let datas = Mapper<UserInfoModel>().mapArray(JSONString: jsonString) {
+            var tempUserInfoModels = [TGUserInfoModel]()
+            if let jsonString = String(data: data, encoding: .utf8), let datas = Mapper<TGUserInfoModel>().mapArray(JSONString: jsonString) {
                 
                 tempUserInfoModels.append(contentsOf: datas)
             }
-            if let jsonString = String(data: data, encoding: .utf8), let userModel = Mapper<UserInfoModel>().map(JSONString: jsonString) {
+            if let jsonString = String(data: data, encoding: .utf8), let userModel = Mapper<TGUserInfoModel>().map(JSONString: jsonString) {
                 
                 tempUserInfoModels.append(userModel)
             }

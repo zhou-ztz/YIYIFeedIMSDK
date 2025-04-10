@@ -8,7 +8,7 @@
 import UIKit
 import SwiftDate
 /// 发送状态
-enum SendStatus: Int {
+public enum SendStatus: Int {
     /// 发送成功
     case success = 0
     /// 正在发送中
@@ -26,10 +26,10 @@ enum SendStatus: Int {
     case shared
 }
 
-class FeedListCellModel {
+public class FeedListCellModel: NSObject{
     
     // 数据 id 类型
-    enum IdType {
+    public enum IdType {
         /// 广告（分页标识）
         case advert(pageId: Int, link: String)
         /// 动态（动态 id）
@@ -61,7 +61,7 @@ class FeedListCellModel {
             }
         }
         
-        subscript(index: String) -> Int? {
+       public subscript(index: String) -> Int? {
             switch self {
             case .advert(let pageId, _):
                 if index == "pageId" {
@@ -90,89 +90,89 @@ class FeedListCellModel {
         }
     }
     /// 用于搜索排序的
-    var idindex = 0
+    public var idindex = 0
     /// 动态 id
-    var id: IdType = .feed(feedId: 0)
+    public var id: IdType = .feed(feedId: 0)
     /// index 用于话题动态分页
-    var index: Int = 0
+    public var index: Int = 0
     /// 用户 id
-    var userId: Int = 0
+    public var userId: Int = 0
     /// 用户名，为空则不显示
-    var userName = ""
+    public var userName = ""
     /// 头像信息，为 nil 则不显示头像
-    var avatarInfo: AvatarInfo?
+    public var avatarInfo: TGAvatarInfo?
     /// 文字标题，为空则不显示
-    var title = ""
+    public var title = ""
     /// 文字内容，为空则不显示
-    var content = ""
+    public var content = ""
     /// 图片，为空则不显示
     /// 当该动态是含有视频时,会把视频的封面当做以往的单张图片处理展示
-    var pictures: [PaidPictureModel] = []
+    public var pictures: [PaidPictureModel] = []
     /// 文章来源，为空则不显示
-    var from = ""
+    @objc dynamic var from = ""
     /// 话题，为空则不显示评论
     var topics: [TopicListModel] = []
     /// 工具栏信息，为 nil 则不显示工具栏
-    var toolModel: FeedListToolModel?
+    public var toolModel: FeedListToolModel?
     /// 评论，为空则不显示评论
     var comments: [FeedCommentListCellModel] = []
 
-    var time: Date?
+    public var time: Date?
 
     var location: TSPostLocationModel?
     /// 在线视频播放地址
-    var videoURL: String = ""
+    public var videoURL: String = ""
     // By Kit Foong (Added video height and width property)
     /// 视频高度
-    var videoHeight: Double = 0.0
+    public var videoHeight: Double = 0.0
     /// 视频宽度
-    var videoWidth: Double = 0.0
+    public var videoWidth: Double = 0.0
     
     /// 视频封面id
-    var videoCoverId: Int = 0
+    public var videoCoverId: Int = 0
     
     /// 视频id
-    var videoId: Int = 0
+    public var videoId: Int = 0
     
     /// 视频Path
-    var videoPath: String = ""
+    public var videoPath: String = ""
     
     /// 本地视频文件地址
-    var localVideoFileURL: String?
+    public var localVideoFileURL: String?
     /// 转发的类型
-    var repostType: String? = nil
+    public var repostType: String? = nil
     /// 转发的ID
-    var repostId: Int = 0
+    public var repostId: Int = 0
     /// 转发信息
-    var repostModel: TGRepostModel? = nil
+    public var repostModel: TGRepostModel? = nil
     /// 热门标识
-    var hot: Int = 0
+    public var hot: Int = 0
     /// 分享信息
-    var sharedModel: SharedViewModel? = nil
+    public var sharedModel: SharedViewModel? = nil
     
-    var canAcceptReward: Int = 0
+    public var canAcceptReward: Int = 0
     
-    var userInfo: UserInfoModel? = nil
+    public var userInfo: TGUserInfoModel? = nil
     
-    var liveModel: LiveEntityModel? = nil
+    public var liveModel: LiveEntityModel? = nil
 
     //商户列表信息
     var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel] = []
     
-    var tagUsers: [UserInfoModel] = []
+    var tagUsers: [TGUserInfoModel] = []
     
-    var rewardsLinkMerchantUsers: [UserInfoModel] = []
+    var rewardsLinkMerchantUsers: [TGUserInfoModel] = []
     
-    var privacy: String = "EVERYONE"
+    public var privacy: String = "EVERYONE"
 
-    var isEdited: Bool = false
+    public var isEdited: Bool = false
 
-    var videoType: Int = 0 //2 is minivideo
+    public var videoType: Int = 0 //2 is minivideo
     
     /// 活动动态是否可以编辑
-    var campaignIsEdite: Bool = false
+    public var campaignIsEdite: Bool = false
     
-    var feedType: FeedContentType {
+    public var feedType: FeedContentType {
         if liveModel != nil, liveModel?.status == 1, pictures.count > 0 {
             return .live
         } else if (videoURL.isEmpty == false || localVideoFileURL?.isEmpty == false), pictures.count > 0 {
@@ -191,17 +191,18 @@ class FeedListCellModel {
         }
     }
 
-    var topReactionList: [ReactionTypes?] = []
+   public var topReactionList: [ReactionTypes?] = []
 
-    var reactionType: ReactionTypes? = nil
+    public var reactionType: ReactionTypes? = nil
 
-    var translateText: String? = nil
-    var isTranslateOn: Bool = false
-    var isSponsored = false
-    var isPinned = false
-    var afterTime: String = ""
-    var tagVoucher: TagVoucherModel? = nil
-    init() {
+    public var translateText: String? = nil
+    public var isTranslateOn: Bool = false
+    public var isSponsored = false
+    public var isPinned = false
+    public var afterTime: String = ""
+    public var tagVoucher: TagVoucherModel? = nil
+    public override init() {
+        
     }
     
     /// 初始化动态收藏列表的的数据模型
@@ -210,14 +211,26 @@ class FeedListCellModel {
         toolModel = nil
         comments = []
     }
+    
+    func convertToDictionary(from model: Any) -> [String: Any] {
+        var dict: [String: Any] = [:]
+        let mirror = Mirror(reflecting: model)
+
+        for child in mirror.children {
+            if let propertyName = child.label {
+                dict[propertyName] = child.value
+            }
+        }
+        return dict
+    }
     /// 初始化首页动态数据模型
-    init(feedListModel model: FeedListModel) {
+  public init(feedListModel model: FeedListModel) {
         idindex = model.id
         id = .feed(feedId: model.id)
         index = model.index
         userId = model.userId
         userName = model.userInfo.displayName
-        avatarInfo = AvatarInfo(userModel: model.userInfo)
+        avatarInfo = TGAvatarInfo(userModel: model.userInfo)
         avatarInfo?.type = .normal(userId: model.userInfo.userIdentity)
         content = model.content
         pictures = model.images?.map { PaidPictureModel(feedImageModel: $0) } ?? []
@@ -283,27 +296,27 @@ class FeedListCellModel {
     }
 }
 
-class FeedListToolModel {
+public class FeedListToolModel {
     /// 是否点赞
-    var isDigg = false
+    public var isDigg = false
     /// 是否收藏
-    var isCollect = false
+    public var isCollect = false
     /// 点赞数
-    var diggCount = 0
+    public var diggCount = 0
     /// 评论数
-    var commentCount = 0
+    public var commentCount = 0
     /// 浏览数
-    var viewCount = 1
+    public var viewCount = 1
     /// 打赏数
-    var rewardCount = 0
+    public var rewardCount = 0
     /// 转发数
-    var forwardCount = 0
+    public var forwardCount = 0
     /// 是否打赏
-    var isRewarded = false
+    public var isRewarded = false
     /// 是否禁止留言
-    var isCommentDisabled = false
+    public var isCommentDisabled = false
     
-    init() {
+    public init() {
     }
     
     /// 初始化列表动态数据模型

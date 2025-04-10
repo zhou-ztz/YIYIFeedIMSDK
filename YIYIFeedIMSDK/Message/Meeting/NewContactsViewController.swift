@@ -15,7 +15,7 @@ class NewContactsViewController: TGViewController {
     ///搜索关键词
     var keyword: String = ""
     /// 数据源
-    var dataSource: [UserInfoModel] = []
+    var dataSource: [TGUserInfoModel] = []
     /// 分组好的数据源
     var sortedModelArr: [[ContactData]] = []
     ///选中的数据
@@ -206,7 +206,7 @@ class NewContactsViewController: TGViewController {
         self.sortedModelArr.removeAll()
         for object in self.indexDataSource {
             
-            let user: [UserInfoModel] = self.dataSource.filter { dataModel in
+            let user: [TGUserInfoModel] = self.dataSource.filter { dataModel in
                 if let pinYin = dataModel.name.transformToPinYin().first?.description {
                     if (pinYin.isNotLetter() && object == special) {
                         return true

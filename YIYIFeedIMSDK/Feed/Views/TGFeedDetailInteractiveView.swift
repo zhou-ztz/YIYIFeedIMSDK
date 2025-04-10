@@ -313,17 +313,17 @@ class TGFeedDetailInteractiveView: UIView {
         
     }
     
-    func updateUser(user: UserInfoModel?) {
+    func updateUser(user: TGUserInfoModel?) {
         guard let user = user else {
             avatarLabel.text = ""
             return
         }
         avatarView.showLiveIcon = true
-        avatarView.avatarInfo = AvatarInfo(userModel: user)
+        avatarView.avatarInfo = TGAvatarInfo(userModel: user)
         avatarLabel.text = user.remarkName ?? user.name
     }
     
-    func updateUserAvatar(avatar: AvatarInfo?) {
+    func updateUserAvatar(avatar: TGAvatarInfo?) {
         guard let avatar = avatar else {
             avatarLabel.text = ""
             return

@@ -8,7 +8,7 @@
 import Foundation
 
 /// 动态列表的类型
-enum TGFeedListType: Equatable {
+public enum TGFeedListType: Equatable {
     case new
     case hot
     case recommend
@@ -54,6 +54,19 @@ enum TGFeedListType: Equatable {
         default: return ""
         }
     }
+    public init?(rawValue: String) {
+        switch rawValue {
+        case "teen": self = .teen
+        case "new": self = .new
+        case "follow": self = .follow
+        case "recommend": self = .recommend
+        case "hot": self = .hot
+        case "intelligent": self = .intelligent
+        case "biz_campaign": self = .bizCampaign
+        default:
+            return nil
+        }
+    }
     
     var boxFilterType: String {
         switch self {
@@ -64,7 +77,7 @@ enum TGFeedListType: Equatable {
         }
     }
     
-    static func ==(lhs: TGFeedListType, rhs: TGFeedListType) -> Bool {
+    public static func ==(lhs: TGFeedListType, rhs: TGFeedListType) -> Bool {
         switch (lhs, rhs) {
         case (.hot, .hot), (.follow, .follow), (.new, .new):
             return true
@@ -92,7 +105,7 @@ enum filterButtonType {
     case live
 }
 
-enum FeedContentType {
+public enum FeedContentType {
     case normalText
     case picture
     case video

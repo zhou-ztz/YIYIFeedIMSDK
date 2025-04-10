@@ -194,7 +194,7 @@ class TGMiniVideoControlView: UIView {
         }
         
         if let userInfo = feed.userInfo {
-            let avatarInfo = AvatarInfo(userModel: userInfo)
+            let avatarInfo = TGAvatarInfo(userModel: userInfo)
             avatarInfo.verifiedType = ""
             avatarInfo.verifiedIcon = ""
             avatar.avatarInfo = avatarInfo

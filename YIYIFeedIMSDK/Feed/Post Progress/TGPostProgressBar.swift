@@ -14,6 +14,11 @@ public struct TGShortVideoAsset {
     let asset: PHAsset?
 //    let recorderSession: SCRecordSession?
     let videoFileURL: URL?
+    public init(coverImage: UIImage? = nil, asset: PHAsset? = nil, videoFileURL: URL? = nil) {
+        self.coverImage = coverImage
+        self.asset = asset
+        self.videoFileURL = videoFileURL
+    }
 }
 public struct TGPostVideoExtension {
     var data: Data?
@@ -1018,9 +1023,9 @@ public struct TGPostModel {
     //视频Id
     let videoDataId: Int?
     //记录发布动态时标记的用户IDs
-    let tagUsers: [UserInfoModel]?
+    let tagUsers: [TGUserInfoModel]?
     //记录发布动态时标记的商家IDs
-    let tagMerchants: [UserInfoModel]?
+    let tagMerchants: [TGUserInfoModel]?
     //记录发布动态时标记的代金券ID
     let tagVoucher: TagVoucherModel?
 }

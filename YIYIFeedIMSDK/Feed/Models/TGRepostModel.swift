@@ -8,7 +8,7 @@
 import UIKit
 import ObjectMapper
 import ObjectBox
-enum TGRepostType: String {
+public enum TGRepostType: String {
     /// 动态
     case postWord
     case postImage
@@ -28,25 +28,25 @@ enum TGRepostType: String {
     /// 已删除
     case delete
 }
-class TGRepostModel {
+public class TGRepostModel {
     /// 分享最大内容数量
-    fileprivate let maxContenWord = 60
+    public let maxContenWord = 60
     /// 类型
-    var type: TGRepostType = .postWord
+    public var type: TGRepostType = .postWord
     /// 用于object传递,优先使用该字段
-    var typeStr: String?
+    public var typeStr: String?
     /// 基本ID
-    var id: Int = 0
+    public var id: Int = 0
     /// 附加ID,比如帖子需要的圈子ID
-    var subId: Int = 0
+    public var subId: Int = 0
     /// 标题内容
-    var title: String?
+    public var title: String?
     /// 正文内容
-    var content: String?
+    public var content: String?
     /// 封面
-    var coverImage: String?
+    public var coverImage: String?
 
-    var extra: String?
+    public var extra: String?
     
     init(type: TGRepostType) {
         self.type = type
@@ -193,16 +193,16 @@ class TGRepostModel {
 }
 
 
-class LiveEntityModel: Mappable {
+public class LiveEntityModel: Mappable {
     
     // objectbox: id = { "assignable": true }
-    var feedId: Id = 0
-    var streamName: String? = nil
-    var liveDescription: String = ""
+    public var feedId: Id = 0
+    public var streamName: String? = nil
+    public var liveDescription: String = ""
     var pushUrl = ""
     var rtmp = ""
-    var status = -1
-    var roomId: String = ""
+    public var status = -1
+    public var roomId: String = ""
     
     var rtmpSD = ""
     var rtmpLD = ""
@@ -228,9 +228,9 @@ class LiveEntityModel: Mappable {
     var profileFrameTint: String?
     
     required init() {}
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
     
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         var key: Int?
         key <- map["feed_id"]
         
@@ -280,13 +280,13 @@ extension LiveEntityModel {
         return LiveEntityModel(JSONString: json)
     }
 
-    func avatarInfo() -> AvatarInfo {
+    func avatarInfo() -> TGAvatarInfo {
 //        let verifiedInfo = TSUserVerifiedModel(type: hostIconUrl, icon: hostIconUrl)
-//        let info = AvatarInfo(avatarURL: hostAvatarUrl.orEmpty, verifiedInfo: verifiedInfo)
+//        let info = TGAvatarInfo(avatarURL: hostAvatarUrl.orEmpty, verifiedInfo: verifiedInfo)
 //        info.frameColor = self.frameTint ?? self.profileFrameTint
 //        info.frameIcon = self.frameIcon ?? self.profileFrameIcon
 //        info.liveId = self.feedId.intValue
-        let info = AvatarInfo()
+        let info = TGAvatarInfo()
         return info
     }
 }

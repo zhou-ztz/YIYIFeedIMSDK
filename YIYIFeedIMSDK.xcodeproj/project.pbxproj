@@ -235,7 +235,6 @@
 		B193FD482D88069A00BEB3F7 /* DynamicTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD472D88069A00BEB3F7 /* DynamicTextField.swift */; };
 		B193FD4A2D88073E00BEB3F7 /* VerifyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD492D88073E00BEB3F7 /* VerifyTextField.swift */; };
 		B193FD512D88088B00BEB3F7 /* TGReportImageCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B193FD4F2D88088B00BEB3F7 /* TGReportImageCollectionCell.xib */; };
-		B193FD522D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B193FD4B2D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard */; };
 		B193FD532D88088B00BEB3F7 /* ReportBottomSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4C2D88088B00BEB3F7 /* ReportBottomSheetVC.swift */; };
 		B193FD542D88088B00BEB3F7 /* TGReportImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4E2D88088B00BEB3F7 /* TGReportImageCollectionCell.swift */; };
 		B193FD552D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */; };
@@ -397,7 +396,6 @@
 		D7047C262D3A4D7800E6FCF6 /* BallSpinFadeIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7047C0F2D3A4D7800E6FCF6 /* BallSpinFadeIndicator.swift */; };
 		D7047C272D3A4D7800E6FCF6 /* Loadable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7047C182D3A4D7800E6FCF6 /* Loadable+Extensions.swift */; };
 		D7047C282D3A4D7800E6FCF6 /* BallBeatIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7047C0C2D3A4D7800E6FCF6 /* BallBeatIndicator.swift */; };
-		D7047C292D3A4D7800E6FCF6 /* LoadingButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = D7047C1A2D3A4D7800E6FCF6 /* LoadingButtons.h */; };
 		D706E16D2D27B66C000D4437 /* TGReleasePulseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D706E16C2D27B66C000D4437 /* TGReleasePulseViewController.swift */; };
 		D706E1712D27CDB9000D4437 /* TGReleasePulseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D706E1702D27CDB9000D4437 /* TGReleasePulseCollectionView.swift */; };
 		D706E1732D27CEEE000D4437 /* TGReleasePulseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D706E1722D27CEEE000D4437 /* TGReleasePulseCollectionViewCell.swift */; };
@@ -425,6 +423,10 @@
 		D711C86B2D1BEB1E004EA26B /* Typist.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711C8682D1BEB1E004EA26B /* Typist.swift */; };
 		D711C86D2D1BEB81004EA26B /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711C86C2D1BEB81004EA26B /* Array+Extension.swift */; };
 		D72627932D41041D001E0DA6 /* TGCommentLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72627922D41041D001E0DA6 /* TGCommentLabel.swift */; };
+		D72BD69E2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D72BD69D2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard */; };
+		D72BD6A62DA4C65B00B95AEF /* LoadingButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = D72BD6A52DA4C65B00B95AEF /* LoadingButtons.h */; };
+		D72BD6A82DA4C66A00B95AEF /* ActiveLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = D72BD6A72DA4C66A00B95AEF /* ActiveLabel.h */; };
+		D72BD6AA2DA4C67800B95AEF /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D72BD6A92DA4C67800B95AEF /* icomoon.ttf */; };
 		D72E9B682D2B737600ACC703 /* TGNetworkURLPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72E9B672D2B737600ACC703 /* TGNetworkURLPath.swift */; };
 		D72E9B6C2D2B884600ACC703 /* TGLocationPOISearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72E9B6B2D2B884600ACC703 /* TGLocationPOISearchViewController.swift */; };
 		D73AFB6C2D3F3A5C001C8458 /* TGCommentPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73AFB6B2D3F3A5C001C8458 /* TGCommentPageController.swift */; };
@@ -497,7 +499,6 @@
 		D7B5868A2D27915600A52F1E /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586602D27915600A52F1E /* Protocols.swift */; };
 		D7B5868B2D27915600A52F1E /* PhotoEditor+Gestures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586592D27915600A52F1E /* PhotoEditor+Gestures.swift */; };
 		D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7B5865F2D27915600A52F1E /* PhotoEditorViewController.xib */; };
-		D7B586982D27915600A52F1E /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B5864C2D27915600A52F1E /* icomoon.ttf */; };
 		D7C4E9D12D2D20560043DD82 /* TGLocationPOICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D02D2D20560043DD82 /* TGLocationPOICell.swift */; };
 		D7C4E9D32D2D21BF0043DD82 /* TGThrottler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D22D2D21BF0043DD82 /* TGThrottler.swift */; };
 		D7C4E9D52D2D23FD0043DD82 /* TGRepostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D42D2D23FD0043DD82 /* TGRepostView.swift */; };
@@ -506,12 +507,12 @@
 		D7C4E9E02D2D29C90043DD82 /* RegexParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9DB2D2D29C90043DD82 /* RegexParser.swift */; };
 		D7C4E9E12D2D29C90043DD82 /* ActiveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D92D2D29C90043DD82 /* ActiveType.swift */; };
 		D7C4E9E22D2D29C90043DD82 /* ActiveBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D62D2D29C90043DD82 /* ActiveBuilder.swift */; };
-		D7C4E9E42D2D29C90043DD82 /* ActiveLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = D7C4E9D72D2D29C90043DD82 /* ActiveLabel.h */; };
 		D7C4ECD92D2D371F0043DD82 /* LabelLineText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4ECD82D2D371F0043DD82 /* LabelLineText.swift */; };
 		D7D349212D94F1BF0085DEB6 /* TGUserNetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D349202D94F1BF0085DEB6 /* TGUserNetworkingManager.swift */; };
 		D7D9E5312D23C9D800D8911F /* TGReactionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9E5302D23C9D800D8911F /* TGReactionOperation.swift */; };
 		D7D9E5332D23C9F200D8911F /* TGAsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9E5322D23C9F200D8911F /* TGAsyncOperation.swift */; };
 		D7D9E5372D23E45400D8911F /* TGCustomPopListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9E5362D23E45400D8911F /* TGCustomPopListViewController.swift */; };
+		D7E3B3892DA6282400DEA02D /* NotificationCenter+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E3B3882DA6282400DEA02D /* NotificationCenter+Actions.swift */; };
 		D7ED1C6B2D3DF9BC00B7F95D /* TGFeedDetailImagePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED1C6A2D3DF9BC00B7F95D /* TGFeedDetailImagePageController.swift */; };
 		D7ED1C6E2D3DFE5900B7F95D /* TGFeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED1C6D2D3DFE5900B7F95D /* TGFeedType.swift */; };
 		D7ED1C702D3DFF3500B7F95D /* TGReactionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED1C6F2D3DFF3500B7F95D /* TGReactionController.swift */; };
@@ -809,7 +810,6 @@
 		B193FD452D88063300BEB3F7 /* UIControl+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Actions.swift"; sourceTree = "<group>"; };
 		B193FD472D88069A00BEB3F7 /* DynamicTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTextField.swift; sourceTree = "<group>"; };
 		B193FD492D88073E00BEB3F7 /* VerifyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyTextField.swift; sourceTree = "<group>"; };
-		B193FD4B2D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ReportBottomSheetVC.storyboard; sourceTree = "<group>"; };
 		B193FD4C2D88088B00BEB3F7 /* ReportBottomSheetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportBottomSheetVC.swift; sourceTree = "<group>"; };
 		B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportCategoryTableViewCell.swift; sourceTree = "<group>"; };
 		B193FD4E2D88088B00BEB3F7 /* TGReportImageCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReportImageCollectionCell.swift; sourceTree = "<group>"; };
@@ -973,7 +973,6 @@
 		D7047C152D3A4D7800E6FCF6 /* MaterialLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialLoadingIndicator.swift; sourceTree = "<group>"; };
 		D7047C182D3A4D7800E6FCF6 /* Loadable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Loadable+Extensions.swift"; sourceTree = "<group>"; };
 		D7047C192D3A4D7800E6FCF6 /* LoadableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableButton.swift; sourceTree = "<group>"; };
-		D7047C1A2D3A4D7800E6FCF6 /* LoadingButtons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingButtons.h; sourceTree = "<group>"; };
 		D706E16C2D27B66C000D4437 /* TGReleasePulseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReleasePulseViewController.swift; sourceTree = "<group>"; };
 		D706E1702D27CDB9000D4437 /* TGReleasePulseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReleasePulseCollectionView.swift; sourceTree = "<group>"; };
 		D706E1722D27CEEE000D4437 /* TGReleasePulseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReleasePulseCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1001,6 +1000,10 @@
 		D711C8682D1BEB1E004EA26B /* Typist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typist.swift; sourceTree = "<group>"; };
 		D711C86C2D1BEB81004EA26B /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		D72627922D41041D001E0DA6 /* TGCommentLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentLabel.swift; sourceTree = "<group>"; };
+		D72BD69D2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ReportBottomSheetVC.storyboard; sourceTree = "<group>"; };
+		D72BD6A52DA4C65B00B95AEF /* LoadingButtons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingButtons.h; sourceTree = "<group>"; };
+		D72BD6A72DA4C66A00B95AEF /* ActiveLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveLabel.h; sourceTree = "<group>"; };
+		D72BD6A92DA4C67800B95AEF /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		D72E9B672D2B737600ACC703 /* TGNetworkURLPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNetworkURLPath.swift; sourceTree = "<group>"; };
 		D72E9B6B2D2B884600ACC703 /* TGLocationPOISearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGLocationPOISearchViewController.swift; sourceTree = "<group>"; };
 		D73AFB6B2D3F3A5C001C8458 /* TGCommentPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentPageController.swift; sourceTree = "<group>"; };
@@ -1052,7 +1055,6 @@
 		D7B586482D27915600A52F1E /* EmojiCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewCell.swift; sourceTree = "<group>"; };
 		D7B5864A2D27915600A52F1E /* EmojisCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		D7B5864B2D27915600A52F1E /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
-		D7B5864C2D27915600A52F1E /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		D7B586552D27915600A52F1E /* PhotoEditor+Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoEditor+Controls.swift"; sourceTree = "<group>"; };
 		D7B586562D27915600A52F1E /* PhotoEditor+Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoEditor+Crop.swift"; sourceTree = "<group>"; };
 		D7B586572D27915600A52F1E /* PhotoEditor+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoEditor+Drawing.swift"; sourceTree = "<group>"; };
@@ -1078,7 +1080,6 @@
 		D7C4E9D22D2D21BF0043DD82 /* TGThrottler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGThrottler.swift; sourceTree = "<group>"; };
 		D7C4E9D42D2D23FD0043DD82 /* TGRepostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRepostView.swift; sourceTree = "<group>"; };
 		D7C4E9D62D2D29C90043DD82 /* ActiveBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveBuilder.swift; sourceTree = "<group>"; };
-		D7C4E9D72D2D29C90043DD82 /* ActiveLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveLabel.h; sourceTree = "<group>"; };
 		D7C4E9D82D2D29C90043DD82 /* ActiveLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveLabel.swift; sourceTree = "<group>"; };
 		D7C4E9D92D2D29C90043DD82 /* ActiveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveType.swift; sourceTree = "<group>"; };
 		D7C4E9DB2D2D29C90043DD82 /* RegexParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexParser.swift; sourceTree = "<group>"; };
@@ -1088,6 +1089,7 @@
 		D7D9E5302D23C9D800D8911F /* TGReactionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReactionOperation.swift; sourceTree = "<group>"; };
 		D7D9E5322D23C9F200D8911F /* TGAsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAsyncOperation.swift; sourceTree = "<group>"; };
 		D7D9E5362D23E45400D8911F /* TGCustomPopListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCustomPopListViewController.swift; sourceTree = "<group>"; };
+		D7E3B3882DA6282400DEA02D /* NotificationCenter+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Actions.swift"; sourceTree = "<group>"; };
 		D7ED1C6A2D3DF9BC00B7F95D /* TGFeedDetailImagePageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedDetailImagePageController.swift; sourceTree = "<group>"; };
 		D7ED1C6D2D3DFE5900B7F95D /* TGFeedType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGFeedType.swift; sourceTree = "<group>"; };
 		D7ED1C6F2D3DFF3500B7F95D /* TGReactionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGReactionController.swift; sourceTree = "<group>"; };
@@ -1545,6 +1547,7 @@
 				D7FEF9BD2D55B9E600FF87E8 /* View+Extensions.swift */,
 				D7FEF9BF2D55BC2D00FF87E8 /* ScreenExtensions.swift */,
 				B1A889482D8D3FC800B678CB /* Notification+Extension.swift */,
+				D7E3B3882DA6282400DEA02D /* NotificationCenter+Actions.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1671,7 +1674,7 @@
 		B193FD502D88088B00BEB3F7 /* Report */ = {
 			isa = PBXGroup;
 			children = (
-				B193FD4B2D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard */,
+				D72BD69D2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard */,
 				B193FD4C2D88088B00BEB3F7 /* ReportBottomSheetVC.swift */,
 				B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */,
 				B193FD4E2D88088B00BEB3F7 /* TGReportImageCollectionCell.swift */,
@@ -1866,10 +1869,10 @@
 		D7047C1B2D3A4D7800E6FCF6 /* LoadingButtons */ = {
 			isa = PBXGroup;
 			children = (
+				D72BD6A52DA4C65B00B95AEF /* LoadingButtons.h */,
 				D7047C172D3A4D7800E6FCF6 /* Indicators */,
 				D7047C182D3A4D7800E6FCF6 /* Loadable+Extensions.swift */,
 				D7047C192D3A4D7800E6FCF6 /* LoadableButton.swift */,
-				D7047C1A2D3A4D7800E6FCF6 /* LoadingButtons.h */,
 			);
 			path = LoadingButtons;
 			sourceTree = "<group>";
@@ -1973,6 +1976,7 @@
 		D7B5866E2D27915600A52F1E /* Photo Editor */ = {
 			isa = PBXGroup;
 			children = (
+				D72BD6A92DA4C67800B95AEF /* icomoon.ttf */,
 				D7B586432D27915600A52F1E /* ColorCollectionViewCell.swift */,
 				D7B586452D27915600A52F1E /* ColorsCollectionViewDelegate.swift */,
 				D7B586462D27915600A52F1E /* CropRectView.swift */,
@@ -1980,7 +1984,6 @@
 				D7B586482D27915600A52F1E /* EmojiCollectionViewCell.swift */,
 				D7B5864A2D27915600A52F1E /* EmojisCollectionViewDelegate.swift */,
 				D7B5864B2D27915600A52F1E /* GradientView.swift */,
-				D7B5864C2D27915600A52F1E /* icomoon.ttf */,
 				D7B586552D27915600A52F1E /* PhotoEditor+Controls.swift */,
 				D7B586562D27915600A52F1E /* PhotoEditor+Crop.swift */,
 				D7B586572D27915600A52F1E /* PhotoEditor+Drawing.swift */,
@@ -2009,8 +2012,8 @@
 		D7C4E9DD2D2D29C90043DD82 /* ActiveLabel */ = {
 			isa = PBXGroup;
 			children = (
+				D72BD6A72DA4C66A00B95AEF /* ActiveLabel.h */,
 				D7C4E9D62D2D29C90043DD82 /* ActiveBuilder.swift */,
-				D7C4E9D72D2D29C90043DD82 /* ActiveLabel.h */,
 				D7C4E9D82D2D29C90043DD82 /* ActiveLabel.swift */,
 				D7C4E9D92D2D29C90043DD82 /* ActiveType.swift */,
 				D7C4E9DB2D2D29C90043DD82 /* RegexParser.swift */,
@@ -2036,13 +2039,6 @@
 				D7ED1C712D3E00A500B7F95D /* TGReactionListController.swift */,
 			);
 			path = ImageDetailPage;
-			sourceTree = "<group>";
-		};
-		D7ED1C692D3DF95900B7F95D /* VideoDetailPage */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = VideoDetailPage;
 			sourceTree = "<group>";
 		};
 		D7ED1C6C2D3DFE4B00B7F95D /* FeedType */ = {
@@ -2179,7 +2175,6 @@
 				D746FA832D4238CC0085F218 /* Player */,
 				D7ED1C6C2D3DFE4B00B7F95D /* FeedType */,
 				D7ED1C682D3DF95900B7F95D /* ImageDetailPage */,
-				D7ED1C692D3DF95900B7F95D /* VideoDetailPage */,
 				D76668E42D351D2B0086F90E /* Post Progress */,
 				D79714EF2D2668BB009772B7 /* Recorder */,
 				D79714EA2D266548009772B7 /* Post Camera */,
@@ -2243,9 +2238,11 @@
 				B193FCC72D6EB5A500BEB3F7 /* ZLEditVideoController.h in Headers */,
 				B193FCC82D6EB5A500BEB3F7 /* TZAssetCell.h in Headers */,
 				B193FCC52D6EB5A500BEB3F7 /* UIView+Layout.h in Headers */,
+				D72BD6A62DA4C65B00B95AEF /* LoadingButtons.h in Headers */,
 				B193FCC42D6EB5A500BEB3F7 /* TSLocalVideoCoverSelectedVC.h in Headers */,
 				B193FCBF2D6EB5A500BEB3F7 /* TZProgressView.h in Headers */,
 				B193FCBC2D6EB5A500BEB3F7 /* TZImageRequestOperation.h in Headers */,
+				D72BD6A82DA4C66A00B95AEF /* ActiveLabel.h in Headers */,
 				B193FCBB2D6EB5A500BEB3F7 /* LZImageBrowser.h in Headers */,
 				B193FCC32D6EB5A500BEB3F7 /* TZPhotoAccessViewController.h in Headers */,
 				B193FCBA2D6EB5A500BEB3F7 /* LZImageCropping.h in Headers */,
@@ -2261,9 +2258,7 @@
 				B193FCCB2D6EB5A500BEB3F7 /* CompressHelper.h in Headers */,
 				B193FCC22D6EB5A500BEB3F7 /* TZAssetModel.h in Headers */,
 				B193FCC02D6EB5A500BEB3F7 /* TZImagePickerController.h in Headers */,
-				D7047C292D3A4D7800E6FCF6 /* LoadingButtons.h in Headers */,
 				8A9F0D2B2CF080790021462C /* YIYIFeedIMSDK.h in Headers */,
-				D7C4E9E42D2D29C90043DD82 /* ActiveLabel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2341,8 +2336,6 @@
 				B1EABC9E2D30F41900EB7868 /* TGNewContactTableViewCell.xib in Resources */,
 				D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */,
 				B193FD512D88088B00BEB3F7 /* TGReportImageCollectionCell.xib in Resources */,
-				B193FD522D88088B00BEB3F7 /* ReportBottomSheetVC.storyboard in Resources */,
-				D7B586982D27915600A52F1E /* icomoon.ttf in Resources */,
 				D764EC7B2D37869F00F62268 /* TGReleasePulseViewController.xib in Resources */,
 				8A9F0DFE2CF48B3B0021462C /* SDKResource.bundle in Resources */,
 				B193FD432D88054900BEB3F7 /* TGCustomTextfield.xib in Resources */,
@@ -2354,6 +2347,7 @@
 				8A9F0DEE2CF48B3B0021462C /* reaction-angry.json in Resources */,
 				8A9F0DF02CF48B3B0021462C /* reaction-cry.json in Resources */,
 				8A9F0DF52CF48B3B0021462C /* Localizable.strings in Resources */,
+				D72BD6AA2DA4C67800B95AEF /* icomoon.ttf in Resources */,
 				8A9F0E002CF48B3B0021462C /* speech_to_text_progress.json in Resources */,
 				8A9F0DF62CF48B3B0021462C /* Localizable.strings in Resources */,
 				B1EABC4F2D2E6C3300EB7868 /* loading_white.json in Resources */,
@@ -2368,6 +2362,7 @@
 				8A9F0DFF2CF48B3B0021462C /* speaking.json in Resources */,
 				8A9F0D942CF430FE0021462C /* NIMKitEmoticon.bundle in Resources */,
 				B1EABB942D196CAF00EB7868 /* emoji.json in Resources */,
+				D72BD69E2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard in Resources */,
 				8A9F0DEF2CF48B3B0021462C /* reaction-awesome.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2562,6 +2557,7 @@
 				B193FBDC2D5C6D3200BEB3F7 /* EggModel.swift in Sources */,
 				B1EABCAB2D3507CB00EB7868 /* LBIndicator.swift in Sources */,
 				B1EABBC12D228CBF00EB7868 /* Country.swift in Sources */,
+				D7E3B3892DA6282400DEA02D /* NotificationCenter+Actions.swift in Sources */,
 				8A9F0D932CF430FE0021462C /* TGNIMInputEmoticonManager.swift in Sources */,
 				8A9F0D9B2CF4464F0021462C /* SCCustomNavigationBar.swift in Sources */,
 				8A9F0EA22CF6F7D00021462C /* TimerHolder.swift in Sources */,

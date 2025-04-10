@@ -26,7 +26,7 @@ let maxPhoto: Int = 9
 public class TGChatViewController: TGViewController {
     
     var viewmodel: TGChatViewModel
-    private var userInfo: UserInfoModel? = nil
+    private var userInfo: TGUserInfoModel? = nil
     var meetingViewmodel: TGJoinMeetingViewModel = TGJoinMeetingViewModel()
     
     lazy var headerAvatarView: TGAvatarView = {
@@ -480,7 +480,7 @@ public class TGChatViewController: TGViewController {
         }
     }
     
-    func updateNav(_ model: UserInfoModel) {
+    func updateNav(_ model: TGUserInfoModel) {
         guard let relationship = model.relationshipWithCurrentUser else { return }
         var showIM = false
         let isMeWhitelist = RLSDKManager.shared.currentUserInfo?.whiteListType?.contains("outgoing_message") ?? false
@@ -2892,7 +2892,7 @@ extension TGChatViewController: IMPinnedPopViewDeleagte {
         RLSDKManager.shared.imDelegate?.didPressNameCard(memberId: memberId)
     }
     
-    func didClickEgg(attachment: IMEggAttachment, nickName: String, avatarInfo: AvatarInfo) {
+    func didClickEgg(attachment: IMEggAttachment, nickName: String, avatarInfo: TGAvatarInfo) {
         pinnedAlert?.dismiss()
         pinnedAlert = nil
     }
@@ -2902,7 +2902,7 @@ extension TGChatViewController: IMPinnedPopViewDeleagte {
         pinnedAlert = nil
     }
     
-    func didUpdateProfileData(_ data: String, avatar: AvatarInfo) {
+    func didUpdateProfileData(_ data: String, avatar: TGAvatarInfo) {
         self.pinnedView?.avatarImageView.avatarInfo = avatar
         self.pinnedView?.avatarImageView.avatarPlaceholderType = .unknown
         self.pinnedView?.content.text = data

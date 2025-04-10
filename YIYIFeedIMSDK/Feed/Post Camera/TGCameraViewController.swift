@@ -123,60 +123,48 @@ extension TGCameraViewController: MiniVideoRecordContainerDelegate {
     }
     // MARK: - 相册
     func albumButtonDidTapped() {
-        if #available(iOS 14.0, *) {
-            // 获取照片库的授权状态
-            let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-            switch status {
-            case .limited:
-                handleLimitedAccess()
-            case .authorized:
-                presentPHPicker()
-            default:
-                print("未授权相册")
+        TGUtil.checkAuthorizeStatusByType(type: .cameraAlbum, isShowBottom: true, viewController: self, completion: {
+            if #available(iOS 14.0, *) {
+                // 获取照片库的授权状态
+                let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+                switch status {
+                case .limited:
+                    self.handleLimitedAccess()
+                case .authorized:
+                    self.presentPHPicker()
+                default:
+                    print("未授权相册")
+                }
+                
             }
-            
-        } else {
-            
-        }
-        
-//        guard let vc = TZImagePickerController(maxImagesCount: maxPhoto - self.selectedAsset.count - self.selectedImage.count, columnNumber: 4, delegate: self, mainColor: TSColor.main.red) else { return }
-//        vc.allowCrop = allowCrop
-//        vc.allowTakePicture = false
-//        vc.allowTakeVideo = false
-//        vc.allowPickingImage = true
-//        vc.allowPickingVideo = allowPickingVideo
-//        vc.allowPickingGif = true
-//        vc.allowPickingMultipleVideo = false
-//        vc.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
-//        vc.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
-//        vc.navigationBar.tintColor = .black
-//        vc.navigationItem.titleView?.tintColor = .black
-//        vc.navigationBar.barTintColor = .black
-//        vc.barItemTextColor = .black
-//        vc.backImage = UIImage(named: "iconsArrowCaretleftBlack")
-//        vc.allowPreview = true
-//        var dic = [NSAttributedString.Key: Any]()
-//        dic[NSAttributedString.Key.foregroundColor] = UIColor.black
-//        vc.navigationBar.titleTextAttributes = dic
-//        self.present(vc.fullScreenRepresentation, animated: true, completion: nil)
+        })
     }
   
     /// 处理受限访问模式下的逻辑
     private func handleLimitedAccess() {
         
-        self.showAlert(message: "rw_limited_feed_photo_tip".localized, buttonTitle: "ok".localized) { action in
-            if #available(iOS 15, *) {
-                PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self) { ids in
-                    var selectedAssets: [PHAsset] = []
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                        selectedAssets = self.fetchAllLimitedAssets()
-                        self.handleSelectedPhotos(photos: [UIImage()], imageAsset: selectedAssets, isGifImage: false)
-                    }
-                }
-            } else {
-                // Fallback on earlier versions
-            }
-        }
+        guard let vc = TZImagePickerController(maxImagesCount: maxPhoto - self.selectedAsset.count, columnNumber: 4, delegate: self, mainColor: RLColor.main.red) else { return }
+        vc.allowCrop = allowCrop
+        vc.allowTakePicture = false
+        vc.allowTakeVideo = false
+        vc.allowPickingImage = true
+        vc.allowPickingVideo = false
+        vc.allowPickingGif = true
+        vc.allowPickingMultipleVideo = false
+        vc.showPhotoCannotSelectLayer = false
+        vc.maxImagesCount = maxPhoto - self.selectedAsset.count
+        vc.photoSelImage =  UIImage(named: "ic_rl_checkbox_selected")
+        vc.previewSelectBtnSelImage = UIImage(named: "ic_rl_checkbox_selected")
+        vc.navigationBar.tintColor = UIColor.black
+        vc.navigationItem.titleView?.tintColor = UIColor.black
+        vc.navigationBar.barTintColor = UIColor.black
+        vc.barItemTextColor = UIColor.black
+        vc.allowPreview = true
+        vc.backImage = UIImage(named: "iconsArrowCaretleftBlack")
+        var dic = [NSAttributedString.Key: Any]()
+        dic[NSAttributedString.Key.foregroundColor] = UIColor.black
+        vc.navigationBar.titleTextAttributes = dic
+        self.present(vc.fullScreenRepresentation, animated: true, completion: nil)
     }
 
     /// 获取指定 IDs 的 PHAsset
@@ -304,6 +292,136 @@ extension TGCameraViewController: PHPickerViewControllerDelegate {
         }
     }
     
+}
+
+extension TGCameraViewController: TZImagePickerControllerDelegate {
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingPhotos photos: [UIImage]!, sourceAssets assets: [Any]!, isSelectOriginalPhoto: Bool) {
+        guard let imageAsset = assets as? [PHAsset] else {
+            return
+        }
+        //在这里加上判断，如果选择的图片为gif图片，不需要进入图片编辑页面
+        var isGifImage = false
+        if imageAsset.count > 0 {
+            let phAsset = imageAsset[0]
+            if let imageType = phAsset.value(forKey: "uniformTypeIdentifier") as? String {
+                if imageType == String(kUTTypeGIF) {
+                    isGifImage = true
+                }
+            }
+        }
+        if photos.count == 1 && allowEdit && !isGifImage {
+            let editor = PhotoEditorViewController(nibName: "PhotoEditorViewController", bundle: Bundle(for: PhotoEditorViewController.self))
+            editor.photoEditorDelegate = self
+            editor.image = photos[0]
+            self.present(editor.fullScreenRepresentation, animated: true, completion: nil)
+            
+        } else {
+            self.selectedAsset.append(contentsOf: imageAsset)
+            self.dismiss(animated: true, completion: nil)
+            self.onSelectPhoto?(self.selectedAsset, photos, nil, false, false)
+        }
+        
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingGifImage animatedImage: UIImage!, sourceAssets asset: PHAsset!) {
+        self.selectedAsset.append(asset)
+        self.dismiss(animated: true, completion: nil)
+        self.onSelectPhoto?(self.selectedAsset, [animatedImage], nil, true, false)
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishEditVideoCover coverImage: UIImage!, videoURL: Any!) {
+        guard let videoURL = videoURL as? NSURL   else { return }
+        
+        let videoPath = videoURL.path ?? ""
+        
+        DispatchQueue.global(qos: .default).async(execute: {
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: URL(fileURLWithPath: videoPath))
+            }) { [weak self] (saved, error) in
+                if saved {
+                    let fetchOptions = PHFetchOptions()
+                    fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+                    if let result = PHAsset.fetchAssets(with: .video, options: fetchOptions).lastObject {
+                        
+                        let option = PHVideoRequestOptions()
+                        option.version = .current
+                        option.deliveryMode = .automatic
+                        option.isNetworkAccessAllowed = true
+                        
+                        PHImageManager.default().requestExportSession(forVideo: result, options: option, exportPreset: AVAssetExportPresetHighestQuality) { [weak self] (exportSession, info) in
+                            
+                            let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                            let date = String(dateFormatter.string(from: Date()))
+                            let fileName = String(date.filter { String($0).rangeOfCharacter(from: CharacterSet(charactersIn: "0123456789")) != nil })
+                            
+                            let url = URL(fileURLWithPath: documentDirectory).appendingPathComponent("\(fileName).mp4")
+                            
+                            if FileManager.default.fileExists(atPath: videoPath) {
+                                do {
+                                    try FileManager.default.removeItem(atPath: videoPath)
+                                } catch {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                            
+                            exportSession?.outputURL = url
+                            exportSession?.outputFileType = .mp4
+                            exportSession?.shouldOptimizeForNetworkUse = true
+                            exportSession?.exportAsynchronously {
+                                DispatchQueue.main.async {
+                                    if exportSession?.status == AVAssetExportSession.Status.completed {
+                                        self?.dismiss(animated: true, completion: nil)
+                                        self?.onSelectPhoto?([result], nil, url.path, false, false)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self?.dismiss(animated: true, completion: nil)
+                        self?.onSelectPhoto?([], nil, videoURL.path ?? "", false, false)
+                    }
+                }
+            }
+        })
+    }
+    
+    public func imagePickerController(_ picker: TZImagePickerController!, didFinishPickingVideo asset: PHAsset!) {
+        guard let asset = asset, asset.mediaType == .video else { return }
+        
+        let option = PHVideoRequestOptions()
+        option.version = .current
+        option.deliveryMode = .automatic
+        option.isNetworkAccessAllowed = true
+        
+        PHImageManager.default().requestExportSession(forVideo: asset, options: option, exportPreset: AVAssetExportPresetHighestQuality) { [weak self] (exportSession, info) in
+            
+            let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            let date = String(dateFormatter.string(from: Date()))
+            let fileName = String(date.filter { String($0).rangeOfCharacter(from: CharacterSet(charactersIn: "0123456789")) != nil })
+            
+            let url = URL(fileURLWithPath: documentDirectory).appendingPathComponent("\(fileName).mp4")
+            
+            exportSession?.outputURL = url
+            exportSession?.outputFileType = .mp4
+            exportSession?.shouldOptimizeForNetworkUse = true
+            exportSession?.exportAsynchronously {
+                DispatchQueue.main.async {
+                    
+                    if exportSession?.status == AVAssetExportSession.Status.completed {
+                        self?.dismiss(animated: true, completion: nil)
+                        self?.onSelectPhoto?([asset], nil, url.path, false, false)
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension TGCameraViewController: PhotoEditorDelegate {

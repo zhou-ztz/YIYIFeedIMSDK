@@ -9,10 +9,10 @@ import UIKit
 
 public class TGRejectedDetailController: TGViewController {
 
-    var onDelete: TGEmptyClosure?
+    public var onDelete: TGEmptyClosure?
     
     /// 动态id
-    var feedId: String = ""
+    public var feedId: String = ""
     
     var rejectDetailModel: TGRejectDetailModel?
     
@@ -91,7 +91,7 @@ public class TGRejectedDetailController: TGViewController {
     var htmlAttributedText: NSMutableAttributedString?
     
     // MARK: - Lifecycle
-    init(feedId: String) {
+    public init(feedId: String) {
         super.init(nibName: nil, bundle: nil)
         self.feedId = feedId
     }

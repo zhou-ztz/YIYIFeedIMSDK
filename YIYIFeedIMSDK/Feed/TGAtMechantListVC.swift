@@ -10,7 +10,7 @@ import UIKit
 class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, TGMyFriendListCellDelegate {
 
     /// 数据源
-    var dataSource: [UserInfoModel] = [] {
+    var dataSource: [TGUserInfoModel] = [] {
         willSet {
             if newValue.isEmpty {
                 friendListTableView.removePlaceholderViews()
@@ -22,7 +22,7 @@ class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDeleg
     var searchTextfield = UITextField()
     /// 占位图
     let occupiedView = TGFadeImageView()
-    var selectedBlock: ((UserInfoModel) -> Void)?
+    var selectedBlock: ((TGUserInfoModel) -> Void)?
     var keyword: String? = ""
     private let occupiedText = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 50, height: 50))
     
@@ -178,7 +178,7 @@ class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDeleg
         }
     }
 
-    func processRefresh(datas: [UserInfoModel]?, message: Error?) {
+    func processRefresh(datas: [TGUserInfoModel]?, message: Error?) {
         friendListTableView.mj_footer.resetNoMoreData()
         // 获取数据成功
         if let datas = datas {

@@ -31,7 +31,7 @@ enum ReportTargetType {
 /// 举报对象
 struct ReportTargetModel {
     /// 举报对象所属的用户
-    var user: UserInfoModel?
+    var user: TGUserInfoModel?
     /// 举报类型
     var type: ReportTargetType
     /// 举报动态实体
@@ -45,7 +45,7 @@ struct ReportTargetModel {
     /// 举报对象的id。(举报评论就是评论id，评论圈子就是圈子id，举报帖子就是帖子id...)
     var targetId: Int
 
-    init(targetId: Int, sourceUser: UserInfoModel?, type: ReportTargetType, imageUrl: String?, title: String?, body: String?) {
+    init(targetId: Int, sourceUser: TGUserInfoModel?, type: ReportTargetType, imageUrl: String?, title: String?, body: String?) {
         self.targetId = targetId
         self.user = sourceUser
         self.type = type
@@ -72,7 +72,7 @@ struct ReportTargetModel {
         default:
             return nil
         }
-        var user = UserInfoModel()
+        var user = TGUserInfoModel()
         user.userIdentity = model.userId
         user.name = model.userName
         self.user = user
@@ -90,7 +90,7 @@ struct ReportTargetModel {
 //            self.type = .Moment
 //        }
 //        if let userObject = model.userInfo, userObject.isInvalidated == false {
-//            self.user = UserInfoModel(object: userObject)
+//            self.user = TGUserInfoModel(object: userObject)
 //        }
 //        self.title = model.data?.title
 //        self.body = model.data?.content
@@ -120,7 +120,7 @@ struct ReportTargetModel {
             targetId = commentId
             type = .Comment(commentType: .post, sourceId: postId, groupId: groupId)
         }
-        var user = UserInfoModel()
+        var user = TGUserInfoModel()
         user.userIdentity = model.userId
         user.name = model.name
         self.user = user
@@ -128,7 +128,7 @@ struct ReportTargetModel {
     }
 
     /// 通过用户 model 来初始化，举报用户
-    init(userModel model: UserInfoModel) {
+    init(userModel model: TGUserInfoModel) {
         targetId = model.userIdentity
         type = .User
         user = model

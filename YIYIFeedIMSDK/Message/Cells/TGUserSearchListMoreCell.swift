@@ -51,7 +51,7 @@ class TGUserSearchListMoreCell: UITableViewCell {
     }
     
     
-    func refreshUser(withUser user: UserInfoModel) {
+    func refreshUser(withUser user: TGUserInfoModel) {
         headerAvatarView.avatarInfo = user.avatarInfo()
         headerTitle.text = user.displayName
     }

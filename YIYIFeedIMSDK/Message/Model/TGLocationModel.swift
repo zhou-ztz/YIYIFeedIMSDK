@@ -16,7 +16,7 @@ class FourSquareLocationModel:  NSObject, Codable {
 
 }
 
-class TGLocationModel: NSObject, Codable{
+public class TGLocationModel: NSObject, Codable{
     
     var locationID: String = ""
     var locationName: String = ""

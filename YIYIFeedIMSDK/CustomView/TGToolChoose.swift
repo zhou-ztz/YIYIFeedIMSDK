@@ -8,7 +8,7 @@
 import UIKit
 import NIMSDK
 
-enum TGToolType: Int {
+public enum TGToolType: Int {
     ///IM
     case scan          = 1 //扫码
     case nearBy        = 2 //附近的人

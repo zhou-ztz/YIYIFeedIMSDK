@@ -184,6 +184,7 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
     func commentDidTapped(view: TGMiniVideoControlView) {
         
         let vc = TGResponsePageController(theme: .white, feed: model) { [weak self] feed in
+            guard let feed = feed as? FeedListCellModel else { return }
             if feed.idindex == self?.model.idindex {
                 self?.model = feed
             }

@@ -60,7 +60,7 @@ class ContactsSelecletdCell: UICollectionViewCell {
     
     func setData(model: ContactData) {
         self.model = model        
-        let avatarInfo = AvatarInfo()
+        let avatarInfo = TGAvatarInfo()
         avatarInfo.avatarURL = model.imageUrl
         avatarInfo.avatarPlaceholderType = model.isTeam ? .group : .unknown
         avatarInfo.type = .normal(userId: model.userId)

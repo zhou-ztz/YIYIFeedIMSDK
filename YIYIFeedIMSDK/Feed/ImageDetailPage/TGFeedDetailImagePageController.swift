@@ -7,18 +7,18 @@
 
 import UIKit
 
-enum FeedMediaType: String {
+public enum FeedMediaType: String {
     case image, video
     case miniVideo = "mini-video"
 }
-enum InnerFeedConfig {
+public enum InnerFeedConfig {
     case none
     case single(feedId: Int, transitionId: String?, placeholderImage: UIImage?, imageId: Int)
     case preLoadedSingle(data: FeedListCellModel, transitionId: String?, placeholderImage: UIImage?)
     case list(data: [FeedListCellModel], tappedIndex: Int, mediaType: FeedMediaType, listType: TGFeedListType, transitionId: String?, placeholderImage: UIImage?, isClickComment: Bool, isTranslateText: Bool)
 }
 
-class TGFeedDetailImagePageController: UIPageViewController {
+public class TGFeedDetailImagePageController: UIPageViewController {
 
     private var verticalPageHandler = PageHandler()
     public var feedType: TGFeedListType {
@@ -45,12 +45,12 @@ class TGFeedDetailImagePageController: UIPageViewController {
     var completeHandler: ((Int, String) -> Void)?
     var onToolbarUpdated: onToolbarUpdate?
     var translateHandler: ((Bool) -> Void)?
-    var onRefresh: TGEmptyClosure?
-    var userId: Int? = nil
-    var afterTime: String? = ""
-    var isControllerPush: Bool?
-    var campaignId: String = ""
-    var hashtagId: String = ""
+    public var onRefresh: TGEmptyClosure?
+    public var userId: Int? = nil
+    public var afterTime: String? = ""
+    public var isControllerPush: Bool?
+    public var campaignId: String = ""
+    public var hashtagId: String = ""
     var tagVoucher: TagVoucherModel?
 
     private(set) var datasource = [FeedListCellModel]()
@@ -64,12 +64,12 @@ class TGFeedDetailImagePageController: UIPageViewController {
 //        }
     let navigationDelegate = TGCustomNavigationDelegate()
     
-    override var prefersStatusBarHidden: Bool {
+    public override var prefersStatusBarHidden: Bool {
         // 返回当前状态栏的可见性
         return UIApplication.shared.isStatusBarHidden
     }
     
-    init(config: InnerFeedConfig, campaignId: String = "", hashtagId: String = "", completeHandler: ((Int, String) -> Void)? = nil, onToolbarUpdated: onToolbarUpdate?, translateHandler: ((Bool) -> Void)? = nil, tagVoucher: TagVoucherModel? = nil) {
+    public init(config: InnerFeedConfig, campaignId: String = "", hashtagId: String = "", completeHandler: ((Int, String) -> Void)? = nil, onToolbarUpdated: onToolbarUpdate?, translateHandler: ((Bool) -> Void)? = nil, tagVoucher: TagVoucherModel? = nil) {
         
         super.init(transitionStyle: .scroll, navigationOrientation: .vertical)
         
@@ -185,7 +185,7 @@ class TGFeedDetailImagePageController: UIPageViewController {
         fatalError()
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
 
@@ -295,11 +295,11 @@ class TGFeedDetailImagePageController: UIPageViewController {
 //        UIView.animate(withDuration: 0.2) {
 //            self.loadPlaceholder.isHidden = true
 //        }
-//        
+//
 //        loadPlaceholder.play()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
@@ -315,17 +315,17 @@ class TGFeedDetailImagePageController: UIPageViewController {
 //            let vc = UIStoryboard.init(name: "Profile", bundle: nil).instantiateViewController(withIdentifier: "HomePageViewController") as! HomePageViewController
 //            vc.model = HomepageModel(userIdentity: userId)
 //            return vc
-//  
+//
 //        }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        setClearNavBar()
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 //        setWhiteNavBar()
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
@@ -495,7 +495,7 @@ private class PageHandler: NSObject, UIPageViewControllerDelegate, UIPageViewCon
 
 extension TGFeedDetailImagePageController: UIGestureRecognizerDelegate {
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }

@@ -8,17 +8,17 @@
 import Foundation
 import ObjectMapper
 
-class TSPostLocationModel: Mappable {
+public class TSPostLocationModel: Mappable {
     
-    var locationID:String = ""
-    var locationName: String = ""
-    var locationLatitude:Float = 0
-    var locationLongtitude:Float = 0
-    var address:String?
+    public var locationID:String = ""
+    public var locationName: String = ""
+    public var locationLatitude:Float = 0
+    public var locationLongtitude:Float = 0
+    public var address:String?
     
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
     
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         locationID <- map["lid"]
         locationName <- map["name"]
         locationLatitude <- map["lat"]

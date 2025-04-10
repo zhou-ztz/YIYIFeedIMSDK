@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TGChatChooseFriendCellDelegate: AnyObject {
-    func chatButtonClick(chatbutton: UIButton, userModel: UserInfoModel)
+    func chatButtonClick(chatbutton: UIButton, userModel: TGUserInfoModel)
 }
 
 class TGChatChooseFriendCell: UITableViewCell {
@@ -22,7 +22,7 @@ class TGChatChooseFriendCell: UITableViewCell {
     var chatButton: UIButton!
     var userIdString: Int? = 0
     var chatUserName: String? = ""
-    var userInfo: UserInfoModel? = nil
+    var userInfo: TGUserInfoModel? = nil
     var currentChooseArray = NSMutableArray()
     var originData = NSMutableArray()
     /// 是否是增删成员 "" 为正常创建聊天 add 为增加成员  delete 为删减成员
@@ -62,9 +62,9 @@ class TGChatChooseFriendCell: UITableViewCell {
         self.addSubview(lineView)
     }
 
-    func setUserInfoData(model: UserInfoModel) {
+    func setUserInfoData(model: TGUserInfoModel) {
         userInfo = model
-        let avatarInfo = AvatarInfo()
+        let avatarInfo = TGAvatarInfo()
         avatarInfo.avatarURL = model.avatarUrl
         //NIMSDKManager.shared.getAvatarIcon(userId: userInfo?.username ?? "")
         avatarImageView.avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: model.sex)
@@ -78,7 +78,7 @@ class TGChatChooseFriendCell: UITableViewCell {
         // 设置默认的高亮选中的勾
         chatButton.setImage(UIImage(named: "ic_rl_checkbox_selected"), for: UIControl.State.selected)
         for (_, model) in currentChooseArray.enumerated() {
-            let userinfo: UserInfoModel = model as! UserInfoModel
+            let userinfo: TGUserInfoModel = model as! TGUserInfoModel
             if userinfo.userIdentity == userInfo?.userIdentity {
                 chatButton.isSelected = true
                 break
@@ -89,7 +89,7 @@ class TGChatChooseFriendCell: UITableViewCell {
         }
         // 设置特定的选项为不可选中的勾
         for (_, model) in originData.enumerated() {
-            let userinfo: UserInfoModel = model as! UserInfoModel
+            let userinfo: TGUserInfoModel = model as! TGUserInfoModel
             if userinfo.userIdentity == userInfo?.userIdentity {
                 chatButton.isSelected = true
                 chatButton.setImage(UIImage(named: "msg_box_choose_before"), for: UIControl.State.selected)

@@ -33,7 +33,7 @@ class TGNewContactTableViewCell: UITableViewCell {
     }
     
     // MARK: - Public
-    func setInfo(model: UserInfoModel) {
+    func setInfo(model: TGUserInfoModel) {
         // 头像
         avatarView.avatarInfo = model.avatarInfo()
         // 用户名
@@ -81,7 +81,7 @@ class TGNewContactTableViewCell: UITableViewCell {
     
 //    func setContactInfo(model: ContactModel) {
 //        // 头像
-//        avatarView.avatarInfo = AvatarInfo()
+//        avatarView.avatarInfo = TGAvatarInfo()
 //        let avatarImage = model.avatar == nil ? UIImage(named: "IMG_pic_default_secret")! : model.avatar!
 //        avatarView.buttonForAvatar.setImage(avatarImage, for: .normal)
 //        // 用户名

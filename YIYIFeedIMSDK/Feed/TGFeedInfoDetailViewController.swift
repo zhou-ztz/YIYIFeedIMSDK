@@ -41,13 +41,13 @@ public class TGFeedInfoDetailViewController: TGViewController {
         return tb
     }()
     
-    private var headerView: FeedDetailTableHeaderView = FeedDetailTableHeaderView()
+//    private var headerView: FeedDetailTableHeaderView = FeedDetailTableHeaderView()
     private let navView: TGMomentDetailNavTitle = TGMomentDetailNavTitle()
     
     //    var currentPrimaryButtonState: SocialButtonState = .follow
-    var onToolbarUpdated: onToolbarUpdate?
+    public var onToolbarUpdated: onToolbarUpdate?
     var reactionHandler: TGReactionHandler?
-    var reactionSelected: ReactionTypes?
+    public var reactionSelected: ReactionTypes?
     
     var backButton = UIButton(type: .custom).configure {
         $0.setImage(UIImage(named: "btn_back_normal"), for: .normal)
@@ -57,9 +57,6 @@ public class TGFeedInfoDetailViewController: TGViewController {
     }
     var rejectedButton = UIButton(type: .custom).configure {
         $0.setImage(UIImage(named: "ic_rl_reject"), for: .normal)
-    }
-    var miniVideoButton = UIButton(type: .custom).configure {
-        $0.setImage(UIImage(named: "ico_video_disabled"), for: .normal)
     }
     var moreButton = UIButton(type: .custom).configure {
         $0.setImage(UIImage(named: "icMoreBlack"), for: .normal)
@@ -77,7 +74,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
         return button
     }()
     var dontTriggerObservers:Bool = false
-    var model: FeedListCellModel? {
+    public var model: FeedListCellModel? {
         didSet {
             self.setHeader()
             self.setBottomViewData()
@@ -101,14 +98,14 @@ public class TGFeedInfoDetailViewController: TGViewController {
     private var afterId: Int?
     private var isFullScreen: Bool = false
     private var sendCommentType: TGSendCommentType = .send
-    //    private var headerView: FeedCommentDetailTableHeaderView = FeedCommentDetailTableHeaderView()
+    private var headerView: FeedCommentDetailTableHeaderView = FeedCommentDetailTableHeaderView()
     private var bottomToolBarView: TGFeedCommentDetailBottomView = TGFeedCommentDetailBottomView(frame: .zero, colorStyle: .normal)
     //
   
     
-    var isHomePage: Bool = false
+    public var isHomePage: Bool = false
     // feed type
-    var type: TGFeedListType?
+    public var type: TGFeedListType?
     
     public override var shouldAutomaticallyForwardAppearanceMethods: Bool {
         return true
@@ -121,12 +118,20 @@ public class TGFeedInfoDetailViewController: TGViewController {
     var onDismiss: ((CMTime) -> Void)?
     var tagVoucher: TagVoucherModel?
     
-    public init(feedId: Int) {
+//    public init(feedId: Int) {
+//        super.init(nibName: nil, bundle: nil)
+//        self.feedId = feedId
+//        //        self.onToolbarUpdated = onToolbarUpdated
+//    }
+//
+    public init(feedId: Int, isTapMore: Bool = false, isClickCommentButton: Bool = false, isVideoFeed: Bool = false, onToolbarUpdated: onToolbarUpdate?) {
         super.init(nibName: nil, bundle: nil)
         self.feedId = feedId
-        //        self.onToolbarUpdated = onToolbarUpdated
+        self.isTapMore = isTapMore
+        self.isClickCommentButton = isClickCommentButton
+        self.onToolbarUpdated = onToolbarUpdated
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -143,7 +148,6 @@ public class TGFeedInfoDetailViewController: TGViewController {
         TGKeyboardToolbar.share.theme = .white
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         TGKeyboardToolbar.share.keyboardToolbarDelegate = self
-//        setRightBarButton()
         prepareNavItems()
         setupTableView()
         setBottomView()
@@ -161,6 +165,23 @@ public class TGFeedInfoDetailViewController: TGViewController {
         TGKeyboardToolbar.share.keyboardstartNotice()
         IQKeyboardManager.shared.enable = false
         IQKeyboardManager.shared.enableAutoToolbar = false
+        
+        NotificationCenter.default.add(observer: self, name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil) { [weak self] (noti) in
+            guard let self = self else { return }
+            guard let userInfo = noti.userInfo, let followStatus = userInfo["follow"] as? FollowStatus, let uid = userInfo["userid"] as? String else { return }
+            guard var object = self.model?.userInfo else { return }
+            
+            if object.userIdentity == uid.toInt() {
+                if followStatus == .unfollow {
+                    object.follower = false
+                } else if followStatus == .follow {
+                    object.follower = true
+                }
+                self.model?.userInfo = object
+                self.updatePrimaryButton()
+            }
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePinnedCell(notice:)), name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil)
     }
     private func setupTableView() {
         
@@ -174,17 +195,12 @@ public class TGFeedInfoDetailViewController: TGViewController {
         headerView.setNeedsLayout()
         headerView.layoutIfNeeded()
         tableView.tableHeaderView = headerView
-        self.headerView.headerStackView.addArrangedSubview(taskManager.taskProgressView)
-        taskManager.updateColor = false
-        taskManager.updateTextColor()
-        taskManager.onUpdateView = { [weak self] in
-            self?.taskManager.updateColor = false
-            self?.headerView.headerStackView.layoutIfNeeded()
-        }
+  
     }
     
     private func setHeader() {
         guard let model = model else { return }
+        self.headerView.setModel(model: model)
         
         self.primaryButton.isHidden = false
         self.moreButton.isHidden = false
@@ -232,6 +248,15 @@ public class TGFeedInfoDetailViewController: TGViewController {
             self.tableView.layoutIfNeeded()
         }
         
+        headerView.feedShopView.momentMerchantDidClick = { [weak self] merchantData in
+            guard let self = self else { return }
+            
+            let appId = merchantData.wantedMid
+            var path = merchantData.wantedPath
+            path = path + "?id=\(appId)"
+            print("=path = \(path)")
+            RLSDKManager.shared.imDelegate?.didPressMiniProgrom(appId: "localInfo.mpExtras", path: path)
+        }
         
         self.headerView.setNeedsLayout()
         self.headerView.layoutIfNeeded()
@@ -299,19 +324,11 @@ public class TGFeedInfoDetailViewController: TGViewController {
             moreButton.isHidden = true
             self.addPostButton.addTarget(self, action: #selector(addPostButtonClick), for: .touchUpInside)
             self.backButton.addTarget(self, action: #selector(backButtonClick), for: .touchUpInside)
-            self.miniVideoButton.addTarget(self, action: #selector(miniVideoButtonClick), for: .touchUpInside)
             self.rejectedButton.addTarget(self, action: #selector(rejectedButtonClick), for: .touchUpInside)
             self.moreButton.addTarget(self, action: #selector(moreButtonClick), for: .touchUpInside)
-            customNavigationBar.setRightViews(views: [addPostButton, rejectedButton, miniVideoButton, primaryButton, moreButton])
+            customNavigationBar.setRightViews(views: [addPostButton, rejectedButton, primaryButton, moreButton])
             customNavigationBar.setLeftViews(views: [backButton , navView])
         }
-//    func setRightBarButton() {
-//        self.addPostButton.addTarget(self, action: #selector(addPostButtonClick), for: .touchUpInside)
-//        self.miniVideoButton.addTarget(self, action: #selector(miniVideoButtonClick), for: .touchUpInside)
-//        self.rejectedButton.addTarget(self, action: #selector(rejectedButtonClick), for: .touchUpInside)
-//        self.moreButton.addTarget(self, action: #selector(moreButtonClick), for: .touchUpInside)
-//        customNavigationBar.setRightViews(views: [addPostButton, rejectedButton, miniVideoButton, moreButton])
-//    }
     @objc func backButtonClick () {
         self.view.endEditing(true)
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
@@ -325,6 +342,11 @@ public class TGFeedInfoDetailViewController: TGViewController {
                 }
             }
         }
+    }
+    @objc func updatePinnedCell(notice: NSNotification) {
+        guard let userInfo = notice.userInfo else { return }
+        guard let feedId = userInfo["feedId"] as? Int, let isPinned = userInfo["isPinned"] as? Bool else { return }
+        self.model?.isPinned = isPinned
     }
     @objc func addPostButtonClick() {
         var data = [TGToolModel]()
@@ -342,8 +364,9 @@ public class TGFeedInfoDetailViewController: TGViewController {
         preference.drawing.background.color = .clear
         self.addPostButton.showToolChoose(identifier: "", data: data, arrowPosition: .none, preferences: preference, delegate: self, isMessage: true)
     }
+    
     @objc func miniVideoButtonClick() {
-        let vc = TGMiniVideoPageViewController(type: .hot, videos: [], focus: 0, onToolbarUpdate: self.onToolbarUpdated, avPlayer: nil, tagVoucher: nil)
+//        let vc = TGMiniVideoPageViewController(type: .hot)
         
 //        vc.onPassPlayer = { [weak self] player, time in
 //            DispatchQueue.main.async {
@@ -356,7 +379,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
 //            _parentVC?.present(TSNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true, completion: nil)
 //        } else {
 //            vc.isControllerPush = true
-            self.navigationController?.pushViewController(vc, animated: true)
+//            self.navigationController?.pushViewController(vc, animated: true)
 //        }
     }
     @objc func rejectedButtonClick() {
@@ -378,7 +401,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
     @objc private func loadFeedDetailInfo() {
         
         TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") {[weak self] feedInfo, error in
-            
+        
             guard let feedInfo = feedInfo, let self = self else {
                 self?.show(placeholder: .network)
                 return
@@ -386,13 +409,15 @@ public class TGFeedInfoDetailViewController: TGViewController {
             let cellModel = FeedListCellModel(feedListModel: feedInfo)
             self.tableView.mj_header.endRefreshing()
             self.tableView.reloadData()
-            self.headerView.setData(model: cellModel)
+            self.headerView.setModel(model: cellModel)
             if let tagVoucher = feedInfo.tagVoucher {
                 self.tagVoucher = tagVoucher
             }
             self.model = cellModel
             self.headerView.setCommentLabel(count: cellModel.comments.count, isCommentDisabled: false)
-            self.navView.update(model: cellModel.userInfo ?? UserInfoModel())
+            self.navView.update(model: cellModel.userInfo ?? TGUserInfoModel())
+            self.updatePrimaryButton()
+            self.onToolbarUpdated?(cellModel)
         }
     }
     @objc func loadMore() {
@@ -587,7 +612,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
         
         
         TGFeedNetworkManager.shared.submitComment(for: commentType, content: message, sourceId: feedId, replyUserId: self.commentModel?.userInfo?.userIdentity, contentType: contentType) { [weak self] (commentModel, message, result) in
-            guard let currentUserInfo = UserInfoModel.retrieveCurrentUserSessionInfo(), let feedId = self?.model?.index else { return }
+            guard let currentUserInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo(), let feedId = self?.model?.index else { return }
             defer {
                 DispatchQueue.main.async {
                    self?.dismissLoading()
@@ -599,14 +624,14 @@ public class TGFeedInfoDetailViewController: TGViewController {
                 return
             }
             var simpleModel = data.simpleModel()
-            simpleModel.userInfo = currentUserInfo.toType(type: UserInfoModel.self)
+            simpleModel.userInfo = currentUserInfo.toType(type: TGUserInfoModel.self)
             switch wself.sendCommentType {
             case .send:
                 simpleModel.replyUserInfo = nil
             case .replySend:
-                simpleModel.replyUserInfo = wself.commentModel?.userInfo?.toType(type: UserInfoModel.self)
+                simpleModel.replyUserInfo = wself.commentModel?.userInfo?.toType(type: TGUserInfoModel.self)
             default:
-                simpleModel.replyUserInfo = wself.commentModel?.replyUserInfo?.toType(type: UserInfoModel.self)
+                simpleModel.replyUserInfo = wself.commentModel?.replyUserInfo?.toType(type: TGUserInfoModel.self)
             }
             let newCommentModel = FeedCommentListCellModel(object: simpleModel, feedId: feedId)
             newCommentModel.userId = currentUserInfo.userIdentity
@@ -664,7 +689,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
             guard let self = self else { return }
             defer {
                 DispatchQueue.main.async {
-                   // self.dismissLoading()
+                    self.dismissLoading()
                     self.loadFeedDetailInfo()
                 }
                 //上报动态转发事件
@@ -743,7 +768,7 @@ extension TGFeedInfoDetailViewController: TGDetailCommentTableViewCellDelegate {
     }
     
     func didLongPressComment(in cell: FeedDetailCommentTableViewCell, model: FeedCommentListCellModel) {
-        guard  let currentUserInfo = UserInfoModel.retrieveCurrentUserSessionInfo() else {
+        guard  let currentUserInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo() else {
             return
         }
         
@@ -762,7 +787,7 @@ extension TGFeedInfoDetailViewController: TGDetailCommentTableViewCellDelegate {
 
         let userId = model.userInfo?.userIdentity
         TGKeyboardToolbar.share.keyboarddisappear()
-        if userId == (UserInfoModel.retrieveCurrentUserSessionInfo()?.userIdentity)! {
+        if userId == (TGUserInfoModel.retrieveCurrentUserSessionInfo()?.userIdentity)! {
             let customAction = TGCustomActionsheetView(titles: ["choice_delete".localized])
             customAction.delegate = self
             customAction.tag = 250
@@ -1102,3 +1127,4 @@ extension TGFeedInfoDetailViewController: TGCustomAcionSheetDelegate {
         
     }
 }
+

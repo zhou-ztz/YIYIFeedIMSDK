@@ -385,7 +385,7 @@ class TGContactsPickerViewController: TGChatFriendListViewController {
         }
     }
     
-    private func updateFriendListData(model: [UserInfoModel]?) {
+    private func updateFriendListData(model: [TGUserInfoModel]?) {
         if let excludeIds = configuration.excludeIds {
             if let models = model {
                 self.friendData += models.compactMap { ContactData(model: $0) }

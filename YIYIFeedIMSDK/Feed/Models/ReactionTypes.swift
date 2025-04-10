@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import Lottie
 
-enum ReactionTypes: Int, CaseIterable {
+public enum ReactionTypes: Int, CaseIterable {
     //love, like, heart_eyes, surprised, sad, angry)
     case heart = 0
     case like = 1
@@ -30,7 +30,7 @@ enum ReactionTypes: Int, CaseIterable {
         }
     }
 
-    var apiName: String {
+    public var apiName: String {
         switch self {
         case .like: return "like"
         case .heart: return "love"
@@ -41,7 +41,7 @@ enum ReactionTypes: Int, CaseIterable {
         }
     }
 
-    var colorSignature: UIColor {
+    public var colorSignature: UIColor {
         switch self {
         case .like: return UIColor.systemBlue
         case .heart: return UIColor.systemPink
@@ -52,7 +52,7 @@ enum ReactionTypes: Int, CaseIterable {
         }
     }
     
-    var image: UIImage {
+    public var image: UIImage {
         switch self {
         case .like: return UIImage(named: "blue_like")!
         case .heart: return UIImage(named: "red_heart")!
@@ -63,7 +63,7 @@ enum ReactionTypes: Int, CaseIterable {
         }
     }
 
-    var imageName: String {
+    public var imageName: String {
         switch self {
         case .like: return "blue_like"
         case .heart: return "red_heart"
@@ -74,7 +74,7 @@ enum ReactionTypes: Int, CaseIterable {
         }
     }
     
-    var lottieAnimation: Animation {
+    public var lottieAnimation: Animation {
         switch self {
         case .like: return Animation.named("reaction-like")!
         case .heart: return Animation.named("reaction-love")!
@@ -85,7 +85,7 @@ enum ReactionTypes: Int, CaseIterable {
         }
     }
 
-    var title: String {
+    public var title: String {
         switch self {
         case .like: return "like_reaction".localized
         case .heart: return "love_reaction".localized

@@ -26,10 +26,10 @@ extension TGAvatarView {
         setUI()
     }
 }
-class TGAvatarView: UIView {
+public class TGAvatarView: UIView {
 
     var shouldAnimate = false
-    enum PlaceholderType: String {
+    public enum PlaceholderType: String {
 
         case unknown = "IMG_pic_default_secret"
         case group = "ic_rl_default_group"
@@ -49,7 +49,7 @@ class TGAvatarView: UIView {
     }
 
     /// 头像信息
-    var avatarInfo = AvatarInfo() {
+    var avatarInfo = TGAvatarInfo() {
         didSet {
             if avatarInfo.avatarPlaceholderType != .unknown {
                     avatarPlaceholderType = avatarInfo.avatarPlaceholderType
@@ -121,7 +121,7 @@ class TGAvatarView: UIView {
         setUI()
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         shapeLayer?.position = CGPoint(x: bounds.midX, y: bounds.midY)
         shapeLayer?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -418,16 +418,16 @@ extension AvatarType {
     }
 }
 
-class AvatarInfo {
+public class TGAvatarInfo {
 
     /// 用户头像类型
-    enum UserAvatarType {
+    public enum UserAvatarType {
         /// 未知用户
         case unknow
         /// 普通用户，如果 userId 不为 nil 点击头像会 push 到对应用户的个人主页
         case normal(userId: Int?)
 
-        var userId: Int? {
+        public var userId: Int? {
             switch self {
             case .normal(let userId):
                 return userId
@@ -438,31 +438,31 @@ class AvatarInfo {
     }
 
     /// 头像类型
-    var type = UserAvatarType.normal(userId: nil)
+    public var type = UserAvatarType.normal(userId: nil)
     /// 头像 url
-    var avatarURL: String?
+    public var avatarURL: String?
     /// 认证信息，为空表示没有
-    var verifiedType = ""
+    public var verifiedType = ""
     /// 认证图标，为空表示没有
-    var verifiedIcon = ""
+    public var verifiedIcon = ""
     /// 头像占位图类型,性别相关
-    var avatarPlaceholderType = TGAvatarView.PlaceholderType.unknown
+    public var avatarPlaceholderType = TGAvatarView.PlaceholderType.unknown
     /// 性别 0 - Unknown, 1 - Man, 2 - Woman.
-    var sex: Int = 0
+    public var sex: Int = 0
     
-    var username: String?
+    public var username: String?
     
-    var nickname: String?
+    public var nickname: String?
 
-    var frameIcon: String?
-    var frameColor: String?
-    var liveId: Int?
+    public var frameIcon: String?
+    public var frameColor: String?
+    public var liveId: Int?
     
-    init() {
+    public init() {
     }
 
     /// 初始化
-    init(userModel model: UserInfoModel) {
+    init(userModel model: TGUserInfoModel) {
         avatarURL =  model.avatarUrl.orEmpty.smallPicUrl(showingSize: CGSize(width: 150, height: 150))
         verifiedType = model.verificationIcon.orEmpty
         verifiedIcon = model.verificationIcon.orEmpty
@@ -476,7 +476,7 @@ class AvatarInfo {
         liveId = model.liveFeedId
     }
 
-    init(avatarURL: String) {
+    public init(avatarURL: String) {
         self.avatarURL = avatarURL
     }
     
@@ -495,7 +495,7 @@ class AvatarInfo {
     }
 }
 
-extension AvatarInfo {
+extension TGAvatarInfo {
     
     func hasLive() -> Bool {
         return liveId != nil

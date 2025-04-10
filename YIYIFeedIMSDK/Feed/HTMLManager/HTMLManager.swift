@@ -202,20 +202,19 @@ class HTMLManager: NSObject {
             var models = getAttributeModel(attributedText: attributedText)
             
             if models.isEmpty {
-                
-//                TSUtil.pushUserHomeName(name: uname)
+                RLSDKManager.shared.imDelegate?.didPressNameCard(memberId: uname)
             } else {
                 for item in models {
                     var username = attributedText.string.subString(with: NSRange(location: item.range.location, length: item.range.length))
                     username = String(username[..<username.index(username.startIndex, offsetBy: username.count - 1)]).replacingFirstOccurrence(of: "@", with: "").replacingOccurrences(of: "\u{00ad}", with: "")
                     if uname == username {
-//                        TSUtil.pushUserHomeId(uid: item.userId)
+                        RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: item.userId.toInt())
                         break
                     }
                 }
             }
         } else {
-//            TSUtil.pushUserHomeName(name: uname)
+            RLSDKManager.shared.imDelegate?.didPressNameCard(memberId: uname)
         }
     }
 }

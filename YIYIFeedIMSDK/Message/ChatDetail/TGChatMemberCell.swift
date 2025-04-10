@@ -116,7 +116,7 @@ class TGChatMemberCell: UICollectionViewCell {
             if let nick = member.memberInfo?.teamNick, nick.count > 0 {
                 self.memberName.text =  nick
             }
-            let avatarInfo = AvatarInfo()
+            let avatarInfo = TGAvatarInfo()
             avatarInfo.avatarPlaceholderType = .unknown
             self.memberImage.avatarInfo = avatarInfo
             

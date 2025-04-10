@@ -8,7 +8,7 @@
 import UIKit
 import Lottie
 
-typealias onToolbarUpdate = ((FeedListCellModel) -> Void)
+public typealias onToolbarUpdate = ((Any) -> Void)
 
 public class TGFeedContentPageController: TGBaseContentPageController {
     private let animateView = AnimationView()
@@ -154,7 +154,8 @@ public class TGFeedContentPageController: TGBaseContentPageController {
         TGKeyboardToolbar.share.theme = .white
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         let respondVC = TGResponsePageController(theme: .white, feed: self.dataModel) { [weak self] (feed) in
-            guard let toolbar = feed.toolModel else {
+            
+            guard let feed = feed as? FeedListCellModel, let toolbar = feed.toolModel else {
                 return
             }
             self?.interactiveView.updateCount(comment: toolbar.commentCount, like: toolbar.diggCount, forwardCount: toolbar.forwardCount)
@@ -196,7 +197,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
             interactiveView.updateTranslateText()
         }
         
-        if let user = UserInfoModel.retrieveUser(username: (dataModel.userInfo?.username).orEmpty) {
+        if let user = TGUserInfoModel.retrieveUser(username: (dataModel.userInfo?.username).orEmpty) {
             interactiveView.updateFollowButton(user.followStatus)
         } else {
             interactiveView.updateFollowButton(dataModel.userInfo?.followStatus ?? .unfollow)
@@ -324,7 +325,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
             guard let self = self else { return }
             defer {
                 DispatchQueue.main.async {
-                   // self.dismissLoading()
+                    self.dismissLoading()
                     self.updateForwardCount()
                 }
                 //上报动态转发事件

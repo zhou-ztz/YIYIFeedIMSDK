@@ -129,7 +129,7 @@ class FeedCommentListCellModel: FeedCommentLabelModel {
         // 1.本地新建的评论没有 commentId，先设置为 0，待创建评论的任务方法返回后更新 commentId 的值
         id = .feed(feedId: feedId, commentId: 0)
         // 2.本地新建的评论，评论者自然是当前用户啦~
-        guard let userInfo = UserInfoModel.retrieveCurrentUserSessionInfo() else {
+        guard let userInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo() else {
             return
         }
         name = userInfo.name
@@ -155,7 +155,7 @@ class FeedCommentListCellModel: FeedCommentLabelModel {
         // 1.本地新建的评论没有 commentId，先设置为 0，待创建评论的任务方法返回后更新 commentId 的值
         id = .post(groupId: groupId, postId: postId, commentId: 0)
         // 2.本地新建的评论，评论者自然是当前用户啦~
-        guard let userInfo = UserInfoModel.retrieveCurrentUserSessionInfo() else {
+        guard let userInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo() else {
             return
         }
         name = userInfo.name
@@ -179,7 +179,7 @@ class FeedCommentListCellModel: FeedCommentLabelModel {
         name = object.userInfo?.name ?? ""
         userId = object.userId
         if let replyUserObject = object.replyUserInfo {
-            replyUserInfo = replyUserObject.toType(type: UserInfoModel.self)
+            replyUserInfo = replyUserObject.toType(type: TGUserInfoModel.self)
             type = .user(replyName: replyUserObject.name, replyUserId: replyUserObject.userIdentity)
         } else {
             type = .text
@@ -189,7 +189,7 @@ class FeedCommentListCellModel: FeedCommentLabelModel {
         sendStatus = SendStatus(rawValue: object.status)!
         contentType = object.contentType
         if let userObject = object.userInfo {
-            userInfo = userObject.toType(type: UserInfoModel.self)
+            userInfo = userObject.toType(type: TGUserInfoModel.self)
         }
         createDate = object.createDate
     }
@@ -200,7 +200,7 @@ class FeedCommentListCellModel: FeedCommentLabelModel {
         name = object.user?.displayName ?? ""
         userId = object.userId
         content = object.body
-        userInfo = UserInfoModel.retrieveCurrentUserSessionInfo()
+        userInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo()
         createDate = object.createDate
         if let replyUserId = object.replyUserId, let replyUser = object.replyUser {
             type = .user(replyName: replyUser.name, replyUserId: replyUserId)

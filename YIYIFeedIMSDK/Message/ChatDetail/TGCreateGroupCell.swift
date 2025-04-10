@@ -55,7 +55,7 @@ class TGCreateGroupCell: UITableViewCell {
     }
 
     func setData(model: ContactData){
-        let avatarInfo = AvatarInfo()
+        let avatarInfo = TGAvatarInfo()
         avatarInfo.avatarURL = model.imageUrl
         avatarInfo.verifiedIcon = model.verifiedIcon
         avatarInfo.verifiedType = model.verifiedType

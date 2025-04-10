@@ -9,7 +9,7 @@ import UIKit
 import NIMSDK
 
 class TGIMSearchUserListMoreVC: TGViewController {
-    var members: [UserInfoModel] = []
+    var members: [TGUserInfoModel] = []
     var keyword: String = ""
     
     lazy var tableView = RLTableView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight), style: .plain).configure {

@@ -59,7 +59,7 @@ class TGMyFriendListCell: UITableViewCell {
         self.addSubview(lineView)
     }
 
-    func setUserInfoData(model: UserInfoModel) {
+    func setUserInfoData(model: TGUserInfoModel) {
         avatarImageView.avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: model.sex)
         avatarImageView.avatarInfo = model.avatarInfo()
         // 用户名

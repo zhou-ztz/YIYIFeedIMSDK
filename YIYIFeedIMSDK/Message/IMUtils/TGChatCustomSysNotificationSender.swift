@@ -52,12 +52,12 @@ class TGChatCustomSysNotificationSender: NSObject {
 
     //MARK: - Secret chat
     func sendSecretChatRequest(session: NIMSession){
-        let dict : [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, NTESCustomContent: "INVITE"]
+        let dict : [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, NTESCustomContent: "INVITE"]
         let data = try? JSONSerialization.data(withJSONObject: dict , options: [])
         guard let json = String(data: data!, encoding: .utf8) else {
             return
         }
-        let textNotification = String(NIMSDK.shared().loginManager.currentAccount()) + " " + "secret_chat_invite".localized
+        let textNotification = String(NIMSDK.shared().v2LoginService.getLoginUser() ?? "") + " " + "secret_chat_invite".localized
         
         let notification = NIMCustomSystemNotification(content: json)
         notification.apnsContent = textNotification
@@ -69,7 +69,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func cancelSecretChatRequest(session: NIMSession){
-        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, NTESCustomContent: "CANCEL"]
+        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, NTESCustomContent: "CANCEL"]
         
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf8) else {
@@ -87,7 +87,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func rejectSecretChatRequest(session: NIMSession){
-        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, NTESCustomContent: "REJECT"]
+        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, NTESCustomContent: "REJECT"]
           
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf16) else {
@@ -105,7 +105,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func acceptSecretChatRequest(session: NIMSession){
-        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, NTESCustomContent: "ACCEPT"]
+        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().v2LoginService.getLoginUser() ?? "", "toAccount": session.sessionId, NTESCustomContent: "ACCEPT"]
           
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf8) else {
@@ -124,7 +124,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func sendSecretChatCreated(session: NIMSession, teamId: String) {
-        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, "teamId": teamId, NTESCustomContent: "ACCEPT"]
+        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, "teamId": teamId, NTESCustomContent: "ACCEPT"]
         
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf8) else {
@@ -142,7 +142,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func sendToOpponentSecretChatCreated(session: NIMSession, teamId: String) {
-        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, "teamId": teamId, NTESCustomContent: "TEAM_CREATE"]
+        let dict: [String : Any] = [NTESNotifyID: NTESSecretChat, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, "teamId": teamId, NTESCustomContent: "TEAM_CREATE"]
         
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf8) else {
@@ -159,7 +159,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func sendTypingState(session: NIMSession){
-        let currentAccount = NIMSDK.shared().loginManager.currentAccount()
+        let currentAccount = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
         if (session.sessionType != .P2P || session.sessionId == currentAccount)
         {
             return
@@ -189,7 +189,7 @@ class TGChatCustomSysNotificationSender: NSObject {
 
     //发送呼叫通知
     func sendCallNotification(teamId: String, roomName: String, members: [String]) {
-        let user = NIMSDK.shared().loginManager.currentAccount()
+        let user = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
         let team = NIMSDK.shared().teamManager.team(byId: teamId)
         let nick = user
         let dict: [String: Any] = [NTESNotifyID: NTESTeamMeetingCall, NTESTeamMeetingMembers: members, NTESTeamMeetingTeamId: teamId, NTESTeamMeetingTeamName: team?.teamName ?? "groups".localized, NTESTeamMeetingName: roomName, NTESTeamMeetingCaller: user]
@@ -213,7 +213,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
     //发送取消呼叫通知
     func sendCancelNotification(teamId: String, roomName: String, member: String, noOnePlaying: Bool, canceller: String) {
-        let user = NIMSDK.shared().loginManager.currentAccount()
+        let user = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
         let team = NIMSDK.shared().teamManager.team(byId: teamId)
         let nick = user
         let dict: [String: Any] = [NTESNotifyID: NTESTeamMeetingCall, NTESTeamMeetingTeamId: teamId, NTESTeamMeetingTeamName: team?.teamName ?? "groups".localized, NTESTeamMeetingName: roomName, NTESTeamMeetingCanceller: canceller, NTESTeamMeetingExist: noOnePlaying]
@@ -310,13 +310,13 @@ class TGChatCustomSysNotificationSender: NSObject {
  
         if invitedContacts.count > 0 {
             for userId in invitedContacts {
-                let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": userId, "roomID": roomID, NTESCustomContent: "INVITE", "sessionID" : session.sessionId, "invitedContacts" : invitedContacts]
+                let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": userId, "roomID": roomID, NTESCustomContent: "INVITE", "sessionID" : session.sessionId, "invitedContacts" : invitedContacts]
                
                 let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
                 guard let json = String(data: data!, encoding: .utf8) else {
                     return
                 }
-                let textNotification = String(NIMSDK.shared().loginManager.currentAccount()) + " " + "whiteboard invite".localized
+                let textNotification = String(NIMSDK.shared().v2LoginService.getLoginUser() ?? "") + " " + "whiteboard invite".localized
                 
                 let notification = NIMCustomSystemNotification(content: json)
                 notification.apnsContent = textNotification
@@ -329,13 +329,13 @@ class TGChatCustomSysNotificationSender: NSObject {
             }
             
         } else {
-            let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, "roomID": roomID, NTESCustomContent: "INVITE", "sessionID" : session.sessionId]
+            let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": NIMSDK.shared().v2LoginService.getLoginUser() ?? "", "toAccount": session.sessionId, "roomID": roomID, NTESCustomContent: "INVITE", "sessionID" : session.sessionId]
             
             let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
             guard let json = String(data: data!, encoding: .utf8) else {
                 return
             }
-            let textNotification = String(NIMSDK.shared().loginManager.currentAccount()) + " " + "whiteboard invite".localized
+            let textNotification = String(NIMSDK.shared().v2LoginService.getLoginUser() ?? "") + " " + "whiteboard invite".localized
             let parameters = ["sound": YippiNetCallRingtone]
             let notification = NIMCustomSystemNotification(content: json)
             notification.apnsPayload = parameters
@@ -358,7 +358,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func busyWhiteboardRequest(session: NIMSession){
-        let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, NTESCustomContent: "BUSY"]
+        let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, NTESCustomContent: "BUSY"]
         
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf8) else {
@@ -377,7 +377,7 @@ class TGChatCustomSysNotificationSender: NSObject {
     }
 
     func rejectWhiteboardRequest(session: NIMSession){
-        let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": NIMSDK.shared().loginManager.currentAccount(), "toAccount": session.sessionId, NTESCustomContent: "REJECT"]
+        let dict: [String : Any] = [NTESNotifyID: NTESWhiteboard, "fromAccount": (NIMSDK.shared().v2LoginService.getLoginUser() ?? ""), "toAccount": session.sessionId, NTESCustomContent: "REJECT"]
         
         let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
         guard let json = String(data: data!, encoding: .utf8) else {

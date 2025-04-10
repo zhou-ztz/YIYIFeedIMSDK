@@ -55,8 +55,8 @@ struct TGRejectDetailModel: Mappable {
     var location: TGRejectDetailModelLocation?
     var privacy: String?
     var topics = [TGRejectDetailModelTopics]()
-    var tagUsers: [UserInfoModel]?
-    var rewardsLinkMerchantUsers : [UserInfoModel]?
+    var tagUsers: [TGUserInfoModel]?
+    var rewardsLinkMerchantUsers : [TGUserInfoModel]?
     var tagVoucher: TagVoucherModel?
     
     init?(map: Map) {}

@@ -20,13 +20,13 @@ enum SharedType: String {
 }
 
 /// share
-class SharedViewModel: Mappable {
-    var thumbnail: String?
-    var url: String?
-    var title: String?
-    var sharedType: String = ""
-    var desc: String?
-    var extra: String?
+public class SharedViewModel: Mappable {
+    public var thumbnail: String?
+    public var url: String?
+    public var title: String?
+    public var sharedType: String = ""
+    public var desc: String?
+    public var extra: String?
     var type: SharedType {
         return SharedType(rawValue: sharedType) ?? .link
     }
@@ -41,11 +41,11 @@ class SharedViewModel: Mappable {
 //        }
 //    }
     
-    required convenience init?(map: Map) {
+    required convenience public init?(map: Map) {
         self.init()
     }
     
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         thumbnail <- map["thumbnail"]
         url <- map["url"]
         title <- map["title"]

@@ -11,143 +11,143 @@ import ObjectMapper
 import ObjectBox
 
 /// 批量获取动态 网络数据模型
-class FeedListResultsModel: Mappable {
+public class FeedListResultsModel: Mappable {
 
     /// 置顶动态列表
-    var pinned: [FeedListModel] = []
+    public var pinned: [FeedListModel] = []
     /// 普通动态列表
-    var feeds: [FeedListModel] = []
+    public var feeds: [FeedListModel] = []
     
-    init() {
+    public init() {
     }
 
-    required init?(map: Map) {
+    required public init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         pinned <- map["pinned"]
         feeds <- map["feeds"]
     }
 }
 
 /// 动态列表数据模型
-class FeedListModel: Mappable, Entity {
+public class FeedListModel: Mappable, Entity {
     /// 动态数据id
     // objectbox: id = { "assignable": true }
-    var feedId: Id = 0
-    var id = 0
+    public var feedId: Id = 0
+    public var id = 0
     /// index 话题动态列表分页
-    var index = 0
+    public var index = 0
     /// 发布者id
-    var userId = 0
+    public var userId = 0
     /// 动态内容
-    var content = ""
+    public var content = ""
     /// 动态来源 1:pc 2:h5 3:ios 4:android 5:其他
-    var from = 0
+    public var from = 0
     /// 点赞数
-    var likeCount = 0
+    public var likeCount = 0
     /// 查看数
-    var viewCount = 0
+    public var viewCount = 0
     /// 评论数
-    var commentCount = 0
+    public var commentCount = 0
     /// 打赏数
-    var rewardCount = 0
+    public var rewardCount = 0
     /// 纬度
-    var latitude = ""
+    public var latitude = ""
     /// 经度
-    var longtitude = ""
+    public var longtitude = ""
     /// GEO
-    var geo = ""
+    public var geo = ""
     /// 标记
-    var feedMark: Int64 = 0
+    public var feedMark: Int64 = 0
     ///    置顶标记
-    var pinned = 0
+    public var pinned = 0
     /// 创建时间
-    var create = Date()
+    public var create = Date()
     /// 删除时间
-    var delete = Date()
+    public var delete = Date()
     /// 是否已收藏
-    var hasCollect = false
+    public var hasCollect = false
     /// 是否已赞
-    var hasLike = false
+    public var hasLike = false
     /// 发布者信息，需要请求用户信息接口来获取
     // objectbox: transient
-    var user: UserInfoModel? = nil
+    var user: TGUserInfoModel? = nil
     /// 转发的类型
-    var repostType: String? = nil
+    public var repostType: String? = nil
     /// 转发的ID
-    var repostId: Int = 0
+    public var repostId: Int = 0
     /// 热门标识
-    var hot: Int = 0
+    public var hot: Int = 0
     /// 是否已赞
-    var hasReward = false
+    public var hasReward = false
     /// 是否禁止留言
-    var hasDisabled = false
+    public var hasDisabled = false
 
-    var privacy: String = ""
+    public var privacy: String = ""
 
-    var editedAt: String = ""
+    public var editedAt: String = ""
 
-    var isEdited: Bool {
+    public var isEdited: Bool {
         return (editedAt.isEmpty == false)
     }
 
-    var topReactions: String? = nil
+    public var topReactions: String? = nil
     
-    var reactType: String? = nil
+    public var reactType: String? = nil
     
-    var isSponsored = false
+    public var isSponsored = false
     
-    var feedType: String = "" //empty = no type, hot = "hot", following= "follow", user = "username"
+    public var feedType: String = "" //empty = no type, hot = "hot", following= "follow", user = "username"
     
     /// 图片信息 同单条动态数据结构一致
     // objectbox: convert = { "dbType": "String", "converter": "FeedImageModel" }
-    var images: [FeedImageModel]? = nil
+    public var images: [FeedImageModel]? = nil
     /// 视频数据
     // objectbox: convert = { "dbType": "String", "converter": "FeedVideoModel" }
-    var feedVideo: FeedVideoModel? = nil
+    public var feedVideo: FeedVideoModel? = nil
     /// 分享信息
     // objectbox: convert = { "dbType": "String", "converter": "SharedViewModel" }
-    var sharedModel: SharedViewModel? = nil
+    public var sharedModel: SharedViewModel? = nil
     // objectbox: convert = { "dbType": "String", "converter": "TSPostLocationModel" }
-    var location: TSPostLocationModel? = nil
+    public var location: TSPostLocationModel? = nil
     /// 话题，为空则不显示评论
     // objectbox: convert = { "dbType": "String", "converter": "TopicListModel" }
     var topics: [TopicListModel]? = nil
     /// 动态评论 列表中返回五条
     // objectbox: convert = { "dbType": "String", "converter": "FeedListCommentModel" }
-    var comments: [FeedListCommentModel]? = nil
+    public var comments: [FeedListCommentModel]? = nil
     /// 直播
     // objectbox: convert = { "dbType": "String", "converter": "LiveEntityModel" }
-    var liveModel: LiveEntityModel? = nil
+    public var liveModel: LiveEntityModel? = nil
     /// 商户信息
     // objectbox: convert = { "dbType": "String", "converter": "TSRewardsLinkMerchantUserModel" }
     var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel]? = nil
     
     /// @用户信息
-    // objectbox: convert = { "dbType": "String", "converter": "UserInfoModel" }
-    var tagUsers: [UserInfoModel]? = nil
+    // objectbox: convert = { "dbType": "String", "converter": "TGUserInfoModel" }
+    var tagUsers: [TGUserInfoModel]? = nil
     /// @商户信息
-    // objectbox: convert = { "dbType": "String", "converter": "UserInfoModel" }
-    var rewardsLinkMerchantUsers : [UserInfoModel]? = nil
+    // objectbox: convert = { "dbType": "String", "converter": "TGUserInfoModel" }
+    var rewardsLinkMerchantUsers : [TGUserInfoModel]? = nil
     
     /// 转发数
-    var feedForwardCount: Int = 0
+    public var feedForwardCount: Int = 0
     
     /// 用做查询条件的时间参数
-    var afterTime: String = ""
+    public var afterTime: String = ""
     
-    var isPinned: Bool = false
+    public var isPinned: Bool = false
     
     // objectbox: convert = { "dbType": "String", "converter": "TagVoucherModel" }
-    var tagVoucher: TagVoucherModel? = nil
+    public var tagVoucher: TagVoucherModel? = nil
     
     /// 活动动态是否可以编辑
-    var campaignIsEdite: Bool = false
+    public var campaignIsEdite: Bool = false
     init() {}
-    required init?(map: Map) {
+    required public init?(map: Map) {
     }
-    init(
+    public init(
          id: Int,
          userId: Int,
          content: String,
@@ -173,7 +173,7 @@ class FeedListModel: Mappable, Entity {
          self.hasLike = hasLike
      }
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         id <- map["id"]
         feedId = UInt64(id)
         index <- map["index"]
@@ -245,21 +245,29 @@ class FeedListModel: Mappable, Entity {
         
         campaignIsEdite <- map["is_edit"]
     }
+    static public func convert(_ object: FeedListModel?) -> String? {
+        guard let object = object else { return nil }
+        return object.toJSONString()
+    }
     
+    static public func convert(_ json: String?) -> FeedListModel? {
+        guard let json = json else { return nil }
+        return Mapper<FeedListModel>().map(JSONString: json)
+    }
 }
 
 extension FeedListModel {
     // objectbox: transient
-    var reactionType: ReactionTypes? {
+    public var reactionType: ReactionTypes? {
         return ReactionTypes.initialize(with: reactType.orEmpty)
     }
     // objectbox: transient
-    var topReactionList: [ReactionTypes]? {
+    public var topReactionList: [ReactionTypes]? {
         return StringArrayTransformer.transformToJSON(topReactions)?.compactMap { ReactionTypes.initialize(with: $0) }
     }
     // objectbox: transient
-    var userInfo: UserInfoModel {
-        return self.user ?? UserInfoModel.retrieveUser(userId: userId) ?? UserInfoModel()
+    public var userInfo: TGUserInfoModel {
+        return self.user ?? TGUserInfoModel.retrieveUser(userId: userId) ?? TGUserInfoModel()
     }
     /// 转发信息
     // objectbox: transient
@@ -270,7 +278,7 @@ extension FeedListModel {
 //        return TGRepostModel.retrieveRepost(repostId)
 //    }
     /// 动态相关用户的 id
-    func userIds() -> [Int] {
+    public func userIds() -> [Int] {
         var ids: [Int] = [userId]
         
         comments?.forEach({ comment in
@@ -280,7 +288,7 @@ extension FeedListModel {
     }
 
     /// 添加用户信息
-    func set(userInfos: [Int: UserInfoModel]) {
+    public func set(userInfos: [Int: TGUserInfoModel]) {
         // 设置动态用户信息
         if let userInfo = userInfos[userId] {
             self.user = userInfo
@@ -291,54 +299,54 @@ extension FeedListModel {
         })
     }
     
-//    func save() {
-//        let box = try? store.box(for: FeedListModel.self)
-//        try? box?.put(self)
-//    }
+    public func save() {
+        guard let json = FeedListModel.convert(self) else { return }
+        RLSDKManager.shared.feedDelegate?.saveFeedListModel(json: json)
+    }
 }
 
 /// 动态列表 评论模型
 /// - Note: 当用户不存在时，用户 id 为 0
-class FeedListCommentModel: Mappable {
+public class FeedListCommentModel: Mappable {
     /// 动态id
-    var feedid = 0
+    public var feedid = 0
     /// 评论 id
-    var id = 0
+    public var id = 0
     /// 评论者id
-    var userId = 0
+    public var userId = 0
     /// 资源作者 id
-    var targetId = 0
+    public var targetId = 0
     /// 被回复者 id（坑：如果没有被回复者，后台会返回 0）
-    var replyId = 0
+    public var replyId = 0
     /// 评论内容
-    var body = ""
+    public var body = ""
     /// 创建时间
-    var create = Date()
+    public var create = Date()
     /// 更新时间
-    var update = Date()
+    public var update = Date()
     /// 后台文档注释没有写
-    var commentableId = 0
+    public var commentableId = 0
     /// 后台文档注释没有写
-    var commentableType = ""
+    public var commentableType = ""
     /// 是否置顶
-    var pinned = false
+    public var pinned = false
     /// sticker/text
-    var contentType = ""
+    public var contentType = ""
     /// 评论者信息，需要请求用户信息接口来获取
-    var userInfo = UserInfoModel()
+    public var userInfo = TGUserInfoModel()
     /// 资源作者信息，需要请求用户信息接口来获取
-    var targetInfo = UserInfoModel()
+    public var targetInfo = TGUserInfoModel()
     /// 被回复者信息，需要请求用户信息接口来获取
-    var replyInfo: UserInfoModel? = nil
+    public var replyInfo: TGUserInfoModel? = nil
     
-    var subscribing: Bool = false
+    public var subscribing: Bool = false
     
-    var subscribingBadge: String?
+    public var subscribingBadge: String?
 
-    required init?(map: Map) {
+    required public init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         id <- map["id"]
         userId <- map["user_id"]
         targetId <- map["target_user"]
@@ -362,7 +370,7 @@ class FeedListCommentModel: Mappable {
     }
 
     /// 添加用户信息
-    func set(userInfos: [Int: UserInfoModel]) {
+    func set(userInfos: [Int: TGUserInfoModel]) {
         if let userInfo = userInfos[userId] {
             self.userInfo = userInfo
         }
@@ -386,23 +394,23 @@ class FeedListCommentModel: Mappable {
 }
 
 /// 动态商家信息
-class TGRewardsLinkMerchantUserModel: Mappable {
-    var desc: String = ""
-    var merchantId: Int = 0
-    var rating: String = ""
-    var userName: String = ""
-    var nickName: String = ""
-    var avatar: String = ""
-    var certificationIconUrl: String = ""
-    var wantedPath: String = ""
-    var wantedMid: Int = 0
+public class TGRewardsLinkMerchantUserModel: Mappable {
+    public var desc: String = ""
+    public var merchantId: Int = 0
+    public var rating: String = ""
+    public var userName: String = ""
+    public var nickName: String = ""
+    public var avatar: String = ""
+    public var certificationIconUrl: String = ""
+    public var wantedPath: String = ""
+    public var wantedMid: Int = 0
     // Rebate || Offset
-    var merchantRebate: String?
-    var merchantOffset: String?
+    public var merchantRebate: String?
+    public var merchantOffset: String?
     
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         desc       <- map["desc"]
         merchantId <- map["id"]
         rating     <- map["rating"]
@@ -434,19 +442,19 @@ class TGRewardsLinkMerchantUserModel: Mappable {
     }
 }
 /// 可付费图片 数据模型
-class FeedImageModel: Mappable {
+public class FeedImageModel: Mappable {
     /// 文件 file_with 标识 不收费图片只存在 file 这一个字段。
-    var file = 0
+    public var file = 0
     /// 图像尺寸，非图片为 null，图片没有尺寸也为 null
     // objectbox: transient
-    var size = CGSize.zero
+    public var size = CGSize.zero
     /// 图片类型 miniType
-    var mimeType: String = ""
+    public var mimeType: String = ""
 
-    required init?(map: Map) {
+    required public init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         file <- map["file"]
         size <- (map["size"], CGSizeTransform())
         mimeType <- map["mime"]
@@ -464,26 +472,26 @@ class FeedImageModel: Mappable {
 }
 
 /// 短视频 数据模型
-class FeedVideoModel: Mappable {
+public class FeedVideoModel: Mappable {
     /// 文件 file_with 标识 不收费图片只存在 file 这一个字段。
-    var videoID = 0
+    public var videoID = 0
     /// 视频宽度
-    var width = 0
+    public var width = 0
     /// 视频高度
-    var height = 0
+    public var height = 0
     /// 封面文件id
-    var videoCoverID = 0
+    public var videoCoverID = 0
 
-    var type = 0
+    public var type = 0
     
-    var soundId: String?
+    public var soundId: String?
     
-    var videoPath = ""
+    public var videoPath = ""
     
-    required init?(map: Map) {
+    required public init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         videoID <- map["video_id"]
         width <- map["width"]
         height <- map["height"]
@@ -504,7 +512,7 @@ class FeedVideoModel: Mappable {
     }
 }
 
-enum YPLiveStatus: Int {
+public enum YPLiveStatus: Int {
     // 直播中
     case onlive = 1
     // 直播结束视频处理中
@@ -514,39 +522,48 @@ enum YPLiveStatus: Int {
 }
 
 
-class FeedStoreModel: Mappable, Entity {
+public class FeedStoreModel: Mappable, Entity {
     /// 动态数据id
     // objectbox: id = { "assignable": true }
-    var feedId: Id = 0
-    var id = 0
+    public var feedId: Id = 0
+    public var id = 0
     /// 图片信息 同单条动态数据结构一致
     // objectbox: convert = { "dbType": "String", "converter": "FeedImageModel" }
-    var images: [FeedImageModel]? = nil
+    public var images: [FeedImageModel]? = nil
     /// 视频数据
     // objectbox: convert = { "dbType": "String", "converter": "FeedVideoModel" }
-    var feedVideo: FeedVideoModel? = nil
+    public var feedVideo: FeedVideoModel? = nil
     
-    init(){}
-    required init?(map: Map) {}
+    public init(){}
+    required public init?(map: Map) {}
     
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
        
+    }
+    static public func convert(_ object: FeedStoreModel?) -> String? {
+        guard let object = object else { return nil }
+        return object.toJSONString()
+    }
+    
+    static public func convert(_ json: String?) -> FeedStoreModel? {
+        guard let json = json else { return nil }
+        return Mapper<FeedStoreModel>().map(JSONString: json)
     }
 }
 
-class TagVoucherModel: Mappable {
+public class TagVoucherModel: Mappable {
 
-    var taggedVoucherId: Int = 0
-    var taggedVoucherTitle: String = ""
+    public var taggedVoucherId: Int = 0
+    public var taggedVoucherTitle: String = ""
     
     init(taggedVoucherId: Int, taggedVoucherTitle: String) {
         self.taggedVoucherTitle = taggedVoucherTitle
         self.taggedVoucherId = taggedVoucherId
     }
     
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         taggedVoucherId <- map["tagged_voucher_id"]
         taggedVoucherTitle <- map["tagged_voucher_title"]
     }

@@ -22,11 +22,13 @@ class TGCommonTool {
     
     // MARK: - 处理 @ 的输入框
     static func atMeTextViewEdit(_ textView: UITextView) -> UITextView {
-        let selectedRange = textView.selectedRange
+        var selectedRange = textView.selectedRange
         if selectedRange.location > 0 {
-            let editLeftChar = String(textView.text[textView.text.index(textView.text.startIndex, offsetBy: selectedRange.location - 1)])
+            let text = textView.text as NSString
+            let editLeftChar = text.substring(with: NSRange(location: selectedRange.location - 1, length: 1))
+            
             if editLeftChar == "@" {
-                textView.text = deleteString(from: textView.text, range: NSRange(location: selectedRange.location - 1, length: 1))
+                textView.text = TGCommonTool.deleteString(from: textView.text, range: NSRange(location: selectedRange.location - 1, length: 1))
                 textView.selectedRange = NSRange(location: selectedRange.location - 1, length: 0)
             }
         }

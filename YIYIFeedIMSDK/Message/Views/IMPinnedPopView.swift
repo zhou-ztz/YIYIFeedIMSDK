@@ -16,9 +16,9 @@ protocol IMPinnedPopViewDeleagte: AnyObject {
     func didClickFile(attachment: IMFileCollectionAttachment)
     func didClickAudio(model: FavoriteMsgModel)
     func didClickContactCard(memberId: String, popView: IMPinnedPopView)
-    func didClickEgg(attachment: IMEggAttachment, nickName: String, avatarInfo: AvatarInfo)
+    func didClickEgg(attachment: IMEggAttachment, nickName: String, avatarInfo: TGAvatarInfo)
     func didClickMeeting(meetingNum: String, meetingPw: String)
-    func didUpdateProfileData(_ data: String, avatar: AvatarInfo)
+    func didUpdateProfileData(_ data: String, avatar: TGAvatarInfo)
 }
 
 class IMPinnedPopView: UIView {

@@ -61,7 +61,7 @@ class MeetingSettingCell: UITableViewCell {
     
     func setData(model: ContactData){
         self.model = model
-        let avatarInfo = AvatarInfo()
+        let avatarInfo = TGAvatarInfo()
         avatarInfo.avatarURL = model.imageUrl
         avatarInfo.verifiedIcon = model.verifiedIcon
         avatarInfo.verifiedType = model.verifiedType

@@ -16,7 +16,7 @@ import ObjectBox
 
 typealias FoursquareLocation = TGLocationModel
 
-class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didselectCellDelegate, TGCustomAcionSheetDelegate, UIGestureRecognizerDelegate {
+public class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didselectCellDelegate, TGCustomAcionSheetDelegate, UIGestureRecognizerDelegate {
     /// 主承载视图
     @IBOutlet weak var mainView: UIView!
     // 滚动视图高度
@@ -105,17 +105,17 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     // 记录collection高度
     var releaseDynamicCollectionViewSourceHeight: CGFloat = 0.0
     /// 选择图片数据对应数据
-    var selectedPHAssets: [PHAsset] = []
+    public var selectedPHAssets: [PHAsset] = []
     /// 选择图片数据对应数据
-    var selectedModelImages: [Any] = []
+    public var selectedModelImages: [Any] = []
     
-    var shortVideoAsset: TGShortVideoAsset? {
+    public var shortVideoAsset: TGShortVideoAsset? {
         didSet {
             reloadShortVideoAsset()
         }
     }
     
-    var selectedText: String = ""
+    public var selectedText: String = ""
     
     // 是否隐藏CollectionView
     var type:  TGToolType = .photo
@@ -128,7 +128,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     /// 话题信息
     var topics: [TGTopicCommonModel] = []
     /// 转发信息
-    var repostModel: TGRepostModel?
+    public var repostModel: TGRepostModel?
     
     var sharedModel: SharedViewModel?
     
@@ -138,9 +138,9 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     var rejectPrivacyType: PrivacyType?
     
     /// 选中的动态关联用户
-    var selectedUsers: [UserInfoModel] = []
+    var selectedUsers: [TGUserInfoModel] = []
     /// 选中的动态关联商家
-    var selectedMerchants: [UserInfoModel] = []
+    var selectedMerchants: [TGUserInfoModel] = []
     /// 输入框顶部工具栏
     // 整个容器
     var toolView = UIView()
@@ -157,15 +157,15 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     var toolHeight: CGFloat = 145 + TSBottomSafeAreaHeight + 41
     
     // By Kit Foong (Check is it mini program)
-    var isMiniProgram: Bool = false
-    var isFromShareExtension: Bool = false
-    var postPhotoExtension =  [TGPostPhotoExtension]()
+    public var isMiniProgram: Bool = false
+    public var isFromShareExtension: Bool = false
+    public var postPhotoExtension =  [TGPostPhotoExtension]()
     //动态ID
-    var feedId: String?
+    public var feedId: String?
     //是否从(驳回动态/编辑)页面来
-    var isFromEditFeed: Bool = false
+    public var isFromEditFeed: Bool = false
     
-    var isPost: Bool = false
+    public var isPost: Bool = false
     
     private let beanErrorLabel: UILabel = {
         let label = UILabel()
@@ -179,7 +179,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     var isTapOtherView = false
     var isPriceTextFiledTap = false
     var isReposting = false
-    var isText = false
+    public var isText = false
     var currentIndex = 0
     private var taggedLocation: FoursquareLocation? {
         willSet  {
@@ -190,22 +190,22 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
             checkInLocationLabel.text = checkedIn.locationName
         }
     }
-    var preText: String? = nil
+    public var preText: String? = nil
     
     //封面ID
-    var coverId: Int?
+    public var coverId: Int?
     //视频ID
-    var videoId: Int?
+    public var videoId: Int?
     
-    var campaignDict: [String: Any]?
+    public var campaignDict: [String: Any]?
 
-    var voucherId: Int?
-    var voucherName: String?
-    var tagVoucher: TagVoucherModel?
-    var isVoucherRemoved: Bool = false
+    public var voucherId: Int?
+    public var voucherName: String?
+    public var tagVoucher: TagVoucherModel?
+    public var isVoucherRemoved: Bool = false
     
 //    var type:  TGToolType
-    init(type: TGToolType, isText: Bool = false, isReposting: Bool = false) {
+   public init(type: TGToolType, isText: Bool = false, isReposting: Bool = false) {
            let frameworkBundle = Bundle(identifier: "com.yiyi.feedimsdk") ?? Bundle.main
            var resourceBundle: Bundle?
 
@@ -247,7 +247,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
     }
     
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(kbWillShowNotificationProcess(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(kbWillHideNotificationProcess(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -255,7 +255,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
         NotificationCenter.default.addObserver(self, selector: #selector(fieldEndEditingNotificationProcess(_:)), name: UITextField.textDidEndEditingNotification, object: nil)
         //        NotificationCenter.default.addObserver(self, selector: #selector(topicChooseNotice(notice:)), name: NSNotification.Name(rawValue: "passPublishTopicData"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateContentTextViewTag(_:)), name: NSNotification.Name(rawValue: "isTaggingPost"), object: nil)
-        
+        self.navigationController?.isNavigationBarHidden = false
         if selectedText != "" {
             self.contentTextView.insertText(selectedText)
             contentTextView.delegate?.textViewDidChange!(contentTextView)
@@ -265,7 +265,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
             isVideoDataChanged = true
         }
     }
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
         //        NotificationCenter.default.addObserver(self, selector: #selector(topicChooseNotice(notice:)), name: NSNotification.Name(rawValue: "passPublishTopicData"), object: nil)
@@ -387,12 +387,12 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
         
         // 有转发内容
 //        if let model = self.repostModel {
-//            
+//
 //            let repostView = TGRepostView(frame: CGRect.zero)
 //            repostBgView.addSubview(repostView)
 //            repostView.cardShowType = .postView
 //            repostView.bindToEdges()
-//            
+//
 //            repostView.updateUI(model: model, shouldShowCancelButton: true)
 //            repostBgViewHeight.constant = 100
 //            // 隐藏付费选择器
@@ -405,9 +405,9 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
 //                make.top.left.right.equalToSuperview()
 //                make.height.equalTo(0.5)
 //            }
-//            
+//
 //        } else if let model = self.sharedModel {
-//            
+//
 //            let sharedView = TGRepostView(frame: .zero)
 //            repostBgView.addSubview(sharedView)
 //            sharedView.cardShowType = .postView
@@ -424,7 +424,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
 //                make.top.left.right.equalToSuperview()
 //                make.height.equalTo(0.5)
 //            }
-//            
+//
 //        } else {
             // 普通发布
             repostBgView.makeHidden()
@@ -458,7 +458,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
                 let originalName = user["name"] as? String
                 
                 let name = TGLocalRemarkName.getRemarkName(userId: nil, username: username, originalName: originalName, label: nil)
-                var userInfo = UserInfoModel()
+                var userInfo = TGUserInfoModel()
                 userInfo.userIdentity = userId
                 userInfo.id = Id(userId)
                 userInfo.username = username ?? ""
@@ -609,7 +609,7 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
         })
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         isTapOtherView = true
         if !contentTextView.isFirstResponder && !toolView.isHidden {
             toolView.isHidden = true
@@ -675,13 +675,16 @@ class TGReleasePulseViewController: UIViewController, UITextViewDelegate, didsel
         }
         
         voucherView.addTap { [weak self] (_) in
-//            let suggestVC = SuggestVoucherViewController()
-//            suggestVC.delegate = self
-//           // searchVC.onLocationSelected = setLocationBlock
-//            
-//            let presentingVC = TGNavigationController(rootViewController: suggestVC).fullScreenRepresentation
-//            self?.navigationController?.present(presentingVC, animated: true, completion: nil)
-            
+            RLSDKManager.shared.feedDelegate?.openVoucherSelection(completion: { [weak self] voucherId, voucherName in
+                guard let self = self else { return }
+                self.voucherInfoView.isHidden = false
+                self.arrowImageView.isHidden = true
+                self.voucherConstantH.constant = 100
+                self.voucherLabel.text = voucherName
+                self.voucherId = voucherId
+                self.voucherName = voucherName
+                self.isVoucherRemoved = false
+            })
         }
         
         if let tagVoucher = tagVoucher, tagVoucher.taggedVoucherId > 0 {
@@ -1052,7 +1055,7 @@ extension TGReleasePulseViewController {
 
 // MARK: - TextViewDelegate
 extension TGReleasePulseViewController {
-    func textViewDidChange(_ textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         //only enable when post type = text
         if self.isText {
             checkLinkPreview(withText: textView.text)
@@ -1068,7 +1071,7 @@ extension TGReleasePulseViewController {
         }
     }
     
-    func textViewDidChangeSelection(_ textView: UITextView) {
+    public func textViewDidChangeSelection(_ textView: UITextView) {
         /// 整体不可编辑
         // 联想文字则不修改
         let range = textView.selectedRange
@@ -1085,7 +1088,7 @@ extension TGReleasePulseViewController {
         }
     }
     
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "" {
             let selectRange = textView.selectedRange
             if selectRange.length > 0 {
@@ -1126,7 +1129,7 @@ extension TGReleasePulseViewController {
 
 // MARK: - Lifecycle
 extension TGReleasePulseViewController {
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setUI()
         // 初始化时创建配置信息都为空
@@ -1167,7 +1170,7 @@ extension TGReleasePulseViewController {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.title = "title_post_status".localized
         setReleaseButtonIsEnabled()
@@ -1178,7 +1181,7 @@ extension TGReleasePulseViewController {
         self.updateViewConstraints()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
     
@@ -1516,12 +1519,12 @@ extension TGReleasePulseViewController {
 //            if text.count > 0 {
 //                self?.insertHashTagTextIntoContent(hashTag: text)
 //                self?.contentTextView.becomeFirstResponder()
-//            
+//
 //            }else {
 //                self?.contentTextView.becomeFirstResponder()
 //                self?.contentTextView.insertText("#")
 //            }
-//            
+//
 //        }
     }
     
@@ -1535,7 +1538,7 @@ extension TGReleasePulseViewController {
     }
     
     func insertTagTextIntoContent (userId: Int? = nil, userName: String) {
-        self.contentTextView = TGCommonTool.atMeTextViewEdit(self.contentTextView) as? KMPlaceholderTextView
+        self.contentTextView = TGCommonTool.atMeTextViewEdit(self.contentTextView) as! KMPlaceholderTextView
         
         let temp = HTMLManager.shared.addUserIdToTagContent(userId: userId, userName: userName)
         let newMutableString = self.contentTextView.attributedText.mutableCopy() as! NSMutableAttributedString
@@ -1579,7 +1582,7 @@ extension TGReleasePulseViewController {
 //                TSIndicatorWindowTop.showDefaultTime(state: .faild, title: "export_video_fail".localized)
 //                return
 //            }
-//            
+//
 //            manager.getVideoWith(asset) { [weak self] item, dictionary in
 //                guard let `self` = self, let item = item else {
 //                    return
@@ -1645,7 +1648,7 @@ extension TGReleasePulseViewController {
 }
 
 extension TGReleasePulseViewController: PhotoEditorDelegate{
-    func doneEditing(image: UIImage) {
+    public func doneEditing(image: UIImage) {
         DispatchQueue.global(qos: .default).async(execute: {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.creationRequestForAsset(from: image)
@@ -1693,7 +1696,7 @@ extension TGReleasePulseViewController: PhotoEditorDelegate{
         
     }
     
-    func canceledEditing() {
+    public func canceledEditing() {
         
     }
 }
