@@ -44,10 +44,10 @@ class TGReactionHandler {
                 label.font = UIFont.systemFont(ofSize: 12)
                 label.text = reaction.title
             }
-
+            
             container.addSubview(bg)
             container.addSubview(label)
-
+            
             bg.snp.makeConstraints { v in
                 v.left.top.centerX.centerY.equalToSuperview()
                 v.height.equalTo(height)
@@ -61,13 +61,13 @@ class TGReactionHandler {
             
             bg.roundCorner(height/2)
             container.frame = CGRect(x: 0, y: 0, width: label.frame.width + padding*2, height: height)
- 
+            
             views.append(container)
         }
         return views
     }()
-
-
+    
+    
     private lazy var stackView: UIStackView = {
         return UIStackView().configure { stackView in
             stackView.distribution = .fillEqually
@@ -76,34 +76,34 @@ class TGReactionHandler {
             stackView.isLayoutMarginsRelativeArrangement = true
         }
     }()
-
+    
     lazy var iconsContainerView: UIView = {
         return createReactionView()
     }()
-
+    
     lazy var longPressGesture: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress))
     }()
     lazy var panGesture: UIPanGestureRecognizer = {
         return UIPanGestureRecognizer(target: self, action: #selector(self.handleLongPress(gesture:)))
     }()
-
+    
     var feedId: Int
     var feedItem: FeedListCellModel?
     weak var reactionView: UIView?
     weak var view: UIView?
     var apiInProgress = false
     var currentReaction: ReactionTypes?
-
+    
     var onSelect: ((_ reaction: ReactionTypes?) -> Void)?
     var onPresent: TGEmptyClosure?
     var onDismiss: TGEmptyClosure?
     var onError: ((_ fallbackReaction: ReactionTypes?, _ message: String) -> Void)?
     var onSuccess: ((_ message: String) -> Void)?
-
+    var isInnerFeed: Bool = false
     var shouldBlockInteraction: Bool = true
     private var theme: Theme = .white
-
+    
     lazy var bgView: TGTouchAbsorbingView = {
         let bg = TGTouchAbsorbingView().build { v in
             v.backgroundColor = .clear
@@ -116,8 +116,25 @@ class TGReactionHandler {
         }
         return bg
     }()
+    let reactionMapping: [ReactionTypes: ReactionTypes] = [
+          .heart: .heart,
+          .like: .heart,
+          .angry: .angry,
+          .awesome: .awesome,
+          .cry: .cry,
+          .wow: .wow
+      ]
+      
+      let blackReactionMapping: [ReactionTypes: ReactionTypes] = [
+          .heart: .blackHeart,
+          .like: .blackHeart,
+          .angry: .blackAngry,
+          .awesome: .blackAwesome,
+          .cry: .blackCry,
+          .wow: .blackWow
+      ]
 
-    init(reactionView: UIView, toAppearIn view: UIView, currentReaction: ReactionTypes?, feedId: Int, feedItem: FeedListCellModel?, shouldBlockInteraction: Bool = true, theme: Theme = .white, reactions :[ReactionTypes] = ReactionTypes.allCases, isForCollectionCell: Bool = false) {
+    init(reactionView: UIView, toAppearIn view: UIView, currentReaction: ReactionTypes?, feedId: Int, feedItem: FeedListCellModel?, shouldBlockInteraction: Bool = true, theme: Theme = .white, reactions :[ReactionTypes] = ReactionTypes.allCases, isForCollectionCell: Bool = false, isInnerFeed: Bool = false) {
         self.reactionView = reactionView
         self.view = view
         self.feedId = feedId
@@ -127,17 +144,13 @@ class TGReactionHandler {
         self.shouldBlockInteraction = shouldBlockInteraction
         self.reactions = reactions
         self.isForCollectionCell = isForCollectionCell
-
+        self.isInnerFeed = isInnerFeed
+        
         reactionView.addTap(action: { [weak self] (_) in
-//            guard TSCurrentUserInfo.share.isLogin == true else {
-//                TSRootViewController.share.guestJoinLandingVC()
-//                return
-//            }
             guard let self = self else { return }
             self.onTapReactionView()
         })
     }
-    
     func onTapReactionView() {
         weak var wself = self
         guard let cur = wself?.currentReaction else {
@@ -150,7 +163,7 @@ class TGReactionHandler {
         wself!.onSelect(reaction: nil)
         wself!.currentReaction = nil
     }
-
+    
     func onSelect(reaction: ReactionTypes?) {
         onSelect?(reaction)
         postReaction()
@@ -160,20 +173,25 @@ class TGReactionHandler {
         let containerView = UIView()
         switch theme {
         case .white: containerView.backgroundColor = .white
-        case .dark: containerView.backgroundColor = RLColor.share.black
+        case .dark: containerView.backgroundColor = TGAppTheme.materialBlack
         }
         
         reactionViews.removeAll()
-
+        
         let arrangedSubviews = reactions.enumerated().map({ (index, reaction) -> UIView in
             let custom = TGReactionSelectorView(reactionType: reaction)
             
             custom.addTap { [weak self] (_) in
                 self?.didSelectIcon = index
-                self?.onSelect(reaction: reaction)
+                
+                if let selectedReaction = self?.isInnerFeed ?? false ? self?.blackReactionMapping[reaction] : self?.reactionMapping[reaction] {
+                    self?.onSelect(reaction: selectedReaction)
+                }
+                
+                // self?.onSelect(reaction: reaction)
                 self?.reset()
             }
-//            custom.imageView.image = reaction.image
+            //            custom.imageView.image = reaction.image
             custom.tag = index
             custom.stackview.tag = index
             
@@ -181,7 +199,7 @@ class TGReactionHandler {
             reactionViews.append(custom)
             return custom
         })
-
+        
         
         stackView.removeAllArrangedSubviews()
         for subview in arrangedSubviews {
@@ -189,35 +207,35 @@ class TGReactionHandler {
         }
         
         containerView.addSubview(stackView)
-
+        
         let numIcons = CGFloat(arrangedSubviews.count)
         let width =  numIcons * self.iconHeight + (numIcons + 1) * padding
-
+        
         containerView.frame = CGRect(x: 0, y: 0, width: width, height: iconHeight + 2 * padding)
         containerView.layer.cornerRadius = containerView.frame.height / 2
-
+        
         // shadow
         containerView.layer.shadowColor = UIColor(white: 0.4, alpha: 0.4).cgColor
         containerView.layer.shadowRadius = 8
         containerView.layer.shadowOpacity = 0.5
         containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
-
+        
         stackView.frame = containerView.frame
         
         containerView.addGestureRecognizer(panGesture)
         return containerView
     }
-
-
+    
+    
     @objc func handleBgGesture(gesture: UIGestureRecognizer) {
-
+        
     }
-
-
+    
+    
     @objc func handleLongPress(gesture: UIGestureRecognizer) {
-//        guard TSCurrentUserInfo.share.isLogin else {
-//            return
-//        }
+        //        guard TSCurrentUserInfo.share.isLogin else {
+        //            return
+        //        }
         
         switch gesture.state {
         case .began:
@@ -274,12 +292,12 @@ class TGReactionHandler {
             }
         })
     }
-
+    
     fileprivate func handleGestureChanged(gesture: UIGestureRecognizer) {
         let pressedLocation = gesture.location(in: self.iconsContainerView)
         
         let fixedYLocation = CGPoint(x: pressedLocation.x, y: self.iconsContainerView.frame.height / 2)
-
+        
         let hitTestView = iconsContainerView.hitTest(fixedYLocation, with: nil)
         
         var hitChanged = false
@@ -305,7 +323,7 @@ class TGReactionHandler {
             
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 hitView.imageView.transform = CGAffineTransform(scaleX: 1.8, y: 1.8).translatedBy(x: 0, y: -self.iconHeight*0.5*self.inverseMultiplier)
-//                hitView.nameContentView.transform = CGAffineTransform(scaleX: 1, y: 1).translatedBy(x: 0, y: (-25 * 1.3*self.inverseMultiplier))
+                //                hitView.nameContentView.transform = CGAffineTransform(scaleX: 1, y: 1).translatedBy(x: 0, y: (-25 * 1.3*self.inverseMultiplier))
                 myview.transform = CGAffineTransform(translationX: location, y: startingPosY - ((5 + 45)*1.5*self.inverseMultiplier))
                 myview.alpha = 1
             })
@@ -327,7 +345,7 @@ class TGReactionHandler {
             })
         }
     }
-
+    
     fileprivate func handleGestureBegan(gesture: UIGestureRecognizer) {
         if let view = view {
             panIndex = 0
@@ -337,12 +355,12 @@ class TGReactionHandler {
                 self.view!.addSubview(bgView)
             }
             self.view!.addSubview(iconsContainerView)
-
+            
             let pressedLocation = gesture.location(in: view)
             var pressedLocationY = pressedLocation.y - (iconsContainerView.height)
             
             willShowInInverse = pressedLocation.y < 80
-
+            
             var centeredX = (view.frame.width - iconsContainerView.frame.width) / 2
             
             if isForCollectionCell {
@@ -360,14 +378,14 @@ class TGReactionHandler {
             } else {
                 pressedLocationY -= 18
             }
-
+            
             iconsContainerView.alpha = 0
             self.iconsContainerView.transform = CGAffineTransform(translationX: centeredX, y: isForCollectionCell ? pressedLocationY : pressedLocation.y)
-
+            
             let adjustedPressY = self.willShowInInverse ? self.iconsContainerView.height : self.iconsContainerView.height + 28.0 // 28-name view height
             
             self.pointOrigin = CGPoint(x: centeredX, y: pressedLocationY)
-
+            
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 self.iconsContainerView.alpha = 1
                 self.iconsContainerView.transform = CGAffineTransform(translationX: self.pointOrigin.x, y: self.pointOrigin.y)
@@ -398,15 +416,15 @@ extension TGReactionHandler {
         apiInProgress = true
         let newReaction: ReactionTypes? = didSelectIcon == nil ? nil : reactions[didSelectIcon!]
         let operation = TGReactionUpdateOperation(feedId: feedId, feedItem: feedItem, currentReaction: currentReaction, nextReaction: newReaction)
-
+        
         operation.onSuccess = { [weak self] (message) in
             self?.onSuccess?(message)
         }
-
+        
         operation.onError = { [weak self] (fallback, message) in
             self?.onError?(fallback, message)
         }
-
+        
         backgroundOperationQueue.addOperation(operation)
         operation.completionBlock = { [weak self] in
             self?.apiInProgress = false

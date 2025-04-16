@@ -8,7 +8,7 @@
 import UIKit
 import SDWebImage
 
-class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtocol {
+public class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtocol {
     
     private let stackView: UIStackView = UIStackView().configure {
         $0.axis = .horizontal
@@ -181,7 +181,7 @@ class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setData(merchant: TGRewardsLinkMerchantUserModel, isDarkBackground: Bool = false) {
+   public func setData(merchant: TGRewardsLinkMerchantUserModel, isDarkBackground: Bool = false) {
         nameLabel.text = merchant.userName
         scoreLabel.text = "\(merchant.rating) \("rewardslink_rating".localized)"
         saleLabel.text = merchant.desc
@@ -222,7 +222,7 @@ class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtocol {
         }
     }
 }
-class FeedShopButton: UIView {
+public class FeedShopButton: UIView {
     let imageView: UIImageView = UIImageView(frame: .zero).configure {
         $0.contentMode = .scaleAspectFit
     }

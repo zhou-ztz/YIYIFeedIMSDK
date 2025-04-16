@@ -212,7 +212,7 @@ class TGFeedDetailInteractiveView: UIView {
         }
       
         toolbar.backgroundColor = .clear
-        toolbar.set(items: [TGToolbarItemModel(image: "IMG_home_ico_love_white" , title: "", index: 0, titleShouldHide: false), TGToolbarItemModel(image: "IMG_home_ico_comment_normal_white", title: "", index: 1, titleShouldHide: false), TGToolbarItemModel(image: "IMG_home_ico_forward_normal_white", title: "", index: 2, titleShouldHide: false) ])
+        toolbar.set(items: [TGToolbarItemModel(image: ["IMG_home_ico_love_white"] , title: "", index: 0, titleShouldHide: false), TGToolbarItemModel(image: ["IMG_home_ico_comment_normal_white"], title: "", index: 1, titleShouldHide: false), TGToolbarItemModel(image: ["IMG_home_ico_forward_normal_white"], title: "", index: 2, titleShouldHide: false) ])
         
         commentButton.backgroundColor = UIColor(hex: 0x3A3A3A)
         commentButton.setTitleColor(UIColor(hex: 0xB4B4B4), for: .normal)
@@ -224,7 +224,7 @@ class TGFeedDetailInteractiveView: UIView {
         toolbar.snp.makeConstraints {
             $0.width.equalTo(UIScreen.main.bounds.width * 0.48)
         }
-        
+        bottomToolStackView.addArrangedSubview(UIView())
         
     }
 
@@ -235,7 +235,7 @@ class TGFeedDetailInteractiveView: UIView {
         // 设置 feedMerchantNamesView 的数据
         feedMerchantNamesView.setData(merchantList: rewardsMerchantUsers)
         feedMerchantNamesView.momentMerchantDidClick = { [weak self] merchantData in
-//               NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
+               NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
         }
         // 如果有商家，则显示 feedMerchantNamesView，否则隐藏
         feedMerchantNamesView.isHidden = !hasMerchants
@@ -301,9 +301,7 @@ class TGFeedDetailInteractiveView: UIView {
             let appId = merchantData.wantedMid
             var path = merchantData.wantedPath
             path = path + "?id=\(appId)"
-//            printIfDebug("=path = \(path)")
-//            guard let extras = TSAppConfig.share.localInfo.mpExtras else { return }
-//            miniProgramExecutor.startApplet(type: .normal(appId: extras), param: ["path": path], parentVC: parentViewController)
+            RLSDKManager.shared.imDelegate?.didPressMiniProgrom(appId: "localInfo.mpExtras", path: path)
         }
         feedShopView.isHidden = true
         
@@ -545,10 +543,32 @@ class TGFeedDetailInteractiveView: UIView {
     }
     func updateReactionButton(reactionType: ReactionTypes?) {
         
+        let reactionMapping: [ReactionTypes: ReactionTypes] = [
+            .heart: .heart,
+            .like: .heart,
+            .angry: .angry,
+            .awesome: .awesome,
+            .cry: .cry,
+            .wow: .wow
+        ]
+        
+        let blackReactionMapping: [ReactionTypes: ReactionTypes] = [
+            .heart: .blackHeart,
+            .like: .blackHeart,
+            .angry: .blackAngry,
+            .awesome: .blackAwesome,
+            .cry: .blackCry,
+            .wow: .blackWow
+        ]
+        
         if let reaction = reactionType {
-            toolbar.setImage(reaction.imageName, At: 0)
+            if !reaction.imageName.contains("black"), let selectedReaction = blackReactionMapping[reaction] {
+                toolbar.setImage([selectedReaction.imageName], At: 0)
+            } else {
+                toolbar.setImage([reaction.imageName], At: 0)
+            }
         } else {
-            toolbar.setImage("IMG_home_ico_love_white" , At: 0)
+            toolbar.setImage(["IMG_home_ico_love_white"] , At: 0)
         }
     }
 

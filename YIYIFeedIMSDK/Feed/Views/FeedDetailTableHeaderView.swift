@@ -191,8 +191,7 @@ class FeedCommentDetailTableHeaderView: UIView {
             RLSDKManager.shared.feedDelegate?.onSearchPageTapped(hashtag: hashtagString)
         }
         
-        let toolbarFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 20, height: 45)
-        toolbar.set(items: [TGToolbarItemModel(image: "", title: "", index: 0, titleShouldHide: true), TGToolbarItemModel(image: "IMG_home_ico_comment_normal", title: "", index: 1), TGToolbarItemModel(image: "", title: "", index: 2), TGToolbarItemModel(image: "IMG_home_ico_more", title: "", index: 3)])
+        toolbar.set(items: [TGToolbarItemModel(image: [""], title: "", index: 0, titleShouldHide: true), TGToolbarItemModel(image: ["IMG_home_ico_comment_normal"], title: "", index: 1), TGToolbarItemModel(image: [""], title: "", index: 2), TGToolbarItemModel(image: ["IMG_home_ico_more"], title: "", index: 3)])
     
         repostView.cardShowType = .listView
         
@@ -202,7 +201,6 @@ class FeedCommentDetailTableHeaderView: UIView {
         
         commentCountWrapperView.addArrangedSubview(commentLabel)
         commentCountWrapperView.makeHidden()
-        
         
         contentStackView.snp.makeConstraints { (m) in
             m.width.equalTo(UIScreen.main.bounds.width)
@@ -299,7 +297,7 @@ extension FeedCommentDetailTableHeaderView {
 //        }
         
         self.toolbar.setTitle((self.model.toolModel?.rewardCount).orZero.abbreviated, At: 2)
-        self.toolbar.setImage("ic_reward", At: 2)
+        self.toolbar.setImage(["ic_reward"], At: 2)
     }
     
     func updateReactionView(reactionList: [ReactionTypes?], total: Int) {
@@ -328,11 +326,11 @@ extension FeedCommentDetailTableHeaderView {
         guard let model = model else { return }
         toolbar.backgroundColor = UIColor.white
         if let reaction = reactionType {
-            toolbar.setImage(reaction.imageName, At: 0)
+            toolbar.setImage([reaction.imageName], At: 0)
             toolbar.setTitle(reaction.title, At: 0)
             toolbar.setTitleColor(TGAppTheme.softBlue, At: 0)
         } else {
-            toolbar.setImage("IMG_home_ico_love", At: 0)
+            toolbar.setImage(["IMG_home_ico_love"], At: 0)
             toolbar.setTitle("love_reaction".localized, At: 0)
             toolbar.setTitleColor(.black, At: 0)
         }
@@ -415,10 +413,18 @@ extension FeedCommentDetailTableHeaderView {
                 button.isSelected = true
                 self.translatedTexts = translates
                 self.primaryLabel.text = translates
+                self.htmlAttributedText = translates.attributonString().setTextFont(14).setlineSpacing(0)
+                if let attributedText = self.htmlAttributedText {
+                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList)
+                }
+                self.primaryLabel.attributedText = self.htmlAttributedText
+                
                 self.contentStackView.layoutSubviews()
                 self.contentStackView.setNeedsLayout()
                 self.contentStackView.layoutIfNeeded()
                 self.onTranslated?()
+                
+                
             }
         }
     }
@@ -475,14 +481,7 @@ extension FeedCommentDetailTableHeaderView {
         locationView.isUserInteractionEnabled = true
         locationView.addTap(action: { [weak self] (_) in
             guard let locationInfo = self?.locationInfo else { return }
-            //需要回调
-//            let locationVC = TSLocationDetailVC(locationID: locationInfo.locationID, locationName: locationInfo.locationName)
-//            if #available(iOS 11, *) {
-//                self?.parentViewController?.navigation(navigateType: .pushView(viewController: locationVC))
-//            } else {
-//                let nav = TSNavigationController(rootViewController: locationVC).fullScreenRepresentation
-//                self?.parentViewController?.navigation(navigateType: .presentView(viewController: nav))
-//            }
+            RLSDKManager.shared.feedDelegate?.onLocationViewTapped(locationID: locationInfo.locationID, locationName: locationInfo.locationName)
         })
         
         locationView.addSubview(stackView)
@@ -637,7 +636,7 @@ extension FeedCommentDetailTableHeaderView {
 //                DispatchQueue.main.async {
 //                    self?.parentViewController?.navigation(navigateType: .pushURL(url: _url))
 //                }
-//                
+//
 //            }
         }
         // 点击at某人

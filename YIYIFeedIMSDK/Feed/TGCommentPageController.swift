@@ -337,9 +337,11 @@ extension TGCommentPageController {
         
         let reportTarget: ReportTargetModel = ReportTargetModel(feedCommentModel: model)
         let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
-        self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
-                     animated: true,
-                     completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                         animated: true,
+                         completion: nil)
+        }
     }
     
     private func deleteComment(in cell: FeedDetailCommentTableViewCell, comment: FeedCommentListCellModel) {

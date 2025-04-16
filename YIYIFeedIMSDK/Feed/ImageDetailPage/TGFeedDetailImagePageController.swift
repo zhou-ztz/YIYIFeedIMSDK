@@ -256,10 +256,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
             self.currentVC?.interactiveView.voucherBottomView.isHidden = false
             self.currentVC?.interactiveView.voucherBottomView.voucherLabel.text = tagVoucher?.taggedVoucherTitle ?? ""
             self.currentVC?.interactiveView.voucherBottomView.voucherOnTapped = { [weak self] in
-//                let vc = VoucherDetailViewController()
-//                vc.voucherId = self?.tagVoucher?.taggedVoucherId ?? 0
-//                let nav = TSNavigationController(rootViewController: vc).fullScreenRepresentation
-//                self?.present(nav, animated: true, completion: nil)
+                RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: self?.tagVoucher?.taggedVoucherId ?? 0)
             }
         } else {
             self.currentVC?.interactiveView.voucherBottomView.isHidden = true

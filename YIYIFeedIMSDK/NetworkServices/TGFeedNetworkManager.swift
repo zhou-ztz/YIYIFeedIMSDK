@@ -325,10 +325,11 @@ class TGFeedNetworkManager: NSObject {
     
     func unpinFeed(feedId: Int, completion: @escaping (String, Int, Bool?) -> Void) {
         let path = "api/v2/feeds/\(feedId)/unpinned"
+        var parameters : [String : Any] = [:]
         TGNetworkManager.shared.request(
             urlPath: path,
-            method: .POST,
-            params: nil,
+            method: .DELETE,
+            params: parameters,
             headers: nil
         ) { data, _, error in
             guard let data = data, error == nil else {
@@ -342,13 +343,14 @@ class TGFeedNetworkManager: NSObject {
     
     func pinFeed(feedId: Int, completion: @escaping (String, Int, Bool?) -> Void) {
         let path = "api/v2/feeds/\(feedId)/pinned"
+        var parameters : [String : Any] = [:]
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,
-            params: nil,
+            params: parameters,
             headers: nil
         ) { data, _, error in
-            guard let data = data, error == nil else {
+            guard error == nil else {
                 completion("network_problem".localized, 0, false)
                 return
             }
@@ -366,7 +368,7 @@ class TGFeedNetworkManager: NSObject {
             params: nil,
             headers: nil
         ) { data, _, error in
-            guard let data = data, error == nil else {
+            guard error == nil else {
                 completion("network_problem".localized, 0, false)
                 return
             }
@@ -540,7 +542,13 @@ class TGFeedNetworkManager: NSObject {
         if hashtags.count > 0 {
             params["hashtag_names"] = hashtags
         }
-        
+        if let tagVoucher = tagVoucher {
+            let tagVoucherObjc: [String: Any] = [
+                "tagged_voucher_id" : tagVoucher.taggedVoucherId,
+                "tagged_voucher_title": tagVoucher.taggedVoucherTitle,
+            ]
+            params["tag_voucher"] = tagVoucherObjc
+        }
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,
@@ -634,7 +642,13 @@ class TGFeedNetworkManager: NSObject {
         if hashtags.count > 0 {
             params["hashtag_names"] = hashtags
         }
-        
+        if let tagVoucher = tagVoucher {
+            let tagVoucherObjc: [String: Any] = [
+                "tagged_voucher_id" : tagVoucher.taggedVoucherId,
+                "tagged_voucher_title": tagVoucher.taggedVoucherTitle,
+            ]
+            params["tag_voucher"] = tagVoucherObjc
+        }
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,
@@ -718,7 +732,14 @@ class TGFeedNetworkManager: NSObject {
         if hashtags.count > 0 {
             params["hashtag_names"] = hashtags
         }
-        
+        if let tagVoucher = tagVoucher {
+            let tagVoucherObjc: [String: Any] = [
+                "tagged_voucher_id" : tagVoucher.taggedVoucherId,
+                "tagged_voucher_title": tagVoucher.taggedVoucherTitle,
+            ]
+            params["tag_voucher"] = tagVoucherObjc
+        }
+
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,

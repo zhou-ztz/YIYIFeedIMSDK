@@ -926,6 +926,7 @@ public class TGChatViewController: TGViewController {
         }else{
             addGesture()
         }
+        keyBoardHeight = offset
         UIView.animate(withDuration: 0.15, animations: {
             
             var frame = self.chatInputView.frame

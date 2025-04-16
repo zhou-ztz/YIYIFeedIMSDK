@@ -58,7 +58,7 @@ protocol UserInfoType: Mappable  {
 
 extension UserInfoType {
     
-    func isMe() -> Bool {
+    public func isMe() -> Bool {
         return userIdentity == Int(RLSDKManager.shared.loginParma?.uid ?? 0)
     }
     

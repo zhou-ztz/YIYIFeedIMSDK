@@ -320,10 +320,7 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
     }
     
     func voucherDidTap(view: TGMiniVideoControlView) {
-//        let vc = VoucherDetailViewController()
-//        vc.voucherId = model.tagVoucher?.taggedVoucherId ?? 0
-//        vc.isMiniVideo = true
-//        self.navigationController?.pushViewController(vc, animated: true)
+        RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: model.tagVoucher?.taggedVoucherId ?? 0)
     }
     
     func sliderDidChanged(time: TimeInterval) {

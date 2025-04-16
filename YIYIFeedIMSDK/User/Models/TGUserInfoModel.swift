@@ -32,8 +32,7 @@ public struct TGUserInfoModel: UserInfoType, Mappable, Entity {
 
     // objectbox: transient
     public var remarkName: String? {
-//        return LocalRemarkName.getRemarkName(userId: "\(self.userIdentity)", username: self.username, originalName: self.name, label: nil)
-        return ""
+        return TGLocalRemarkName.getRemarkName(userId: "\(self.userIdentity)", username: self.username, originalName: self.name, label: nil)
     }
 
     public var phone: String?
@@ -412,12 +411,12 @@ extension TGUserInfoModel {
     }
 
     // objectbox: transient
-//    var isMe: Bool {
-//        guard let currentUser = CurrentUser else {
-//            return false
-//        }
-//        return self.userIdentity == currentUser.userIdentity || self.username == currentUser.username
-//    }
+    public var isMe: Bool {
+        guard let uid = RLSDKManager.shared.loginParma?.uid else {
+            return false
+        }
+        return self.userIdentity == uid
+    }
 
     // objectbox: transient
     var sexTitle: String {

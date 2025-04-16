@@ -98,7 +98,7 @@ public class TGRepostModel {
     }
 
     /// 根据typeStr更新type
-    func updataModelType() {
+    public func updataModelType() {
         if let typeStr = self.typeStr {
             if typeStr == "postWord" {
                 self.type = .postWord

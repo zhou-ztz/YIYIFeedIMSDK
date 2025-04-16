@@ -24,7 +24,7 @@ class TGUserNetworkingManager: NSObject {
             return
         }
         //这里需要进一步解析
-        let path = "api/v2/users/" + "?id=" + userIdentities.convertToString()! + "&limit=50"
+        let path = "api/v2/users" + "?id=" + userIdentities.convertToString()! + "&limit=50"
       
         TGNetworkManager.shared.request(urlPath: path, method: .GET) { data, _, error in
             guard let data = data, error == nil else {

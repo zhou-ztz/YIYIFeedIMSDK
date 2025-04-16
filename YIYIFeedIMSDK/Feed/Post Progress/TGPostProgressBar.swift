@@ -240,7 +240,7 @@ public class TGPostProgressBar: UIView {
     public var type: TGPostReleaseType = .normalType
     
     public func add(post: TGPostModel) {
-        
+        self.backgroundColor = .white
         self.addSubview(stackview)
         self.addSubview(progressBar)
         

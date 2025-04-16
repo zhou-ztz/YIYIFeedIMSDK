@@ -30,6 +30,7 @@ class TGToolbarView: UIView, TGToolBarButtonItemDelegate{
     /// item 数据模型
     var itemModels: [TGToolbarItemModel]? = nil
     
+    var paddingContentView: UIView = UIView()
     
     init() {
         super.init(frame: .zero)
@@ -62,6 +63,10 @@ class TGToolbarView: UIView, TGToolBarButtonItemDelegate{
             item.tag = tagNumberForItem + model.index
             contentView.addArrangedSubview(item)
         }
+     
+        paddingContentView.backgroundColor = .clear
+        paddingContentView.isHidden = true
+        contentView.addArrangedSubview(paddingContentView)
     }
     /// 通过 index 获取 item
     func getItemAt(_ index: Int) -> TGToolBarButtonItem {
@@ -84,7 +89,7 @@ class TGToolbarView: UIView, TGToolBarButtonItemDelegate{
         itemModels?[index] = model!
         item.setItemWithNewModel(model!)
     }
-    public func setImage(_ newImage: String, At index: Int) {
+    public func setImage(_ newImage: [String], At index: Int) {
         let item = getItemAt(index)
         let model = itemModels?[index]
         model?.image = newImage
@@ -94,6 +99,7 @@ class TGToolbarView: UIView, TGToolBarButtonItemDelegate{
     public func item(isHidden: Bool, at index: Int) {
         let item = getItemAt(index)
         item.isHidden = isHidden
+        self.paddingContentView.isHidden  = !isHidden
     }
     
     func toolbarDidSelectedItemAt(index: Int) {
@@ -108,7 +114,7 @@ class TGToolbarView: UIView, TGToolBarButtonItemDelegate{
 class TGToolbarItemModel: NSObject {
 
     /// 图像
-    var image: String? = nil
+    var image: [String]? = nil
     /// 标题
     var title: String? = nil
     
@@ -127,7 +133,7 @@ class TGToolbarItemModel: NSObject {
     ///   - imageValue: 图片名称
     ///   - titleValue: 标题
     ///   - titleShouldHide: 是否需要隐藏
-    init(image imageValue: String?, title titleValue: String?, index indexValue: Int, titleShouldHide: Bool = false) {
+    init(image imageValue: [String]?, title titleValue: String?, index indexValue: Int, titleShouldHide: Bool = false) {
         super.init()
         image = imageValue
         title = titleValue

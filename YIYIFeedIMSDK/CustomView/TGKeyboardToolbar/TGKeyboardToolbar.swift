@@ -329,6 +329,7 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
             //                self?.keyboardToolbarDelegate?.keyboardToolbarDidDismiss()
             //            }
             //            rootViewController.present(nav.fullScreenRepresentation, animated: true, completion: nil)
+            RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: voucherId)
         }
     }
     

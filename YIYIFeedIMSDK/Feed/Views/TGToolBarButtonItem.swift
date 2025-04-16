@@ -63,7 +63,7 @@ class TGToolBarButtonItem: UIView {
     func updateChildView() {
   
         // 设置 imageView 的图片
-         if let imageName = model?.image {
+        if let imageName = model?.image?.first {
              imageView.image = UIImage.set_image(named: imageName)
          }
 

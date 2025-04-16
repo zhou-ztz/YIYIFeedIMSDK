@@ -451,11 +451,12 @@ extension TGFeedContentPageController: CustomPopListProtocol {
             let webServerAddress = RLSDKManager.shared.loginParma?.webServerAddress ?? ""
             let fullUrlString = "\(webServerAddress)feeds/\(String(messagePopModel.feedId))"
             // By Kit Foong (Hide Yippi App from share)
-            let items: [Any] = [URL(string: fullUrlString), messagePopModel.titleSecond, ShareExtensionBlockerItem()]
+            guard let url = URL(string: fullUrlString) else { return }
+            let items: [Any] = [url, messagePopModel.titleSecond, ShareExtensionBlockerItem()]
             let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
             activityVC.popoverPresentationController?.sourceView = self.view
             self.present(activityVC, animated: true, completion: nil)
-        case .save(isSaved: let isSaved):
+        case .save(isSaved: _):
             let isCollect = (self.dataModel.toolModel?.isCollect).orFalse ? false : true
             TGFeedNetworkManager.shared.colloction(isCollect ? 1 : 0, feedIdentity: self.dataModel.idindex, feedItem: self.dataModel) {[weak self] result in
                 if result == true {
@@ -471,9 +472,11 @@ extension TGFeedContentPageController: CustomPopListProtocol {
         case .reportPost:
             guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: self.dataModel) else { return }
             let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
-            self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
-                         animated: true,
-                         completion: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                             animated: true,
+                             completion: nil)
+            }
             break
         case .edit:
             let model = self.dataModel

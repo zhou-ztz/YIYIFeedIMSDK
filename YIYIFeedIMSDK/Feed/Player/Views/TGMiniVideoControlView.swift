@@ -880,8 +880,7 @@ extension TGMiniVideoControlView {
             var path = merchantData.wantedPath
             path = path + "?id=\(appId)"
             print("=path = \(path)")
-//            guard let extras = TSAppConfig.share.localInfo.mpExtras else { return }
-//            miniProgramExecutor.startApplet(type: .normal(appId: extras), param: ["path": path], parentVC: parentViewController)
+            RLSDKManager.shared.imDelegate?.didPressMiniProgrom(appId: "localInfo.mpExtras", path: path)
         }
 
         readMoreLabel.snp.makeConstraints {
@@ -1272,17 +1271,18 @@ extension TGMiniVideoControlView: CustomPopListProtocol{
         case .shareExternal:
             //记录转发数
             self.forwardFeed()
-            if let model = self.model {
+            if let model = self.model, let webServerAddress = RLSDKManager.shared.loginParma?.webServerAddress {
                 let messagePopModel = TGmessagePopModel(momentModel: model)
-//                let fullUrlString = "\(TSUtil.getWebServerAddress())feeds/\(String(messagePopModel.feedId))"
-                let fullUrlString = ""
+                let fullUrlString = "\(webServerAddress)feeds/\(String(messagePopModel.feedId))"
+             
                 // By Kit Foong (Hide Yippi App from share)
-                let items: [Any] = [URL(string: fullUrlString), messagePopModel.titleSecond, ShareExtensionBlockerItem()]
+                guard let url = URL(string: fullUrlString) else { return }
+                let items: [Any] = [url, messagePopModel.titleSecond, ShareExtensionBlockerItem()]
                 let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
                 activityVC.popoverPresentationController?.sourceView = self.parentViewController?.view
                 self.parentViewController?.present(activityVC, animated: true, completion: nil)
             }
-        case .save(isSaved: let isSaved):
+        case .save(isSaved: _):
             if let data = self.model {
                 let isCollect = (data.toolModel?.isCollect).orFalse ? false : true
                 
@@ -1302,9 +1302,11 @@ extension TGMiniVideoControlView: CustomPopListProtocol{
             if let model = self.model {
                 guard let reportTarget: ReportTargetModel = ReportTargetModel(feedModel: model) else { return }
                 let reportVC: TGReportViewController = TGReportViewController(reportTarget: reportTarget)
-                self.parentViewController?.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
-                             animated: true,
-                             completion: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.parentViewController?.present(TGNavigationController(rootViewController: reportVC).fullScreenRepresentation,
+                                 animated: true,
+                                 completion: nil)
+                }
             }
         default:
             break

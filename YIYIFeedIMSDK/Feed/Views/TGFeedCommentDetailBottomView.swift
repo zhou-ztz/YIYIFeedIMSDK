@@ -104,7 +104,7 @@ class TGFeedCommentDetailBottomView: UIView {
             $0.centerY.equalToSuperview()
         }
         
-        toolbar.set(items: [TGToolbarItemModel(image: colorStyle == .normal ? "IMG_home_ico_love" : "IMG_home_ico_love_white" , title: "", index: 0, titleShouldHide: false), TGToolbarItemModel(image: colorStyle == .normal ? "IMG_home_ico_comment_normal" : "IMG_home_ico_comment_normal_white", title: "", index: 1, titleShouldHide: false), TGToolbarItemModel(image: colorStyle == .normal ? "IMG_home_ico_forward_normal" : "IMG_home_ico_forward_normal_white", title: "", index: 2, titleShouldHide: false) ])
+        toolbar.set(items: [TGToolbarItemModel(image: colorStyle == .normal ? ["IMG_home_ico_love"] : ["IMG_home_ico_love_white"] , title: "", index: 0, titleShouldHide: false), TGToolbarItemModel(image: colorStyle == .normal ? ["IMG_home_ico_comment_normal"] : ["IMG_home_ico_comment_normal_white"], title: "", index: 1, titleShouldHide: false), TGToolbarItemModel(image: colorStyle == .normal ? ["IMG_home_ico_forward_normal"] : ["IMG_home_ico_forward_normal_white"], title: "", index: 2, titleShouldHide: false) ])
         
         if self.colorStyle == .dark {
             commentButton.backgroundColor = UIColor(hex: 0x3A3A3A)
@@ -116,18 +116,35 @@ class TGFeedCommentDetailBottomView: UIView {
         }
       
         contentView.addArrangedSubview(toolbar)
+        toolbar.snp.makeConstraints {
+            $0.width.equalTo(UIScreen.main.bounds.width * 0.48)
+        }
+        contentView.addArrangedSubview(UIView())
     }
     
     public func loadToolbar(model: FeedListToolModel?, canAcceptReward: Bool, reactionType: ReactionTypes?) {
         guard let model = model else { return }
         toolbar.backgroundColor = colorStyle == .normal ? .white : .black
+
+        let blackReactionMapping: [ReactionTypes: ReactionTypes] = [
+            .heart: .blackHeart,
+            .like: .blackHeart,
+            .angry: .blackAngry,
+            .awesome: .blackAwesome,
+            .cry: .blackCry,
+            .wow: .blackWow
+        ]
+
         if let reaction = reactionType {
-            toolbar.setImage(reaction.imageName, At: 0)
-            toolbar.setTitle(reaction.title, At: 0)
+            if let selectedReaction = blackReactionMapping[reaction] {
+                toolbar.setImage([selectedReaction.imageName], At: 0)
+                toolbar.setTitle(selectedReaction.title, At: 0)
+            }
         } else {
-            toolbar.setImage(colorStyle == .normal ? "IMG_home_ico_love" : "IMG_home_ico_love_white" , At: 0)
-            toolbar.setTitle("love_reaction".localized, At: 0)
+            toolbar.setImage(colorStyle == .normal ? ["IMG_home_ico_love"] : ["IMG_home_ico_love_white"] , At: 0)
+            toolbar.setTitle("0", At: 0)
         }
+        
         // 设置点赞数量
         toolbar.setTitle(model.diggCount.abbreviated, At: 0)
         // 设置评论按钮

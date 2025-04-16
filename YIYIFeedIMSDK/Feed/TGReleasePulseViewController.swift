@@ -203,7 +203,10 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
     public var voucherName: String?
     public var tagVoucher: TagVoucherModel?
     public var isVoucherRemoved: Bool = false
-    
+    var isMiniVideo: Bool = false
+    private var videoType: TGVideoType {
+        return isMiniVideo ? .miniVideo : .normalVideo
+    }
 //    var type:  TGToolType
    public init(type: TGToolType, isText: Bool = false, isReposting: Bool = false) {
            let frameworkBundle = Bundle(identifier: "com.yiyi.feedimsdk") ?? Bundle.main
@@ -225,6 +228,7 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
            self.isText = isText
            self.isReposting = isReposting
            self.type = type
+           self.isMiniVideo = type == .miniVideo
        }
     func reloadShortVideoAsset() {
         guard let previewImageView = self.previewImageView else {
@@ -1024,7 +1028,7 @@ extension TGReleasePulseViewController {
             }
         }
         if self.type == .miniVideo {
-            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: self.privacyType.rawValue, repostModel: nil, shareModel: nil, topics: self.topics, taggedLocation: self.taggedLocation, phAssets: nil, postPhoto: nil, video: shortVideoAsset, soundId: nil, videoType: nil, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: nil, rejectNeedsUploadVideo: isVideoDataChanged, videoCoverId: coverId, videoDataId: videoId, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher)
+            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: self.privacyType.rawValue, repostModel: nil, shareModel: nil, topics: self.topics, taggedLocation: self.taggedLocation, phAssets: nil, postPhoto: nil, video: shortVideoAsset, soundId: nil, videoType: self.videoType, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: nil, rejectNeedsUploadVideo: isVideoDataChanged, videoCoverId: coverId, videoDataId: videoId, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher)
             if campaignDict != nil {
                 TGPostTaskManager.shared.addTask(postModel, type: .campaign)
             } else {
@@ -1743,14 +1747,3 @@ extension TGReleasePulseViewController: MiniVideoCoverPickerDelegate {
         self.shortVideoAsset = TGShortVideoAsset(coverImage: image, asset: asset.asset, videoFileURL: asset.videoFileURL)
     }
 }
-//extension TGReleasePulseViewController: SuggestVoucherDelegate {
-//    func selectedVoucher(voucherId: Int, voucherName: String) {
-//        self.voucherInfoView.isHidden = false
-//        self.arrowImageView.isHidden = true
-//        self.voucherConstantH.constant = 100
-//        self.voucherLabel.text = voucherName
-//        self.voucherId = voucherId
-//        self.voucherName = voucherName
-//        self.isVoucherRemoved = false
-//    }
-//}

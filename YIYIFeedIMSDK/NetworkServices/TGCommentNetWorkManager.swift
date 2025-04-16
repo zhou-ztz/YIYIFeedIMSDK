@@ -15,7 +15,7 @@ class TGCommentNetWorkManager: NSObject {
     
     func pinComment(for commentId: Int, sourceId: Int, complete: @escaping ((_ msg: String?, _ status: Bool) -> Void)) -> Void {
         
-        let path = "feeds/\(sourceId)/comments/\(commentId)/pinned"
+        let path = "api/v2/feeds/\(sourceId)/comments/\(commentId)/pinned"
         
         TGNetworkManager.shared.request(
             urlPath: path,
@@ -23,77 +23,48 @@ class TGCommentNetWorkManager: NSObject {
             params: nil,
             headers: nil
         ) { data, _, error in
-            guard let data = data, error == nil else {
+            guard error == nil else {
                 complete(nil, false)
                 return
             }
-            do {
-                if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    
-                    let comment = Mapper<BaseModelResponse>().map(JSONObject: jsonDict)
-                    complete(comment?.message, true)
-                }
-            } catch {
-                print("JSON 解析失败: \(error)")
-                complete("error_data_server_return".localized, false)
-            }
-            
+            complete("", true)
         }
     }
     
     func unpinComment(for commentId: Int, sourceId: Int, complete: @escaping ((_ msg: String?, _ status: Bool) -> Void)) -> Void {
         
         
-        let path = "feeds/\(sourceId)/comments/\(commentId)/unpinned"
+        let path = "api/v2/feeds/\(sourceId)/comments/\(commentId)/unpinned"
         
-        TGNetworkManager.shared.request(
-            urlPath: path,
-            method: .POST,
-            params: nil,
-            headers: nil
-        ) { data, _, error in
-            guard let data = data, error == nil else {
-                complete(nil, false)
-                return
-            }
-            do {
-                if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    
-                    let comment = Mapper<BaseModelResponse>().map(JSONObject: jsonDict)
-                    complete(comment?.message, true)
-                }
-            } catch {
-                print("JSON 解析失败: \(error)")
-                complete("error_data_server_return".localized, false)
-            }
-            
-        }
-    }
-    
-    func deleteComment(for type: TGCommentType, commentId: Int, sourceId: Int, complete: @escaping ((_ msg: String?, _ status: Bool) -> Void)) -> Void {
-        // 1. url
-        let path = "feeds/\(sourceId)/comments/\(commentId)"
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .DELETE,
             params: nil,
             headers: nil
         ) { data, _, error in
-            guard let data = data, error == nil else {
+            guard error == nil else {
                 complete(nil, false)
                 return
             }
-            do {
-                if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    
-                    let comment = Mapper<BaseModelResponse>().map(JSONObject: jsonDict)
-                    complete(comment?.message, true)
-                }
-            } catch {
-                print("JSON 解析失败: \(error)")
-                complete("error_data_server_return".localized, false)
-            }
+            complete("", true)
             
+        }
+    }
+    
+    func deleteComment(for type: TGCommentType, commentId: Int, sourceId: Int, complete: @escaping ((_ msg: String?, _ status: Bool) -> Void)) -> Void {
+        // 1. url
+        let path = "api/v2/feeds/\(sourceId)/comments/\(commentId)"
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .DELETE,
+            params: nil,
+            headers: nil
+        ) { data, _, error in
+            guard error == nil else {
+                complete(nil, false)
+                return
+            }
+            complete("", true)
         }
     }
     

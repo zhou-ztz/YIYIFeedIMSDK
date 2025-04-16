@@ -37,13 +37,13 @@ public class TSPostLocationModel: Mappable {
     }
 }
 
-class TGPostLocationModel: Codable {
+public class TGPostLocationModel: Codable {
     
-    var locationID: String?
-    var locationName: String?
-    var locationLatitude: Float?
-    var locationLongtitude: Float?
-    var address: String?
+    public var locationID: String?
+    public var locationName: String?
+    public var locationLatitude: Float?
+    public var locationLongtitude: Float?
+    public var address: String?
 
     enum CodingKeys: String, CodingKey {
         case locationID = "lid"

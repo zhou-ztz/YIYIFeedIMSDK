@@ -157,7 +157,7 @@ public class FeedListCellModel: NSObject{
     public var liveModel: LiveEntityModel? = nil
 
     //商户列表信息
-    var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel] = []
+    public var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel] = []
     
     var tagUsers: [TGUserInfoModel] = []
     
