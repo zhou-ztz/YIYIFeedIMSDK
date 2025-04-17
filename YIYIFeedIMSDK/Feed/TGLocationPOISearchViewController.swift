@@ -158,7 +158,7 @@ class TGLocationPOISearchViewController: TGViewController {
         
 
         view.backgroundColor = RLColor.inconspicuous.background
-        setCloseButton(backImage: true, titleStr: "check_in".localized)
+        self.customNavigationBar.backItem.setTitle("check_in".localized, for: .normal)
         navigationController?.automaticallyAdjustsScrollViewInsets = false
      
     }

@@ -126,6 +126,15 @@ class TGFeedCommentDetailBottomView: UIView {
         guard let model = model else { return }
         toolbar.backgroundColor = colorStyle == .normal ? .white : .black
 
+        let reactionMapping: [ReactionTypes: ReactionTypes] = [
+            .heart: .heart,
+            .like: .heart,
+            .angry: .angry,
+            .awesome: .awesome,
+            .cry: .cry,
+            .wow: .wow
+        ]
+        
         let blackReactionMapping: [ReactionTypes: ReactionTypes] = [
             .heart: .blackHeart,
             .like: .blackHeart,
@@ -134,9 +143,11 @@ class TGFeedCommentDetailBottomView: UIView {
             .cry: .blackCry,
             .wow: .blackWow
         ]
-
+        
+        let finalReactionMapping = self.colorStyle == .dark ? blackReactionMapping : reactionMapping
+        
         if let reaction = reactionType {
-            if let selectedReaction = blackReactionMapping[reaction] {
+            if let selectedReaction = finalReactionMapping[reaction] {
                 toolbar.setImage([selectedReaction.imageName], At: 0)
                 toolbar.setTitle(selectedReaction.title, At: 0)
             }

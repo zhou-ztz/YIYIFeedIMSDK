@@ -566,7 +566,7 @@
 		F5CD2C7A2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C6E2CFEB4C400EA7C7A /* TGFeedInfoDetailViewController.swift */; };
 		F5CD2C7B2CFEB4C400EA7C7A /* FeedListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C5F2CFEB4C400EA7C7A /* FeedListModel.swift */; };
 		F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */; };
-		F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */; };
+		F5CD2C7E2CFEB4C400EA7C7A /* FeedCommentDetailTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C682CFEB4C400EA7C7A /* FeedCommentDetailTableHeaderView.swift */; };
 		F5CD2C7F2CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */; };
 		F5CD2C832CFEB51C00EA7C7A /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C802CFEB51C00EA7C7A /* StoreManager.swift */; };
 		F5CD2C842CFEB51C00EA7C7A /* TGAppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CD2C812CFEB51C00EA7C7A /* TGAppTheme.swift */; };
@@ -1139,7 +1139,7 @@
 		F5CD2C642CFEB4C400EA7C7A /* TSPostLocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSPostLocationModel.swift; sourceTree = "<group>"; };
 		F5CD2C662CFEB4C400EA7C7A /* AvatarUserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUserNameView.swift; sourceTree = "<group>"; };
 		F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedDetailCommentTableViewCell.swift; sourceTree = "<group>"; };
-		F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedDetailTableHeaderView.swift; sourceTree = "<group>"; };
+		F5CD2C682CFEB4C400EA7C7A /* FeedCommentDetailTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCommentDetailTableHeaderView.swift; sourceTree = "<group>"; };
 		F5CD2C692CFEB4C400EA7C7A /* FeedImageSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageSliderView.swift; sourceTree = "<group>"; };
 		F5CD2C6A2CFEB4C400EA7C7A /* FeedToolBarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedToolBarButton.swift; sourceTree = "<group>"; };
 		F5CD2C6C2CFEB4C400EA7C7A /* TGMomentDetailNavTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMomentDetailNavTitle.swift; sourceTree = "<group>"; };
@@ -2130,7 +2130,7 @@
 			children = (
 				F5CD2C662CFEB4C400EA7C7A /* AvatarUserNameView.swift */,
 				F5CD2C672CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift */,
-				F5CD2C682CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift */,
+				F5CD2C682CFEB4C400EA7C7A /* FeedCommentDetailTableHeaderView.swift */,
 				F5CD2C692CFEB4C400EA7C7A /* FeedImageSliderView.swift */,
 				F5CD2C6A2CFEB4C400EA7C7A /* FeedToolBarButton.swift */,
 				D711C85C2D1BEB04004EA26B /* TGFeedCommentDetailBottomView.swift */,
@@ -2820,7 +2820,7 @@
 				D76668D92D34FD500086F90E /* Date+Extension.swift in Sources */,
 				F5CD2C7C2CFEB4C400EA7C7A /* TSPostLocationModel.swift in Sources */,
 				D7AD6A9F2D390EBF006A3A1F /* TGOBSManager.swift in Sources */,
-				F5CD2C7E2CFEB4C400EA7C7A /* FeedDetailTableHeaderView.swift in Sources */,
+				F5CD2C7E2CFEB4C400EA7C7A /* FeedCommentDetailTableHeaderView.swift in Sources */,
 				F5CD2C7F2CFEB4C400EA7C7A /* FeedDetailCommentTableViewCell.swift in Sources */,
 				D7ED1C702D3DFF3500B7F95D /* TGReactionController.swift in Sources */,
 				8A9F0DC52CF451E90021462C /* Action.swift in Sources */,

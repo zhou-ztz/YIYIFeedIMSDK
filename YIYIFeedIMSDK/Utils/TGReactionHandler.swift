@@ -155,8 +155,8 @@ class TGReactionHandler {
         weak var wself = self
         guard let cur = wself?.currentReaction else {
             self.didSelectIcon = 0
-            wself?.onSelect(reaction: .heart)
-            wself?.currentReaction = .heart
+            wself?.onSelect(reaction: isInnerFeed ? .blackHeart : .heart)
+            wself?.currentReaction = isInnerFeed ? .blackHeart : .heart
             return
         }
         self.didSelectIcon = nil

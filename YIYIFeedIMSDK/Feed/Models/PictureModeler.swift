@@ -29,19 +29,7 @@ public class PictureModeler {
     /// 图片类型
     public var mimeType: String = ""
 
-    // MARK: Object
-//    func object() -> PictureObject {
-//        let object = PictureObject()
-//        object.url = url
-//        object.cache = cache
-//        object.originalWidth = originalSize.width
-//        object.originalHeight = originalSize.height
-//        object.shouldClearCache = shouldClearCache
-//        object.shouldShowLongicon = shouldShowLongicon
-//        object.mimeType = mimeType
-//        object.vendor = vendor
-//        return object
-//    }
+    
 }
 
 public class PaidPictureModel: PictureModeler {

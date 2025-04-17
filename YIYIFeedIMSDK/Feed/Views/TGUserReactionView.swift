@@ -25,12 +25,12 @@ class TGUserReactionView: UIView {
         stack.axis = .horizontal
         stack.alignment = .fill
         stack.distribution = .fill
-        stack.spacing = 1.5
+        stack.spacing = -5
         stack.backgroundColor = .clear
-
+        stack.transform = CGAffineTransform(scaleX: -1, y: 1)
         return stack
     }()
-
+    
     private let label: UILabel = {
         let label = UILabel()
         label.backgroundColor = .clear
@@ -62,13 +62,33 @@ class TGUserReactionView: UIView {
         containerStack.bindToEdges()
     }
 
-    func setData(reactionIcon: [ReactionTypes?], totalReactionCount: Int, labelTextColor: UIColor? = nil) {
+    func setData(reactionIcon: [ReactionTypes?], totalReactionCount: Int, labelTextColor: UIColor? = nil, isInnerFeed: Bool = false) {
         let maxIcon = 3
         iconStack.removeAllArrangedSubviews()
         let count = (reactionIcon.count > 0) ? min(reactionIcon.count, maxIcon) : 1
-        for index in 0..<count {
+        for (index, reaction) in reactionIcon.enumerated() {
             let imageView = UIImageView()
-            imageView.image = (reactionIcon.count > 0) ? reactionIcon[index]?.image : UIImage(named: "red_heart")
+            
+            let reactionImageMap: [ReactionTypes: String] = [
+                .heart: "love",
+                .wow: "wow",
+                .angry: "angry",
+                .awesome: "yay",
+                .cry: "cry"
+            ]
+
+            if let reaction = reaction {
+                if let baseImageName = reactionImageMap[reaction] {
+                    imageView.image = UIImage(named: isInnerFeed ? "\(baseImageName)_black" : baseImageName)
+                } else {
+                    imageView.image = UIImage(named: isInnerFeed ? "love_black" : "love")
+                }
+                print("Index: \(index), Reaction: \(reaction)")
+            } else {
+                imageView.image = UIImage(named: isInnerFeed ? "love_black" : "love")
+                print("Index: \(index), Reaction is nil")
+            }
+
             iconStack.addArrangedSubview(imageView)
             imageView.snp.makeConstraints {
                 $0.width.height.equalTo(18)

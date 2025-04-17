@@ -611,8 +611,10 @@ extension TGMiniVideoPageViewController: CustomPopListProtocol{
                   guard let self = self else { return }
                   TGFeedNetworkManager.shared.deleteMoment(model.idindex) { [weak self] (result) in
                       guard let self = self else { return }
-                      NotificationCenter.default.post(name: NSNotification.Name(rawValue: "feedDelete"), object: nil, userInfo: ["feedId": feedId])
-                      self.navigationController?.popViewController(animated: true)
+                      DispatchQueue.main.async {
+                          NotificationCenter.default.post(name: NSNotification.Name(rawValue: "feedDelete"), object: nil, userInfo: ["feedId": feedId])
+                          self.navigationController?.popViewController(animated: true)
+                      }
                   }
               }, cancelButtonTitle: "cancel".localized)
   

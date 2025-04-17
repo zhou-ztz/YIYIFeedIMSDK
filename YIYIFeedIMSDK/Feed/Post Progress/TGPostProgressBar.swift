@@ -10,10 +10,10 @@ import MobileCoreServices
 import Photos
 
 public struct TGShortVideoAsset {
-    let coverImage: UIImage?
-    let asset: PHAsset?
+    public let coverImage: UIImage?
+    public let asset: PHAsset?
 //    let recorderSession: SCRecordSession?
-    let videoFileURL: URL?
+    public let videoFileURL: URL?
     public init(coverImage: UIImage? = nil, asset: PHAsset? = nil, videoFileURL: URL? = nil) {
         self.coverImage = coverImage
         self.asset = asset
@@ -976,22 +976,22 @@ public class TGPostProgressBar: UIView {
 
 
 public struct TGPostModel {
-    let feedMark: Int
-    let isHotFeed: Bool
-    let feedContent: String
-    let privacy: String
+    public let feedMark: Int
+    public let isHotFeed: Bool
+    public let feedContent: String
+    public let privacy: String
     let repostModel: TGRepostModel?
     let shareModel: SharedViewModel?
     let topics: [TGTopicCommonModel]?
     let taggedLocation: TGLocationModel?
     
     // photo
-    let phAssets: [PHAsset]?
+    public let phAssets: [PHAsset]?
     let postPhoto: [TGPostPhotoExtension]?
 
     // video
-    let video: TGShortVideoAsset?
-    let soundId: String?
+    public let video: TGShortVideoAsset?
+    public let soundId: String?
     let videoType: TGVideoType?
     let postVideo: [TGPostVideoExtension]?
     
@@ -1011,17 +1011,17 @@ public struct TGPostModel {
         return false
     }
     //是否提交被驳回的动态
-    let isEditFeed: Bool
+    public let isEditFeed: Bool
     //动态id
-    let feedId: String?
+    public let feedId: String?
     //图片资源
-    let images: [Any]?
+    public let images: [Any]?
     //是否需要重新上传视频资源
-    let rejectNeedsUploadVideo: Bool?
+    public let rejectNeedsUploadVideo: Bool?
     //视频封面Id
-    let videoCoverId: Int?
+    public let videoCoverId: Int?
     //视频Id
-    let videoDataId: Int?
+    public let videoDataId: Int?
     //记录发布动态时标记的用户IDs
     let tagUsers: [TGUserInfoModel]?
     //记录发布动态时标记的商家IDs

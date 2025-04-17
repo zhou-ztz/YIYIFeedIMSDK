@@ -579,8 +579,8 @@ class TGFeedDetailInteractiveView: UIView {
             }
             return
         }
-        reactionView.setData(reactionIcon: topReactionList, totalReactionCount: totalReactions, labelTextColor: UIColor.white)
-
+        reactionView.setData(reactionIcon: topReactionList, totalReactionCount: totalReactions, labelTextColor: UIColor.white, isInnerFeed: true)
+        
         if reactionView.superview == nil {
             let paddingView = UIView()
             paddingView.addSubview(reactionView)
@@ -592,7 +592,7 @@ class TGFeedDetailInteractiveView: UIView {
     }
 
     func updateUserReacitonData(topReactionList: [ReactionTypes?], totalReactions: Int) {
-        reactionView.setData(reactionIcon: topReactionList, totalReactionCount: totalReactions, labelTextColor: UIColor.white)
+        reactionView.setData(reactionIcon: topReactionList, totalReactionCount: totalReactions, labelTextColor: UIColor.white, isInnerFeed: true)
     }
 
     func fadeOut() {
@@ -636,7 +636,7 @@ class TGFeedDetailInteractiveView: UIView {
         
     
         let likeItem = toolbar.getItemAt(0)
-        reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self, currentReaction: reactionType, feedId: feedId, feedItem: feedItem, theme: .white, reactions: [.heart,.awesome,.wow,.cry,.angry])
+        reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self, currentReaction: reactionType, feedId: feedId, feedItem: feedItem, theme: .white, reactions: [.heart,.awesome,.wow,.cry,.angry], isInnerFeed: true)
         reactionHandler?.onError = { [weak self] (fallback, message) in
             DispatchQueue.main.async {
                 guard let self = self else { return }

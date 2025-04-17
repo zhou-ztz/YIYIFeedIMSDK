@@ -9,15 +9,15 @@ import UIKit
 import ObjectMapper
 /// 话题列表 话题model
 
-class TopicListModel: Mappable {
+public class TopicListModel: Mappable {
     var topicId: Int = 0
     var topicTitle: String = ""
 //    var topicLogo: TSNetFileModel?
     var topicFollow = false
 
-    required init?(map: Map) {}
+    required public init?(map: Map) {}
 
-    func mapping(map: Map) {
+    public func mapping(map: Map) {
         topicId <- map["id"]
         topicTitle <- map["name"]
 //        topicLogo <- map["logo"]

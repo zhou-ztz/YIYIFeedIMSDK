@@ -177,7 +177,7 @@ class FeedCommentDetailTableHeaderView: UIView {
         primaryLabel.lineSpacing = 6
         primaryLabel.lineBreakMode = .byWordWrapping
         primaryLabel.textAlignment = .left
-        primaryLabel.handleURLTap { [weak self] (url) in
+        primaryLabel.handleURLTap { (url) in
             DispatchQueue.main.async {
                 RLSDKManager.shared.feedDelegate?.didOpenDeepLink(deepLink: url.absoluteString)
             }
@@ -187,7 +187,7 @@ class FeedCommentDetailTableHeaderView: UIView {
             HTMLManager.shared.handleMentionTap(name: name, attributedText: self.htmlAttributedText)
         }
         
-        primaryLabel.handleHashtagTap { [weak self] (hashtagString) in
+        primaryLabel.handleHashtagTap { (hashtagString) in
             RLSDKManager.shared.feedDelegate?.onSearchPageTapped(hashtag: hashtagString)
         }
         
@@ -205,13 +205,6 @@ class FeedCommentDetailTableHeaderView: UIView {
         contentStackView.snp.makeConstraints { (m) in
             m.width.equalTo(UIScreen.main.bounds.width)
         }
-        
-        //        toolbar.snp.makeConstraints { (m) in
-        //            m.top.equalTo(contentStackView.snp.bottom).offset(8)
-        //            m.left.equalToSuperview().offset(0)
-        //            m.width.equalToSuperview()
-        //            m.height.equalTo(45)
-        //        }
         
         commentCountWrapperView.snp.makeConstraints { (m) in
             m.left.equalToSuperview().offset(0)
@@ -291,15 +284,6 @@ extension FeedCommentDetailTableHeaderView {
         contentView.layoutIfNeeded()
     }
     
-    func updateRewardView() {
-//        guard TSAppConfig.share.localInfo.isOpenReward == true && TSAppConfig.share.localInfo.isFeedReward == true else {
-//            return
-//        }
-        
-        self.toolbar.setTitle((self.model.toolModel?.rewardCount).orZero.abbreviated, At: 2)
-        self.toolbar.setImage(["ic_reward"], At: 2)
-    }
-    
     func updateReactionView(reactionList: [ReactionTypes?], total: Int) {
         if reactionList.count > 0 {
             reactionView.superview?.makeVisible()
@@ -366,8 +350,10 @@ extension FeedCommentDetailTableHeaderView {
         
         reactionView.setData(reactionIcon: reactionList, totalReactionCount: totalReactions)
         reactionView.addTap { [weak self] _ in
-            let vc = TGReactionController(feedId: feedId)
-            self?.parentViewController?.navigationController?.pushViewController(vc, animated: true)
+            guard let model = self?.model else { return }
+            let vc = TGResponsePageController(theme: .white, feed: model, defaultSegment: 1, onToolbarUpdate: nil)
+            let nav = UINavigationController(rootViewController: vc).fullScreenRepresentation
+            self?.parentViewController?.present(nav, animated: true, completion: nil)
         }
         reactionPaddingView.isHidden = !(reactionList.count > 0)
         contentStackView.addArrangedSubview(reactionPaddingView)
@@ -461,7 +447,7 @@ extension FeedCommentDetailTableHeaderView {
         }
         
         icon.snp.makeConstraints { make in
-            make.width.equalTo(18)
+            make.width.equalTo(20)
         }
         
         let label = UILabel()

@@ -29,6 +29,7 @@ public class TGRejectListController: TGViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.customNavigationBar.backItem.setTitle("rejected_post".localized, for: .normal)
         self.backBaseView.addSubview(rejectListTableView)
         rejectListTableView.mj_header = SCRefreshHeader(refreshingTarget: self, refreshingAction: #selector(getData))
         rejectListTableView.mj_footer = SCRefreshFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreList))

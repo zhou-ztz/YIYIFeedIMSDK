@@ -49,6 +49,7 @@ class TGAtPeopleAndMechantListVC: TGViewController, UIPageViewControllerDataSour
             
             self.selectedBlock?(nil, .people)
         })
+        self.customNavigationBar.backItem.setTitle("tag_title_ppl_merchant".localized, for: .normal)
         view.backgroundColor = .white
         setUI()
     }

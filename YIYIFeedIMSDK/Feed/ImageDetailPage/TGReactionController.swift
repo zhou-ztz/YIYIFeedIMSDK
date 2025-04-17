@@ -45,8 +45,6 @@ class TGReactionController: UIViewController {
 
     convenience init(feedId: Int) {
         self.init(theme: .white, feedId: feedId)
-        //self.setCloseButton(backImage: true, titleStr: "title_reactions_list".localized)
-        self.isNavTransparent = false
     }
     
     required init?(coder: NSCoder) { fatalError() }

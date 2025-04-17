@@ -231,7 +231,7 @@ class TGMiniVideoControlView: UIView {
         
         if let feed = self.model, let count = feed.toolModel?.diggCount, count > 0 {
             reactionList.makeVisible()
-            reactionList.setData(reactionIcon: feed.topReactionList, totalReactionCount: count, labelTextColor: UIColor.init(hex: 0x929292))
+            reactionList.setData(reactionIcon: feed.topReactionList, totalReactionCount: count, labelTextColor: UIColor.init(hex: 0x929292), isInnerFeed: true)
         } else {
             reactionList.makeHidden()
         }
@@ -297,11 +297,11 @@ class TGMiniVideoControlView: UIView {
     
     private func setBottomViewData() {
         guard let model = model else { return }
-    
+        
         bottomToolBarView.loadToolbar(model: model.toolModel, canAcceptReward: model.canAcceptReward == 1 ? true : false, reactionType: model.reactionType)
 
         let likeItem = bottomToolBarView.toolbar.getItemAt(0)
-        reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self.parentViewController?.view ?? UIView(), currentReaction: model.reactionType, feedId: model.idindex, feedItem: model, reactions: [.heart,.awesome,.wow,.cry,.angry])
+        reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self.parentViewController?.view ?? UIView(), currentReaction: model.reactionType, feedId: model.idindex, feedItem: model, reactions: [.heart,.awesome,.wow,.cry,.angry], isInnerFeed: true)
         
         likeItem.addGestureRecognizer(reactionHandler!.longPressGesture)
         
@@ -1181,7 +1181,7 @@ extension TGMiniVideoControlView {
         
         if let feed = self.model, let count = feed.toolModel?.diggCount, count > 0 {
             reactionList.makeVisible()
-            reactionList.setData(reactionIcon: feed.topReactionList, totalReactionCount: count, labelTextColor: UIColor.init(hex: 0x929292))
+            reactionList.setData(reactionIcon: feed.topReactionList, totalReactionCount: count, labelTextColor: UIColor.init(hex: 0x929292), isInnerFeed: true)
             toolbaritem.titleLabel.text = count.stringValue
         } else {
             reactionList.makeHidden()
@@ -1196,7 +1196,7 @@ extension TGMiniVideoControlView {
         self.model = feed
         if let feed = self.model, let count = feed.toolModel?.diggCount, count > 0 {
             reactionList.makeVisible()
-            reactionList.setData(reactionIcon: feed.topReactionList, totalReactionCount: count, labelTextColor: UIColor.init(hex: 0x929292))
+            reactionList.setData(reactionIcon: feed.topReactionList, totalReactionCount: count, labelTextColor: UIColor.init(hex: 0x929292), isInnerFeed: true)
         } else {
             reactionList.makeHidden()
             let toolbaritem = bottomToolBarView.toolbar.getItemAt(0)

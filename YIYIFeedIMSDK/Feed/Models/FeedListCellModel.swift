@@ -111,7 +111,7 @@ public class FeedListCellModel: NSObject{
     /// 文章来源，为空则不显示
     @objc dynamic var from = ""
     /// 话题，为空则不显示评论
-    var topics: [TopicListModel] = []
+    public var topics: [TopicListModel] = []
     /// 工具栏信息，为 nil 则不显示工具栏
     public var toolModel: FeedListToolModel?
     /// 评论，为空则不显示评论
@@ -119,7 +119,7 @@ public class FeedListCellModel: NSObject{
 
     public var time: Date?
 
-    var location: TSPostLocationModel?
+    public var location: TSPostLocationModel?
     /// 在线视频播放地址
     public var videoURL: String = ""
     // By Kit Foong (Added video height and width property)
