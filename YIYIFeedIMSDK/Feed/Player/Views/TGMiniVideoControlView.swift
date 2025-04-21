@@ -139,12 +139,13 @@ class TGMiniVideoControlView: UIView {
 //        printIfDebug("deinit MiniVideoControlView")
     }
     
-    func setFeed(_ feed: FeedListCellModel?, _ isTranslate: Bool) {
+    func setFeed(_ feed: FeedListCellModel?, _ isTranslate: Bool, _ isExpand: Bool) {
         guard let feed = feed else { return }
-        self.updateFeed(feed, isTranslate)
+        
+        self.updateFeed(feed, isTranslate, isExpand)
         if let imageUrl = feed.pictures.first?.url, let url = URL(string: imageUrl) {
             // By Kit Foong (Update Image full screen by checking video height and width)
-            let aspectRatio = feed.videoHeight / feed.videoWidth
+            var aspectRatio = feed.videoHeight / feed.videoWidth
             if aspectRatio >= 1.25 {
                 coverImageView.contentMode = .scaleAspectFill
             } else {
@@ -158,12 +159,14 @@ class TGMiniVideoControlView: UIView {
         playBtn.isHidden = true
     }
     
-    func updateFeed(_ feed: FeedListCellModel?, _ isTranslate: Bool = false) {
+    
+    func updateFeed(_ feed: FeedListCellModel?, _ isTranslate: Bool = false, _ isExpand: Bool = false) {
         guard let feed = feed else { return }
-        self.model = feed
-
-        readMoreLabel.numberOfLines = 2
         
+        self.model = feed
+        
+        readMoreLabel.numberOfLines = 2
+        readMoreLabel.isExpand = isExpand
         if feed.content != originalTexts {
             translateButton.isSelected = false
             translatedTexts = ""
@@ -382,15 +385,9 @@ class TGMiniVideoControlView: UIView {
             // By Kit Foong (Added action for location view)
             locationView.isUserInteractionEnabled = true
             
-            locationView.addTap(action: { [weak self] (_) in
+            locationView.addTap(action: { (_) in
                 
-//                let locationVC = TSLocationDetailVC(locationID: location.locationID, locationName: location.locationName)
-//                if #available(iOS 11, *) {
-//                    self?.parentViewController?.navigation(navigateType: .pushView(viewController: locationVC))
-//                } else {
-//                    let nav = TSNavigationController(rootViewController: locationVC).fullScreenRepresentation
-//                    self?.parentViewController?.navigation(navigateType: .presentView(viewController: nav))
-//                }
+                RLSDKManager.shared.feedDelegate?.onLocationViewTapped(locationID: location.locationID, locationName: location.locationName)
             })
             locationAndMerchantView.addArrangedSubview(locationView)
         }
@@ -1136,7 +1133,7 @@ extension TGMiniVideoControlView {
     private func setupReactions(_ model: FeedListCellModel) {
         
         let toolbaritem = bottomToolBarView.toolbar.getItemAt(0)
-        self.reactionHandler = TGReactionHandler(reactionView: toolbaritem, toAppearIn: self, currentReaction: model.reactionType, feedId: model.idindex, feedItem: model, reactions: [.heart,.awesome,.wow,.cry,.angry])
+        self.reactionHandler = TGReactionHandler(reactionView: toolbaritem, toAppearIn: self, currentReaction: model.reactionType, feedId: model.idindex, feedItem: model, reactions: [.heart,.awesome,.wow,.cry,.angry], isInnerFeed: true)
 
         toolbaritem.addGestureRecognizer(reactionHandler!.longPressGesture)
         
@@ -1261,12 +1258,9 @@ extension TGMiniVideoControlView: CustomPopListProtocol{
             if let model = self.model {
                 let messageModel = TGmessagePopModel(momentModel: model)
                 let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
-                if #available(iOS 11, *) {
-                    self.parentViewController?.navigationController?.pushViewController(vc, animated: true)
-                } else {
-                    let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
-                    self.parentViewController?.navigationController?.present(navigation, animated: true, completion: nil)
-                }
+                let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
+                self.parentViewController?.navigationController?.present(navigation, animated: true, completion: nil)
+                
             }
         case .shareExternal:
             //记录转发数

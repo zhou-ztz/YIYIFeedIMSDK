@@ -25,6 +25,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
     var onDelete: TGEmptyClosure?
     // feed type
     var type: TGFeedListType?
+    var isExpand: Bool = false
     
     init(currentIndex: Int = 0, dataModel: FeedListCellModel,
          imageIndex: Int = 0, placeholderImage: UIImage?,
@@ -34,7 +35,8 @@ public class TGFeedContentPageController: TGBaseContentPageController {
          onToolbarUpdated: onToolbarUpdate?,
          onIndexUpdate: ((Int, String) -> Void)? = nil,
          translateHandler: ((Bool) -> Void)? = nil,
-         onTapHiddenUpdate: ((Bool) -> Void)? = nil
+         onTapHiddenUpdate: ((Bool) -> Void)? = nil,
+         isExpand: Bool = false
     ) { // require to update transition animation to correct trellis view
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
         self.onIndexUpdate = onIndexUpdate
@@ -43,18 +45,27 @@ public class TGFeedContentPageController: TGBaseContentPageController {
         self.onRefresh = onRefresh
         self.onLoadMore = onLoadMore
         self.pageHandler.controller = self
-        self.imageIndex = imageIndex
+        self.imageIndex = min(imageIndex, max(0, dataModel.pictures.count - 1))
         self.isClickComment = isClickComment
         self.isTranslateText = isTranslateText
         self.onToolbarUpdated = onToolbarUpdated
         self.translateHandler = translateHandler
         self.onTapHiddenUpdate = onTapHiddenUpdate
+        self.isExpand = isExpand
         
-        let imageController = TGFeedDetailImageController(imageUrlPath: (dataModel.pictures[imageIndex].url).orEmpty, imageIndex: imageIndex, model: dataModel, placeholderImage: placeholderImage, transitionId: transitionId)
+        if !dataModel.pictures.isEmpty {
+            let imageController = TGFeedDetailImageController(
+                imageUrlPath: (dataModel.pictures[self.imageIndex].url).orEmpty,
+                imageIndex: self.imageIndex,
+                model: dataModel,
+                placeholderImage: placeholderImage,
+                transitionId: transitionId,
+                isExpand: isExpand
+            )
+            setGesture(for: imageController)
+            self.setViewControllers([imageController], direction: .forward, animated: true)
+        }
         
-        setGesture(for: imageController)
-        self.setViewControllers([imageController], direction: .forward, animated: true)
-//        self.hero.isEnabled = true
         
         updateInteractiveView()
         interactiveView.readMoreLabel.setAllowTruncation()
@@ -178,7 +189,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
         //interactiveView.updateTopicsView(with: dataModel.topics)
         //        interactiveView.updateLocationView(with: dataModel.location)
         interactiveView.updateLocationAndMerchantNameView(location: dataModel.location, rewardsMerchantUsers: dataModel.rewardsMerchantUsers)
-        interactiveView.updateInfo(caption: dataModel.content)
+        interactiveView.updateInfo(caption: dataModel.content, isExpand: isExpand)
         //处理商家的显示逻辑
         interactiveView.updateMerchantView(with: dataModel.rewardsMerchantUsers)
         interactiveView.updateCount(comment: (dataModel.toolModel?.commentCount).orZero, like: (dataModel.toolModel?.diggCount).orZero, forwardCount: (dataModel.toolModel?.forwardCount).orZero)
@@ -438,12 +449,7 @@ extension TGFeedContentPageController: CustomPopListProtocol {
             self.forwardFeed()
             let messageModel = TGmessagePopModel(momentModel: self.dataModel)
             let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
-            if #available(iOS 11, *) {
-                self.navigationController?.pushViewController(vc, animated: true)
-            } else {
-                let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
-                self.navigationController?.present(navigation, animated: true, completion: nil)
-            }
+            self.navigationController?.pushViewController(vc, animated: true)
         case .shareExternal:
             // 记录转发数
             self.forwardFeed()

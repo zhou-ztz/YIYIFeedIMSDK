@@ -31,12 +31,14 @@ public class TGFeedDetailImageController: TGViewController, UIGestureRecognizerD
     var onSingleTapView: TGEmptyClosure?
     var onDoubleTapView: TGEmptyClosure?
     var onZoomUpdate: TGEmptyClosure?
-
-    init(imageUrlPath: String = "", imageIndex: Int, model: FeedListCellModel, placeholderImage: UIImage? = nil, transitionId: String? = nil) {
+    var isExpand: Bool = false
+    
+    init(imageUrlPath: String = "", imageIndex: Int, model: FeedListCellModel, placeholderImage: UIImage? = nil, transitionId: String? = nil, isExpand: Bool = false) {
         super.init(nibName: nil, bundle: nil)
         self.imageUrlPath = imageUrlPath
         self.imageIndex = imageIndex
         self.model = model
+        self.isExpand = isExpand
 //        self.hero.isEnabled = true
 //        if let transitionId = transitionId {
 //            self.imageView.hero.id = transitionId

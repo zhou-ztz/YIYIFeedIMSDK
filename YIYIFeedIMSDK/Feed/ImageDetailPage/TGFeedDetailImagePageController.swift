@@ -52,7 +52,8 @@ public class TGFeedDetailImagePageController: UIPageViewController {
     public var campaignId: String = ""
     public var hashtagId: String = ""
     var tagVoucher: TagVoucherModel?
-
+    var isExpand: Bool = false
+    
     private(set) var datasource = [FeedListCellModel]()
     private var closeButton = UIImageView(image: UIImage(named: "iconsArrowCaretleftWhite")).configure { (v) -> () in
         v.contentMode = .scaleAspectFit
@@ -69,7 +70,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
         return UIApplication.shared.isStatusBarHidden
     }
     
-    public init(config: InnerFeedConfig, campaignId: String = "", hashtagId: String = "", completeHandler: ((Int, String) -> Void)? = nil, onToolbarUpdated: onToolbarUpdate?, translateHandler: ((Bool) -> Void)? = nil, tagVoucher: TagVoucherModel? = nil) {
+    public init(config: InnerFeedConfig, campaignId: String = "", hashtagId: String = "", completeHandler: ((Int, String) -> Void)? = nil, onToolbarUpdated: onToolbarUpdate?, translateHandler: ((Bool) -> Void)? = nil, tagVoucher: TagVoucherModel? = nil, isExpand: Bool = false) {
         
         super.init(transitionStyle: .scroll, navigationOrientation: .vertical)
         
@@ -83,6 +84,8 @@ public class TGFeedDetailImagePageController: UIPageViewController {
 
         self.tagVoucher = tagVoucher
 
+        self.isExpand = isExpand
+        
         switch config {
         case .none: break
             

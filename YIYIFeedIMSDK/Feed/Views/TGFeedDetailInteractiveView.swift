@@ -342,7 +342,7 @@ class TGFeedDetailInteractiveView: UIView {
         }
     }
 
-    func updateInfo(caption: String?) {
+    func updateInfo(caption: String?, isExpand: Bool = false) {
         HTMLManager.shared.removeHtmlTag(htmlString: caption.orEmpty, completion: { [weak self] (content, userIdList) in
             guard let self = self else { return }
             self.userIdList = userIdList
@@ -351,7 +351,7 @@ class TGFeedDetailInteractiveView: UIView {
             if let attributedText = self.htmlAttributedText {
                 self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList)
             }
-            
+            self.readMoreLabel.isExpand = isExpand
             self.readMoreLabel.numberOfLines = 2
             self.readMoreLabel.setText(text: self.originalTexts, allowTruncation: true)
             self.readMoreLabel.onHeightChanged = { [weak self] in

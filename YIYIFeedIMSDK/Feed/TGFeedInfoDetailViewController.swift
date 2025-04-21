@@ -984,23 +984,39 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
                 return
             }
             let feedId = model.idindex
+            let action: (@escaping (String, Int, Bool?) -> Void) -> Void = isPinned
+                ? { TGFeedNetworkManager.shared.unpinFeed(feedId: feedId, completion: $0) }
+                : { TGFeedNetworkManager.shared.pinFeed(feedId: feedId, completion: $0) }
             
-            TGFeedNetworkManager.shared.pinFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+            action { [weak self] errMessage, statusCode, status in
                 guard let self = self else { return }
                 guard status == true else {
                     if statusCode == 241 {
-                        self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                        self.showDialog(
+                            image: nil,
+                            title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized,
+                            message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized,
+                            dismissedButtonTitle: "ok".localized,
+                            onDismissed: nil,
+                            onCancelled: nil
+                        )
                     } else {
                         UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
                     }
                     return
                 }
-                
-                let newPined = !isPinned
-                
-                self.model?.isPinned = newPined
-                UIViewController.showBottomFloatingToast(with: newPined ? "feed_pinned".localized : "feed_unpinned".localized, desc: "")
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
+
+                let newPinned = !isPinned
+                self.model?.isPinned = newPinned
+                UIViewController.showBottomFloatingToast(
+                    with: newPinned ? "feed_pinned".localized : "feed_unpinned".localized,
+                    desc: ""
+                )
+                NotificationCenter.default.post(
+                    name: NSNotification.Name(rawValue: "newPinnedFeed"),
+                    object: nil,
+                    userInfo: ["isPinned": newPinned, "feedId": feedId]
+                )
             }
             
             break

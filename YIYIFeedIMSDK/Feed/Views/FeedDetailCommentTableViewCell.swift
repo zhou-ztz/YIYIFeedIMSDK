@@ -48,6 +48,15 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         return img
     }()
     
+    lazy var nameAndBadgeIconStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        stackView.distribution = .fill
+        stackView.alignment = .fill
+        return stackView
+    }()
+    
     lazy var nameLabel: UILabel = {
         let lab = UILabel()
         lab.textColor = RLColor.share.black3
@@ -57,7 +66,11 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         return lab
     }()
     
-    
+    lazy var badgeIconImageView: UIImageView = {
+        let badgeIconImageView = UIImageView()
+        return badgeIconImageView
+    }()
+
     lazy var commentDetailLabel: TGCommentLabel = {
         let lab = TGCommentLabel()
         lab.textColor = MainColor.normal.minor
@@ -125,20 +138,30 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
             make.width.height.equalTo(36)
         }
         
-        contentView.addSubview(nameLabel)
-        nameLabel.snp.makeConstraints { make in
+        contentView.addSubview(nameAndBadgeIconStackView)
+        nameAndBadgeIconStackView.snp.makeConstraints { make in
             make.left.equalTo(avatarView.snp.right).offset(10)
             make.top.equalTo(avatarView.snp.top).offset(2)
+        }
+        nameAndBadgeIconStackView.addArrangedSubview(nameLabel)
+        nameAndBadgeIconStackView.addArrangedSubview(badgeIconImageView)
+        nameLabel.snp.makeConstraints { make in
+            make.height.equalTo(15)
+        }
+        badgeIconImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
         }
         
         contentView.addSubview(pinnedContainer)
         pinnedContainer.snp.makeConstraints { make in
-            make.left.equalTo(nameLabel.snp.right).offset(10)
-            make.centerY.equalTo(nameLabel)
+            make.left.equalTo(nameAndBadgeIconStackView.snp.right).offset(10)
+            make.centerY.equalTo(nameAndBadgeIconStackView)
             make.height.equalTo(20)
+            make.width.lessThanOrEqualTo(68)
         }
         pinnedContainer.addSubview(pinnedIcon)
         pinnedContainer.addSubview(pinnedLabel)
+        
         pinnedIcon.snp.makeConstraints { make in
             make.left.equalTo(4)
             make.centerY.equalToSuperview()
@@ -198,6 +221,9 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
             nameLabel.text = "default_delete_user_name".localized
         } else {
             nameLabel.text = data.userInfo!.name
+        }
+        if data.subscribing, let subscriptionBadge = data.subscribingBadge {
+            badgeIconImageView.sd_setImage(with: URL(string: subscriptionBadge), completed: nil)
         }
         commentDetailLabel.linesSpacing = 0
         commentDetailLabel.showType = .detail

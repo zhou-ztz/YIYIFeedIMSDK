@@ -77,7 +77,7 @@ class TGMomentDetailNavTitle: UIView {
         
         addTap { (_) in
             //跳转到个人信息页面
-            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": object.userIdentity])
+            RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: object.userIdentity)
         }
         
         layoutIfNeeded()

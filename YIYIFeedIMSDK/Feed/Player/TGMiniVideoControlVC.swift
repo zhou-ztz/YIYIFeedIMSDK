@@ -18,6 +18,7 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
     var isPausedWhenEnterBackground: Bool = false
     var isTranslateText: Bool = false
     var translateHandler: ((Bool) -> Void)?
+    var isExpand: Bool = false
     
     var playUrlArrays: [URL] = []
 
@@ -45,11 +46,11 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
 //                    let followstatus: FollowStatus = status == true ? .follow : .unfollow
 //                    self.updateFollowStatus(followstatus, userId: self.model.userId.stringValue)
 //                }
-//                
+//
 //            }
 //        }
         
-        control.setFeed(model,self.isTranslateText)
+        control.setFeed(model,self.isTranslateText,self.isExpand)
         control.delegate = self
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(showReactionBottomSheet), name: NSNotification.Name.Reaction.show, object: nil)
@@ -84,7 +85,7 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
                 if status == AVPStatusError {
                     //音频源文件问题导致播放失败了
 //                    self.showError(message: "error".localized)
-                    self.control.setFeed(self.model,self.isTranslateText)
+                    self.control.setFeed(self.model,self.isTranslateText,self.isExpand)
                     self.control.hidePlayBtn()
                 }
                 if status == AVPStatusPaused {
@@ -226,11 +227,11 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
 //            self.presentTipping(target: model.idindex, type: .moment, theme: .dark) { [weak self] (_, _) in
 //                if let tool = self?.model.toolModel {
 //                    self?.showSuccess(message: "tip_successful_title".localized)
-//                    
+//
 //                    tool.rewardCount += 1
 //                    tool.isRewarded = true
 //                    self?.model.toolModel = tool
-//                    
+//
 //                    if let feed = self?.model {
 //                        self?.updateDataSouce(feed)
 //                    }
@@ -271,7 +272,7 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
 //                }
 //                //self.navigationController?.popViewController(animated: true)
 //            }
-//            
+//
 //        default:
 //            guard let user = model.userInfo else {
 //                return

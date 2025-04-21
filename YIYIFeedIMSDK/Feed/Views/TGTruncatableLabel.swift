@@ -41,6 +41,7 @@ class TGTruncatableLabel: UIView {
     let scrollView = UIScrollView().configure {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
+    var isExpand: Bool = true
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -213,6 +214,23 @@ class TGTruncatableLabel: UIView {
         
         highlight.tapAction = { [weak self] (_, text, _, _) in
             guard let self = self else { return }
+            if self.label.numberOfLines == 0 {
+                self.label.truncationToken = expandtruncationToken
+                self.label.numberOfLines = self.numberOfLines
+            } else {
+                self.label.numberOfLines = 0
+                self.label.layoutIfNeeded()
+                self.label.truncationToken = nil
+            }
+            self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
+            self.onHeightChanged?()
+            self.layoutScrollView()
+            self.onTextNumberOfLinesTapped?(.TruncatableLabelShowMore)
+        }
+    
+        if isExpand {
+            isExpand = false
+            
             if self.label.numberOfLines == 0 {
                 self.label.truncationToken = expandtruncationToken
                 self.label.numberOfLines = self.numberOfLines
