@@ -106,7 +106,7 @@ class AudioVideoViewModel: NSObject {
         v2param.channelExtension = customInfo ?? ""
         let pushConfig = V2NIMSignallingPushConfig()
         pushConfig.pushEnabled = true
-        pushConfig.pushTitle = "呼叫通知".localized
+        pushConfig.pushTitle = "".localized
        // pushConfig.pushPayload = "测试"
         pushConfig.pushContent = String(format: "call_request".localized, callInfo.callType.rawValue == NIMSignalingChannelType.audio.rawValue ? "msg_type_voice_call".localized : "msg_type_video_call".localized )
         v2param.pushConfig = pushConfig

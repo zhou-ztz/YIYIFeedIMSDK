@@ -116,11 +116,13 @@ class TGUtil {
      }
     /// 跳转到用户中心
     class func pushUserHomeName(name: String) {
-        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uname": name])
+//        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uname": name])
+        RLSDKManager.shared.imDelegate?.didPressNameCard(memberId: name)
     }
     
     class func pushUserHomeId(uid: String) {
-        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": uid])
+//        NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": uid])
+        RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: uid.toInt())
     }
     
     class func checkAuthorizeStatusByType(type: TGPermissionType, isShowBottom: Bool = false, viewController: UIViewController?, completion: @escaping TGEmptyClosure) {

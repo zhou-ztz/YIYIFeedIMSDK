@@ -227,7 +227,7 @@ class TeamMeetingViewModel: NSObject {
         
     }
     
-    ///关闭频道
+    ///关闭信令频道
     func closeChannel(success: @escaping () ->Void, failure: @escaping (Error?) ->Void){
         guard let channelId = channelInfo?.channelInfo.channelId else {
             failure(nil)
@@ -255,7 +255,7 @@ class TeamMeetingViewModel: NSObject {
         }
         
     }
-    /// 离开频道
+    /// 离开信令频道
     func signalingLeave(channelId: String, success: @escaping () ->Void, failure: @escaping (Error?) ->Void) {
         
         NIMSDK.shared().v2SignallingService.leaveRoom(channelId, offlineEnabled: true, serverExtension: nil) {

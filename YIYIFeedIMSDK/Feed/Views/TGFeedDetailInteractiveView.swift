@@ -234,8 +234,9 @@ class TGFeedDetailInteractiveView: UIView {
         
         // 设置 feedMerchantNamesView 的数据
         feedMerchantNamesView.setData(merchantList: rewardsMerchantUsers)
-        feedMerchantNamesView.momentMerchantDidClick = { [weak self] merchantData in
-               NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
+        feedMerchantNamesView.momentMerchantDidClick = { merchantData in
+//               NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
+            RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: merchantData.merchantId)
         }
         // 如果有商家，则显示 feedMerchantNamesView，否则隐藏
         feedMerchantNamesView.isHidden = !hasMerchants

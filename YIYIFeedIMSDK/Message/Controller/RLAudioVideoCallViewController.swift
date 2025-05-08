@@ -169,7 +169,7 @@ class RLAudioVideoCallViewController: TGViewController {
                     UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
                 }
                 self.viewmodel.callEventType = .miss
-                self.leavlChannel()
+                self.closeChannel()
             }
         }
         

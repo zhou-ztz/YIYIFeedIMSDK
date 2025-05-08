@@ -494,10 +494,10 @@ extension TGUserInfoModel {
     }
     
     static func retrieveUser(userId: Int?) -> TGUserInfoModel? {
+        
         guard let userId = userId else { return nil }
         let json = RLSDKManager.shared.feedDelegate?.getUserInfoModel(username: nil, userId: userId, nickname: nil)
-        return TGUserInfoModel.convert(json)?.first
-      //  return UserInfoStoreManager().fetchById(id: userId)
+        return RLSDKManager.shared.imDelegate?.fetchUserStoreById(userId: userId)
     }
     
     static func retrieveUser(nickname: String?) -> TGUserInfoModel? {

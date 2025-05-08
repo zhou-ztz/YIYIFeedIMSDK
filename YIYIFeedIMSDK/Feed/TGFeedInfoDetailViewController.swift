@@ -206,9 +206,6 @@ public class TGFeedInfoDetailViewController: TGViewController {
         guard let model = model else { return }
         self.headerView.setModel(model: model)
         
-        self.primaryButton.isHidden = false
-        self.moreButton.isHidden = false
-        
         let likeItem = self.bottomToolBarView.toolbar.getItemAt(0)
         reactionHandler = TGReactionHandler(reactionView: likeItem, toAppearIn: self.view, currentReaction: model.reactionType, feedId: model.idindex, feedItem: model, reactions: [.heart,.awesome,.wow,.cry,.angry])
         
@@ -278,7 +275,9 @@ public class TGFeedInfoDetailViewController: TGViewController {
         bottomToolBarView.isHidden = true
         bottomToolBarView.onCommentAction = { [weak self] in
             guard let self = self else { return }
-            TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
+            self.commentModel = nil
+            self.activeKeyboard()
+            
             if let tagVoucher = self.tagVoucher {
                 TGKeyboardToolbar.share.setTagVoucher(tagVoucher)
             }
@@ -291,7 +290,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
             case 0:
                 self.reactionHandler?.onTapReactionView()
             case 1:
-                TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
+                self.activeKeyboard()
             case 2:
                 self.navigationController?.presentPopVC(target: "", type: .share, delegate: self)
             default: break
@@ -386,8 +385,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
             let cellModel = FeedListCellModel(feedListModel: feedInfo)
             self.feedOwnerId = cellModel.userId
             self.dontTriggerObservers = dontTriggerObservers
-            self.tableView.mj_header.endRefreshing()
-            
+
             self.model = cellModel
             
             if self.tagVoucher?.taggedVoucherId != nil && self.tagVoucher?.taggedVoucherId != 0 {
@@ -461,13 +459,12 @@ public class TGFeedInfoDetailViewController: TGViewController {
     
     private func getCommentList() {
         TGFeedNetworkManager.shared.fetchFeedCommentsList(withFeedId: "\(feedId)", afterId: nil, limit: 20) {[weak self] contentListResponse, error in
-            guard let feedIcontentListResponsenfo = contentListResponse, let self = self else {
+            guard let commentList = contentListResponse, let self = self else {
                 self?.tableView.mj_header.endRefreshing()
-                //                UIViewController.showBottomFloatingToast(with: errorMsg.orEmpty, desc: "")
                 self?.tableView.show(placeholderView: .network)
                 return
             }
-            let commentList = feedIcontentListResponsenfo
+            
             self.commentDatas = commentList
             self.model?.comments = self.commentDatas
             self.tableView.mj_footer.isHidden = self.commentDatas.count < 20
@@ -598,15 +595,15 @@ public class TGFeedInfoDetailViewController: TGViewController {
         //上报动态评论事件
         RLSDKManager.shared.feedDelegate?.onTrackEvent(itemId: feedId.stringValue, itemType: self.model?.feedType == .miniVideo ? TGItemType.shortvideo.rawValue : TGItemType.image.rawValue, behaviorType: TGBehaviorType.comment.rawValue, moduleId: TGModuleId.feed.rawValue, pageId: TGPageId.feed.rawValue, behaviorValue: nil, traceInfo: nil)
         
-        
         TGFeedNetworkManager.shared.submitComment(for: commentType, content: message, sourceId: feedId, replyUserId: self.commentModel?.userInfo?.userIdentity, contentType: contentType) { [weak self] (commentModel, message, result) in
             guard let currentUserInfo = TGUserInfoModel.retrieveCurrentUserSessionInfo(), let feedId = self?.model?.index else { return }
             defer {
                 DispatchQueue.main.async {
+                    self?.commentModel = nil
                     self?.dismissLoading()
                 }
             }
-            
+     
             guard result == true, let data = commentModel, let wself = self else {
                 UIViewController.showBottomFloatingToast(with: message ?? "please_retry_option".localized, desc: "", displayDuration: 4.0)
                 return
@@ -662,7 +659,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
         }
     }
     private func setTSKeyboard(placeholderText: String, cell: FeedDetailCommentTableViewCell?) {
-        TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
+        self.activeKeyboard()
         TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: placeholderText)
     }
     
@@ -726,6 +723,8 @@ extension TGFeedInfoDetailViewController: UITableViewDelegate, UITableViewDataSo
             return
         }
         guard !userInfo.isMe() else { return }
+        
+        self.commentModel = comment
         
         TGKeyboardToolbar.share.keyboarddisappear()
         
@@ -839,6 +838,16 @@ extension TGFeedInfoDetailViewController: TGDetailCommentTableViewCellDelegate {
     }
 }
 extension TGFeedInfoDetailViewController: TGKeyboardToolbarDelegate {
+    private func activeKeyboard() {
+        
+        TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
+        if let userInfo = self.commentModel?.userInfo {
+        TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: "reply_with_string".localized + "\(userInfo.name)")
+        } else {
+            TGKeyboardToolbar.share.keyboardSetPlaceholderText(placeholderText: "rw_placeholder_comment".localized)
+        }
+    }
+    
     func keyboardToolbarSendTextMessage(message: String, bundleId: String?, inputBox: AnyObject?, contentType: CommentContentType) {
         //        if TSCurrentUserInfo.share.isLogin == false {
         //            TSRootViewController.share.guestJoinLandingVC()
@@ -984,39 +993,23 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
                 return
             }
             let feedId = model.idindex
-            let action: (@escaping (String, Int, Bool?) -> Void) -> Void = isPinned
-                ? { TGFeedNetworkManager.shared.unpinFeed(feedId: feedId, completion: $0) }
-                : { TGFeedNetworkManager.shared.pinFeed(feedId: feedId, completion: $0) }
             
-            action { [weak self] errMessage, statusCode, status in
+            TGFeedNetworkManager.shared.pinFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
                 guard let self = self else { return }
                 guard status == true else {
                     if statusCode == 241 {
-                        self.showDialog(
-                            image: nil,
-                            title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized,
-                            message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized,
-                            dismissedButtonTitle: "ok".localized,
-                            onDismissed: nil,
-                            onCancelled: nil
-                        )
+                        self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
                     } else {
                         UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
                     }
                     return
                 }
-
-                let newPinned = !isPinned
-                self.model?.isPinned = newPinned
-                UIViewController.showBottomFloatingToast(
-                    with: newPinned ? "feed_pinned".localized : "feed_unpinned".localized,
-                    desc: ""
-                )
-                NotificationCenter.default.post(
-                    name: NSNotification.Name(rawValue: "newPinnedFeed"),
-                    object: nil,
-                    userInfo: ["isPinned": newPinned, "feedId": feedId]
-                )
+                
+                let newPined = !isPinned
+                
+                self.model?.isPinned = newPined
+                UIViewController.showBottomFloatingToast(with: newPined ? "feed_pinned".localized : "feed_unpinned".localized, desc: "")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
             }
             
             break

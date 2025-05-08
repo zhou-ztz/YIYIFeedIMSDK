@@ -109,6 +109,9 @@ class FeedCommentListCellModel: FeedCommentLabelModel {
         userId = model.userId
         if model.replyId > 0 {
 //            type = .user(replyName: model.replyInfo.name, replyUserId: model.replyId)
+            replyUserInfo =  TGUserInfoModel.retrieveUser(userId: model.replyId)
+        }else{
+            replyUserInfo = model.replyInfo
         }
         replyUserInfo = model.replyInfo
         content = model.body

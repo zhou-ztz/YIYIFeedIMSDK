@@ -1080,7 +1080,8 @@ public class TGPostTaskManager {
         }
         postView.addAction {
             if postView.isComplete {
-                NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": RLSDKManager.shared.loginParma?.uid ?? 0])
+//                NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": RLSDKManager.shared.loginParma?.uid ?? 0])
+                RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: Int(RLSDKManager.shared.loginParma?.uid ?? 0))
             }
             if postView.isRejectFail {
                 DispatchQueue.main.async {

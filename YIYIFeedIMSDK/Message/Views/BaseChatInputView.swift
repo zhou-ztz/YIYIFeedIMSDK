@@ -587,6 +587,7 @@ extension BaseChatInputView: UITextViewDelegate {
             sendButton.setImage(UIImage.set_image(named: "speech"), for: .normal)
         } else {
             sendButton.setImage(UIImage.set_image(named: "icASendBlue"), for: .normal)
+            recordButton.isHidden = true
         }
         
         // At

@@ -612,13 +612,14 @@ class TGIMTeamMeetingController: TGViewController {
                 timer?.stopTimer()
                 timerCallee?.stopTimer()
                 self.player?.stop()
-                //离开频道
-                viewmodel.closeChannel { [weak self] in
+                //离开信令频道
+                viewmodel.signalingLeave(channelId: viewmodel.channelInfo?.channelInfo.channelId ?? "") { [weak self] in
                     self?.leavlChannel()
-                } failure: {[weak self] error in
+                } failure: { [weak self] error in
                     UIViewController.showBottomFloatingToast(with: error?.localizedDescription ?? "", desc: "")
                     self?.leavlChannel()
                 }
+
             } else {
                 timer?.stopTimer()
                 timerCallee?.stopTimer()
@@ -748,6 +749,7 @@ class TGIMTeamMeetingController: TGViewController {
         }
         
     }
+    /// 离开音视频2.0频道
     func leavlChannel(){
         NERtcEngine.shared().leaveChannel()
         self.dismiss()

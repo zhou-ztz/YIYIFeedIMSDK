@@ -867,7 +867,8 @@ extension TGMiniVideoControlView {
         locationAndMerchantView.bindToEdges()
         
         feedMerchantNamesView.momentMerchantDidClick = { merchantData in
-            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
+//            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchantData.merchantId.stringValue])
+            RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: merchantData.merchantId)
         }
         
         feedShopView.momentMerchantDidClick = { [weak self] merchantData in

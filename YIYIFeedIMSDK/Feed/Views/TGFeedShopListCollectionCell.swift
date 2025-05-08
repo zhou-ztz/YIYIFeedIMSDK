@@ -200,7 +200,8 @@ public class TGFeedShopListCollectionCell: UICollectionViewCell, BaseCellProtoco
 //            }
 //            guard let self = self else { return }
          
-            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchant.merchantId.stringValue])
+//            NotificationCenter.default.post(name: NSNotification.Name.AvatarButton.DidClick, object: nil, userInfo: ["uid": merchant.merchantId.stringValue])
+            RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: merchant.merchantId)
         }
         
         if isDarkBackground {

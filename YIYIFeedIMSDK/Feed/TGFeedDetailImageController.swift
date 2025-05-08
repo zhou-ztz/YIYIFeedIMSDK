@@ -97,12 +97,12 @@ public class TGFeedDetailImageController: TGViewController, UIGestureRecognizerD
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //开始记录停留时间
-//        stayBeginTimestamp = Date().timeStamp
+        stayBeginTimestamp = Date().timeStamp
         
     }
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-//        self.behaviorUserFeedStayData()
+        self.behaviorUserFeedStayData()
     }
     func reloadGifUrlPath() {
 //        guard let url = try? self.imageUrlPath.asURL() else { return }

@@ -95,7 +95,7 @@ class TGTextToolBarView: UIView, UITextViewDelegate {
         voucherBottomView.isHidden = true
         voucherBottomView.snp.makeConstraints {
             $0.leading.top.trailing.equalToSuperview()
-            $0.height.equalTo(44)
+            $0.height.equalTo(0)
         }
         voucherBottomView.voucherOnTapped = {
             self.toolBarViewDelegate?.onVoucherClick(self.voucherId)

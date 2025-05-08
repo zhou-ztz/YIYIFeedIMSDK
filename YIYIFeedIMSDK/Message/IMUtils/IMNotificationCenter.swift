@@ -162,6 +162,17 @@ class IMNotificationCenter: NSObject {
         
         
     }
+    
+    /// 查询信令房间频道
+    func signalingQueryRoomInfo(channelName: String, completion: @escaping (Bool) -> Void ) {
+        
+        NIMSDK.shared().v2SignallingService.getRoomInfo(byChannelName: channelName) { roomInfo in
+            completion(roomInfo.channelInfo.expireTime < Date().timeIntervalSince1970)
+        } failure: { error in
+            completion(true)
+        }
+
+    }
 }
 
 extension IMNotificationCenter: V2NIMSignallingListener {
@@ -199,9 +210,43 @@ extension IMNotificationCenter: V2NIMSignallingListener {
     }
     
     func onOfflineEvent(_ event: [V2NIMSignallingEvent]) {
-        guard let eventOne = event.first else {
-            return
+        
+        event.forEach { event in
+            switch event.eventType {
+            case .SIGNALLING_EVENT_TYPE_INVITE:
+     
+                if self.shouldResponseBusy() || self.shouldAutoRejectCall() {
+                    self.unAcceptInvited(channelId: event.channelInfo.channelId, caller: event.inviterAccountId ?? "", requestId: event.requestId)
+                    return
+                    
+                }
+                
+                self.signalingQueryRoomInfo(channelName: event.channelInfo.channelName ?? "") { invail in
+                    if !invail {
+                        if let data = event.channelInfo.channelExtension?.data(using: .utf8), let customInfo = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+                            if let type = customInfo["type"] as? String {
+                                switch NERtCallingType(rawValue: type) {
+                                case .team:
+                                    
+                                    if let data = customInfo["data"] as? [String : Any] {
+                                        self.presentTeamCall(data: data, event: event)
+                                    }
+                                case .p2p:
+                                    self.presentCalls(types: event.channelInfo.channelType, caller: event.inviterAccountId ?? "", channelId: event.channelInfo.channelId, channelName: event.channelInfo.channelName ?? "", requestId: event.requestId)
+                                default:
+                                    break
+                                }
+                                
+                            }
+                        }
+                        
+                    }
+                }
+                
+            default:
+                break
+            }
         }
-
+        
     }
 }

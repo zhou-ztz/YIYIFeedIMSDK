@@ -56,7 +56,7 @@ public protocol TGMessageDelegate: AnyObject {
     func didPressMiniProgrom(appId: String, path: String)
     ///  打开支付密码弹窗
     func showPin(type: TGAuthMessageType, _ completion: ((String) -> Void)?, cancel: (() -> Void)?, needDisplayError: Bool)
-    /// 关键支付密码弹窗
+    /// 关闭支付密码弹窗
     func dismissPin()
     /// 显示支付message
     func showPinError(message: String)
@@ -72,6 +72,9 @@ public protocol TGMessageDelegate: AnyObject {
     func onLoginStatus(_ status: Int)
     /// 文件以web 形式打开
     func openFileWebview(url: URL, title: String)
+    /// 通过userId去拿Store 的 TGUserInfoModel
+    func fetchUserStoreById(userId: Int) -> TGUserInfoModel?
+    
 }
 
 public protocol TGFeedDelegate: AnyObject {

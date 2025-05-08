@@ -197,8 +197,6 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        self.setClearNavBar(shadowColor: .clear)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
         TGKeyboardToolbar.share.theme = .white
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         
@@ -231,7 +229,6 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
         } else {
             UIApplication.shared.setStatusBarStyle(.default, animated: true)
         }
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     public override func viewDidAppear(_ animated: Bool) {
