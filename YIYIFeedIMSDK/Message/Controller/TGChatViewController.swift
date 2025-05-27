@@ -12,6 +12,7 @@ import Photos
 import PhotosUI
 import MobileCoreServices
 import SVProgressHUD
+import Toast
 
 
 //@_implementationOnly import IMEngine
@@ -197,6 +198,8 @@ public class TGChatViewController: TGViewController {
     var dependVC : UIViewController!
     
     var keyBoardHeight: CGFloat = TSBottomSafeAreaHeight
+    
+    var blurUIView : UIView!
   
     public init(conversationId: String, conversationType: Int) {
         let type = V2NIMConversationType(rawValue: conversationType) ?? .CONVERSATION_TYPE_P2P
@@ -373,6 +376,7 @@ public class TGChatViewController: TGViewController {
         openEggTapGesture = UITapGestureRecognizer(target: self, action: #selector(checkOpenEggStatus))
         eggOverlayView.openEggView.addGestureRecognizer(openEggTapGesture)
         
+        setupBlurView()
     }
     
     func setupNav() {
@@ -823,7 +827,9 @@ public class TGChatViewController: TGViewController {
     
     func openWhiteBoard(){
         let timeStamp = Date().timeIntervalSince1970
+        SVProgressHUD.show()
         TGIMNetworkManager.createWhiteboard(roomName: viewmodel.sessionId + String(timeStamp)) {[weak self] model, error in
+            SVProgressHUD.dismiss()
             guard let self = self else {return}
             if let error = error {
                 UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
@@ -916,6 +922,57 @@ public class TGChatViewController: TGViewController {
         }
     }
     
+    func sendVioceToText() {
+        let popHeight = bottomExanpndHeight + normalInputHeight
+        let vc = TGSpeechTyperViewController()
+        let tDelegate = TransitioningDelegate(height: popHeight)
+        vc.collapseFrameHeight = popHeight
+        vc.transitionDelegate = tDelegate
+        vc.transitioningDelegate = tDelegate
+        vc.modalPresentationStyle = .custom
+        blurUIView.isHidden = false
+        
+        PopupWindowManager.shared.changeKeyWindow(rootViewController: vc, height: popHeight)
+        vc.closure = { [weak self] (text) in
+            guard let self = self, let text = text else { return }
+            self.viewmodel.sendTextMessage(text: text, conversationId: self.viewmodel.conversationId) { _, _ in
+            }
+            self.blurUIView.isHidden = true
+        }
+        
+        vc.onRemoveBlurUI = {
+            self.blurUIView.isHidden = true
+        }
+    }
+    
+    func setupBlurView() {
+        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        blurUIView = UIView()
+        blurUIView.backgroundColor = .black.withAlphaComponent(0.6)
+        blurUIView.frame = view.bounds
+        blurUIView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurUIView.isHidden = true
+        
+        // Add tap gesture recognizer to blurUIView
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBlurViewTap))
+        blurUIView.addGestureRecognizer(tapGesture)
+        
+        window.addSubview(blurUIView)
+    }
+    
+    @objc private func handleBlurViewTap() {
+        if let presentedVC = self.presentedViewController {
+            presentedVC.dismiss(animated: true) { [weak self] in
+                self?.blurUIView.isHidden = true
+                PopupWindowManager.shared.changeKeyWindow(rootViewController: nil, height: (self?.bottomExanpndHeight ?? 0) + (self?.normalInputHeight ?? 0))
+            }
+        } else {
+            blurUIView.isHidden = true
+            PopupWindowManager.shared.changeKeyWindow(rootViewController: nil, height: bottomExanpndHeight + normalInputHeight)
+        }
+    }
+    
     
     func layoutInputView(offset: CGFloat) {
         print("layoutInputView offset : ", offset)
@@ -996,24 +1053,42 @@ public class TGChatViewController: TGViewController {
             return
         }
         let messages = viewmodel.getDeleteMessages(indexPaths: selectedRows)
-       // let sortedRows = selectedRows.sorted(by: { $0.row > $1.row })
-//        var canDeleteForEveryone = true
-//
-//        sortedRows.forEach { path in
-//            let model = dataSource.itemIdentifier(for: path)
-//            if let message = model?.nimMessageModel, !SessionUtil().canMessageBeRevoked(message) || !showRevokeButton(message) {
-//                canDeleteForEveryone = false
-//            }
-//        }
+        let messageDatas = viewmodel.getDeleteMessageDatas(indexPaths: selectedRows)
+       
+        var canDeleteForEveryone = true
+        messages.forEach { message in
+            if !MessageUtils.showRevokeButton(message) || !MessageUtils.canMessageBeRevoked(message)  {
+                canDeleteForEveryone = false
+            }
+        }
         
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let cancelAction = UIAlertAction(title: "cancel".localized, style: .cancel, handler: nil)
-//        let deleteForEveryone = UIAlertAction(title: "longclick_msg_revoke_message".localized, style: .default, handler: { [weak self] action in
-//            guard let self = self else { return }
-//            
-//            self.selectedMsgId.removeAll()
-//            self.showSelectActionToolbar(false, isDelete: false)
-//        })
+        let deleteForEveryone = UIAlertAction(title: "longclick_msg_revoke_message".localized, style: .default, handler: { [weak self] action in
+            guard let self = self else { return }
+            messageDatas.forEach { data in
+                self.viewmodel.revokeSelectedMessage(data) { code, msg in
+                    if code != nil {
+                        DispatchQueue.main.async {
+                            if code == 200 {
+                                self.view.makeToast("message_delete_success".localized, duration: 2.0, position: CSToastPositionCenter)
+                            } else if code == 508 {
+                                let alertController = UIAlertController(title: nil, message: "revoke_failed".localized, preferredStyle: .alert)
+                                let cancelAction = UIAlertAction(title: "confirm".localized, style: .cancel, handler: nil)
+                                alertController.addAction(cancelAction)
+                                self.present(alertController, animated: true)
+                            } else {
+                                self.view.makeToast(msg ?? "revoke_try_again".localized, duration: 2.0, position: CSToastPositionCenter)
+                            }
+                        }
+                        self.viewmodel.deleteMessageForUI(messages: messages)
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+            self.selectedMsgId.removeAll()
+            self.showSelectActionToolbar(false, isDelete: false)
+        })
         let deleteForMe = UIAlertAction(title: "longclick_msg_delete_for_me".localized, style: .default, handler: { [weak self] action in
             guard let self = self else { return }
             self.viewmodel.deleteMessage(messages: messages, onlyDeleteLocal: false) { error in
@@ -1032,9 +1107,9 @@ public class TGChatViewController: TGViewController {
         alertController.addAction(cancelAction)
         alertController.addAction(deleteForMe)
         
-//        if canDeleteForEveryone {
-//            alertController.addAction(deleteForEveryone)
-//        }
+        if canDeleteForEveryone {
+            alertController.addAction(deleteForEveryone)
+        }
         
         self.present(alertController, animated: true)
         
@@ -1755,7 +1830,7 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
         if model.type == .time {
             return false
         }
-        if model.nimMessageModel?.messageType == .MESSAGE_TYPE_NOTIFICATION {
+        if model.nimMessageModel?.messageType == .MESSAGE_TYPE_NOTIFICATION || model.nimMessageModel?.messageType == .MESSAGE_TYPE_TIP {
             return false
         }
         guard let message = model.nimMessageModel else { return false }
@@ -2409,7 +2484,7 @@ extension TGChatViewController: ChatInputViewDelegate {
         case .whiteBoard:
             openWhiteBoard()
         case .voiceToText:
-            break
+            self.sendVioceToText()
         case .rps:
             let value = arc4random() % 3 + 1
             let rawAttachment = CustomAttachmentDecoder.RPSMessageEncode(value: Int(value))

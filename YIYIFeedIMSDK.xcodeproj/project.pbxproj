@@ -240,6 +240,10 @@
 		B193FD552D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD4D2D88088B00BEB3F7 /* ReportCategoryTableViewCell.swift */; };
 		B193FD572D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD562D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift */; };
 		B193FD5C2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */; };
+		B19503DB2DDB178D000B7554 /* TGSpeechTyperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19503DA2DDB178D000B7554 /* TGSpeechTyperViewController.swift */; };
+		B19503DF2DDB1814000B7554 /* SpeechTyperModalPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19503DE2DDB1814000B7554 /* SpeechTyperModalPresentation.swift */; };
+		B19503E02DDB1814000B7554 /* SpeechToTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19503DC2DDB1814000B7554 /* SpeechToTextView.swift */; };
+		B19503E12DDB1814000B7554 /* SpeechToTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B19503DD2DDB1814000B7554 /* SpeechToTextView.xib */; };
 		B1A889492D8D3FC800B678CB /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A889482D8D3FC800B678CB /* Notification+Extension.swift */; };
 		B1A8894B2D8D491400B678CB /* RemarkNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */; };
 		B1A889562D93AE7600B678CB /* TGEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A889552D93AE7600B678CB /* TGEventType.swift */; };
@@ -816,6 +820,10 @@
 		B193FD4F2D88088B00BEB3F7 /* TGReportImageCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TGReportImageCollectionCell.xib; sourceTree = "<group>"; };
 		B193FD562D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveHalfScreenPresentation.swift; sourceTree = "<group>"; };
 		B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGIndicatorWindowTop.swift; sourceTree = "<group>"; };
+		B19503DA2DDB178D000B7554 /* TGSpeechTyperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGSpeechTyperViewController.swift; sourceTree = "<group>"; };
+		B19503DC2DDB1814000B7554 /* SpeechToTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechToTextView.swift; sourceTree = "<group>"; };
+		B19503DD2DDB1814000B7554 /* SpeechToTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpeechToTextView.xib; sourceTree = "<group>"; };
+		B19503DE2DDB1814000B7554 /* SpeechTyperModalPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTyperModalPresentation.swift; sourceTree = "<group>"; };
 		B1A889482D8D3FC800B678CB /* Notification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemarkNameManager.swift; sourceTree = "<group>"; };
 		B1A889552D93AE7600B678CB /* TGEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGEventType.swift; sourceTree = "<group>"; };
@@ -1277,6 +1285,7 @@
 				B193FC152D65B88200BEB3F7 /* TGVoiceToTextIMViewController.swift */,
 				B193FD062D71861200BEB3F7 /* TGIMMediaRecordController.swift */,
 				B193FD2D2D81753600BEB3F7 /* TGIMClientsViewController.swift */,
+				B19503DA2DDB178D000B7554 /* TGSpeechTyperViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1472,6 +1481,9 @@
 				B1EABCA32D34B19F00EB7868 /* IMPinnedView.swift */,
 				B1EABCA52D34B55700EB7868 /* IMPinnedPopView.swift */,
 				B193FBD92D5C4B9700BEB3F7 /* RedPacketView.swift */,
+				B19503DC2DDB1814000B7554 /* SpeechToTextView.swift */,
+				B19503DD2DDB1814000B7554 /* SpeechToTextView.xib */,
+				B19503DE2DDB1814000B7554 /* SpeechTyperModalPresentation.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2355,6 +2367,7 @@
 				B1EABB892D195E7A00EB7868 /* yippi-sns.graphql in Resources */,
 				B1EABB8A2D195E7A00EB7868 /* schema.json in Resources */,
 				8A9F0DFB2CF48B3B0021462C /* Localizable.strings in Resources */,
+				B19503E12DDB1814000B7554 /* SpeechToTextView.xib in Resources */,
 				8A9F0DF92CF48B3B0021462C /* Localizable.strings in Resources */,
 				B193FCE12D6EB5A500BEB3F7 /* TZImagePickerController.bundle in Resources */,
 				8A9F0DF42CF48B3B0021462C /* Localizable.strings in Resources */,
@@ -2498,6 +2511,8 @@
 				8A4BB3B72D114C9D00AAB4B8 /* TGNearByLocalContainerCell.swift in Sources */,
 				D7971DB42D2683DE009772B7 /* TGVideoRecordButton.swift in Sources */,
 				D79714F82D266A4E009772B7 /* TGShareButton.swift in Sources */,
+				B19503DF2DDB1814000B7554 /* SpeechTyperModalPresentation.swift in Sources */,
+				B19503E02DDB1814000B7554 /* SpeechToTextView.swift in Sources */,
 				D775B4742D9658290062FF01 /* TGSimpleCommentModel.swift in Sources */,
 				8A9F0D4E2CF427560021462C /* RLConversationListViewController.swift in Sources */,
 				F5CD2C902CFEB5C200EA7C7A /* View+Extension.swift in Sources */,
@@ -2597,6 +2612,7 @@
 				D7AD6A8A2D38D3FC006A3A1F /* TGMiniVideoCoverPickerViewController.swift in Sources */,
 				F53D556C2D0AB1B00021BF2C /* ReactionTypes.swift in Sources */,
 				8A4BB3BB2D11512D00AAB4B8 /* TGLocationModel.swift in Sources */,
+				B19503DB2DDB178D000B7554 /* TGSpeechTyperViewController.swift in Sources */,
 				8A9F0E9F2CF6F6910021462C /* CustomAttachmentDefines.swift in Sources */,
 				8A9F0DAC2CF44D6F0021462C /* Optional+Extension.swift in Sources */,
 				8A027A5B2CFDAD76008D1AC7 /* TGMessageData.swift in Sources */,

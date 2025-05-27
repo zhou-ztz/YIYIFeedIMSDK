@@ -105,8 +105,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
                 }
             })
         }
-        
-        interactiveView.onVoucherTouched = {
+        interactiveView.voucherBottomView.voucherOnTapped = {
             RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: dataModel.tagVoucher?.taggedVoucherId ?? 0)
         }
         

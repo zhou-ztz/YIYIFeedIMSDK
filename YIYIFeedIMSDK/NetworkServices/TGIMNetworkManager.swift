@@ -541,4 +541,36 @@ class TGIMNetworkManager: NSObject {
             }
         }
     }
+    
+    /// 消息撤回
+    /// type: 7 表示单聊消息撤回, 8 表示群消息撤回
+    class func revokeMessageRequest(deleteMsgid: String, timetag: String, type: Int, from: String, to: String, completion: @escaping (IMRevokeModel?, Error?) -> Void) {
+        let path = "/api/v2/netease/recall_message"
+        let param: [String: Any] = ["deleteMsgid" : deleteMsgid, "timetag": timetag, "type": type, "from": from, "to": to]
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: param,
+            headers: nil
+        ) { data, _, error1 in
+            guard let data = data, error1 == nil else {
+                completion(nil, error1)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(IMRevokeModel.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response, nil)
+                }
+            } catch {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
 }

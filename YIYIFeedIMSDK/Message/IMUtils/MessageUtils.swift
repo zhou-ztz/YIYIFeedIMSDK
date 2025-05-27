@@ -676,6 +676,27 @@ class MessageUtils: NSObject {
         }
         return nil
     }
+    
+    class func canMessageBeRevoked(_ message: V2NIMMessage) -> Bool {
+        if self.checkYidunAntiSpamIsEmpty(message) == false {
+            return false
+        }
+
+        let isDeliverFailed = !message.isSelf && message.sendingState == .MESSAGE_SENDING_STATE_FAILED
+        if  isDeliverFailed {
+            return false
+        }
+        var messageType = message.messageType
+        if messageType == .MESSAGE_TYPE_TIP || messageType == .MESSAGE_TYPE_NOTIFICATION {
+            return false
+        }
+        //自定义消息的删除
+//        if messageObject is NIMCustomObject {
+//            var attach = (message.messageObject as? NIMCustomObject)?.attachment as? IMMessageContentInfo
+//            return attach?.canBeRevoked() ?? false
+//        }
+        return true
+    }
 
     
     class func showRevokeButton(_ message: V2NIMMessage) -> Bool {
@@ -1064,5 +1085,27 @@ class MessageUtils: NSObject {
             }
         }
         
+    }
+    
+    class func formPayloadParameters(sessionId: String, sessionType: String, messageId: String? = nil) -> [String:Any]? {
+        var json: [String:Any]? = nil
+        var parameters: String = ""
+        if messageId == nil {
+            parameters = String(format: "{\"sessionID\": \"%@\", \"sessionType\": \"%@\"}", sessionId, sessionType)
+        } else {
+            parameters = String(format: "{\"sessionID\": \"%@\", \"sessionType\": \"%@\", \"messageId\": \"%@\"}", sessionId, sessionType, messageId ?? "")
+        }
+       // printIfDebug(parameters)
+        
+        if let data = parameters.data(using: String.Encoding.utf8) {
+            do {
+                json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:Any]
+              //  printIfDebug(json)
+            } catch {
+              //  printIfDebug("Something went wrong")
+            }
+        }
+        
+        return json
     }
 }

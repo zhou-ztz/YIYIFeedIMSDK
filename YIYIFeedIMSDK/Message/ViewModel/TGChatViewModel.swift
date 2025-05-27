@@ -279,6 +279,108 @@ class TGChatViewModel: NSObject {
         }
         
     }
+    ///删除所有人消息
+    func revokeSelectedMessage(_ data: TGMessageData, completion: ((Int?, String?) -> Void)? = nil) {
+        guard let message = data.nimMessageModel else {
+            return
+        }
+
+        let dispatchGroup = DispatchGroup()
+        var errorCount = 0
+        var errorMessage : String? = nil
+        
+        if data.messageList.count >= 4 {
+            for item in data.messageList {
+                if errorCount > 0 { break }
+                
+                if let messageModel = item.nimMessageModel {
+                    dispatchGroup.enter() // Notify the group a task has started
+                    
+                    self.deleteMessageRequest(messageModel, completion: { code, message in
+                        defer { dispatchGroup.leave() } // Notify the group the task is done
+                        
+                        if let code = code, code == 200 {
+                           
+                        } else {
+                            errorCount += 1
+                            errorMessage = message
+                        }
+                    })
+                }
+            }
+            
+            // When all async calls are done, this gets called
+            dispatchGroup.notify(queue: .main) {
+                if errorCount > 0 {
+                    completion?(-1, errorMessage)
+                } else {
+                    completion?(200, nil)
+                }
+            }
+        } else {
+            self.deleteMessageRequest(message, completion: { code, message in
+                completion?(code, message)
+            })
+        }
+    }
+    
+    private func deleteMessageRequest(_ message: V2NIMMessage, completion: ((Int?, String?) -> Void)? = nil) {
+        if self.conversationType == .CONVERSATION_TYPE_P2P {
+            
+            if let json = MessageUtils.formPayloadParameters(sessionId: self.sessionId, sessionType: "0")?.toJSON {
+                let param = V2NIMMessageRevokeParams()
+                param.pushContent = "recent_msg_desc_p2p_msg".localized
+                param.pushPayload = json
+                NIMSDK.shared().v2MessageService.revokeMessage(message, revokeParams: param) {
+                    completion?(200, nil)
+                } failure: { error in
+                    if let error1 = error.nserror as? NSError {
+                        completion?(error1.code, nil)
+                    }
+                }
+        
+            }
+        } else {
+            let accountId = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
+            NIMSDK.shared().v2TeamService.getTeamMemberList(byIds: self.sessionId, teamType: .TEAM_TYPE_NORMAL, accountIds: [accountId]) { teamMembers in
+                if let teamMember = teamMembers.first, teamMember.memberRole == .TEAM_MEMBER_ROLE_OWNER || teamMember.memberRole == .TEAM_MEMBER_ROLE_MANAGER {
+                    TGIMNetworkManager.revokeMessageRequest(deleteMsgid: message.messageServerId ?? "", timetag: String(Int(message.createTime * 1000)), type: 8, from: message.senderId ?? "", to: message.receiverId ?? "") { revokeModel, error in
+                        if let model = revokeModel {
+                            completion?(200, nil)
+                        } else {
+                            if let error = error as? NSError {
+                                completion?(error.code, nil)
+                            }
+                        }
+                    }
+                } else {
+                    
+                    if let json = MessageUtils.formPayloadParameters(sessionId: self.sessionId, sessionType: "1")?.toJSON {
+                        let param = V2NIMMessageRevokeParams()
+                        param.pushContent = "recent_msg_desc_group_msg".localized
+                        param.pushPayload = json
+                        NIMSDK.shared().v2MessageService.revokeMessage(message, revokeParams: param) {
+                            completion?(200, nil)
+                        } failure: { error in
+                            if let error1 = error.nserror as? NSError {
+                                completion?(error1.code, nil)
+                            }
+                        }
+                
+                    }
+                    
+                }
+            } failure: { error in
+                if let error1 = error.nserror as? NSError {
+                    completion?(error1.code, error1.localizedDescription)
+                }
+                
+            }
+            
+            
+        }
+    }
+    
     
     func findMessageIndexPath(messages: [V2NIMMessage]) -> [IndexPath]{
         var indexPaths: [IndexPath] = []
@@ -319,6 +421,18 @@ class TGChatViewModel: NSObject {
             for (index, model) in self.messages.enumerated() {
                 if index == indexPath.row , let message = model.nimMessageModel {
                     messageList.append(message)
+                }
+            }
+        }
+        return messageList
+    }
+    
+    func getDeleteMessageDatas(indexPaths: [IndexPath]) -> [TGMessageData] {
+        var messageList: [TGMessageData] = []
+        indexPaths.forEach { indexPath in
+            for (index, model) in self.messages.enumerated() {
+                if index == indexPath.row {
+                    messageList.append(model)
                 }
             }
         }

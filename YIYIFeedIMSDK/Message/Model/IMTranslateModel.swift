@@ -15,3 +15,13 @@ struct IMTranslateModel : Codable {
         case text = "message"
     }
 }
+
+struct IMRevokeModel : Codable {
+    let code : Int?
+    let desc : String?
+
+    enum CodingKeys: String, CodingKey {
+        case code = "code"
+        case desc = "desc"
+    }
+}
