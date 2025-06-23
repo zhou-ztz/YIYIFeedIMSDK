@@ -154,6 +154,13 @@
 		8ABF5F462CF9C668001DC11E /* TGIMTeamMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F452CF9C668001DC11E /* TGIMTeamMeetingController.swift */; };
 		8ABF5F482CF9C8D4001DC11E /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */; };
 		8ABF5F4A2CF9CCED001DC11E /* TeamMeetingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */; };
+		B14CCF4F2DFFC16000C563B8 /* UnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CCF4E2DFFC16000C563B8 /* UnknownMessageCell.swift */; };
+		B14CCF512E03DCFD00C563B8 /* IMGiftAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CCF502E03DCFD00C563B8 /* IMGiftAttachment.swift */; };
+		B14CCF532E03E03400C563B8 /* GiftMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CCF522E03E03300C563B8 /* GiftMessageCell.swift */; };
+		B14CCF552E040EE800C563B8 /* TGGiftRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CCF542E040EE800C563B8 /* TGGiftRequest.swift */; };
+		B14CCF582E041D3000C563B8 /* TGCancelPopView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B14CCF572E041D3000C563B8 /* TGCancelPopView.xib */; };
+		B14CCF592E041D3000C563B8 /* TGCancelPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CCF562E041D3000C563B8 /* TGCancelPopView.swift */; };
+		B14CCF5B2E052E3800C563B8 /* IMGiftOpenedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CCF5A2E052E3800C563B8 /* IMGiftOpenedView.swift */; };
 		B15E87492D433E0C0015E5C0 /* TGJoinMeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15E87482D433E0C0015E5C0 /* TGJoinMeetingViewController.swift */; };
 		B15E874B2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15E874A2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift */; };
 		B193FBDA2D5C4B9700BEB3F7 /* RedPacketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193FBD92D5C4B9700BEB3F7 /* RedPacketView.swift */; };
@@ -733,6 +740,13 @@
 		8ABF5F472CF9C8D4001DC11E /* UILabel+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
 		8ABF5F492CF9CCED001DC11E /* TeamMeetingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMeetingViewModel.swift; sourceTree = "<group>"; };
 		9B7FF8D3AB0A77F6C7BA2655 /* Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; path = "Target Support Files/Pods-YIYISDKDemo-YIYIFeedIMSDK/Pods-YIYISDKDemo-YIYIFeedIMSDK.release.xcconfig"; sourceTree = "<group>"; };
+		B14CCF4E2DFFC16000C563B8 /* UnknownMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownMessageCell.swift; sourceTree = "<group>"; };
+		B14CCF502E03DCFD00C563B8 /* IMGiftAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMGiftAttachment.swift; sourceTree = "<group>"; };
+		B14CCF522E03E03300C563B8 /* GiftMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftMessageCell.swift; sourceTree = "<group>"; };
+		B14CCF542E040EE800C563B8 /* TGGiftRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGGiftRequest.swift; sourceTree = "<group>"; };
+		B14CCF562E041D3000C563B8 /* TGCancelPopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCancelPopView.swift; sourceTree = "<group>"; };
+		B14CCF572E041D3000C563B8 /* TGCancelPopView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TGCancelPopView.xib; sourceTree = "<group>"; };
+		B14CCF5A2E052E3800C563B8 /* IMGiftOpenedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMGiftOpenedView.swift; sourceTree = "<group>"; };
 		B15E87482D433E0C0015E5C0 /* TGJoinMeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGJoinMeetingViewController.swift; sourceTree = "<group>"; };
 		B15E874A2D433E5F0015E5C0 /* TGJoinMeetingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGJoinMeetingViewModel.swift; sourceTree = "<group>"; };
 		B193FBD92D5C4B9700BEB3F7 /* RedPacketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketView.swift; sourceTree = "<group>"; };
@@ -1229,6 +1243,7 @@
 				B1EABBB02D1D5D8000EB7868 /* IMReplyAttachment.swift */,
 				B1EABC352D2D3AD600EB7868 /* IMMeetingRoomAttachment.swift */,
 				B193FC1A2D66CE5300BEB3F7 /* IMTextTranslateAttachment.swift */,
+				B14CCF502E03DCFD00C563B8 /* IMGiftAttachment.swift */,
 				8A4BB3472D09446600AAB4B8 /* CustomAttachment.swift */,
 				8A9F0E9E2CF6F6910021462C /* CustomAttachmentDecoder.swift */,
 				8A9F0E9D2CF6F6910021462C /* CustomAttachmentDefines.swift */,
@@ -1409,6 +1424,7 @@
 				B1EABC162D267A5400EB7868 /* TGContactsPickerConfig.swift */,
 				B1EABC1A2D267C9000EB7868 /* TGmessagePopModel.swift */,
 				B1EABC1E2D26820A00EB7868 /* TGVoucherRequest.swift */,
+				B14CCF542E040EE800C563B8 /* TGGiftRequest.swift */,
 				B1EABC202D2682A300EB7868 /* TGMiniProgramShareModel.swift */,
 				B1DA58FD2D38DEF500F83914 /* TGMessageRequestModel.swift */,
 				B193FBDB2D5C6D3200BEB3F7 /* EggModel.swift */,
@@ -1484,6 +1500,7 @@
 				B19503DC2DDB1814000B7554 /* SpeechToTextView.swift */,
 				B19503DD2DDB1814000B7554 /* SpeechToTextView.xib */,
 				B19503DE2DDB1814000B7554 /* SpeechTyperModalPresentation.swift */,
+				B14CCF5A2E052E3800C563B8 /* IMGiftOpenedView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1531,6 +1548,8 @@
 				B193FD492D88073E00BEB3F7 /* VerifyTextField.swift */,
 				B193FD562D8809D300BEB3F7 /* LiveHalfScreenPresentation.swift */,
 				B193FD5B2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift */,
+				B14CCF562E041D3000C563B8 /* TGCancelPopView.swift */,
+				B14CCF572E041D3000C563B8 /* TGCancelPopView.xib */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -1777,6 +1796,8 @@
 				B193FBEC2D5F367C00BEB3F7 /* MiniProgramMessageCell.swift */,
 				B193FC0A2D64935200BEB3F7 /* MultiImageMessageCell.swift */,
 				B193FC1C2D66D89500BEB3F7 /* TranslateMessageCell.swift */,
+				B14CCF522E03E03300C563B8 /* GiftMessageCell.swift */,
+				B14CCF4E2DFFC16000C563B8 /* UnknownMessageCell.swift */,
 			);
 			path = IMChatCell;
 			sourceTree = "<group>";
@@ -2356,6 +2377,7 @@
 				8A9F0DF32CF48B3B0021462C /* reaction-wow.json in Resources */,
 				8A9F0DFA2CF48B3B0021462C /* Localizable.strings in Resources */,
 				8A9F0DF72CF48B3B0021462C /* Localizable.strings in Resources */,
+				B14CCF582E041D3000C563B8 /* TGCancelPopView.xib in Resources */,
 				8A9F0DEE2CF48B3B0021462C /* reaction-angry.json in Resources */,
 				8A9F0DF02CF48B3B0021462C /* reaction-cry.json in Resources */,
 				8A9F0DF52CF48B3B0021462C /* Localizable.strings in Resources */,
@@ -2454,6 +2476,7 @@
 				B1EABC0D2D23D8AD00EB7868 /* AddChatViewController.swift in Sources */,
 				8A9F0D992CF444A80021462C /* SCRefreshHeader.swift in Sources */,
 				B1EABC342D2D383200EB7868 /* MeetingMessageCell.swift in Sources */,
+				B14CCF512E03DCFD00C563B8 /* IMGiftAttachment.swift in Sources */,
 				B1EABC1B2D267C9000EB7868 /* TGmessagePopModel.swift in Sources */,
 				B1EABC972D30D3CA00EB7868 /* IMActionListView.swift in Sources */,
 				B193FC182D65D18D00BEB3F7 /* IMTranslateModel.swift in Sources */,
@@ -2547,6 +2570,7 @@
 				B1EABC252D26840900EB7868 /* TGChatChooseFriendCell.swift in Sources */,
 				B1EABB7A2D1948B000EB7868 /* InputEmoticonTabView.swift in Sources */,
 				D706E17B2D27EA4E000D4437 /* TGTopicCommonModel.swift in Sources */,
+				B14CCF552E040EE800C563B8 /* TGGiftRequest.swift in Sources */,
 				8A4BB38F2D0FC92600AAB4B8 /* IMWhiteboardAttachment.swift in Sources */,
 				8A4BB3B52D11479B00AAB4B8 /* TGInputLocalContainerCell.swift in Sources */,
 				D758DCFC2D9A96920081A787 /* TGReactionTableViewCell.swift in Sources */,
@@ -2570,6 +2594,7 @@
 				D7ED1C7A2D3E275500B7F95D /* TGRefreshView.swift in Sources */,
 				D7AD6A9B2D38FED7006A3A1F /* TGUploadNetworkManager.swift in Sources */,
 				B193FBDC2D5C6D3200BEB3F7 /* EggModel.swift in Sources */,
+				B14CCF592E041D3000C563B8 /* TGCancelPopView.swift in Sources */,
 				B1EABCAB2D3507CB00EB7868 /* LBIndicator.swift in Sources */,
 				B1EABBC12D228CBF00EB7868 /* Country.swift in Sources */,
 				D7E3B3892DA6282400DEA02D /* NotificationCenter+Actions.swift in Sources */,
@@ -2702,6 +2727,7 @@
 				B1EABC192D267BC700EB7868 /* TGContactsPickerViewController.swift in Sources */,
 				8A4BB3952D0FC92600AAB4B8 /* IMCallingAttachment.swift in Sources */,
 				B1DA593C2D40E06200F83914 /* MeetingListViewCell.swift in Sources */,
+				B14CCF4F2DFFC16000C563B8 /* UnknownMessageCell.swift in Sources */,
 				B193FC1D2D66D89500BEB3F7 /* TranslateMessageCell.swift in Sources */,
 				B1EABC2F2D2BBFAA00EB7868 /* TGChatNotificationCell.swift in Sources */,
 				8A9F0D6E2CF42AC70021462C /* RLUserInterfacePrinciples.swift in Sources */,
@@ -2842,6 +2868,7 @@
 				8A9F0DC52CF451E90021462C /* Action.swift in Sources */,
 				B1EABB8E2D19615900EB7868 /* TGAppUtil.swift in Sources */,
 				D746FA8C2D424FB50085F218 /* TGLocationView.swift in Sources */,
+				B14CCF532E03E03400C563B8 /* GiftMessageCell.swift in Sources */,
 				B1EABB802D195C0000EB7868 /* TGSticker.swift in Sources */,
 				8A9F0DAD2CF44D6F0021462C /* String+Extension.swift in Sources */,
 				8A4BB3B12D111EA900AAB4B8 /* TGGalleryViewController.swift in Sources */,
@@ -2926,6 +2953,7 @@
 				8A4BB3322D08352B00AAB4B8 /* NMCMessageDispatcher.swift in Sources */,
 				8A4BB39C2D0FC92700AAB4B8 /* IMVoucherAttachment.swift in Sources */,
 				B1EABC902D2F675E00EB7868 /* SelectionView.swift in Sources */,
+				B14CCF5B2E052E3800C563B8 /* IMGiftOpenedView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

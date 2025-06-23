@@ -50,6 +50,8 @@ public protocol TGMessageDelegate: AnyObject {
     func didPressQRCodeVC(qrType: TGQRType, qrContent: String, descStr: String)
     /// 跳转优惠券详情 urlString - deeplink url
     func didPressVoucher(urlString: String)
+    /// 跳转优惠券详情 -gift
+    func didPressGiftToVoucherDetail(voucherId: Int)
     /// 跳转动态详情 urlString - deeplink url
     func didPressSocialPost(urlString: String)
     /// 跳转小程序
@@ -74,6 +76,8 @@ public protocol TGMessageDelegate: AnyObject {
     func openFileWebview(url: URL, title: String)
     /// 通过userId去拿Store 的 TGUserInfoModel
     func fetchUserStoreById(userId: Int) -> TGUserInfoModel?
+    /// 我的礼品卡页面
+    func didPressMyGiftVC(giftType: Int)
     
 }
 

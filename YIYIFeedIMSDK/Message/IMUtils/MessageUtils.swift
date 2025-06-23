@@ -535,6 +535,8 @@ class MessageUtils: NSObject {
                 default:
                     items = [.delete]
                 }
+            } else {
+                items = [.delete]
             }
         default:
             items = [.forward, .reply, .collection, .delete]
@@ -613,8 +615,12 @@ class MessageUtils: NSObject {
             return true
         }
         
-        if message.messageType == .MESSAGE_TYPE_CUSTOM, let attach = model.customAttachment{
-            return attach.canBeForwarded()
+        if message.messageType == .MESSAGE_TYPE_CUSTOM {
+            if let attach = model.customAttachment {
+                return attach.canBeForwarded()
+            } else {
+                return false
+            }
         }
         
         if message.messageType == .MESSAGE_TYPE_NOTIFICATION {

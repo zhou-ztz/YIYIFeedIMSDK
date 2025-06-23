@@ -343,6 +343,8 @@ public class TGChatViewController: TGViewController {
         tableView.register(MiniProgramMessageCell.self, forCellReuseIdentifier: "MiniProgramMessageCell")
         tableView.register(MultiImageMessageCell.self, forCellReuseIdentifier: "MultiImageMessageCell")
         tableView.register(TranslateMessageCell.self, forCellReuseIdentifier: "TranslateMessageCell")
+        tableView.register(UnknownMessageCell.self, forCellReuseIdentifier: "UnknownMessageCell")
+        tableView.register(GiftMessageCell.self, forCellReuseIdentifier: "GiftMessageCell")
     
         chatInputView.frame = CGRect(x: 0, y: backBaseView.bounds.height - chatInputView.menuHeight - TSBottomSafeAreaHeight, width: self.view.bounds.width, height: chatInputView.menuHeight + chatInputView.contentHeight)
         
@@ -1633,6 +1635,60 @@ public class TGChatViewController: TGViewController {
             }
         }
     }
+    
+    /// 发送礼物状态通知
+    func sendGiftStatusNotification(message: TGMessageData, giftMessageStatus: GiftMessageStatus) {
+        viewmodel.sendGiftStatusNotification(message: message, giftMessageStatus: giftMessageStatus) { [weak self] flag in
+            guard let self = self, let indexPath = self.viewmodel.getIndexPathForMessage(model: message) else {return}
+            DispatchQueue.main.async {
+                self.tableView.reloadRow(at: indexPath, with: .none)
+            }
+            
+        }
+    }
+    
+    func handleGiftResponse(accept: Bool, message: TGMessageData, serviceTransactionId: String) {
+        let status = accept == true ? "1" : "-1"
+        SVProgressHUD.show()
+        TGIMNetworkManager.giftStatusUpdateRequest(pandaPurchaseId: serviceTransactionId, status: status) { [weak self] response, error in
+            SVProgressHUD.dismiss()
+            guard let self = self else { return }
+            self.sendGiftStatusNotification(message: message, giftMessageStatus: accept == true ? GiftMessageStatus.accepted : GiftMessageStatus.rejected)
+            if let data = response {
+                if accept {
+                    let openedView = IMGiftOpenedView(statusResponse: data.purchase)
+                    let newPopup = TGAlertController(style: .popup(customview: openedView),
+                                                     hideCloseButton: true,
+                                                     allowBackgroundDismiss: false,
+                                                     isOffset: true)
+                    openedView.closeButtonClosure = { newPopup.dismiss() }
+                    openedView.actionButtonClosure = {
+                        newPopup.dismiss()
+                        // 跳转我的礼品卡列表
+                        RLSDKManager.shared.imDelegate?.didPressMyGiftVC(giftType: 1)
+                    }
+                    self.present(newPopup, animated: false)
+                } else {
+                    print("操作成功 ： \(data.message ?? "")")
+                }
+            } else {
+                UIViewController.showBottomFloatingToast(with: error?.localizedDescription ?? "", desc: "")
+            }
+        }
+    }
+    
+    func updateGiftMsgStatus(messageId: String, giftMessageStatus: GiftMessageStatus)  {
+        if let messageData = viewmodel.getMessageDataForMessageClientId(messageClientId: messageId), let indexPath = viewmodel.getIndexPathForMessage(model: messageData), let nimMessage = messageData.nimMessageModel {
+            let ext = ["gift_message_status": giftMessageStatus.rawValue].toJSON ?? ""
+            nimMessage.localExtension = ext
+            NIMSDK.shared().v2MessageService.updateMessageLocalExtension(nimMessage, localExtension: ext) {[weak self] _ in
+                DispatchQueue.main.async {
+                    self?.tableView.reloadRow(at: indexPath, with: .none)
+                }
+            }
+        }
+
+    }
 }
 
 // MARK: UITableViewDelegate, UITableViewDataSource
@@ -1746,22 +1802,29 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.setData(model: model)
                     cell.delegate = self
                     return cell
+                case .Gift:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "GiftMessageCell", for: indexPath) as! GiftMessageCell
+                    cell.setData(model: model)
+                    cell.delegate = self
+                    return cell
                 default:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "UnknownMessageCell", for: indexPath) as! UnknownMessageCell
                     cell.setData(model: model)
                     cell.contentLabel.text = "unknown_message".localized
                     cell.delegate = self
-                   
                     return cell
                 }
             }
-            return UITableViewCell()
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TextMessageCell", for: indexPath) as! TextMessageCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "UnknownMessageCell", for: indexPath) as! UnknownMessageCell
             cell.setData(model: model)
             cell.contentLabel.text = "unknown_message".localized
             cell.delegate = self
-           
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "UnknownMessageCell", for: indexPath) as! UnknownMessageCell
+            cell.setData(model: model)
+            cell.contentLabel.text = "unknown_message".localized
+            cell.delegate = self
             return cell
         }
     }
@@ -1835,9 +1898,10 @@ extension TGChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
         guard let message = model.nimMessageModel else { return false }
         if let ext = message.serverExtension, let dict = ext.toDictionary, dict.keys.contains("secretChatTimer") { return false }
-        if isForwarding, let attach = model.customAttachment {
-            return attach.canBeForwarded()
+        if isForwarding {
+            return MessageUtils.canMessageBeForwarded(model)
         }
+        
         return true
     }
     
@@ -2028,6 +2092,56 @@ extension TGChatViewController: BaseMessageCellDelegate {
                 case .Translate:
                     guard let attach = model.customAttachment as? IMTextTranslateAttachment, let oriMessage = self.viewmodel.findMessageData(messageClientId: model.nimMessageModel?.messageClientId ?? "")  else { return}
                     textTranslate(withText: attach.originalText, oriMessage: oriMessage, translateMessage: model)
+                case .Gift:
+                    guard let attach = model.customAttachment as? IMGiftAttachment, let message = model.nimMessageModel else { return}
+                    if message.isSelf {
+                        RLSDKManager.shared.imDelegate?.didPressGiftToVoucherDetail(voucherId: attach.voucherId.toInt())
+                    } else {
+                        SVProgressHUD.show()
+                        TGIMNetworkManager.giftStatusDetailRequest(pandaPurchaseId: attach.serviceTransactionId) {[weak self] respone, error in
+                            SVProgressHUD.dismiss()
+                            guard let self = self else { return }
+                            if let data = respone {
+                                if data.status == GiftMessageStatus.accepted.rawValue {
+                                    self.sendGiftStatusNotification(message: model, giftMessageStatus: GiftMessageStatus.accepted)
+                                } else if data.status == GiftMessageStatus.rejected.rawValue {
+                                    self.sendGiftStatusNotification(message: model, giftMessageStatus: GiftMessageStatus.rejected)
+                                }else if data.status == GiftMessageStatus.cancelled.rawValue {
+                                    //对方已经撤回消息，取消发送礼品卡
+                                    UIViewController.showBottomFloatingToast(with: "rw_im_gift_revoked_toast".localized, desc: "")
+                                    self.sendGiftStatusNotification(message: model, giftMessageStatus: GiftMessageStatus.cancelled)
+                                }else if data.status == GiftMessageStatus.expired.rawValue {
+                                    //消息已经过期未领取
+                                    self.sendGiftStatusNotification(message: model, giftMessageStatus: GiftMessageStatus.expired)
+                                } else if data.status == GiftMessageStatus.pending.rawValue {
+                                    //领取优惠券
+                                    let serviceTransactionId = attach.serviceTransactionId
+                                    let view = TGCancelPopView(isGift: true)
+                                    let popup = TGAlertController(style: .popup(customview: view), hideCloseButton: true)
+                                    view.alertButtonClosure = {[weak self] in
+                                        guard let self = self else { return }
+                                        popup.dismiss {
+                                            self.handleGiftResponse(accept: true, message: model, serviceTransactionId: serviceTransactionId)
+                                        }
+                                    }
+                                    view.cancelButtonClosure = { [weak self] in
+                                        guard let self = self else { return }
+                                        popup.dismiss {
+                                            self.handleGiftResponse(accept: false, message: model, serviceTransactionId: serviceTransactionId)
+                                        }
+                                    }
+                                    view.closeButtonClosure = {
+                                        popup.dismiss()
+                                    }
+                                    present(popup, animated: false)
+                                }
+                                
+                            } else { //
+                                UIViewController.showBottomFloatingToast(with: error?.localizedDescription ?? "", desc: "")
+                            }
+                        }
+                    }
+                    break
                 default:
                     break
                 }
@@ -2400,6 +2514,14 @@ extension TGChatViewController: TGChatViewModelDelegate {
         }
         if type == NTESPinnedUpdated && self.viewmodel.conversationType == .CONVERSATION_TYPE_TEAM {
             loadMessagePins()
+        }
+        
+        if type == NTESGiftMsgUpdated && self.viewmodel.conversationType == .CONVERSATION_TYPE_P2P {
+            if let msg_id = content["im_msg_id"] as? String, let giftMessageStatus = content["gift_message_status"] as? String {
+                
+                self.updateGiftMsgStatus(messageId: msg_id, giftMessageStatus: GiftMessageStatus(rawValue: giftMessageStatus) ?? .pending)
+            }
+        
         }
     }
     

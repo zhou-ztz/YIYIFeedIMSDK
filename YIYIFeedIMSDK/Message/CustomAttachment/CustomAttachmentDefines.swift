@@ -148,6 +148,10 @@ let CMCallType      =     "callType"
 let CMEventType     =     "eventType"
 let CMCallDuration  =     "duration"
 
+// Gift
+let CMGiftImageName      =  "giftImageName"
+let CMGiftTransactionId     =  "giftTransactionId"
+let CMGiftVoucherId             =  "giftVoucherId"
 
 enum IMCustomMeetingCommand: Int {
     case Unknown              = 0
@@ -183,6 +187,7 @@ enum CustomMessageType: Int {
     case WhiteBoard        = 201
     case MeetingRoom       = 202
     case VideoCall         = 203 // 音视频通话
+    case Gift              = 204  // 礼品卡
     case Unknown           = -1
 }
 
@@ -230,5 +235,14 @@ enum CallingEventType: Int {
     case miss       = 1 // 未接电话
     case bill       = 2 //电话回单
     case reject     = 3 //对方拒接电话
+}
+
+/// 礼物状态
+enum GiftMessageStatus: String {
+    case accepted = "Accepted"
+    case rejected = "Rejected"
+    case cancelled = "Cancelled"
+    case expired = "Expired"
+    case pending = "Pending"
 }
 

@@ -106,19 +106,29 @@ extension UserDefaults {
         UserDefaults.standard.synchronize()
     }
     
+//    static var biometricEnabled: Bool {
+//        get {
+//            guard let username = RLSDKManager.shared.loginParma?.imAccid else {
+//                return false
+//            }
+//            return UserDefaults.standard.bool(forKey: "biometric-enabled-\(username)")
+//        }
+//        
+//        set {
+//            guard let username = RLSDKManager.shared.loginParma?.imAccid  else {
+//                return
+//            }
+//            UserDefaults.standard.set(newValue, forKey: "biometric-enabled-\(username)")
+//            UserDefaults.standard.synchronize()
+//        }
+//    }
     static var biometricEnabled: Bool {
         get {
-            guard let username = RLSDKManager.shared.loginParma?.imAccid else {
-                return false
-            }
-            return UserDefaults.standard.bool(forKey: "biometric-enabled-\(username)")
+            return UserDefaults.standard.bool(forKey: "biometric-enabled")
         }
         
         set {
-            guard let username = RLSDKManager.shared.loginParma?.imAccid  else {
-                return
-            }
-            UserDefaults.standard.set(newValue, forKey: "biometric-enabled-\(username)")
+            UserDefaults.standard.set(newValue, forKey: "biometric-enabled")
             UserDefaults.standard.synchronize()
         }
     }

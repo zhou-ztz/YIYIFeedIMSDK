@@ -38,11 +38,11 @@ public struct TGUserInfoModel: UserInfoType, Mappable, Entity {
     public var phone: String?
     public var mobi: String?
 
-    var email: String?
-    var sex: Int = 0 /// The user's gender, 0 - Unknown, 1 - Man, 2 - Woman.
-    var bio: String?
-    var location: String?
-    var createDate: Date?
+    public var email: String?
+    public var sex: Int = 0 /// The user's gender, 0 - Unknown, 1 - Man, 2 - Woman.
+    public var bio: String?
+    public var location: String?
+    public var createDate: Date?
     var updateDate: Date?
     public var avatarUrl: String?
     var avatarMime: String?
@@ -56,14 +56,14 @@ public struct TGUserInfoModel: UserInfoType, Mappable, Entity {
 
     // verification
     public var verificationIcon: String?
-    var verificationType: String?
+    public var verificationType: String?
 
     // extra
-    var likesCount: Int = 0
-    var commentsCount: Int = 0
-    var followersCount: Int = 0
-    var followingsCount: Int = 0
-    var feedCount: Int = 0
+    public var likesCount: Int = 0
+    public var commentsCount: Int = 0
+    public var followersCount: Int = 0
+    public var followingsCount: Int = 0
+    public var feedCount: Int = 0
     var checkInCount: Int = 0
     var canSubscribe: Bool = false
     var isRewardAcceptEnabled: Bool = false

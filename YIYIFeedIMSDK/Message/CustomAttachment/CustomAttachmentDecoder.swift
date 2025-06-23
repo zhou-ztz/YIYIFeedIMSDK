@@ -121,6 +121,12 @@ class CustomAttachmentDecoder: NSObject {
                     attachment.translatedText = data.jsonString(CMTranslatedMessage)
                     attachment.isOutgoingMsg = data.jsonBool(CMTranslatedMessageIsOutgoing)
                     return (type, attachment)
+                case .Gift:
+                    let attachment = IMGiftAttachment()
+                    attachment.serviceTransactionId =  data.jsonString(CMGiftTransactionId)
+                    attachment.imageName = data.jsonString(CMGiftImageName)
+                    attachment.voucherId = data.jsonString(CMGiftVoucherId)
+                    return (type, attachment)
                 default:
                     return (type, nil)
                 }
@@ -221,6 +227,10 @@ class CustomAttachmentDecoder: NSObject {
     }
     /// contactCard
     class func contactCardMessageEncode(attach: IMContactCardAttachment) -> String {
+        return attach.encode()
+    }
+    /// gitCard
+    class func gitCardMessageEncode(attach: IMGiftAttachment) -> String {
         return attach.encode()
     }
     

@@ -317,28 +317,27 @@ class TGAlertController: UIViewController {
 //                make.height.equalTo(320)
 //            }
 //        }
-//        
-//        if customView.isKind(of: MeetingPasswordView.self) {
-//            alertView.snp.makeConstraints { (make) in
-//                make.center.equalToSuperview()
-//                make.width.equalTo(322)
-//            }
-//        }
-//        
-//        if customView.isKind(of: MeetingPayView.self) {
-//            alertView.snp.makeConstraints { (make) in
-//                make.center.equalToSuperview()
-//                make.width.equalTo(ScreenWidth - 48)
-//            }
-//        }
-//        
-//        if customView.isKind(of: CancelPopView.self){
-//            alertView.snp.makeConstraints { (make) in
-//                make.center.equalToSuperview()
-//                make.width.equalTo(350)
-//            }
-//        }
-//        
+        if customView.isKind(of: IMGiftOpenedView.self) {
+            alertView.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.equalTo(ScreenWidth - 48)
+            }
+        }
+        
+        if customView.isKind(of: MeetingPayView.self) {
+            alertView.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.equalTo(ScreenWidth - 48)
+            }
+        }
+        
+        if customView.isKind(of: TGCancelPopView.self){
+            alertView.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.equalTo(350)
+            }
+        }
+        
         let closeButton = UIButton().configure { button in
             button.setImage(UIImage.set_image(named: "IMG_topbar_close"), for: .normal)
             button.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)

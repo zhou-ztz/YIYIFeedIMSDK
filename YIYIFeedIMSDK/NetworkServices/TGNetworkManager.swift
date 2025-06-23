@@ -46,7 +46,7 @@ class TGNetworkManager {
                  method: HTTPMethod,
                  params: [String: Any]? = nil,
                  headers: [String: String]? = nil,
-                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
+                 completion: @escaping (Data?, HTTPURLResponse?, Error?) -> Void) {
         
         // 构建完整 URL
         var fullUrl = (url ?? baseUrl) + urlPath
@@ -103,7 +103,7 @@ class TGNetworkManager {
             guard let data = data else {
                 let noDataError = NSError(domain: "TGNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])
                 DispatchQueue.main.async {
-                    completion(nil, response, noDataError)
+                    completion(nil, response as? HTTPURLResponse, noDataError)
                 }
                 return
             }
@@ -120,7 +120,7 @@ class TGNetworkManager {
                     print("Request was successful")
                     ///数据不需要解析
                     if  data.bytes.count == 0 {
-                        completion(data, response, nil)
+                        completion(data, httpResponse, nil)
                         return
                     }
                     
@@ -128,13 +128,13 @@ class TGNetworkManager {
                         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                             print("response json = \(json)")
                             DispatchQueue.main.async {
-                                completion(data, response, nil)
+                                completion(data, httpResponse, nil)
                             }
                             
                         } else if let jsonArr = try JSONSerialization.jsonObject(with: data, options: []) as? [Any] {
                             print("response jsonArr = \(jsonArr)")
                             DispatchQueue.main.async {
-                                completion(data, response, nil)
+                                completion(data, httpResponse, nil)
                             }
                             
                         } else {
@@ -142,7 +142,7 @@ class TGNetworkManager {
                         }
                     } catch {
                         DispatchQueue.main.async {
-                            completion(data, response, error)
+                            completion(data, httpResponse, error)
                         }
                     }
                     
@@ -152,7 +152,7 @@ class TGNetworkManager {
                     guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                         let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "No data received"])
                         DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
+                            completion(nil, httpResponse, noDataError)
                         }
                         return
                     }
@@ -160,23 +160,23 @@ class TGNetworkManager {
                     if let message = dictionary["message"] as? String, let code = dictionary["code"] as? Int {
                         let noDataError = NSError(domain: "TGNetworkManager", code: code, userInfo: [NSLocalizedDescriptionKey: message])
                         DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
+                            completion(nil, httpResponse, noDataError)
                         }
                     } else if let message = dictionary["message"] as? String {
                         let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: message])
                         DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
+                            completion(nil, httpResponse, noDataError)
                         }
                     } else if let code = dictionary["code"] as? Int {
                         let noDataError = NSError(domain: "TGNetworkManager", code: code, userInfo: [NSLocalizedDescriptionKey: ""])
                         DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
+                            completion(nil, httpResponse, noDataError)
                         }
                     }
                     else {
                         let noDataError = NSError(domain: "TGNetworkManager", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "No data received"])
                         DispatchQueue.main.async {
-                            completion(nil, response, noDataError)
+                            completion(nil, httpResponse, noDataError)
                         }
                     }
                     
@@ -184,7 +184,7 @@ class TGNetworkManager {
             } else {
                 let noDataError = NSError(domain: "TGNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])
                 DispatchQueue.main.async {
-                    completion(nil, response, noDataError)
+                    completion(nil, response as? HTTPURLResponse, noDataError)
                 }
             }
             

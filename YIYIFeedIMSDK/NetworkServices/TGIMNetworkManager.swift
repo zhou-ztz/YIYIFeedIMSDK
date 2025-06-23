@@ -452,27 +452,27 @@ class TGIMNetworkManager: NSObject {
     }
     
     ///会议支付 
-    class func meetingPayment(pin: String, completion: @escaping (_ requestdata: MeetingPayment?, _ error: Error?) ->Void) {
+    class func meetingPayment(pin: String, completion: @escaping (_ requestdata: MeetingPayment?, _ error: Error?, _ statusCode: Int?) ->Void) {
         let path = "api/v2/meeting/payment?pin=\(pin)"
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,
             params: nil,
             headers: nil
-        ) { data, _, error in
+        ) { data, respone, error in
             guard let data = data, error == nil else {
-                completion(nil, error)
+                completion(nil, error, 0)
                 return
             }
             if let jsonString = String(data: data, encoding: .utf8) {
                 let model = Mapper<MeetingPayment>().map(JSONString: jsonString)
                 DispatchQueue.main.async {
-                    completion(model, nil)
+                    completion(model, nil, respone?.statusCode)
                 }
             } else {
                 let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
                 DispatchQueue.main.async {
-                    completion(nil, nserror)
+                    completion(nil, nserror, respone?.statusCode)
                 }
             }
         }
@@ -573,4 +573,64 @@ class TGIMNetworkManager: NSObject {
             }
         }
     }
+    
+    class func giftStatusDetailRequest(pandaPurchaseId: String, completion: @escaping (GiftStatusResponse?, Error?) -> Void) {
+        
+        let path = "wallet/api/partner/panda/gift-detail/\(pandaPurchaseId)"
+       
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .GET,
+            params: nil,
+            headers: nil
+        ) { data, _, error1 in
+            guard let data = data, error1 == nil else {
+                completion(nil, error1)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(GiftStatusResponse.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response, nil)
+                }
+            } catch {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
+    
+    class func giftStatusUpdateRequest(pandaPurchaseId: String, status: String, completion: @escaping (PandaGiftStatusResponse?, Error?) -> Void) {
+        let path = "/wallet/api/partner/panda/gift-status/\(pandaPurchaseId)"
+        let params = ["status": status]
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .PATCH,
+            params: params,
+            headers: nil
+        ) { data, _, error1 in
+            guard let data = data, error1 == nil else {
+                completion(nil, error1)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(PandaGiftStatusResponse.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response, nil)
+                }
+            } catch {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
+    
 }

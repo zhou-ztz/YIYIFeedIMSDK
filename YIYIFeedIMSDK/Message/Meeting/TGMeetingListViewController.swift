@@ -268,7 +268,7 @@ class TGMeetingListViewController: TGViewController {
     }
     
     func meetingPay(pin: String) {
-        TGIMNetworkManager.meetingPayment(pin: pin) {[weak self] requestdata, error in
+        TGIMNetworkManager.meetingPayment(pin: pin) {[weak self] requestdata, error, statusCode in
             guard let self = self, let rootVC = UIApplication.topViewController() else { return }
             if let error = error {
                 self.payInfoVC?.dismiss()
@@ -276,7 +276,27 @@ class TGMeetingListViewController: TGViewController {
                 RLSDKManager.shared.imDelegate?.dismissPin()
                 UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
                 
-            } else {
+            } else if let statusCode = statusCode {
+                if statusCode == 409 {
+                    if UserDefaults.biometricEnabled {
+                        UserDefaults.biometricEnabled = false
+                        let view = TGCancelPopView(isInvalidPin: true)
+                        let popup = TGAlertController(style: .popup(customview: view), hideCloseButton: true)
+                        view.alertButtonClosure = {
+                            popup.dismiss {
+                                RLSDKManager.shared.imDelegate?.showPin(type: .purchase, {[weak self] pin in
+                                    self?.meetingPay(pin: pin)
+                                }, cancel: nil, needDisplayError: false)
+                            }
+                        }
+                        rootVC.present(popup, animated: false)
+                        
+                    } else {
+                        RLSDKManager.shared.imDelegate?.showPinError(message: error?.localizedDescription ?? "")
+                    }
+                }
+            }
+            else {
                 guard let model = requestdata else { return }
                 switch model.code {
                 case 1007:

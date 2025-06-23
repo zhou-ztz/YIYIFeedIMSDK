@@ -28,6 +28,8 @@ let NTESPinnedStored    = 6
 let NTESPinnedDeleted    = 7
 let NTESPinnedUpdated    = 8
 
+let NTESGiftMsgUpdated    = 9
+
 class TGChatCustomSysNotificationSender: NSObject {
     
     var lastTime: Date!

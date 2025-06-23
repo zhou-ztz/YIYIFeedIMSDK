@@ -263,9 +263,14 @@ class ConversationListCell: UITableViewCell {
                     }
                 case .Voucher:
                     text = "recent_msg_desc_voucher".localized
+                case .Gift:
+                    text = "rw_recent_msg_desc_gift".localized
                 default:
+                    text = "recent_msg_unknown".localized
                     break
                 }
+            } else {
+                text = "recent_msg_unknown".localized
             }
     
             break

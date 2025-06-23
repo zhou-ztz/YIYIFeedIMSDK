@@ -1135,6 +1135,39 @@ class TGChatViewModel: NSObject {
         }
     }
     
+    /// 发送礼物状态通知
+    func sendGiftStatusNotification(message: TGMessageData, giftMessageStatus: GiftMessageStatus, completion: @escaping (Bool) -> Void) {
+        guard let nimMessage = message.nimMessageModel, let ext = ["gift_message_status": giftMessageStatus.rawValue].toJSON else { return }
+        let conversationId = self.conversationId
+        nimMessage.localExtension = ext
+        NIMSDK.shared().v2MessageService.updateMessageLocalExtension(nimMessage, localExtension: ext) { _ in
+            completion(true)
+            let dict: [String: Any] = [NTESNotifyID: NTESGiftMsgUpdated,
+                                       "gift_message_status": giftMessageStatus.rawValue,
+                                       "im_msg_id": nimMessage.messageClientId ?? ""]
+
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: []),
+                  let json = String(data: jsonData, encoding: .utf8) else { return }
+            
+            let param = V2NIMSendCustomNotificationParams()
+            let pushConfig = V2NIMNotificationPushConfig()
+            pushConfig.pushEnabled = false
+            param.pushConfig = pushConfig
+            let notificationConfig = V2NIMNotificationConfig()
+            notificationConfig.offlineEnabled = false
+            param.notificationConfig = notificationConfig
+            NIMSDK.shared().v2NotificationService.sendCustomNotification(conversationId, content: json, params: param) {
+                
+            } failure: { _ in
+                
+            }
+        } failure: { _ in
+            completion(false)
+        }
+
+        
+    }
+    
 }
 
 extension TGChatViewModel: V2NIMMessageListener {
