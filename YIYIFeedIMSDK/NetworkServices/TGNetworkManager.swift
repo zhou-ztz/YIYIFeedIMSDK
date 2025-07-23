@@ -35,7 +35,9 @@ class TGNetworkManager {
             "X-Device-Model": TGDevice.modelName,
             "Accept-Language": TGLocalizationManager.getCurrentLanguage(),
             "X-Device-Country": UserDefaults.standard.string(forKey: "selected-country-code") ?? "MY",
-            "X-App-Favor": "ios"
+            "X-App-Favor": "ios",
+            "X-Device-Latitude" : TGDevice.getLatitude(),
+            "X-Device-Longitude" : TGDevice.getLongitude()
         ]
     }()
     

@@ -63,16 +63,16 @@ public class TGFeedInfoDetailViewController: TGViewController {
     }
     
     var dontTriggerObservers:Bool = false
-    
     public var model: FeedListCellModel? {
         didSet {
-            self.setHeader()
-            self.setBottomViewData()
-            self.getCommentList()
-            self.navView.updateSponsorStatus(model?.isSponsored ?? false)
+            if dontTriggerObservers == false {
+                self.setHeader()
+                self.setBottomViewData()
+                self.getCommentList()
+                self.navView.updateSponsorStatus(model?.isSponsored ?? false)
+            }
         }
     }
-    
     public var transitionId = UUID().uuidString
     public var afterTime: String = ""
     
@@ -298,7 +298,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
         }
         bottomToolBarView.snp.makeConstraints {
             $0.right.left.bottom.equalToSuperview()
-            $0.height.equalTo(70)
+            $0.height.equalTo(TSBottomSafeAreaHeight + 60)
         }
         
         voucherBottomView.isHidden = true
@@ -793,11 +793,11 @@ extension TGFeedInfoDetailViewController: TGDetailCommentTableViewCellDelegate {
         guard let commentId = comment.id["commentId"], let cellIndex = self.commentDatas.firstIndex(where: { $0.id["commentId"] == commentId }) else {
             return
         }
-        
+        cell.showLoading()
         TGCommentNetWorkManager.shared.pinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
-            //            cell.hideLoading()
             guard let self = self else { return }
             DispatchQueue.main.async {
+                cell.hideLoading()
                 guard let commentIndex = self.commentDatas.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
                 guard status == true else {
                     self.showTopFloatingToast(with: message.orEmpty, desc: message.orEmpty)
@@ -817,11 +817,11 @@ extension TGFeedInfoDetailViewController: TGDetailCommentTableViewCellDelegate {
         guard let commentId = comment.id["commentId"], let cellIndex = self.commentDatas.firstIndex(where: { $0.id["commentId"] == commentId }) else {
             return
         }
-        //        cell.showLoading()
+        cell.showLoading()
         TGCommentNetWorkManager.shared.unpinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
-            //            cell.hideLoading()
             guard let self = self else { return }
             DispatchQueue.main.async {
+                cell.hideLoading()
                 guard let commentIndex = self.commentDatas.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
                 guard status == true else {
                     self.showTopFloatingToast(with: message.orEmpty, desc: message.orEmpty)
@@ -922,7 +922,7 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
                 activityVC.popoverPresentationController?.sourceView = self.view
                 self.present(activityVC, animated: true, completion: nil)
             }
-        case .save(isSaved: let isSaved):
+        case .save(isSaved: _):
             if let feedmodel = self.model {
                 let isCollect = (feedmodel.toolModel?.isCollect).orFalse ? false : true
                 TGFeedNetworkManager.shared.colloction(isCollect ? 1 : 0, feedIdentity: feedmodel.idindex, feedItem: feedmodel) {[weak self] result in
@@ -994,7 +994,9 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
             }
             let feedId = model.idindex
             
-            TGFeedNetworkManager.shared.pinFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+            let networkManager: (Int, @escaping (String, Int, Bool?) -> Void) -> Void = isPinned ? TGFeedNetworkManager.shared.unpinFeed : TGFeedNetworkManager.shared.pinFeed
+            
+            networkManager(feedId) {[weak self] errMessage, statusCode, status in
                 guard let self = self else { return }
                 guard status == true else {
                     if statusCode == 241 {

@@ -165,10 +165,14 @@ public class TGViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = barButton
     }
     
-    func show(placeholder type: PlaceholderViewType, theme: Theme = .white) {
+    func show(placeholder type: PlaceholderViewType, theme: Theme = .white, topPadding: CGFloat? = nil) {
         if placeholder.superview == nil {
             backBaseView.addSubview(placeholder)
-            placeholder.bindToEdges()
+            if let topPadding = topPadding {
+                placeholder.bindToEdges(topPadding: topPadding)
+            } else {
+                placeholder.bindToEdges()
+            }
             placeholder.onTapActionButton = {
                 self.placeholderButtonDidTapped()
             }

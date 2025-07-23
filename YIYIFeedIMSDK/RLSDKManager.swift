@@ -78,6 +78,9 @@ public protocol TGMessageDelegate: AnyObject {
     func fetchUserStoreById(userId: Int) -> TGUserInfoModel?
     /// 我的礼品卡页面
     func didPressMyGiftVC(giftType: Int)
+    /// 打开礼品卡购买页面
+    func didPressGiftSegmentVC(giftRecipient: String)
+    
     
 }
 

@@ -113,4 +113,16 @@ struct TGDevice {
         default:  return identifier
         }
     }
+    
+    public static var appLoction: CLLocation = CLLocation()
+    
+    public static func getLatitude() -> String {
+        return String(appLoction.coordinate.latitude)
+    }
+    
+    public static func getLongitude() -> String {
+        return String(appLoction.coordinate.longitude)
+    }
+    
+    
 }

@@ -633,4 +633,34 @@ class TGIMNetworkManager: NSObject {
         }
     }
     
+    class func giftCancelRequest(pandaPurchaseId: String, completion: @escaping (PandaGiftStatusResponse?, Error?) -> Void) {
+        let path = "/wallet/api/partner/panda/gift-card/cancel"
+        let params = ["id": pandaPurchaseId]
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .POST,
+            params: params,
+            headers: nil
+        ) { data, _, error1 in
+            guard let data = data, error1 == nil else {
+                completion(nil, error1)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(PandaGiftStatusResponse.self, from: data)
+                DispatchQueue.main.async {
+                    completion(response, nil)
+                }
+            } catch {
+                // 解析失败，返回错误
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
+    
+    
 }

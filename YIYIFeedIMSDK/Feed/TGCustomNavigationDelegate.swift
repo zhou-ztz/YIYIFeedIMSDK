@@ -133,6 +133,13 @@ extension TGCustomNavigationDelegate {
         view.addGestureRecognizer(gesture)
     }
     
+    func addEdgeDismissInteractionController(to view: UIView, delegate: UIGestureRecognizerDelegate?) {
+        let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipeFromLeft(_:)))
+        gesture.edges = .left
+        gesture.delegate = delegate
+        view.addGestureRecognizer(gesture)
+    }
+    
     @objc func handleSwipeFromRight(_ gesture: UIScreenEdgePanGestureRecognizer) {
         guard let gestureView = gesture.view else {
             return
@@ -159,6 +166,40 @@ extension TGCustomNavigationDelegate {
         case .ended:
             if let interactionController = self.interactionController {
                 if percent > 0.5 {
+                    interactionController.finish()
+                } else {
+                    interactionController.cancel()
+                }
+                self.interactionController = nil
+            }
+            
+        default:
+            break
+        }
+    }
+    @objc func handleSwipeFromLeft(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        guard let gestureView = gesture.view else {
+            return
+        }
+        
+        let percent = gesture.translation(in: gestureView).x / gestureView.bounds.size.width
+        
+        switch gesture.state {
+        case .began:
+            interactionController = UIPercentDrivenInteractiveTransition()
+            current?.navigationController?.popViewController(animated: true)
+            
+        case .changed:
+            if let interactionController = self.interactionController {
+                interactionController.update(percent)
+            }
+            
+        case .cancelled, .ended:
+            if let interactionController = self.interactionController {
+                let velocity = gesture.velocity(in: gestureView)
+                let shouldFinish = percent > 0.3 || velocity.x > 500
+                
+                if shouldFinish {
                     interactionController.finish()
                 } else {
                     interactionController.cancel()

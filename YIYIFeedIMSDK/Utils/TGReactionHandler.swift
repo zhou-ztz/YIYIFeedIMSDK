@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import CoreGraphics
+import Combine
 
 class TGReactionHandler {
     private let iconHeight: CGFloat = 38
@@ -29,6 +30,9 @@ class TGReactionHandler {
     private var pointOrigin: CGPoint = .zero
     private var panIndex = 0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private var cancellables = Set<AnyCancellable>()
+    private let reactionTapSubject = PassthroughSubject<Void, Never>()
+    
     private lazy var nameViews: [UIView] = {
         var views: [UIView] = []
         let height: CGFloat = 28.0
@@ -148,20 +152,28 @@ class TGReactionHandler {
         
         reactionView.addTap(action: { [weak self] (_) in
             guard let self = self else { return }
-            self.onTapReactionView()
+            self.reactionTapSubject.send()
         })
+        //控制 1 秒最多触发一次,防止过快点击出现数据错乱
+        reactionTapSubject
+            .throttle(for: .seconds(1), scheduler: RunLoop.main, latest: false)
+            .sink { [weak self] in
+                self?.onTapReactionView()
+            }
+            .store(in: &cancellables)
     }
     func onTapReactionView() {
         weak var wself = self
-        guard let cur = wself?.currentReaction else {
+        if currentReaction == nil {
             self.didSelectIcon = 0
             wself?.onSelect(reaction: isInnerFeed ? .blackHeart : .heart)
             wself?.currentReaction = isInnerFeed ? .blackHeart : .heart
-            return
+        }else{
+            self.didSelectIcon = nil
+            wself!.onSelect(reaction: nil)
+            wself!.currentReaction = nil
         }
-        self.didSelectIcon = nil
-        wself!.onSelect(reaction: nil)
-        wself!.currentReaction = nil
+     
     }
     
     func onSelect(reaction: ReactionTypes?) {

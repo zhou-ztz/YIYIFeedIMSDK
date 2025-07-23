@@ -381,6 +381,13 @@ class MessageUtils: NSObject {
         let rawAttachment = attachment.encode()
         return V2NIMMessageCreator.createCustomMessage("", rawAttachment: rawAttachment)
     }
+    class func giftV2Message(serviceTransactionId: String, voucherId: String) ->V2NIMMessage {
+        let attachment = IMGiftAttachment()
+        attachment.serviceTransactionId = serviceTransactionId
+        attachment.voucherId = voucherId
+        let rawAttachment = attachment.encode()
+        return V2NIMMessageCreator.createCustomMessage("", rawAttachment: rawAttachment)
+    }
     
     class func contactCardV2Message(userName: String) ->V2NIMMessage {
         let attactment = IMContactCardAttachment()
@@ -555,7 +562,7 @@ class MessageUtils: NSObject {
         if conversationType == .CONVERSATION_TYPE_TEAM {
             return [.album, .camera, .file, .redpacket, .videoCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
         }
-        return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+        return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .gift, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
     }
     
     class func canMessageBePinned (_ model: TGMessageData) -> Bool {

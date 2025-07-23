@@ -170,7 +170,12 @@ extension UIView {
             $0.edges.equalToSuperview().inset(inset)
         }
     }
-
+    func bindToEdges(topPadding: CGFloat, inset: ConstraintInsetTarget = 0) {
+        self.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(topPadding)
+            $0.left.right.bottom.equalToSuperview().inset(inset)
+        }
+    }
     func getRootView() -> UIView {
         if let _superview = self.superview {
             return _superview.getRootView()

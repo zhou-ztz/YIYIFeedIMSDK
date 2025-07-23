@@ -228,7 +228,7 @@ extension UIViewController {
    
         let popVC = TGCustomPopListViewController(type: type, items: items)
         popVC.modalTransitionStyle = .crossDissolve
-        popVC.modalPresentationStyle = .overCurrentContext
+        popVC.modalPresentationStyle = .overFullScreen
         popVC.delegate = delegate
 //        rewardVC.defaultPageIndex = defaultPageIdx
         self.present(popVC, animated: true, completion: nil)
@@ -278,7 +278,61 @@ extension UIViewController {
         
         SwiftEntryKit.display(entry: toastView, using: attr)
     }
-    func showDialog(image: UIImage? = nil, title: String? = nil, message: String, dismissedButtonTitle: String, onDismissed: (()->())?, onCancelled: (()->())? = nil, cancelButtonTitle: String? = nil, isRedPacket: Bool? = false, isInsufficientBalance: Bool? = false, isFavouriteMessage: Bool? = false) {
+    
+    func showBottomLoading(with title: String) {
+        
+        let loadingView = UIView()
+        loadingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.startAnimating()
+        activityIndicator.color = .white
+        loadingView.addSubview(activityIndicator)
+        
+        let loadingLabel = UILabel()
+        loadingLabel.text = title
+        loadingLabel.textColor = .white
+        loadingLabel.font = UIFont.systemFont(ofSize: 16)
+        loadingView.addSubview(loadingLabel)
+        
+        loadingView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(TSBottomSafeAreaHeight + 45)
+            make.width.equalTo(UIScreen.main.bounds.size.width)
+        }
+        
+        loadingLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview().offset(15)
+            make.centerY.equalToSuperview()
+        }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.right.equalTo(loadingLabel.snp.left).offset(-15)
+            make.centerY.equalTo(loadingLabel)
+        }
+        
+        // 配置SwiftEntryKit的属性
+        var attributes = EKAttributes.bottomFloat
+        attributes.displayDuration = .infinity // 无限制显示
+        attributes.entryInteraction = .absorbTouches // 阻止点击操作
+//        attributes.screenInteraction = .dismiss // 点击背景时，关闭加载视图
+        attributes.scroll = .disabled
+        attributes.entranceAnimation = .init(translate: .init(duration: 0.2, spring: nil))
+        attributes.exitAnimation = .init(translate: .init(duration: 0.2))
+        attributes.shadow = .active(with: .init(color: .black, opacity: 0.3, radius: 6))
+        attributes.positionConstraints.size = .init(width: .intrinsic, height: .intrinsic)
+        attributes.positionConstraints.safeArea = .overridden
+        attributes.statusBar = .dark
+        
+        // 显示加载视图
+        SwiftEntryKit.display(entry: loadingView, using: attributes, presentInsideKeyWindow: true)
+    }
+    func hideBottomLoading() {
+        SwiftEntryKit.dismiss()
+    }
+    
+    
+    func showDialog(image: UIImage? = nil, title: String? = nil, message: String, dismissedButtonTitle: String, onDismissed: (()->())?, onCancelled: (()->())? = nil, cancelButtonTitle: String? = nil, isRedPacket: Bool? = false, isInsufficientBalance: Bool? = false, isFavouriteMessage: Bool? = false, isBoost: Bool? = false) {
+        
         let alertViewContent = UIView(frame: .zero)
         alertViewContent.snp.makeConstraints {
             $0.width.equalTo(UIScreen.main.bounds.width * 0.8)
@@ -337,7 +391,7 @@ extension UIViewController {
         
         mainStackView.addArrangedSubview(contentLabelStackView)
         contentLabelStackView.snp.makeConstraints {
-            if isFavouriteMessage ?? false {
+            if isFavouriteMessage ?? false || isBoost ?? false {
                 $0.top.equalToSuperview().offset(25)
             }
             $0.left.equalToSuperview().offset(25)
@@ -354,14 +408,19 @@ extension UIViewController {
             buttonStackView.spacing = 8
             
             buttonStackView.snp.makeConstraints {
-                $0.height.equalTo(70)
+                $0.height.equalTo(isBoost ?? false ? 45 : 70)
             }
             
             if let cancelTitle = cancelButtonTitle {
                 if isFavouriteMessage ?? false {
-                    cancelButton.applyStyle(.custom(text: cancelTitle, textColor: UIColor(red: 210.0/255.0, green: 210.0/255.0, blue: 210.0/255.0, alpha: 1.0) , backgroundColor: UIColor(hex: 0xF5F5F5), cornerRadius: 22.5))
+                    cancelButton.applyStyle(.custom(text: cancelTitle, textColor: .black, backgroundColor: .white, cornerRadius: 12.5))
                 } else {
-                    cancelButton.applyStyle(.custom(text: cancelTitle, textColor: UIColor(red: 210.0/255.0, green: 210.0/255.0, blue: 210.0/255.0, alpha: 1.0), backgroundColor: .clear, cornerRadius: 0))
+                    if isBoost ?? false {
+                        cancelButton.applyStyle(.custom(text: cancelTitle, textColor: .black, backgroundColor: UIColor(hex: 0xE5E6EB), cornerRadius: 12.5))
+                    } else {
+                        cancelButton.applyStyle(.custom(text: cancelTitle, textColor: .black, backgroundColor: .white, cornerRadius: 12.5))
+                        cancelButton.dropShadow()
+                    }
                 }
                 buttonStackView.addArrangedSubview(cancelButton)
                 cancelButton.snp.makeConstraints {
@@ -371,9 +430,9 @@ extension UIViewController {
             }
             
             if isFavouriteMessage ?? false {
-                okButton.applyStyle(.custom(text: dismissedButtonTitle, textColor: .white, backgroundColor: UIColor(hex: 0xED2121), cornerRadius: 22.5))
+                okButton.applyStyle(.custom(text: dismissedButtonTitle, textColor: .white, backgroundColor: UIColor(hex: 0xED2121), cornerRadius: 12.5))
             } else {
-                okButton.applyStyle(.custom(text: dismissedButtonTitle, textColor: .white, backgroundColor: RLColor.main.red, cornerRadius: 22.5))
+                okButton.applyStyle(.custom(text: dismissedButtonTitle, textColor: .white, backgroundColor: RLColor.main.red, cornerRadius: 12.5))
             }
             buttonStackView.addArrangedSubview(okButton)
             okButton.snp.makeConstraints {
@@ -392,7 +451,7 @@ extension UIViewController {
             }
             
             if let cancelTitle = cancelButtonTitle {
-                cancelButton.applyStyle(.custom(text: cancelTitle, textColor: UIColor(red: 210.0/255.0, green: 210.0/255.0, blue: 210.0/255.0, alpha: 1.0), backgroundColor: .clear, cornerRadius: 0))
+                cancelButton.applyStyle(.custom(text: cancelTitle, textColor: .black, backgroundColor: .white, cornerRadius: 12.5))
                 mainStackView.addArrangedSubview(cancelButton)
                 cancelButton.snp.makeConstraints {
                     $0.left.equalToSuperview().offset(59)

@@ -159,8 +159,9 @@ class TGCommentPageController: UIViewController {
         guard let commentId = comment.id["commentId"], let cellIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else {
             return
         }
+        cell.showLoading()
         TGCommentNetWorkManager.shared.pinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
-            //            cell.hideLoading()
+            cell.hideLoading()
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let commentIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }
@@ -182,9 +183,9 @@ class TGCommentPageController: UIViewController {
         guard let commentId = comment.id["commentId"], let cellIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else {
             return
         }
-        //        cell.showLoading()
+        cell.showLoading()
         TGCommentNetWorkManager.shared.unpinComment(for: commentId, sourceId: feedId) { [weak self] (message, status) in
-            //            cell.hideLoading()
+            cell.hideLoading()
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let commentIndex = self.comments.firstIndex(where: { $0.id["commentId"] == commentId }) else { return }

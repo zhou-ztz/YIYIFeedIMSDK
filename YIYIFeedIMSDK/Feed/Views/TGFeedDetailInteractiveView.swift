@@ -438,19 +438,21 @@ class TGFeedDetailInteractiveView: UIView {
         }
         
         if !isEdit {
-            viewsAndTimeView.insertArrangedSubview(translateDotView, at: 3)
-            
-            let leftAligned = UIView()
-            leftAligned.addSubview(translateButton)
-            translateButton.contentHorizontalAlignment = .left
-            translateButton.snp.makeConstraints { (v) in
-                v.top.left.bottom.right.equalToSuperview()
-                v.right.lessThanOrEqualToSuperview()
+            //避免重复布局
+            if !viewsAndTimeView.arrangedSubviews.contains(translateDotView) {
+                viewsAndTimeView.insertArrangedSubview(translateDotView, at: 3)
+
+                let leftAligned = UIView()
+                leftAligned.addSubview(translateButton)
+                translateButton.contentHorizontalAlignment = .left
+                translateButton.snp.makeConstraints { (v) in
+                    v.top.left.bottom.right.equalToSuperview()
+                    v.right.lessThanOrEqualToSuperview()
+                }
+
+                viewsAndTimeView.addArrangedSubview(leftAligned)
             }
-            
-            viewsAndTimeView.addArrangedSubview(leftAligned)
         }
-        
         // By Kit Foong (Added checking when no text or only emoji will hide translate button)
         translateButton.isHidden =  self.originalTexts.isEmpty || self.originalTexts.containsOnlyEmoji
         translateDotView.isHidden = translateButton.isHidden
@@ -507,7 +509,7 @@ class TGFeedDetailInteractiveView: UIView {
             }
             
         }
-
+        
         viewsAndTimeView.layoutIfNeeded()
     }
     

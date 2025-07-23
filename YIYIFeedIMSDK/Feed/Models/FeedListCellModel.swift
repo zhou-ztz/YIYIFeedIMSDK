@@ -249,19 +249,19 @@ public class FeedListCellModel: NSObject{
         
         // 视频的处理
         // 如果存在视频时,视频的封面当做单张图片显示和处理同时设置播放地址
-        if let video = model.feedVideo, video.width > 0 && video.height > 0 {
-            let picture = PaidPictureModel()
-            picture.url = video.videoCoverID.imageUrl()
-            picture.originalSize = CGSize(width: video.width, height: video.height)
-            pictures = [picture]
-            videoURL = video.videoID.imageUrl()
-            videoHeight = Double(video.height)
-            videoWidth = Double(video.width)
-            videoType = video.type
-            videoCoverId = video.videoCoverID
-            videoId = video.videoID
-            videoPath = video.videoPath
-        }
+      if let video = model.feedVideo {
+          let picture = PaidPictureModel()
+          picture.url = video.videoCoverID.imageUrl()
+          picture.originalSize = CGSize(width: video.width, height: video.height)
+          pictures = [picture]
+          videoURL = video.videoID.imageUrl()
+          videoHeight = Double(video.height)
+          videoWidth = Double(video.width)
+          videoType = video.type
+          videoCoverId = video.videoCoverID
+          videoId = video.videoID
+          videoPath = video.videoPath
+      }
         canAcceptReward = model.userInfo.isRewardAcceptEnabled ? 1 : 0
         liveModel = model.liveModel
         privacy = model.privacy
@@ -283,12 +283,12 @@ public class FeedListCellModel: NSObject{
         pictures = model.images?.map { PaidPictureModel(feedImageModel: $0) } ?? []
         // 视频的处理
         // 如果存在视频时,视频的封面当做单张图片显示和处理同时设置播放地址
-        if let video = model.feedVideo, video.width > 0 && video.height > 0 {
+        if let video = model.feedVideo {
             let picture = PaidPictureModel()
-//            picture.url = video.videoCoverID.imageUrl()
+            picture.url = video.videoCoverID.imageUrl()
             picture.originalSize = CGSize(width: video.width, height: video.height)
             pictures = [picture]
-//            videoURL = video.videoID.imageUrl()
+            videoURL = video.videoID.imageUrl()
             videoHeight = Double(video.height)
             videoWidth = Double(video.width)
             videoType = video.type

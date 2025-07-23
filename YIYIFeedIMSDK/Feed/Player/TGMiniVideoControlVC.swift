@@ -20,8 +20,6 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
     var translateHandler: ((Bool) -> Void)?
     var isExpand: Bool = false
     
-    var playUrlArrays: [URL] = []
-
     init(model: FeedListCellModel) {
         self.model = model
         super.init(nibName: nil, bundle: nil)
@@ -34,31 +32,17 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .clear
-        control = TGMiniVideoControlView()
-        control.frame = CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight)
-        self.view.addSubview(control)
-        
-        //刷新用户关注状态
-//        if model.userId != CurrentUserSessionInfo?.userIdentity {
-//            TSUserNetworkingManager().getUserInfo(userId: model.userId) { userModel, msg, status in
-//                if let status = userModel?.follower {
-//                    let followstatus: FollowStatus = status == true ? .follow : .unfollow
-//                    self.updateFollowStatus(followstatus, userId: self.model.userId.stringValue)
-//                }
-//
-//            }
-//        }
-        
-        control.setFeed(model,self.isTranslateText,self.isExpand)
-        control.delegate = self
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(showReactionBottomSheet), name: NSNotification.Name.Reaction.show, object: nil)
+        self.view.backgroundColor = .black
+        self.loadControlView()
+        NotificationCenter.default.addObserver(self, selector: #selector(showReactionBottomSheet), name: NSNotification.Name.Reaction.show, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.control.coverImageView.setViewHidden(false)
+        DispatchQueue.main.async {
+            self.control.coverImageView.setViewHidden(false)
+        }
+        self.loadFeedData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -127,6 +111,37 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
     
     var parentVC: TGMiniVideoPageViewController? {
         return (parent as? TGMiniVideoPageViewController)
+    }
+    func loadFeedData() {
+        
+        TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: self.model.idindex.stringValue) {[weak self] feedInfo, error in
+            guard let listModel = feedInfo, let self = self else {
+                return
+            }
+            control.setFeed(FeedListCellModel(feedListModel: listModel),self.isTranslateText,self.isExpand)
+        }
+        
+    }
+    
+    func loadControlView() {
+        
+        control = TGMiniVideoControlView()
+        control.frame = CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight)
+        self.view.addSubview(control)
+        
+        //刷新用户关注状态
+        if model.userId != RLSDKManager.shared.currentUserInfo?.userIdentity {
+            TGUserNetworkingManager.shared.getUserInfo([model.userId]) { info, userInfoModels, error in
+                if let status = userInfoModels?.first?.follower {
+                    let followstatus: FollowStatus = status == true ? .follow : .unfollow
+                    self.updateFollowStatus(followstatus, userId: self.model.userId.stringValue)
+                }
+            }
+        }
+        
+        control.setFeed(model,self.isTranslateText,self.isExpand)
+        control.delegate = self
+        
     }
     
     func didEnterBackground() {

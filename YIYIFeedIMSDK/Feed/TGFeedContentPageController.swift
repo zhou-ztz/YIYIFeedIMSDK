@@ -248,6 +248,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.setClearNavBar(shadowColor: .clear)
+        self.loadFeedData()
         //进入页面时将状态栏的字体改为白色
         UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
     }
@@ -262,7 +263,17 @@ public class TGFeedContentPageController: TGBaseContentPageController {
             UIApplication.shared.setStatusBarStyle(.default, animated: true)
         }
     }
-    
+    func loadFeedData() {
+        TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: self.dataModel.idindex.stringValue) {[weak self] feedInfo, error in
+            guard let listModel = feedInfo, let self = self else {
+                return
+            }
+            let cellModel = FeedListCellModel(feedListModel: listModel)
+            self.dataModel = cellModel
+            self.interactiveView.updateTimeAndView(date: dataModel.time, views: (dataModel.toolModel?.viewCount).orZero)
+        }
+    }
+
     @objc func newChangeFollowStatus(_ notification: Notification) {
         guard let userInfo = notification.userInfo, let followStatus = userInfo["follow"] as? FollowStatus, let uid = userInfo["userid"] as? String else { return }
         guard var object = self.dataModel.userInfo else { return }
@@ -515,7 +526,9 @@ extension TGFeedContentPageController: CustomPopListProtocol {
         case .pinTop(isPinned: let isPinned):
             let feedId = self.dataModel.idindex
             
-            TGFeedNetworkManager.shared.pinFeed(feedId: feedId) {[weak self] errMessage, statusCode, status in
+            let networkManager: (Int, @escaping (String, Int, Bool?) -> Void) -> Void = isPinned ? TGFeedNetworkManager.shared.unpinFeed : TGFeedNetworkManager.shared.pinFeed
+            
+            networkManager(feedId) {[weak self] errMessage, statusCode, status in
                 guard let self = self else { return }
                 guard status == true else {
                     if statusCode == 241 {

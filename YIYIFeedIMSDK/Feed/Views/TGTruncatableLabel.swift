@@ -35,7 +35,8 @@ class TGTruncatableLabel: UIView {
     var onHttpTagTapped: ((String) -> Void)?
     var onTextNumberOfLinesTapped: ((TruncatableLabelShowStyle) -> Void)?
     var onHeightChanged: TGEmptyClosure?
-    
+    var currentLabelShowStyle : TruncatableLabelShowStyle = .TruncatableLabelShowLess
+
     var maximumHeight: CGFloat = UIScreen.main.bounds.height / 3
     
     let scrollView = UIScrollView().configure {
@@ -64,11 +65,17 @@ class TGTruncatableLabel: UIView {
         
         label.snp.makeConstraints {
             $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
         }
     
         label.setContentHuggingPriority(.required, for: .vertical)
         label.numberOfLines = self.numberOfLines
         
+        // Add tap gesture to the entire label
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLabelTap))
+        label.addGestureRecognizer(tapGesture)
+        label.isUserInteractionEnabled = true
+
         stack.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalTo(scrollView.snp.width)
@@ -90,6 +97,7 @@ class TGTruncatableLabel: UIView {
             self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
             self.setAllowTruncation()
             self.layoutScrollView()
+            self.currentLabelShowStyle = .TruncatableLabelShowLess
             self.onTextNumberOfLinesTapped?(.TruncatableLabelShowLess)
         }
     }
@@ -100,11 +108,21 @@ class TGTruncatableLabel: UIView {
         self.layoutScrollView()
     }
 
-
-    func setText(text: String, textColor: UIColor = .white, allowTruncation: Bool = false) {
-        if text.count == 0  {
-            return
+    @objc private func handleLabelTap() {
+        if label.numberOfLines == 0 {
+            label.numberOfLines = numberOfLines
+        } else {
+            label.numberOfLines = 0
+            label.layoutIfNeeded()
         }
+        collapseViewWrapper.isHidden = label.numberOfLines > 0
+        onHeightChanged?()
+        layoutScrollView()
+        onTextNumberOfLinesTapped?(label.numberOfLines == 0 ? .TruncatableLabelShowMore : .TruncatableLabelShowLess)
+    }
+
+    
+    func setText(text: String, textColor: UIColor = .white, allowTruncation: Bool = false) {
         customText = NSMutableAttributedString(string: text)
         customText.addAttributeTextColor(label.textColor, range: NSRange(text.startIndex..<text.endIndex, in: text))
         customText.yy_font = self.label.font.withSize(14)
@@ -124,9 +142,6 @@ class TGTruncatableLabel: UIView {
     }
     
     func setAttributeText(attString: NSMutableAttributedString, textColor: UIColor = .white, allowTruncation: Bool = false) {
-        if attString.string.count == 0  {
-            return
-        }
         customText = attString
         customText.addAttributeTextColor(textColor, range: NSRange(attString.string.startIndex..<attString.string.endIndex, in: attString.string))
         customText.yy_font = self.label.font.withSize(14)
@@ -146,7 +161,6 @@ class TGTruncatableLabel: UIView {
     }
 
     private func prepareAlias(for text: String) {
-        if text.count == 0 { return }
         // By Kit Foong (Updated new Regex pattern, refer from Active Label. Previously didn't cater when got space for username)
         guard let regex = try? NSRegularExpression(pattern: "\\u00ad@((?:[^/]+?))\\u00ad", options: []) else { return }
         //guard let regex = try? NSRegularExpression(pattern: "@\\S\\w*", options: []) else { return }
@@ -163,10 +177,9 @@ class TGTruncatableLabel: UIView {
     }
 
     private func prepareHashTags(for text: String) {
-        if text.count == 0 { return }
         ///"#\\S\\w*"
         guard let regex = try? NSRegularExpression(pattern: "(?<=^|\\s|$)#[\\p{L}\\p{Nd}_\\p{P}\\p{Emoji}]*", options: []) else { return }
-        let matches = regex.enumerateMatches(in: text,
+        regex.enumerateMatches(in: text,
                 range: NSRange(text.startIndex..<text.endIndex, in: text)
         ) { (matchResult, _, stop) -> () in
             guard let match = matchResult else { return }
@@ -179,11 +192,10 @@ class TGTruncatableLabel: UIView {
     }
     
     private func prepareHttpTag(for text: String) {
-        if text.count == 0 { return }
         guard let regex = try? NSRegularExpression(pattern: "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)", options: []) else {
             return
         }
-        let matches = regex.enumerateMatches(in: text,
+        regex.enumerateMatches(in: text,
                 range: NSRange(text.startIndex..<text.endIndex, in: text)
         ) { (matchResult, _, stop) -> () in
             guard let match = matchResult else { return }
@@ -196,7 +208,6 @@ class TGTruncatableLabel: UIView {
     }
 
     func setAllowTruncation() {
-        
         let moretext = NSMutableAttributedString(string: " \("rw_text_expand".localized)")
         let highlight = YYTextHighlight()
 
@@ -225,6 +236,7 @@ class TGTruncatableLabel: UIView {
             self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
             self.onHeightChanged?()
             self.layoutScrollView()
+            self.currentLabelShowStyle = .TruncatableLabelShowMore
             self.onTextNumberOfLinesTapped?(.TruncatableLabelShowMore)
         }
     
@@ -232,12 +244,10 @@ class TGTruncatableLabel: UIView {
             isExpand = false
             
             if self.label.numberOfLines == 0 {
-                self.label.truncationToken = expandtruncationToken
                 self.label.numberOfLines = self.numberOfLines
             } else {
                 self.label.numberOfLines = 0
                 self.label.layoutIfNeeded()
-                self.label.truncationToken = nil
             }
             
             self.collapseViewWrapper.isHidden = self.label.numberOfLines > 0
@@ -250,9 +260,8 @@ class TGTruncatableLabel: UIView {
 
     
     private func layoutScrollView() {
-        guard let text = self.label.text else { return  }
         self.scrollView.snp.updateConstraints {
-            let labelHeight = text.height(withConstrainedWidth: self.scrollView.bounds.width, font: self.label.font)
+            let labelHeight = self.label.text?.height(withConstrainedWidth: self.scrollView.bounds.width, font: self.label.font) ?? 0.0
             var finalHeight: CGFloat = 0.0
             
             if self.label.numberOfLines == 0 {
@@ -262,10 +271,7 @@ class TGTruncatableLabel: UIView {
             }
             
             let height = min(finalHeight, maximumHeight)
-            if height > 0  {
-                $0.height.equalTo(height)
-            }
-    
+            $0.height.equalTo(height)
         }
     }
 }

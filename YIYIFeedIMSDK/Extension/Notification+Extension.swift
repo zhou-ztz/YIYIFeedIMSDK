@@ -183,4 +183,7 @@ extension Notification.Name {
     struct Transaction {
         static let reloadYear = Notification.Name("reloadYear")
     }
+    struct Gift {
+         public static let sendGift = NSNotification.Name(rawValue: "com.ts-plus.notification.name.gift.sendGift")
+     }
 }

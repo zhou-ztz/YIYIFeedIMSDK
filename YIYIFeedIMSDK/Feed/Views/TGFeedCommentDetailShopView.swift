@@ -17,7 +17,7 @@ class TGFeedCommentDetailShopView: UIView {
         $0.alignment = .fill
         $0.distribution = .fill
         $0.axis = .vertical
-        $0.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1)
+        $0.backgroundColor = UIColor(hex: 0xF5F5F5)
         $0.spacing = 5
     }
     
@@ -25,7 +25,7 @@ class TGFeedCommentDetailShopView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         //layout.minimumInteritemSpacing = 5
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 30, height: 110)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 110)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -83,7 +83,7 @@ class TGFeedCommentDetailShopView: UIView {
     
     private func commonInit() {
         self.addSubview(stackView)
-        stackView.roundCorner()
+        stackView.layer.cornerRadius = 10.0
         stackView.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(self.shopSubViewType == .picture ? 10 : 0)
             $0.top.bottom.equalToSuperview().inset(5)
@@ -105,14 +105,14 @@ class TGFeedCommentDetailShopView: UIView {
         if isDarkBackground {
             stackView.backgroundColor = UIColor(red: 49/255, green: 49/255, blue: 49/255, alpha: 0.8)
         } else {
-            stackView.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1)
+            stackView.backgroundColor = UIColor(hex: 0xF5F5F5)
         }
         
         if let layout = feedShopListView.collectionViewLayout as? UICollectionViewFlowLayout {
             if isInnerFeed {
-                layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 110)
+                layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 50, height: 110)
             } else {
-                layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 30, height: 110)
+                layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 40, height: 110)
             }
         }
     }

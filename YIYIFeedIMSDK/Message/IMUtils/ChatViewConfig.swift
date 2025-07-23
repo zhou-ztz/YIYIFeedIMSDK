@@ -8,7 +8,7 @@
 
 import Foundation
 import NIMSDK
-enum MediaItem: Int {
+@objc enum MediaItem: Int {
     case album = 0
     case camera = 1
     case file = 2
@@ -16,12 +16,13 @@ enum MediaItem: Int {
     case videoCall = 4
     case voiceCall = 5
     case sendCard = 6
-    case whiteBoard = 7
-    case sendLocation = 8
-    case voiceToText = 9
-    case rps = 10
-    case collectMessage = 11 //收藏的消息
-    case secretMessage = 12
+    case gift = 7
+    case whiteBoard = 8
+    case sendLocation = 9
+    case voiceToText = 10
+    case rps = 11
+    case collectMessage = 12 //收藏的消息
+    case secretMessage = 13
     
     var info: (title: String, icon: UIImage?) {
         switch self {
@@ -39,6 +40,8 @@ enum MediaItem: Int {
             return ("msg_type_voice_call".localized, UIImage.set_image(named: "voiceCall"))
         case .sendCard:
             return ("input_panel_name_card".localized, UIImage.set_image(named: "contactIM"))
+        case .gift:
+            return ("title_live_tab_gift".localized, UIImage.set_image(named: "ic_rl_gift"))
         case .whiteBoard:
             return ("input_panel_whiteboard".localized, UIImage.set_image(named: "whiteboard"))
         case .sendLocation:

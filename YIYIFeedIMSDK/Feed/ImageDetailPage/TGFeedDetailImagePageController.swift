@@ -34,7 +34,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
         }
     }
     
-    private var networkOngoing = false
+    public var networkOngoing = false
     private var currentVC: TGFeedContentPageController? {
         return self.viewControllers?.first as? TGFeedContentPageController
     }
@@ -178,10 +178,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
      }
     func onLoadMore() {
         guard networkOngoing == false else { return }
-//        let bottomView = ContentPageBottomView(bgColor: UIColor.darkGray.withAlphaComponent(0.5),
-//                                               textColor: .white, text: "load_more".localized)
-//        self.showBottomFloatingView(with: bottomView, displayDuration: 1.0, allowTouch: true)
-//        bottomView.start()
+        self.showBottomLoading(with: "loading_state".localized)
     }
     
     required init?(coder: NSCoder) {
@@ -218,6 +215,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
                 DispatchQueue.main.async {
                     guard let self = self else { return }
                     self.hideLoading()
+                    self.hideBottomLoading()
                     if let data = data {
                         let index = data.pictures.firstIndex(where: { $0.file == imageId })
                         let destination = TGFeedContentPageController(currentIndex: 0,
@@ -325,6 +323,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 //        setWhiteNavBar()
+        self.hideBottomLoading()
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
@@ -342,6 +341,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
                 defer {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         self?.networkOngoing = false
+                        self?.hideBottomLoading()
                     }
                     self?.verticalPageHandler.controller = self
                 }
@@ -439,7 +439,13 @@ private class PageHandler: NSObject, UIPageViewControllerDelegate, UIPageViewCon
         let index = currentVC.currentIndex
         let indexBefore = index - 1
         
-        guard indexBefore >= 0 else { return nil }
+        guard indexBefore >= 0 else {
+            if controller.networkOngoing {
+                controller.showBottomLoading(with: "loading_state".localized)
+            }
+            return nil
+        }
+
         let dest = TGFeedContentPageController(currentIndex: indexBefore, dataModel: controller.datasource[indexBefore],
                                              placeholderImage: nil, onRefresh: controller.refresh,
                                              onLoadMore: {

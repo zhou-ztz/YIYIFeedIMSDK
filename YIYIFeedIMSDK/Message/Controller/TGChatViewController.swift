@@ -200,7 +200,18 @@ public class TGChatViewController: TGViewController {
     var keyBoardHeight: CGFloat = TSBottomSafeAreaHeight
     
     var blurUIView : UIView!
-  
+    
+    private let processedGiftIdsKey = "ProcessedGiftIdsKey"
+    // 防止重复发送礼品卡的记号属性
+    private var processedGiftIds: [String] {
+        get {
+            UserDefaults.standard.stringArray(forKey: processedGiftIdsKey) ?? []
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: processedGiftIdsKey)
+        }
+    }
+    
     public init(conversationId: String, conversationType: Int) {
         let type = V2NIMConversationType(rawValue: conversationType) ?? .CONVERSATION_TYPE_P2P
         self.viewmodel = TGChatViewModel(conversationId: conversationId, conversationType: type)
@@ -231,11 +242,14 @@ public class TGChatViewController: TGViewController {
         ///聊天背景
         setChatWallpaper()
         updateNavLeftItem()
+        NotificationCenter.default.removeObserver(self, name: Notification.Name.Gift.sendGift, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sendGiftMsg(_:)), name: Notification.Name.Gift.sendGift, object: nil)
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         viewmodel.stop()
+        NotificationCenter.default.removeObserver(self, name: Notification.Name.Gift.sendGift, object: nil)
     }
 
     func fetchTeam() {
@@ -658,7 +672,28 @@ public class TGChatViewController: TGViewController {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+    @objc func sendGiftMsg(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let serviceTransactionId = userInfo["serviceTransactionId"] as? String,
+              let voucherId = userInfo["voucherId"] as? String,
+              !processedGiftIds.contains(serviceTransactionId) else { return }
+        
+        appendProcessedGiftId(serviceTransactionId)
+        let message = MessageUtils.giftV2Message(serviceTransactionId: serviceTransactionId, voucherId: voucherId)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
+            self.viewmodel.sendMessage(message: message, conversationId: self.viewmodel.conversationId, params: nil) { _, _, _ in
+                
+            }
+        }
+        
+    }
+    private func appendProcessedGiftId(_ id: String) {
+        var ids = processedGiftIds
+        if !ids.contains(id) {
+            ids.append(id)
+            UserDefaults.standard.set(ids, forKey: processedGiftIdsKey)
+        }
+    }
     func teamMeeting(userIds: [String]) {
         let currentUserID = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
         var memberIds = [String]()
@@ -923,7 +958,9 @@ public class TGChatViewController: TGViewController {
             }
         }
     }
-    
+    func onGiftTapped() {
+        RLSDKManager.shared.imDelegate?.didPressGiftSegmentVC(giftRecipient: self.viewmodel.sessionId)
+     }
     func sendVioceToText() {
         let popHeight = bottomExanpndHeight + normalInputHeight
         let vc = TGSpeechTyperViewController()
@@ -1087,6 +1124,7 @@ public class TGChatViewController: TGViewController {
                         self.tableView.reloadData()
                     }
                 }
+                self.cancelGiftMessage(data)
             }
             self.selectedMsgId.removeAll()
             self.showSelectActionToolbar(false, isDelete: false)
@@ -1104,6 +1142,10 @@ public class TGChatViewController: TGViewController {
                 }
             }
             
+            messageDatas.forEach { data in
+                self.cancelGiftMessage(data)
+            }
+            
         })
         
         alertController.addAction(cancelAction)
@@ -1116,6 +1158,28 @@ public class TGChatViewController: TGViewController {
         self.present(alertController, animated: true)
         
     }
+    
+    private func cancelGiftMessage(_ message: TGMessageData) {
+        
+        guard let nimMessage = message.nimMessageModel else { return }
+        guard let attachment = message.customAttachment as? IMGiftAttachment else { return }
+        
+        //需要删除消息时撤回未领取礼品卡
+        if nimMessage.isSelf,
+           (nimMessage.localExtension == nil || nimMessage.localExtension?.isEmpty == true) {
+            
+            let serviceTransactionId = attachment.serviceTransactionId
+            
+            TGIMNetworkManager.giftCancelRequest(pandaPurchaseId: serviceTransactionId) { response, error in
+                SVProgressHUD.dismiss()
+                if let error = error {
+                    UIViewController.showBottomFloatingToast(with: error.localizedDescription, desc: "")
+                }
+            }
+        }
+        
+    }
+    
     @objc func cancelSelectMessage(){
         self.showSelectActionToolbar(false, isDelete: false)
     }
@@ -2582,6 +2646,9 @@ extension TGChatViewController: ChatInputViewDelegate {
             break
         case .sendCard:
             onContactTapped()
+        case .gift:
+            onGiftTapped()
+            break
         case .camera:
             openCamera()
         case .redpacket:

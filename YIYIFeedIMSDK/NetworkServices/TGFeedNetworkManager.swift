@@ -380,7 +380,7 @@ class TGFeedNetworkManager: NSObject {
     func colloction(_ newState: Int, feedIdentity: Int, feedItem: FeedListCellModel?, complete: @escaping ((_ result: Bool) -> Void)) -> Void {
         
         let collectPath = newState == 1 ? "/collections" : "/uncollect"
-        let path = "api/v2/feeds/" + "/\(feedIdentity)" +  collectPath
+        let path = "api/v2/feeds/" + "\(feedIdentity)" +  collectPath
         
         let method: HTTPMethod = newState == 1 ? .POST : .DELETE
         

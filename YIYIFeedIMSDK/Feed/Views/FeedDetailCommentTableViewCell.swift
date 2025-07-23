@@ -110,6 +110,11 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         return lab
     }()
     
+    lazy var pinnedActivity: UIActivityIndicatorView = {
+        let pinnedActivity = UIActivityIndicatorView(style: .medium)
+        pinnedActivity.isHidden = true
+        return pinnedActivity
+    }()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -171,6 +176,13 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
             make.left.equalTo(pinnedIcon.snp.right).offset(4)
             make.centerY.equalToSuperview()
         }
+        
+        contentView.addSubview(pinnedActivity)
+        pinnedActivity.snp.makeConstraints { make in
+            make.left.equalTo(pinnedContainer.snp.right).offset(8)
+            make.centerY.equalTo(nameAndBadgeIconStackView)
+        }
+        
         contentView.addSubview(commentDetailLabel)
         commentDetailLabel.snp.makeConstraints { make in
             make.left.equalTo(nameLabel.snp.left)
@@ -241,6 +253,17 @@ class FeedDetailCommentTableViewCell: UITableViewCell, TGCommentLabelDelegate {
         }
         
     }
+    public func showLoading() {
+        pinnedActivity.isHidden = false
+        pinnedActivity.startAnimating()
+    }
+    
+    public func hideLoading() {
+        pinnedActivity.isHidden = true
+        pinnedActivity.stopAnimating()
+    }
+    
+    
     public func setAsPinned(pinned: Bool?, isDarkMode: Bool) {
         pinnedContainer.backgroundColor = isDarkMode ? UIColor(red: 51.0/255.0, green: 51.0/255.0, blue: 51.0/255.0, alpha: 1.0) : UIColor(red: 242.0/255.0, green: 242.0/255.0, blue: 242.0/255.0, alpha: 1.0)
         pinnedIcon.image = isDarkMode ? UIImage(named: "icPinnedWhite") : UIImage(named: "icPinned")
