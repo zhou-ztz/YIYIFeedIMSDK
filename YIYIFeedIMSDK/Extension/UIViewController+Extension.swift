@@ -689,7 +689,7 @@ public func printIfDebug(_ item: @autoclosure () -> Any, separator: String = " "
     #if DEBUG
     Swift.print(item(), separator: separator, terminator: terminator)
     #else
-    XCGLoggerManager.shared.logRequestInfo("printIfDebug: \(item())")
+   // XCGLoggerManager.shared.logRequestInfo("printIfDebug: \(item())")
     #endif
 }
 
