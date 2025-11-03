@@ -2,7 +2,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "YIYIFeedIMSDK"
-  spec.version      = "2.7.8"
+  spec.version      = "2.7.9"
   spec.summary      = "A short description of YIYIFeedIMSDK."
   spec.description  = <<-DESC
                    这个是一个测试的demo description of YIYIFeedIMSDK项目
@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => 'MIT', :file => 'LICENSE' }
   spec.author       = { "tingzhi.zhou" => "tingzhi.zhou@yiartkeji.com" }
   spec.platform     = :ios, "13.0"
-  spec.source       = { :git => 'https://github.com/zhou-ztz/YIYIFeedIMSDK.git', :tag => '2.7.8'}
+  spec.source       = { :git => 'https://github.com/zhou-ztz/YIYIFeedIMSDK.git', :tag => '2.7.9'}
   spec.vendored_frameworks = ['YIYIFeedIMSDK/OBS.framework']
   spec.source_files = ['YIYIFeedIMSDK/**/*.swift','YIYIFeedIMSDK/TZImagePickerController/**/*.{h,m}','YIYIFeedIMSDK/YIYIFeedIMSDK.h']
   
@@ -49,6 +49,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'Toast', '4.0'
   spec.dependency 'SVProgressHUD', '2.1.2'
   spec.dependency 'SwiftyUserDefaults', '5.3.0'
+  spec.dependency 'SwiftSoup', '2.7.6'
  
   spec.xcconfig = {
   'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
