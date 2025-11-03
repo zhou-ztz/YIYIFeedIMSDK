@@ -144,6 +144,9 @@ class FeedCommentDetailTableHeaderView: UIView {
     // callback
     var onToolbarItemTapped: ((Int) -> Void)?
     var userIdList: [String] = []
+    var merchantIdList: [String] = []
+    var merchantAppIdList: [String] = []
+    var merchantDealPathList: [String] = []
     var htmlAttributedText: NSMutableAttributedString?
     
     override init(frame: CGRect) {
@@ -240,10 +243,13 @@ extension FeedCommentDetailTableHeaderView {
             break
         }
         
-        HTMLManager.shared.removeHtmlTag(htmlString: model.content, completion: { [weak self] (content, userIdList) in
+        HTMLManager.shared.removeHtmlTag(htmlString: model.content, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
             guard let self = self else { return }
             
             self.userIdList = userIdList
+            self.merchantIdList = merchantIdList
+            self.merchantAppIdList = merchantAppIdList
+            self.merchantDealPathList = merchantDealPathList
             self.originalTexts = content
             self.loadContent(content: content)
             self.loadToolbar(model: model.toolModel, canAcceptReward: model.canAcceptReward == 1 ? true : false, reactionType: model.reactionType)

@@ -59,11 +59,14 @@ public class TGFeedDetailImagePageController: UIPageViewController {
         v.contentMode = .scaleAspectFit
     }
     
-//    private let loadPlaceholder = PlaceHolderView(
-//        offset: TSUserInterfacePrinciples.share.getTSNavigationBarHeight(), heading: "", detail: "", lottieName: "feed-loading", theme: .dark).build { (v) in
-//            v.isHidden = true
-//        }
-    let navigationDelegate = TGCustomNavigationDelegate()
+    private let loadPlaceholder = TGPlaceHolderView(
+        offset: RLUserInterfacePrinciples.share.getTSNavigationBarHeight(), heading: "", detail: "", lottieName: "feed-loading", theme: .dark).build { (v) in
+            v.isHidden = true
+        }
+//    let navigationDelegate = TGCustomNavigationDelegate()
+//
+    //let navigationDelegate = CustomNavigationDelegate()
+    private var interactivePushController: TGInteractivePanTransitionHandler?
     
     public override var prefersStatusBarHidden: Bool {
         // 返回当前状态栏的可见性
@@ -109,9 +112,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
                 self?.updateNavigationDelegate(index: index)
             }, onTapHiddenUpdate: { [weak self] (isHidden) in
                 self?.toggleStatusBar(isHidden)
-            }
-                                                 
-            )
+            }, isExpand: self.isExpand)
             datasource = [data]
             dest.onDelete = {
             
@@ -149,7 +150,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
                                                     self?.updateNavigationDelegate(index: index)
                                                 }, translateHandler: wself?.translateHandler, onTapHiddenUpdate: { [weak self] (isHidden) in
                                                     self?.toggleStatusBar(isHidden)
-                                                })
+                                                }, isExpand: isExpand)
             dest.type = self.feedType
             dest.loadGestureEnabled = true
             dest.onDelete = {
@@ -205,8 +206,8 @@ public class TGFeedDetailImagePageController: UIPageViewController {
             }
         }
         
-//        view.addSubview(loadPlaceholder)
-//        loadPlaceholder.bindToEdges()
+        view.addSubview(loadPlaceholder)
+        loadPlaceholder.bindToEdges()
         
         switch config {
         case let .single(feedId, transitionId, placeholderImage, imageId):
@@ -230,7 +231,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
                                                                         self?.updateNavigationDelegate(index: index)
                                                                     }, onTapHiddenUpdate: { [weak self] (isHidden) in
                                                                         self?.toggleStatusBar(isHidden)
-                                                                    })
+                                                                    }, isExpand: self.isExpand)
                         destination.onDelete = {
                             if self.isModal == true && self.isControllerPush == nil  {
                                 self.onRefresh?()
@@ -250,8 +251,10 @@ public class TGFeedDetailImagePageController: UIPageViewController {
         default: break
         }
         
-        navigationController?.delegate = navigationDelegate
-        navigationDelegate.addEdgePushInteractionController(to: self.view, delegate: self)
+//        navigationController?.delegate = navigationDelegate
+//        navigationDelegate.addEdgePushInteractionController(to: self.view, delegate: self)
+        //处理右滑左滑的自定义手势类
+        self.refreshInteractivePushBinding()
         
         if tagVoucher?.taggedVoucherId != nil && tagVoucher?.taggedVoucherId != 0 {
             self.currentVC?.interactiveView.voucherBottomView.isHidden = false
@@ -260,7 +263,32 @@ public class TGFeedDetailImagePageController: UIPageViewController {
             self.currentVC?.interactiveView.voucherBottomView.isHidden = true
         }
     }
-    
+    func refreshInteractivePushBinding() {
+        guard let navigationController = self.navigationController else { return }
+        let targetView = self.currentVC?.interactiveView
+        
+        if let handler = interactivePushController {
+            handler.attach(to: targetView ?? self.view, navigationController: navigationController, viewController: self)
+            handler.panGestureRecognizer.delegate = self
+        } else {
+            interactivePushController = TGInteractivePanTransitionHandler(
+                attachTo: targetView ?? self.view,
+                navigationController: navigationController,
+                viewController: self,
+                pushProvider: { [weak self] in
+                    guard let self = self,
+                          let user = self.currentVC?.dataModel.userInfo,
+                          user.followStatus != .oneself,
+                          let isContentCollapse = self.currentVC?.isContentCollapse,
+                          isContentCollapse == true else { return nil }
+                    return RLSDKManager.shared.feedDelegate?.fetchProfileVCById(userId: user.userIdentity)
+                },
+                allowDismiss: false
+            )
+            
+            interactivePushController?.panGestureRecognizer.delegate = self
+        }
+    }
     private func loadPage(id: Int, transitionId: String?, placeholderImage: UIImage?, complete: ((_ data: FeedListCellModel?, _ error: Error?) -> Void)?) {
         
         
@@ -277,21 +305,21 @@ public class TGFeedDetailImagePageController: UIPageViewController {
     }
     
     private func showLoading() {
-//        view.bringSubviewToFront(loadPlaceholder)
-//        view.bringSubviewToFront(closeButton)
-//        UIView.animate(withDuration: 0.2) {
-//            self.loadPlaceholder.isHidden = false
-//        }
-//        loadPlaceholder.play()
+        view.bringSubviewToFront(loadPlaceholder)
+        view.bringSubviewToFront(closeButton)
+        UIView.animate(withDuration: 0.2) {
+            self.loadPlaceholder.isHidden = false
+        }
+        loadPlaceholder.play()
     }
     
     private func hideLoading() {
-//        view.bringSubviewToFront(loadPlaceholder)
-//        UIView.animate(withDuration: 0.2) {
-//            self.loadPlaceholder.isHidden = true
-//        }
-//
-//        loadPlaceholder.play()
+        view.bringSubviewToFront(loadPlaceholder)
+        UIView.animate(withDuration: 0.2) {
+            self.loadPlaceholder.isHidden = true
+        }
+
+        loadPlaceholder.play()
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -391,8 +419,7 @@ public class TGFeedDetailImagePageController: UIPageViewController {
             self?.completeHandler?(index, transitionId)
             self?.updateNavigationDelegate(index: index)}, onTapHiddenUpdate: { [weak self] (isHidden) in
                 self?.toggleStatusBar(isHidden)
-            }
-        )
+            }, isExpand: self.isExpand)
         vc.onDelete = {
             if self.isModal == true && self.isControllerPush == nil  {
                 self.onRefresh?()
@@ -431,6 +458,8 @@ private class PageHandler: NSObject, UIPageViewControllerDelegate, UIPageViewCon
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        guard finished, completed, let controller = controller else { return }
+        controller.refreshInteractivePushBinding()
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {

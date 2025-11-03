@@ -136,6 +136,9 @@ class TGWebViewController: TGViewController {
             if let token = RLSDKManager.shared.loginParma?.xToken {
                 request.addValue("Bearer \(token)", forHTTPHeaderField: "X-Token")
             }
+//            for (key, value) in HTTPHeaderFields.headers {
+//                request.setValue(value, forHTTPHeaderField: key)
+//            }
             let cookies = HTTPCookieStorage.shared.cookies
             let values = HTTPCookie.requestHeaderFields(with: cookies!)
             request.allHTTPHeaderFields = values

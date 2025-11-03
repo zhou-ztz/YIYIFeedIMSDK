@@ -11,6 +11,8 @@ import Photos
 import SwiftEntryKit
 
 public typealias TGEmptyClosure = () -> Void
+/// 登录控制器
+var landingVC: TGNavigationController? = nil
 
 private class NavLeftAlignWrapperView: UIView {
     override var intrinsicContentSize: CGSize {
@@ -233,6 +235,18 @@ extension UIViewController {
 //        rewardVC.defaultPageIndex = defaultPageIdx
         self.present(popVC, animated: true, completion: nil)
     }
+    func showSuccess(message: String) {
+        let topShow = TGIndicatorWindowTop(state: .success, title: message)
+        topShow.show(timeInterval: TGIndicatorWindowTop.defaultShowTimeInterval)
+    }
+    
+    func showError(message: String = "please_retry_option".localized) {
+        UIViewController.showBottomFloatingToast(with: "", desc: message, background: TGAppTheme.materialBlack.withAlphaComponent(0.8), displayDuration: 1.5)
+    }
+    func showTopIndicator(status: LoadingState, _ title: String) {
+        let alert = TGIndicatorWindowTop(state: status, title: title)
+        alert.show(timeInterval: TGIndicatorWindowTop.defaultShowTimeInterval)
+    }
     func showTopFloatingToast(with title: String, desc: String = "", background: UIColor? = nil, customView: UIView? = nil) {
         var attr = UIView.topToastAttributes
         attr.name = "toast"
@@ -278,7 +292,53 @@ extension UIViewController {
         
         SwiftEntryKit.display(entry: toastView, using: attr)
     }
-    
+    @discardableResult
+    func showBottomFloatingView(with controller: UIViewController, displayDuration: TimeInterval = 2.5, allowTouch: Bool = true) -> SwiftEntryKit.EntryDismissalDescriptor {
+        let entryname = UUID().uuidString
+        var attr = UIView.bottomToastAttributes
+        attr.name = entryname
+        attr.displayDuration = displayDuration
+        attr.screenInteraction = allowTouch ? .dismiss : .absorbTouches
+        attr.entryInteraction = .absorbTouches
+
+        attr.entryBackground = .color(color: EKColor(UIColor.clear))
+
+        let nav = TGNavigationController(rootViewController: controller)
+        nav.view.roundCornerWithCorner(UIRectCorner([.topLeft, .topRight]), radius: 10, fillColor: .clear, shadow: false)
+
+        SwiftEntryKit.display(entry: controller, using: attr)
+
+        return .specific(entryName: entryname)
+    }
+
+    @discardableResult
+    func showBottomFloatingView(with customView: UIView, displayDuration: TimeInterval = 2.5, allowTouch: Bool = true) -> SwiftEntryKit.EntryDismissalDescriptor {
+        let entryname = UUID().uuidString
+        var attr = UIView.bottomToastAttributes
+        attr.name = entryname
+        attr.displayDuration = displayDuration
+//        attr.screenInteraction = allowTouch ? .forward : .forward
+        attr.screenInteraction = .forward
+        attr.entryInteraction = .absorbTouches
+
+        attr.entryBackground = .color(color: EKColor(UIColor.clear))
+        SwiftEntryKit.display(entry: customView, using: attr)
+
+        return .specific(entryName: entryname)
+    }
+
+    func dismisSwiftyEntry(named: String? = nil) {
+        guard let name = named else {
+            SwiftEntryKit.dismiss(.displayed)
+            return
+        }
+        SwiftEntryKit.dismiss(.specific(entryName: name))
+    }
+
+    func dismissSwiftyEntryErrors() {
+        SwiftEntryKit.dismiss(.specific(entryName: "errors"), with: nil)
+    }
+
     func showBottomLoading(with title: String) {
         
         let loadingView = UIView()
@@ -625,6 +685,14 @@ extension UINavigationController {
     }
 }
 
+public func printIfDebug(_ item: @autoclosure () -> Any, separator: String = " ", terminator: String = "\n") {
+    #if DEBUG
+    Swift.print(item(), separator: separator, terminator: terminator)
+    #else
+    XCGLoggerManager.shared.logRequestInfo("printIfDebug: \(item())")
+    #endif
+}
+
 extension UIViewController {
     /// 处理对于动态的一些配置
     /// - Parameters:
@@ -663,4 +731,22 @@ extension UIViewController {
         
         return releasePulseVC
     }
+}
+
+extension UIViewController {
+    
+//    /// 游客进入登录视图
+//    func verifyGuestModeOrNoLogin(vc: UIViewController? = nil, reOpenMP: Bool = false, success: (() -> Void)? = nil, failure: (() -> Void)? = nil) {
+//        RLSDKManager.shared.feedDelegate?.didVerifyGuestModeOrNoLogin(
+//            vc: vc,
+//            reOpenMP: reOpenMP,
+//            success: success,
+//            failure: failure
+//        )
+//    }
+//    
+//    func guestJoinLandingVC(vc: UIViewController? = nil, isGuestBtnHidden: Bool = true, reOpenMP: Bool = false) {
+//        landingVC = presentAuthentication(vc: vc, isDismissBtnHidden: false, isGuestBtnHidden: isGuestBtnHidden, reOpenMP: reOpenMP)
+//    }
+    
 }

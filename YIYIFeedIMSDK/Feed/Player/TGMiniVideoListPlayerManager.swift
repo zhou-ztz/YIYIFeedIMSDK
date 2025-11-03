@@ -10,7 +10,7 @@ import UIKit
 import AliyunPlayer
 
 
-class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDelegate {
+class TGMiniVideoListPlayerManager: NSObject, AVPDelegate, AliMediaLoaderStatusDelegate {
     
     static let shared = TGMiniVideoListPlayerManager()
     
@@ -42,15 +42,13 @@ class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDe
         AliPrivateService.initLicense()
     }
     func setupPlayer() {
-        
         self.listPlayer = AliListPlayer.init()
-//        self.listPlayer.setTraceID(Device.currentUDID)
+        self.listPlayer.setTraceID(TGDevice.currentUDID)
         self.listPlayer.isLoop = true
         self.listPlayer.isAutoPlay = true
         self.listPlayer.scalingMode = AVP_SCALINGMODE_SCALEASPECTFIT
         self.listPlayer.delegate = self
         self.listPlayer.setFastStart(true)
-       // self.listPlayer.setScene(AVP_SHORT_VIDEO)
        
         let config = self.listPlayer.getConfig()
         config?.enableLocalCache = true
@@ -66,22 +64,32 @@ class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDe
         AliPlayerGlobalSettings.enableNetworkBalance(false)
         AliPlayerGlobalSettings.enableLocalCache(true, maxBufferMemoryKB: 1024, localCacheDir: documentsPath)
     }
+    
     // MARK: - 暂停播放
     func pause() {
-        self.listPlayer.pause()
+        if self.playerStatus == AVPStatusStarted {
+            try? AVAudioSession.sharedInstance().setActive(false)
+            self.listPlayer.pause()
+        }
     }
+    
     // MARK: - 停止播放
     func stop() {
+        try? AVAudioSession.sharedInstance().setActive(false)
         self.listPlayer.stop()
+        self.curVideo = nil
     }
+    
     // MARK: - 开始播放
     func play() {
         self.listPlayer.start()
     }
+    
     // MARK: - 设置播放源视图
     func setPlayerView(_ view: UIView){
         self.listPlayer.playerView = view
     }
+    
     // MARK: - 设置播放器数据源
     func initPlayerSource(_ videos: [FeedListCellModel]) {
         
@@ -93,9 +101,9 @@ class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDe
             self.listPlayer.addUrlSource(model.videoURL, uid: "\(model.videoURL)")
             AliMediaLoader.shareInstance().load(model.videoURL, duration: 1000)
             AliMediaLoader.shareInstance().setAliMediaLoaderStatusDelegate(self)
-            
         }
     }
+    
     // MARK: - 清理播放器列表
     func clearPlayerSource() {
         self.listPlayer.clear()
@@ -103,16 +111,21 @@ class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDe
     
     // MARK: - 设置播放对象
     func playWithVideo(_ video: FeedListCellModel) {
+        try? AVAudioSession.sharedInstance().setCategory(.playback)
+        try? AVAudioSession.sharedInstance().setActive(true)
+        
         curVideo = video
         self.listPlayer.move(to: "\(video.videoURL)")
         self.listPlayer.start()
     }
+    
     // MARK: - 设置
     func setSeek(_ toTime: Int64) {
         self.listPlayer.seek(toTime: toTime, seekMode: AVP_SEEKMODE_INACCURATE)
     }
+    
     // MARK: - 获取视频播放状态
-    func getPlayStatus() -> AVPStatus{
+    func getPlayStatus() -> AVPStatus {
         return self.playerStatus
     }
     
@@ -121,6 +134,7 @@ class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDe
             self.onCurrentPositionUpdateHandler?(position/1000, self.playerDuration)
         }
     }
+    
     // MARK: - AVPDelegate
     func onPlayerEvent(_ player: AliPlayer!, eventType: AVPEventType) {
         switch eventType {
@@ -133,39 +147,41 @@ class TGMiniVideoListPlayerManager: NSObject, AVPDelegate,AliMediaLoaderStatusDe
                 self.playerDuration = self.listPlayer.duration / 1000
             }
         case AVPEventFirstRenderedStart:
-            print("首帧显示")
+            printIfDebug("首帧显示")
             self.onCurrentPlayStatusUpdateHandler?(AVPStatusStarted)
         case AVPEventCompletion:
-            print("播放完成")
+            printIfDebug("播放完成")
         case AVPEventLoadingStart:
-            print("缓冲开始")
+            printIfDebug("缓冲开始")
         default:
             break
         }
     }
+    
     func onPlayerStatusChanged(_ player: AliPlayer!, oldStatus: AVPStatus, newStatus: AVPStatus) {
         
         switch newStatus {
         case AVPStatusIdle:
-            print("空转，闲时，静态")
+            
+            printIfDebug("空转，闲时，静态")
         case AVPStatusInitialzed:
-            print("初始化完成")
+            printIfDebug("初始化完成")
         case AVPStatusPrepared:
-            print("准备完成")
+            printIfDebug("准备完成")
             self.playerStatus = newStatus
             self.onCurrentPlayStatusUpdateHandler?(newStatus)
         case AVPStatusStarted:
-            print("正在播放")
+            printIfDebug("正在播放")
             self.playerStatus = newStatus
             self.onCurrentPlayStatusUpdateHandler?(newStatus)
         case AVPStatusPaused:
-            print("播放暂停")
+            printIfDebug("播放暂停")
             self.playerStatus = newStatus
             self.onCurrentPlayStatusUpdateHandler?(newStatus)
         case AVPStatusStopped:
-            print("播放停止")
+            printIfDebug("播放停止")
         case AVPStatusError:
-            print("播放错误")
+            printIfDebug("播放错误")
             if self.playerStatus != AVPStatusError {
                 self.playerStatus = newStatus
                 self.onCurrentPlayStatusUpdateHandler?(newStatus)

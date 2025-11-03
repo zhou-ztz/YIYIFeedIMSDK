@@ -122,6 +122,17 @@ public protocol TGFeedDelegate: AnyObject {
     
     /// 动态点击跳转
     func didOpenNavigationURL(url: URL)
+    
+    /// 游客模式跳转
+    func didVerifyGuestModeOrNoLogin(
+          vc: UIViewController?,
+          reOpenMP: Bool,
+          success: (() -> Void)?,
+          failure: (() -> Void)?
+      )
+    
+    /// 获取ProfileViewController对象
+    func fetchProfileVCById(userId: Int) -> UIViewController?
 }
 
 public class RLSDKManager: NSObject {

@@ -25,10 +25,11 @@ class TGNetworkManager {
         return [
             "Authorization" : "Bearer \(accessToken)",
             "X-Client-App-Name": RLSDKManager.shared.loginParma?.appName ?? "rewards_link",
-            "X-Client-Type": "iOS",
+            "X-Client-Type": UIDevice.current.systemName,
+            "X-Device-ID": TGDevice.currentUDID,
             "X-Device-Language": TGLocalizationManager.getCurrentLanguage(),
             "Accept": "application/json",
-            "X-Client-Version": "2.1.8",
+            "X-Client-Version": RLSDKManager.shared.loginParma?.clientVersion ?? "2.1.8",
             "Content-Type": "application/json",
             "X-Device-OS": UIDevice.current.systemVersion,
             "IOS_DEVICE": "ios",

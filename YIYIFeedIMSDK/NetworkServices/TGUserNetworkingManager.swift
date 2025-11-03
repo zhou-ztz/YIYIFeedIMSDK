@@ -50,4 +50,42 @@ class TGUserNetworkingManager: NSObject {
             complete(tempUserInfoModels, tempUserInfoModels, nil)
         }
     }
+    
+    func taggedBranchList(offset: Int?, keyWordString: String?, limit: Int = TGNewFriendsNetworkManager.limit,
+                          longitude: String = TGDevice.getLongitude(), latitude: String = TGDevice.getLatitude(),
+                          complete: @escaping ((_ branchModel: TGTaggedBranchModel?, _ error: NSError?) -> Void)) {
+        
+        
+        let path = "api/v2/user/merchant/taggedBranchList"
+        var parameter: [String: Any] = ["offset": 1, "limit": limit]
+        
+        if let offset = offset {
+            parameter["offset"] = offset
+        }
+        
+        parameter["keyword"] = keyWordString
+        parameter["longitude"] = longitude
+        parameter["latitude"] = latitude
+
+        TGNetworkManager.shared.request(urlPath: path, method: .GET) { data, _, error in
+            guard let data = data, error == nil else {
+                let error = TGErrorCenter.create(With: .networkError)
+                complete(nil, error)
+                return
+            }
+            
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<TGTaggedBranchModel>().map(JSONString: jsonString)
+                DispatchQueue.main.async {
+                    complete(model, nil)
+                }
+            } else {
+                let nserror = NSError(domain: "TGUserNetworkingManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    complete(nil, nserror)
+                }
+            }
+            
+        }
+    }
 }

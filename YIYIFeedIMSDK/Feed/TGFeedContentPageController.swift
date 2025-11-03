@@ -26,6 +26,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
     // feed type
     var type: TGFeedListType?
     var isExpand: Bool = false
+    var isContentCollapse: Bool = true
     
     init(currentIndex: Int = 0, dataModel: FeedListCellModel,
          imageIndex: Int = 0, placeholderImage: UIImage?,
@@ -64,6 +65,12 @@ public class TGFeedContentPageController: TGBaseContentPageController {
             )
             setGesture(for: imageController)
             self.setViewControllers([imageController], direction: .forward, animated: true)
+            for view in self.view.subviews {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.isScrollEnabled = !isExpand
+                }
+            }
+
         }
         
         
@@ -72,7 +79,9 @@ public class TGFeedContentPageController: TGBaseContentPageController {
         interactiveView.alpha = 1
         
         interactiveView.onCommentTouched = { [unowned self] in
-            self.openCommentView()
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                self.openCommentView()
+            })
         }
         
 //        interactiveView.onGiftTouched = { [unowned self] in
@@ -80,29 +89,38 @@ public class TGFeedContentPageController: TGBaseContentPageController {
 //        }
         
         interactiveView.onForwardTouched =  { [unowned self] in
-//            if TSCurrentUserInfo.share.isLogin == false {
-//                TSRootViewController.share.guestJoinLandingVC()
-//                return
-//            }
-            self.navigationController?.presentPopVC(target: "", type: .share, delegate: self)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                self.navigationController?.presentPopVC(target: "", type: .share, delegate: self)
+            })
+        }
+        interactiveView.onAITouched = { [unowned self] in
+            let bottomSheet = TGAIFeedIntroBottomSheetVC()
+            bottomSheet.modalPresentationStyle = .custom
+            let transitionDelegate = HalfScreenTransitionDelegate()
+            transitionDelegate.heightPercentage = 0.4
+            bottomSheet.transitioningDelegate = transitionDelegate
+            self.present(bottomSheet, animated: true)
         }
         
         interactiveView.onMoreTouched = { [unowned self] in
-            guard let id = RLSDKManager.shared.loginParma?.uid else {
-                return
-            }
-            
-            self.navigationController?.presentPopVC(target: self.dataModel, type: self.dataModel.userId == id ? .moreMe : .moreUser , delegate: self)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard let id = RLSDKManager.shared.loginParma?.uid else {
+                    return
+                }
+                self.navigationController?.presentPopVC(target: self.dataModel, type: self.dataModel.userId == id ? .moreMe : .moreUser , delegate: self)
+            })
         }
         
         interactiveView.onFollowTouched = { [weak self] in
-            guard var user = dataModel.userInfo else { return }
-            user.updateFollow(completion: { [weak self] (success) in
-                if success {
-                    DispatchQueue.main.async {
-                        self?.interactiveView.updateFollowButton(user.followStatus)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard var user = dataModel.userInfo else { return }
+                user.updateFollow(completion: { [weak self] (success) in
+                    if success {
+                        DispatchQueue.main.async {
+                            self?.interactiveView.updateFollowButton(user.followStatus)
+                        }
                     }
-                }
+                })
             })
         }
         interactiveView.voucherBottomView.voucherOnTapped = {
@@ -119,6 +137,16 @@ public class TGFeedContentPageController: TGBaseContentPageController {
         
         interactiveView.onTopicViewTapped = { topicID in
             RLSDKManager.shared.feedDelegate?.onTopicViewTapped(groupId: topicID)
+        }
+        
+        interactiveView.onReadMoreLabelStyleUpdate = { [weak self] isCollapse in
+            guard let self = self else { return }
+            self.isContentCollapse = isCollapse
+            for view in self.view.subviews {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.isScrollEnabled = isCollapse
+                }
+            }
         }
         
         interactiveView.reactionSuccess = { [weak self] in
@@ -183,6 +211,7 @@ public class TGFeedContentPageController: TGBaseContentPageController {
         interactiveView.updateTimeAndView(date: dataModel.time , views: (dataModel.toolModel?.viewCount).orZero, isEdit: isEdit ?? false)
         interactiveView.updateUser(user: dataModel.userInfo)
         interactiveView.updateUserAvatar(avatar: dataModel.avatarInfo)
+        interactiveView.updateAIFeedView(isShow: dataModel.isAIFeed)
         interactiveView.updateSponsorStatus(dataModel.isSponsored)
         //Rewardslink hidden topic view
         //interactiveView.updateTopicsView(with: dataModel.topics)
@@ -292,9 +321,11 @@ public class TGFeedContentPageController: TGBaseContentPageController {
     func setGesture(for controller: TGFeedDetailImageController) {
         controller.onSingleTapView = { [weak self] in self?.toggleInteractiveView() }
         controller.onDoubleTapView = { [weak self] in
-            self?.executeLike()
-            self?.interactiveView.reactionHandler?.didSelectIcon = ReactionTypes.heart.rawValue
-            self?.interactiveView.reactionHandler?.onSelect(reaction: .heart)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                self?.executeLike()
+                self?.interactiveView.reactionHandler?.didSelectIcon = ReactionTypes.blackHeart.rawValue
+                self?.interactiveView.reactionHandler?.onSelect(reaction: .blackHeart)
+            })
         }
         
         controller.onZoomUpdate = { [weak self] in
@@ -356,10 +387,12 @@ public class TGFeedContentPageController: TGBaseContentPageController {
             guard status == true else {
                 if statusCode == 241 {
                     self.showDialog(image: nil, title: "fail_to_pin_title".localized, message: "fail_to_pin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                } else if statusCode == 4003 {
+                    return
                 } else {
-                    UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
-
+                    self.showError(message: errMessage)
                 }
+
                 return
             }
         }
@@ -402,6 +435,7 @@ private class PageHandler: NSObject, UIPageViewControllerDelegate, UIPageViewCon
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard finished == true else { return }
         guard let controller = controller else { return }
+        guard controller.isContentCollapse else { return }
         guard let currentVC = pageViewController.viewControllers?.first as? TGFeedDetailImageController else { return }
         let index = currentVC.imageIndex
         
@@ -414,24 +448,34 @@ private class PageHandler: NSObject, UIPageViewControllerDelegate, UIPageViewCon
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let controller = controller else { return nil }
+        guard controller.isContentCollapse else { return nil }
         guard let currentVC = pageViewController.viewControllers?.first as? TGFeedDetailImageController else { return nil }
         
         let newIndex = currentVC.imageIndex - 1
-        guard newIndex >= 0 else { return nil }
+        guard newIndex >= 0, !controller.dataModel.pictures.isEmpty else { return nil }
         
-        let newController = TGFeedDetailImageController(imageUrlPath: (controller.dataModel.pictures[newIndex].url).orEmpty, imageIndex: newIndex, model: controller.dataModel)
+        let newController = TGFeedDetailImageController(
+            imageUrlPath: (controller.dataModel.pictures[newIndex].url).orEmpty,
+            imageIndex: newIndex,
+            model: controller.dataModel
+        )
         controller.setGesture(for: newController)
         return newController
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let controller = controller else { return nil }
+        guard controller.isContentCollapse else { return nil }
         guard let currentVC = pageViewController.viewControllers?.first as? TGFeedDetailImageController else { return nil }
         
         let newIndex = currentVC.imageIndex + 1
-        guard newIndex > 0, newIndex < (controller.dataModel.pictures.count) else { return nil }
+        guard newIndex < controller.dataModel.pictures.count else { return nil }
         
-        let newController = TGFeedDetailImageController(imageUrlPath: (controller.dataModel.pictures[newIndex].url).orEmpty, imageIndex: newIndex, model: controller.dataModel)
+        let newController = TGFeedDetailImageController(
+            imageUrlPath: (controller.dataModel.pictures[newIndex].url).orEmpty,
+            imageIndex: newIndex,
+            model: controller.dataModel
+        )
         controller.setGesture(for: newController)
         return newController
     }
@@ -455,11 +499,13 @@ extension TGFeedContentPageController: CustomPopListProtocol {
     func handlePopUpItemAction(itemType: TGPopUpItem) {
         switch itemType {
         case .message:
-            // 记录转发数
-            self.forwardFeed()
-            let messageModel = TGmessagePopModel(momentModel: self.dataModel)
-            let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
-            self.navigationController?.pushViewController(vc, animated: true)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                // 记录转发数
+                self.forwardFeed()
+                let messageModel = TGmessagePopModel(momentModel: self.dataModel)
+                let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
+                self.navigationController?.pushViewController(vc, animated: true)
+            })
         case .shareExternal:
             // 记录转发数
             self.forwardFeed()
@@ -559,8 +605,7 @@ extension TGFeedContentPageController: CustomPopListProtocol {
                         if newValue == 1 {
                             self.showTopFloatingToast(with: "disable_comment_success".localized)
                         } else {
-                            self.showTopFloatingToast(with: "enable_comment_success".localized)
-                           // self.showTopIndicator(status: .success, "enable_comment_success".localized)
+                            self.showTopIndicator(status: .success, "enable_comment_success".localized)
                         }
                         self.updateInteractiveView(isEdit: true)
                     }

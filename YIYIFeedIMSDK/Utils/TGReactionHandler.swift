@@ -177,8 +177,21 @@ class TGReactionHandler {
     }
     
     func onSelect(reaction: ReactionTypes?) {
-        onSelect?(reaction)
-        postReaction()
+        TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+            let mappedReaction: ReactionTypes?
+            if let reaction = reaction {
+                if self.isInnerFeed {
+                    mappedReaction = self.blackReactionMapping[reaction] ?? reaction
+                } else {
+                    mappedReaction = self.reactionMapping[reaction] ?? reaction
+                }
+            } else {
+                mappedReaction = nil
+            }
+            
+            self.onSelect?(mappedReaction)
+            self.postReaction()
+        })
     }
     
     private func createReactionView() -> UIView {
@@ -275,6 +288,7 @@ class TGReactionHandler {
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             let stackView = self.iconsContainerView.subviews.first
             stackView?.subviews.enumerated().forEach({ (i, v) in
+                guard i >= 0 && i < self.nameViews.count else { return }
                 
                 let rect = self.iconsContainerView.convert(v.center, to: self.view)
                 let center = rect.x - v.width / 2
@@ -293,7 +307,7 @@ class TGReactionHandler {
             self.iconsContainerView.removeFromSuperview()
             self.onDismiss?()
             self.iconsContainerView = self.createReactionView()
-            if let iconVal = self.didSelectIcon {
+            if let iconVal = self.didSelectIcon, iconVal >= 0 && iconVal < self.reactions.count {
                 let selectedReaction = self.reactions[iconVal]
                 self.currentReaction = selectedReaction
                 self.onSelect(reaction: selectedReaction)
@@ -404,6 +418,9 @@ class TGReactionHandler {
             }) { (_) in
                 
                 for (i, v) in self.nameViews.enumerated() {
+                    guard i >= 0 && i < self.stackView.arrangedSubviews.count else { continue }
+                    guard i >= 0 && i < self.reactionViews.count else { continue }
+                    
                     let associatedReaction = self.stackView.arrangedSubviews[i]
                     let centerPosition = self.iconsContainerView.convert(associatedReaction.frame.center, to: self.view)
                     let location = centerPosition.x

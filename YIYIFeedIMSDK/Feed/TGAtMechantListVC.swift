@@ -10,7 +10,7 @@ import UIKit
 class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, TGMyFriendListCellDelegate {
 
     /// 数据源
-    var dataSource: [TGUserInfoModel] = [] {
+    var dataSource: [TGTaggedBranchData] = [] {
         willSet {
             if newValue.isEmpty {
                 friendListTableView.removePlaceholderViews()
@@ -22,8 +22,11 @@ class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDeleg
     var searchTextfield = UITextField()
     /// 占位图
     let occupiedView = TGFadeImageView()
-    var selectedBlock: ((TGUserInfoModel) -> Void)?
+    var selectedBlock: ((TGTaggedBranchData, String, String) -> Void)?
     var keyword: String? = ""
+    var appId: String = ""
+    var dealPath: String = ""
+    var offset: Int = 2
     private let occupiedText = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 50, height: 50))
     
     override func viewDidLoad() {
@@ -100,15 +103,27 @@ class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDeleg
     }
    
     @objc func refresh() {
-        TGNewFriendsNetworkManager.searchMyMerchant(offset: nil, keyWordString: keyword, filterMerchants: "1") {[weak self] users, error in
-            self?.friendListTableView.mj_header.endRefreshing()
-            self?.processRefresh(datas: users, message: error)
-        }
+        self.offset = 1
+        TGUserNetworkingManager.shared.taggedBranchList(offset: nil, keyWordString: keyword, complete: { (tagBranchModel, networkError) in
+            // 如果是第一次进入
+            if let appId = tagBranchModel?.miniProgramAppId, let dealPath = tagBranchModel?.miniProgramDealPath {
+                self.appId = appId
+                self.dealPath = dealPath
+            }
+           
+            if let taggedBranchData = tagBranchModel?.data {
+                self.processRefresh(datas: taggedBranchData , message: networkError)
+            }
+            self.friendListTableView.mj_header.endRefreshing()
+        })
     }
+    
 
     @objc func loadMore() {
-        TGNewFriendsNetworkManager.searchMyMerchant(offset: dataSource.count, keyWordString: keyword, filterMerchants: "1", completion: { (userModels, networkError) in
-            guard let datas = userModels else {
+        
+        self.offset += 1
+        TGUserNetworkingManager.shared.taggedBranchList(offset: self.offset, keyWordString: keyword, complete: { (tagBranchModel, networkError) in
+            guard let datas = tagBranchModel?.data else {
                 self.friendListTableView.mj_footer.endRefreshing()
                 return
             }
@@ -158,7 +173,8 @@ class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDeleg
         if cell == nil {
             cell = TGMyFriendListCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: indentifier)
         }
-        cell?.setUserInfoData(model: dataSource[indexPath.row])
+        cell?.isMerchant = true
+        cell?.setMerchantData(model: dataSource[indexPath.row])
         cell?.delegate = self
         cell?.chatButton.isHidden = true
         return cell!
@@ -173,12 +189,12 @@ class TGAtMechantListVC: TGViewController, UITextFieldDelegate, UITableViewDeleg
         let model = dataSource[indexPath.row]
 
         if self.selectedBlock != nil {
-            self.selectedBlock!(model)
+            self.selectedBlock!(model, appId, dealPath)
             return
         }
     }
 
-    func processRefresh(datas: [TGUserInfoModel]?, message: Error?) {
+    func processRefresh(datas: [TGTaggedBranchData]?, message: Error?) {
         friendListTableView.mj_footer.resetNoMoreData()
         // 获取数据成功
         if let datas = datas {

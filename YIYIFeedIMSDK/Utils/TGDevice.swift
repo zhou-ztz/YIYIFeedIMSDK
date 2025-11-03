@@ -10,6 +10,19 @@ import UIKit
 
 
 struct TGDevice {
+    public static let currentUDID = TGDevice.uniqueDeviceIdentifier()
+    private static func uniqueDeviceIdentifier() -> String {
+        var deviceUUID = String.empty
+        let keyChainResult = TGKeyChainHelper.shared.read(type: String.self, forKey: Constants.KeyChain.deviceUUID)
+        if keyChainResult.success, let uuid = keyChainResult.value, !uuid.isEmpty {
+            deviceUUID = uuid
+        } else {
+            deviceUUID = UIDevice.current.identifierForVendor?.uuidString ?? String.empty
+            _ = TGKeyChainHelper.shared.store(value: deviceUUID, forKey: Constants.KeyChain.deviceUUID)
+        }
+        return deviceUUID
+    }
+    
     static var isLandscape: Bool {
         switch UIDevice.current.orientation {
         case .portrait, .portraitUpsideDown:

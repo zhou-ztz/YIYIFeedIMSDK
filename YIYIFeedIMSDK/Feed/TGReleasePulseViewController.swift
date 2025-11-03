@@ -140,7 +140,7 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
     /// 选中的动态关联用户
     var selectedUsers: [TGUserInfoModel] = []
     /// 选中的动态关联商家
-    var selectedMerchants: [TGUserInfoModel] = []
+    var selectedMerchants: [TGTaggedBranchData] = []
     /// 输入框顶部工具栏
     // 整个容器
     var toolView = UIView()
@@ -167,6 +167,9 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
     
     public var isPost: Bool = false
     
+    
+    var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel] = []
+    
     private let beanErrorLabel: UILabel = {
         let label = UILabel()
         label.applyStyle(.regular(size: 12, color: UIColor(red: 209, green: 77, blue: 77)))
@@ -175,7 +178,6 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
         
         return label
     }()
-    
     var isTapOtherView = false
     var isPriceTextFiledTap = false
     var isReposting = false
@@ -455,25 +457,22 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
         }
         if let hashtags = dict["hashtag"] as? [String]  {
             var textStr: String = ""
-            var userIds: Int = 0
-            if let user = dict["user"] as? [String: Any] , let userId = user["yippiUserId"] as? Int{
-                
-                let username = user["yippiUsername"] as? String
-                let originalName = user["name"] as? String
-                
-                let name = TGLocalRemarkName.getRemarkName(userId: nil, username: username, originalName: originalName, label: nil)
-                var userInfo = TGUserInfoModel()
-                userInfo.userIdentity = userId
-                userInfo.id = Id(userId)
-                userInfo.username = username ?? ""
-                
-                let nickName = name.count == 0 ? (username ?? "") : name
-                userInfo.name = nickName
-                self.selectedMerchants.append(userInfo)
-                self.insertTagTextIntoContent(userId: userInfo.userIdentity, userName: nickName)
-                userIds = userId
+            var branchIds: Int = 0
+            if let user = dict["user"] as? [String: Any], let userId = user["yippiUserId"] as? Int,
+                let branchId = user["wantedId"] as? Int, let branchName = user["branchName"] as? String {
+             
+                var merchantData = TGTaggedBranchData()
+                merchantData.miniProgramBranchID = branchId
+                merchantData.branchName = branchName
+                merchantData.yippiUserID = userId
+
+                self.selectedMerchants.append(merchantData)
+                let dealPath: String = "/pages/detail/index"
+                let mpExtras = RLSDKManager.shared.loginParma?.mpExtras ?? ""
+                self.insertMerchantTagTextIntoContent(miniProgramBranchId: branchId, branchName: branchName, appId: mpExtras, dealPath: dealPath, isPostFeed: true, userId: userId)
+                branchIds = branchId
             }
-            if userIds != 0 {
+            if branchIds != 0 {
                 textStr = "\n" + " "
             }
            
@@ -483,7 +482,7 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
 
             self.contentTextView.becomeFirstResponder()
             self.contentTextView.insertText(textStr)
-            HTMLManager.shared.formatTextViewAttributeText(contentTextView)
+            HTMLManager.shared.formatTextViewAttributeText(contentTextView, selectedMerchants: selectedMerchants)
         }
     }
     @IBAction func tapScrollView(_ sender: UITapGestureRecognizer) {
@@ -1028,14 +1027,14 @@ extension TGReleasePulseViewController {
             }
         }
         if self.type == .miniVideo {
-            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: self.privacyType.rawValue, repostModel: nil, shareModel: nil, topics: self.topics, taggedLocation: self.taggedLocation, phAssets: nil, postPhoto: nil, video: shortVideoAsset, soundId: nil, videoType: self.videoType, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: nil, rejectNeedsUploadVideo: isVideoDataChanged, videoCoverId: coverId, videoDataId: videoId, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher)
+            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: self.privacyType.rawValue, repostModel: nil, shareModel: nil, topics: self.topics, taggedLocation: self.taggedLocation, phAssets: nil, postPhoto: nil, video: shortVideoAsset, soundId: nil, videoType: self.videoType, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: nil, rejectNeedsUploadVideo: isVideoDataChanged, videoCoverId: coverId, videoDataId: videoId, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher, aiFeedTargetBranchId: nil)
             if campaignDict != nil {
                 TGPostTaskManager.shared.addTask(postModel, type: .campaign)
             } else {
                 TGPostTaskManager.shared.addTask(postModel, type: .normalType)
             }
         }else {
-            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: privacyType.rawValue, repostModel: repostModel, shareModel: sharedModel, topics: topics, taggedLocation: taggedLocation, phAssets: postPHAssets, postPhoto: postPhotoExtension, video: nil, soundId: nil, videoType: nil, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: selectedModelImages, rejectNeedsUploadVideo: nil, videoCoverId: nil, videoDataId: nil, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher)
+            let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: privacyType.rawValue, repostModel: repostModel, shareModel: sharedModel, topics: topics, taggedLocation: taggedLocation, phAssets: postPHAssets, postPhoto: postPhotoExtension, video: nil, soundId: nil, videoType: nil, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: selectedModelImages, rejectNeedsUploadVideo: nil, videoCoverId: nil, videoDataId: nil, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher, aiFeedTargetBranchId: nil)
             if campaignDict != nil {
                 TGPostTaskManager.shared.addTask(postModel, type: .campaign)
             } else {
@@ -1164,10 +1163,27 @@ extension TGReleasePulseViewController {
         beanErrorLabel.isHidden = true
      
         if let text = self.preText, text.count > 0 {
-            HTMLManager.shared.removeHtmlTag(htmlString: "\(text) ", completion: { [weak self] (content, userIdList) in
+            HTMLManager.shared.removeHtmlTag(htmlString: "\(text) ", isPostFeed: true, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
                 guard let self = self else { return }
+                
+                if self.isFromEditFeed && !self.rewardsMerchantUsers.isEmpty {
+                    for (index, merchantId) in merchantIdList.enumerated() {
+                        if let branchId = Int(merchantId), branchId > 0 {
+                            let merchantData = TGTaggedBranchData()
+                            merchantData.miniProgramBranchID = branchId
+                            
+                            if let matchingMerchant = self.rewardsMerchantUsers.first(where: { $0.wantedMid == branchId }) {
+                                merchantData.yippiUserID = matchingMerchant.merchantId
+                                merchantData.branchName = matchingMerchant.userName
+                            }
+                            
+                            self.selectedMerchants.append(merchantData)
+                        }
+                    }
+                }
+                
                 var htmlAttributedText = content.attributonString()
-                htmlAttributedText = HTMLManager.shared.formAttributeText(htmlAttributedText, userIdList)
+                htmlAttributedText = HTMLManager.shared.formAttributeText(htmlAttributedText, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList, self.selectedMerchants)
                 self.contentTextView.attributedText = htmlAttributedText
                 self.contentTextView.delegate?.textViewDidChange!(contentTextView)
             })
@@ -1492,19 +1508,42 @@ extension TGReleasePulseViewController {
     }
     /// 跳转到可选at人的列表
     func pushAtSelectedList() {
+//        let atselectedListVC = TGAtPeopleAndMechantListVC()
+//        let presentingVC = TGNavigationController(rootViewController: atselectedListVC).fullScreenRepresentation
+//        self.present(presentingVC, animated: true, completion: nil)
+//        atselectedListVC.selectedBlock = { [weak self] (userInfo, userInfoModelType) in
+//            guard let self = self else { return }
+//            atselectedListVC.dismiss(animated: true, completion: nil)
+//            if let userInfo = userInfo {
+//                /// 先移除光标所在前一个at
+//                self.insertTagTextIntoContent(userId: userInfo.userIdentity, userName: userInfo.name)
+//                if userInfoModelType == .merchant {
+//                    self.selectedMerchants.append(userInfo)
+//                } else {
+//                    self.selectedUsers.append(userInfo)
+//                }
+//                return
+//            }
+//        }
         let atselectedListVC = TGAtPeopleAndMechantListVC()
-        let presentingVC = TGNavigationController(rootViewController: atselectedListVC).fullScreenRepresentation
-        self.present(presentingVC, animated: true, completion: nil)
-        atselectedListVC.selectedBlock = { [weak self] (userInfo, userInfoModelType) in
+        self.present(TGNavigationController(rootViewController: atselectedListVC).fullScreenRepresentation, animated: true, completion: nil)
+        atselectedListVC.selectedBlock = { [weak self] (userInfo, appId, dealPath, userInfoModelType) in
             guard let self = self else { return }
             atselectedListVC.dismiss(animated: true, completion: nil)
             if let userInfo = userInfo {
-                /// 先移除光标所在前一个at
-                self.insertTagTextIntoContent(userId: userInfo.userIdentity, userName: userInfo.name)
-                if userInfoModelType == .merchant {
-                    self.selectedMerchants.append(userInfo)
-                } else {
-                    self.selectedUsers.append(userInfo)
+                switch userInfoModelType {
+                case .people:
+                    if let userModel = userInfo as? TGUserInfoModel {
+                        /// 先移除光标所在前一个at
+                        self.insertTagTextIntoContent(userId: userModel.userIdentity, userName: userModel.name)
+                        self.selectedUsers.append(userModel)
+                    }
+                case .merchant:
+                    if let merchantModel = userInfo as? TGTaggedBranchData {
+                        /// 先移除光标所在前一个at
+                        self.insertMerchantTagTextIntoContent(miniProgramBranchId: merchantModel.miniProgramBranchID, branchName: merchantModel.branchName ?? "", appId: appId, dealPath: dealPath, isPostFeed: true, userId: merchantModel.yippiUserID)
+                        // Note: merchant is already added to selectedMerchants in insertMerchantTagTextIntoContent
+                    }
                 }
                 return
             }
@@ -1541,7 +1580,7 @@ extension TGReleasePulseViewController {
         }
     }
     
-    func insertTagTextIntoContent (userId: Int? = nil, userName: String) {
+    func insertTagTextIntoContent(userId: Int? = nil, userName: String) {
         self.contentTextView = TGCommonTool.atMeTextViewEdit(self.contentTextView) as! KMPlaceholderTextView
         
         let temp = HTMLManager.shared.addUserIdToTagContent(userId: userId, userName: userName)
@@ -1554,20 +1593,52 @@ extension TGReleasePulseViewController {
         self.contentTextView.becomeFirstResponder()
         self.contentTextView.insertText("")
     }
-    // 添加hashtag 内容
-    func insertHashTagTextIntoContent (hashTag: String) {
+    
+    func insertMerchantTagTextIntoContent(miniProgramBranchId: Int? = nil, branchName: String? = nil, appId: String? = nil,
+                                          dealPath: String? = nil, isPostFeed: Bool = false, userId: Int? = nil, userName: String? = nil) {
+        self.contentTextView = TGCommonTool.atMeTextViewEdit(self.contentTextView) as! KMPlaceholderTextView
         
-        self.contentTextView = TGCommonTool.hashtagTextViewEdit(self.contentTextView) as! KMPlaceholderTextView
-        let temp = HTMLManager.shared.addHashTagContent(hashTag: hashTag)
-        let newMutableString = self.contentTextView.attributedText.mutableCopy() as! NSMutableAttributedString
-        newMutableString.append(temp)
+        if isPostFeed {
+            let merchantName = branchName ?? ""
+            let temp: NSAttributedString = HTMLManager.shared.addMerchantToTagContent(
+                miniProgramBranchId: miniProgramBranchId,
+                branchName: merchantName,
+                appId: appId,
+                dealPath: dealPath,
+                yippiUserID: userId
+            )
+            
+            let newMutableString = self.contentTextView.attributedText.mutableCopy() as! NSMutableAttributedString
+            newMutableString.append(temp)
+            
+            self.contentTextView.attributedText = newMutableString
+            
+            // Add merchant to selectedMerchants array
+            if let miniProgramBranchId = miniProgramBranchId, let branchName = branchName {
+                let merchantData = TGTaggedBranchData()
+                merchantData.miniProgramBranchID = miniProgramBranchId
+                merchantData.branchName = branchName
+                merchantData.yippiUserID = userId
+                self.selectedMerchants.append(merchantData)
+            }
+        } else {
+            // For user mentions
+            let temp: NSAttributedString = HTMLManager.shared.addUserIdToTagContent(
+                userId: userId,
+                userName: userName ?? ""
+            )
+            
+            let newMutableString = self.contentTextView.attributedText.mutableCopy() as! NSMutableAttributedString
+            newMutableString.append(temp)
+            
+            self.contentTextView.attributedText = newMutableString
+        }
         
-        self.contentTextView.attributedText = newMutableString
-        self.contentTextView.delegate?.textViewDidChange!(contentTextView)
+        self.contentTextView.delegate?.textViewDidChange?(contentTextView)
         self.contentTextView.becomeFirstResponder()
         self.contentTextView.insertText("")
-        
     }
+    
 }
 
 extension TGReleasePulseViewController: TSSystemEmojiSelectorViewDelegate {

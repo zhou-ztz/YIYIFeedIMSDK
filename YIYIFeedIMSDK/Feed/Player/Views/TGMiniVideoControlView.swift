@@ -47,6 +47,9 @@ class TGMiniVideoControlView: UIView {
     var translateHandler: ((Bool) -> Void)?
     var reactionSelected: ReactionTypes?
     var userIdList: [String] = []
+    var merchantIdList: [String] = []
+    var merchantAppIdList: [String] = []
+    var merchantDealPathList: [String] = []
     var htmlAttributedText: NSMutableAttributedString?
     
     private var translateButton: LoadableButton = LoadableButton(frame: .zero, icon: nil,
@@ -179,15 +182,14 @@ class TGMiniVideoControlView: UIView {
                 readMoreLabel.setText(text: originalTexts, allowTruncation: true)
             }
         } else {
-            HTMLManager.shared.removeHtmlTag(htmlString: feed.content, completion: { [weak self] (content, userIdList) in
+            HTMLManager.shared.removeHtmlTag(htmlString: feed.content, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
                 guard let self = self else { return }
                 self.userIdList = userIdList
+                self.merchantIdList = merchantIdList
+                self.merchantAppIdList = merchantAppIdList
+                self.merchantDealPathList = merchantDealPathList
                 self.originalTexts = content
-                self.htmlAttributedText = content.attributonString()
-                if let attributedText = self.htmlAttributedText {
-                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList)
-                }
-                
+                self.updateContentLabel(content: content, original: feed.content)
                 self.updateTranslateText(isTranslate)
             })
         }
@@ -280,9 +282,12 @@ class TGMiniVideoControlView: UIView {
         }
         
         bottomToolBarView.onCommentAction = { [weak self] in
-            guard let self = self else { return }
-            //            TSKeyboardToolbar.share.keyboardBecomeFirstResponder()
-            self.delegate?.commentDidTapped(view: self)
+            
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard let self = self else { return }
+                //            TSKeyboardToolbar.share.keyboardBecomeFirstResponder()
+                self.delegate?.commentDidTapped(view: self)
+            })
         }
         //设置商家信息相关内容
         updateLocationAndMerchantNameView(location: feed.location, rewardsMerchantUsers: feed.rewardsMerchantUsers)
@@ -333,11 +338,17 @@ class TGMiniVideoControlView: UIView {
             
             switch toolbarIndex {
             case 0:
-                self.reactionHandler?.onTapReactionView()
+                TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                    self.reactionHandler?.onTapReactionView()
+                })
             case 1:
-                self.delegate?.commentDidTapped(view: self)
+                TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                    self.delegate?.commentDidTapped(view: self)
+                })
             case 2:
-                self.parentViewController?.navigationController?.presentPopVC(target: "", type: .share, delegate: self)
+                TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                    self.parentViewController?.presentPopVC(target: "", type: .share, delegate: self)
+                })
             default: break
             }
         }
@@ -416,6 +427,18 @@ class TGMiniVideoControlView: UIView {
                 readMoreLabel.setText(text:  self.originalTexts, allowTruncation: true)
             }
             
+        }
+    }
+    
+    func updateContentLabel(content: String, original: String) {
+        htmlAttributedText = content.attributonString().setTextFont(14).setlineSpacing(0)
+        if let attributedText = htmlAttributedText {
+            htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList)
+            if readMoreLabel != nil { readMoreLabel.setAttributeText(attString: attributedText, allowTruncation: true) }
+        } else {
+            if readMoreLabel != nil {
+                readMoreLabel.setText(text: original, textColor: readMoreLabel.label.textColor, allowTruncation: true)
+            }
         }
     }
     
@@ -967,25 +990,27 @@ extension TGMiniVideoControlView {
     private func prepareFollowButton() {
         
         primaryButton.addTap { [weak self] (_) in
-            guard let self = self else { return }
-//            guard TSCurrentUserInfo.share.isLogin == true else {
-//                TSRootViewController.share.guestJoinLandingVC()
-//                return
-//            }
-            primaryButton.setTitle("Loading...".localized, for: .normal)
-            self.model?.userInfo?.updateFollow { [weak self] (success) in
-                DispatchQueue.main.async {
-                    if success {
-                        guard let self = self  else { return }
-                        
-                        // By Kit Foong (Trigger observer to update follow status)
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": self.model?.userInfo?.follower, "userid": "\(self.model?.userInfo?.userIdentity)"])
-                        self.updatePrimaryButton()
-                    } else {
-                        self?.updatePrimaryButton()
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard let self = self else { return }
+                //            guard TSCurrentUserInfo.share.isLogin == true else {
+                //                TSRootViewController.share.guestJoinLandingVC()
+                //                return
+                //            }
+                self.primaryButton.setTitle("Loading...".localized, for: .normal)
+                self.model?.userInfo?.updateFollow { [weak self] (success) in
+                    DispatchQueue.main.async {
+                        if success {
+                            guard let self = self  else { return }
+                            
+                            // By Kit Foong (Trigger observer to update follow status)
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": self.model?.userInfo?.follower, "userid": "\(self.model?.userInfo?.userIdentity)"])
+                            self.updatePrimaryButton()
+                        } else {
+                            self?.updatePrimaryButton()
+                        }
                     }
                 }
-            }
+            })
         }
         let followView = UIView()
         followView.addSubview(primaryButton)
@@ -1007,8 +1032,15 @@ extension TGMiniVideoControlView {
     }
     private func setGestures() {
     
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTapGestureRecogniser(_:)))
-    
+        let doubleTap = UITapGestureRecognizer { [weak self] in
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                self?.executeLike()
+                if self?.model?.reactionType != nil {
+                    return
+                }
+                self?.reactionHandler?.onSelect(reaction: .heart)
+            })
+        }
         doubleTap.numberOfTapsRequired = 2
         self.gradientView.addGestureRecognizer(doubleTap)
         
@@ -1048,27 +1080,28 @@ extension TGMiniVideoControlView {
 //            TSRootViewController.share.guestJoinLandingVC()
 //            return
 //        }
-        
-        guard var object = model?.userInfo else { return }
-        
-        guard let relationship = object.relationshipWithCurrentUser else {
-//            TSRootViewController.share.guestJoinLandingVC()
-            return
-        }
-        if relationship.status == .eachOther {
-//            let session = NIMSession(object.username, type: .P2P)
-//            let vc = IMChatViewController(session: session, unread: 0)
-//            self.parentViewController?.navigationController?.pushViewController(vc, animated: true)
-        } else {
-            object.updateFollow { (success) in
-                DispatchQueue.main.async {
-                    if success {
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": object.follower, "userid": "\(object.userIdentity)"])
-                        self.updatePrimaryButton()
+        TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+            guard var object = self.model?.userInfo else { return }
+            
+            guard let relationship = object.relationshipWithCurrentUser else {
+    //            TSRootViewController.share.guestJoinLandingVC()
+                return
+            }
+            if relationship.status == .eachOther {
+    //            let session = NIMSession(object.username, type: .P2P)
+    //            let vc = IMChatViewController(session: session, unread: 0)
+    //            self.parentViewController?.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                object.updateFollow { (success) in
+                    DispatchQueue.main.async {
+                        if success {
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": object.follower, "userid": "\(object.userIdentity)"])
+                            self.updatePrimaryButton()
+                        }
                     }
                 }
             }
-        }
+        })
     }
     
     func updateSponsorStatus(_ isShow: Bool) {
@@ -1254,15 +1287,17 @@ extension TGMiniVideoControlView: CustomPopListProtocol{
         
         switch itemType {
         case .message:
-            //记录转发数
-            self.forwardFeed()
-            if let model = self.model {
-                let messageModel = TGmessagePopModel(momentModel: model)
-                let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
-                let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
-                self.parentViewController?.navigationController?.present(navigation, animated: true, completion: nil)
-                
-            }
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                //记录转发数
+                self.forwardFeed()
+                if let model = self.model {
+                    let messageModel = TGmessagePopModel(momentModel: model)
+                    let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
+                    let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
+                    self.parentViewController?.navigationController?.present(navigation, animated: true, completion: nil)
+                    
+                }
+            })
         case .shareExternal:
             //记录转发数
             self.forwardFeed()

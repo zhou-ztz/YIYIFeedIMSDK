@@ -122,19 +122,10 @@ class TGFeedCommentDetailBottomView: UIView {
         contentView.addArrangedSubview(UIView())
     }
     
-    public func loadToolbar(model: FeedListToolModel?, canAcceptReward: Bool, reactionType: ReactionTypes?) {
+    public func loadToolbar(model: FeedListToolModel?, canAcceptReward: Bool, reactionType: ReactionTypes?, isFeedInfo: Bool = false) {
         guard let model = model else { return }
         toolbar.backgroundColor = colorStyle == .normal ? .white : .black
 
-        let reactionMapping: [ReactionTypes: ReactionTypes] = [
-            .heart: .heart,
-            .like: .heart,
-            .angry: .angry,
-            .awesome: .awesome,
-            .cry: .cry,
-            .wow: .wow
-        ]
-        
         let blackReactionMapping: [ReactionTypes: ReactionTypes] = [
             .heart: .blackHeart,
             .like: .blackHeart,
@@ -144,10 +135,24 @@ class TGFeedCommentDetailBottomView: UIView {
             .wow: .blackWow
         ]
         
-        let finalReactionMapping = self.colorStyle == .dark ? blackReactionMapping : reactionMapping
+        let whiteReactionMapping: [ReactionTypes: ReactionTypes] = [
+            .heart: .heart,
+            .like: .heart,
+            .angry: .angry,
+            .awesome: .awesome,
+            .cry: .cry,
+            .wow: .wow
+        ]
         
         if let reaction = reactionType {
-            if let selectedReaction = finalReactionMapping[reaction] {
+            let selectedReaction: ReactionTypes?
+            if isFeedInfo {
+                selectedReaction = whiteReactionMapping[reaction]
+            } else {
+                selectedReaction = blackReactionMapping[reaction]
+            }
+            
+            if let selectedReaction = selectedReaction {
                 toolbar.setImage([selectedReaction.imageName], At: 0)
                 toolbar.setTitle(selectedReaction.title, At: 0)
             }

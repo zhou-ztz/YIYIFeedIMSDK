@@ -163,7 +163,7 @@ class VoucherMessageCell: BaseMessageCell {
                     return
                 }
                 
-                HTMLManager.shared.removeHtmlTag(htmlString: attachment.desc, completion: { [weak self] (content, _) in
+                HTMLManager.shared.removeHtmlTag(htmlString: attachment.desc, completion: { [weak self] (content, _, _, _, _) in
                     guard let self = self else { return }
                     self.updateUIWithContent(image: attachment.imageURL, title: attachment.title, desc: content, content:decodedUrl)
                 })

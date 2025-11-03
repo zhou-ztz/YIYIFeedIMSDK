@@ -268,7 +268,7 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
     }
     
     func removeToolBar() {
-//        self.textToolBarView?.emoticonView.isHidden = true
+        self.textToolBarView?.emoticonView.isHidden = true
         self.keyboardToolbarDelegate?.keyboardToolbarDidDismiss()
         
         TGKeyboardToolbar.share.removeFromSuperview()
@@ -322,13 +322,6 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
     
     func onVoucherClick(_ voucherId: Int) {
         if let rootViewController = UIApplication.topViewController() {
-            //            let vc = VoucherDetailViewController()
-            //            vc.voucherId = voucherId
-            //            let nav = PortraitNavigationController(rootViewController: vc)
-            //            nav.onPopViewController = { [weak self] in
-            //                self?.keyboardToolbarDelegate?.keyboardToolbarDidDismiss()
-            //            }
-            //            rootViewController.present(nav.fullScreenRepresentation, animated: true, completion: nil)
             RLSDKManager.shared.feedDelegate?.didVoucherTouched(voucherId: voucherId)
         }
     }
@@ -338,6 +331,7 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
     }
     
     func onTagUser(textView: UITextView) {
+        guard let textView = self.textToolBarView?.messageInputView.sendTextView else { return }
         TGKeyboardToolbar.share.removeFromSuperview()
         UIView.animate(withDuration: 0.2, animations: {
             self.bgView.backgroundColor = UIColor(hex: 0x000000, alpha: 0.0)
@@ -346,25 +340,35 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
         })
         keyboard.stop()
         if let rootViewController = UIApplication.topViewController() {
-            //            let atselectedListVC = TSAtPeopleAndMechantListVC()
-            //            atselectedListVC.selectedBlock = { [weak self] (userInfo, userInfoModelType) in
-            //                guard let self = self else { return }
-            //                if let userInfo = userInfo {
-            //                    /// 先移除光标所在前一个at
-            //                    self.insertTagTextIntoContent(userId: userInfo.userIdentity, userName: userInfo.name)
-            //                    return
-            //                }
-            //                self.textToolBarView?.messageInputView.sendTextView = TSCommonTool.atMeTextViewEdit(self.textToolBarView?.messageInputView.sendTextView) as! KMPlaceholderTextView
-            //            }
-            //            let nav = TSNavigationController(rootViewController: atselectedListVC)
-            //            rootViewController.present(nav.fullScreenRepresentation, animated: true, completion: nil)
+            let atselectedListVC = TGAtPeopleAndMechantListVC()
+            atselectedListVC.selectedBlock = { [weak self] (userInfo, appId, dealPath, userInfoModelType) in
+                guard let self = self else { return }
+                if let userInfo = userInfo {
+                    switch userInfoModelType {
+                    case .people:
+                        if let userModel = userInfo as? TGUserInfoModel {
+                            /// 先移除光标所在前一个at
+                            self.insertTagTextIntoContent(userId: userModel.userIdentity, userName: userModel.name)
+                        }
+                    case .merchant:
+                        if let merchantModel = userInfo as? TGTaggedBranchData {
+                            /// 先移除光标所在前一个at
+                            self.insertMerchantTagTextIntoContent(miniProgramBranchId: merchantModel.miniProgramBranchID ?? 0, branchName: merchantModel.branchName ?? "", appId: appId, dealPath: dealPath, yippiUserID: merchantModel.yippiUserID ?? 0)
+                        }
+                    }
+                    return
+                }
+                self.textToolBarView?.messageInputView.sendTextView = TGCommonTool.atMeTextViewEdit(textView) as! KMPlaceholderTextView
+            }
+            let nav = TGNavigationController(rootViewController: atselectedListVC)
+            rootViewController.present(nav.fullScreenRepresentation, animated: true, completion: nil)
         }
     }
     
     func insertTagTextIntoContent(userId: Int? = nil, userName: String) {
-//        self.textToolBarView?.messageInputView.sendTextView = TGCommonTool.atMeTextViewEdit(self.textToolBarView?.messageInputView.sendTextView) as! KMPlaceholderTextView
-        guard var textView = self.textToolBarView?.messageInputView.sendTextView else { return }
         
+        guard let textView = self.textToolBarView?.messageInputView.sendTextView else { return }
+        self.textToolBarView?.messageInputView.sendTextView = TGCommonTool.atMeTextViewEdit(textView) as! KMPlaceholderTextView
         let temp = HTMLManager.shared.addUserIdToTagContent(userId: userId, userName: userName)
         let newMutableString = textView.attributedText.mutableCopy() as! NSMutableAttributedString
         newMutableString.append(temp)
@@ -373,7 +377,19 @@ class TGKeyboardToolbar: UIView, TGTextToolBarViewDelegate {
         textView.delegate?.textViewDidChange!(textView)
         textView.becomeFirstResponder()
     }
-    
+    func insertMerchantTagTextIntoContent(miniProgramBranchId: Int, branchName: String, appId: String, dealPath: String, yippiUserID: Int) {
+       
+        guard let textView = self.textToolBarView?.messageInputView.sendTextView else { return }
+        self.textToolBarView?.messageInputView.sendTextView = TGCommonTool.atMeTextViewEdit(textView) as! KMPlaceholderTextView
+        let temp = HTMLManager.shared.addMerchantToTagContent(miniProgramBranchId: miniProgramBranchId, branchName: branchName, appId: appId, dealPath: dealPath, yippiUserID: yippiUserID)
+        let newMutableString = textView.attributedText.mutableCopy() as! NSMutableAttributedString
+        newMutableString.append(temp)
+        
+        textView.attributedText = newMutableString
+        textView.delegate?.textViewDidChange!(textView)
+        textView.becomeFirstResponder()
+    }
+
     func updateKeyboardFrameWithNoKeyBoard(to screenSize: CGSize) {
         guard let mWindow = UIApplication.shared.keyWindow else {
             //            assert(false, "\(TGTextToolBarView.self)没有获取到window")

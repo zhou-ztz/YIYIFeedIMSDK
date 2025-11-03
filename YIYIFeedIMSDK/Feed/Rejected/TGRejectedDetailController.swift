@@ -137,11 +137,11 @@ public class TGRejectedDetailController: TGViewController {
         
         if let feedContent = data.textModel?.feedContent {
             titleStackView.isHidden = false
-            HTMLManager.shared.removeHtmlTag(htmlString: feedContent, completion: { [weak self] (content, userIdList) in
+            HTMLManager.shared.removeHtmlTag(htmlString: feedContent, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
                 guard let self = self else { return }
                 self.htmlAttributedText = content.attributonString()
                 if let attributedText = self.htmlAttributedText {
-                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList)
+                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList)
                     if self.readMoreLabel != nil { self.readMoreLabel.setAttributeText(attString: attributedText, textColor: .black, allowTruncation: true) }
                 } else {
                     if self.readMoreLabel != nil { self.readMoreLabel.setText(text: content, textColor: .black, allowTruncation: true) }

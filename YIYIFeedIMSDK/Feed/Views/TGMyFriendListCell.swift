@@ -16,6 +16,7 @@ class TGMyFriendListCell: UITableViewCell {
     weak var delegate: TGMyFriendListCellDelegate?
     /// 头像
     var avatarImageView: TGAvatarView!
+    var businessImageView: UIImageView!
     /// 昵称
     var nameLabel: UILabel!
     /// 简介
@@ -23,7 +24,7 @@ class TGMyFriendListCell: UITableViewCell {
     /// 聊天按钮
     var chatButton: UIButton!
     var chatUserName: String = ""
-
+    var isMerchant: Bool = false
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.creatSubView()
@@ -37,6 +38,13 @@ class TGMyFriendListCell: UITableViewCell {
         avatarImageView = TGAvatarView(origin: CGPoint(x: 10, y: 15), type: .width38(showBorderLine: false), animation: false)
         self.addSubview(avatarImageView)
 
+        businessImageView = UIImageView(frame: CGRect(x: 16, y: 15, width: 35, height: 35))
+        businessImageView.contentMode = .scaleAspectFill
+        businessImageView.clipsToBounds = true
+        businessImageView.layer.cornerRadius = 17.5
+        businessImageView.isHidden = true
+        self.addSubview(businessImageView)
+        
         nameLabel = UILabel(frame: CGRect(x: avatarImageView.right + 15, y: 15, width: ScreenWidth - avatarImageView.right - 15, height: 17.5))
         nameLabel.font = UIFont.systemFont(ofSize: 16)
         nameLabel.textColor = UIColor(hex: 0x333333)
@@ -60,6 +68,10 @@ class TGMyFriendListCell: UITableViewCell {
     }
 
     func setUserInfoData(model: TGUserInfoModel) {
+        avatarImageView.isHidden = false
+        businessImageView.isHidden = true
+        introLabel.isHidden = false
+        
         avatarImageView.avatarPlaceholderType = TGAvatarView.PlaceholderType(sexNumber: model.sex)
         avatarImageView.avatarInfo = model.avatarInfo()
         // 用户名
@@ -71,7 +83,24 @@ class TGMyFriendListCell: UITableViewCell {
         introLabel.text = model.shortDesc
         chatUserName = model.username
     }
-
+    func setMerchantData(model: TGTaggedBranchData) {
+        avatarImageView.isHidden = true
+        businessImageView.isHidden = false
+        introLabel.isHidden = true
+        
+        // Center nameLabel horizontally from businessImageView with trailing padding 16
+        let nameLabelWidth = ScreenWidth - businessImageView.right - 16 - 15 // 16 for trailing padding, 15 for leading spacing
+        nameLabel.frame = CGRect(x: businessImageView.right + 15, y: 25, width: nameLabelWidth, height: 17.5)
+        
+        if let businessLogo = model.businessLogo {
+            businessImageView.sd_setImage(with: URL(string: businessLogo), placeholderImage: UIImage(named: "icPicturePostPlaceholder"))
+        }
+        
+        if let branchName = model.branchName {
+            nameLabel.text = branchName
+            chatUserName = branchName
+        }
+    }
     @objc func chatButtonClick(button: UIButton) {
         delegate?.chatWithUserName(userName: chatUserName)
     }

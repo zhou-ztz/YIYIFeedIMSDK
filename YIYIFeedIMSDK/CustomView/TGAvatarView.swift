@@ -101,7 +101,8 @@ public class TGAvatarView: UIView {
     }
     var showLiveIcon: Bool = false
     var isFromReactionList: Bool = false
-    
+    var onImageLoaded: (() -> Void)?
+
     private var liveIcon: UIImageView = UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: 1, height: 1))).configure {
         $0.contentMode = .scaleAspectFit
     }
@@ -127,8 +128,10 @@ public class TGAvatarView: UIView {
         shapeLayer?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         buttonForAvatar.applyBorder(color: borderColor, width: showBoardLine ? borderWidth : 0)
         buttonForAvatar.circleCorner()
+        let frameWidth = max(frame.width, 1.0)
+
         if buttonForAvatar.frame.width == 0 {
-            buttonForAvatar.layer.cornerRadius = frame.width / 2
+            buttonForAvatar.layer.cornerRadius = frameWidth / 2
         }
         buttonForAvatar.clipsToBounds = true
         buttonForAvatar.imageView?.contentMode = .scaleAspectFill
@@ -180,7 +183,17 @@ extension TGAvatarView {
     /// 加载头像
     fileprivate func loadAvatar() {
         // 2.加载头像图片
-        buttonForAvatar.sd_setImage(with: URL(string: avatarInfo.avatarURL.orEmpty), for: .normal, placeholderImage: avatarPlaceholderImage, options: [.lowPriority, .scaleDownLargeImages])
+//        buttonForAvatar.sd_setImage(with: URL(string: avatarInfo.avatarURL.orEmpty), for: .normal, placeholderImage: avatarPlaceholderImage, options: [.lowPriority, .scaleDownLargeImages])
+        buttonForAvatar.sd_setImage(
+            with: URL(string: avatarInfo.avatarURL.orEmpty),
+            for: .normal,
+            placeholderImage: avatarPlaceholderImage ?? UIImage(named: avatarPlaceholderType.rawValue),
+            options: [.lowPriority, .scaleDownLargeImages]
+        ) { [weak self] image, error, cacheType, url in
+            // 👇 notify CommonSharedUIView or trigger your share flow
+            self?.onImageLoaded?()
+        }
+
     }
 }
 
@@ -195,7 +208,8 @@ extension TGAvatarView {
         buttonForVerified.imageView?.contentMode = .scaleToFill
         
         buttonForVerified.clipsToBounds = true
-        buttonForVerified.layer.cornerRadius = frame.height * 0.35 / 2
+        let frameHeight = max(self.frame.height, 1.0)
+        self.buttonForVerified.layer.cornerRadius = frameHeight * 0.35 / 2
 
         // 2.根据认证 icon，加载认证图片
         guard !avatarInfo.verifiedType.isEmpty else {
@@ -227,8 +241,12 @@ extension TGAvatarView {
             }
         } else {
             // 加载后台返回图标
-            let iconURL = URL(string: avatarInfo.verifiedIcon)
-            buttonForVerified.sd_setImage(with: iconURL, for: .normal, placeholderImage: nil, options: [.refreshCached,], completed: nil)
+            if let iconURL = URL(string: self.avatarInfo.verifiedIcon) {
+                self.buttonForVerified.sd_setImage(with: iconURL, for: .normal, placeholderImage: nil, options: [.refreshCached], completed: nil)
+            } else {
+                self.buttonForVerified.imageView?.isHidden = true
+            }
+
         }
     }
 }

@@ -473,7 +473,7 @@ class TGFeedNetworkManager: NSObject {
     }
     
     
-    func releasePost(feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func releasePost(feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGTaggedBranchData]?, tagVoucher: TagVoucherModel?, aiFeedTargetBranchId: String?,complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds"
         
@@ -532,8 +532,32 @@ class TGFeedNetworkManager: NSObject {
             params["tag_users"] = userIDs
         }
         if let merchants = tagMerchants, merchants.count > 0 {
-            let merchantIDs = TGUtil.generateMatchingUserIDs(tagUsers: merchants, atStrings: atStrings)
-            params["feed_rewards_link_yippi_user_ids"] = merchantIDs
+            printIfDebug("🔍 Network Request: Processing \(merchants.count) merchants from tagMerchants")
+            var merchantDataArray: [[String: Any]] = []
+            for (index, merchant) in merchants.enumerated() {
+                printIfDebug("🔍 Network Request: Merchant \(index): branchName='\(merchant.branchName ?? "nil")', miniProgramBranchID=\(merchant.miniProgramBranchID), yippiUserID=\(merchant.yippiUserID ?? 0)")
+                
+                if let yippiUserID = merchant.yippiUserID, let miniProgramBranchID = merchant.miniProgramBranchID, miniProgramBranchID > 0  {
+                    let merchantData: [String: Any] = [
+                        "merchant_yippi_user_id": yippiUserID,
+                        "yippis_wanted_branch_id": miniProgramBranchID
+                    ]
+                    merchantDataArray.append(merchantData)
+                    printIfDebug("🔍 Network Request: Added merchant data: yippiUserID=\(yippiUserID), branchID=\(miniProgramBranchID)")
+                } else {
+                    printIfDebug("🔍 Network Request: Skipped merchant due to invalid data: yippiUserID=\(merchant.yippiUserID ?? 0), branchID=\(merchant.miniProgramBranchID)")
+                }
+            }
+            
+            printIfDebug("🔍 Network Request: Final merchantDataArray count: \(merchantDataArray.count)")
+            if !merchantDataArray.isEmpty {
+                params["feed_rewards_link_yippi_branch_ids"] = merchantDataArray
+                printIfDebug("🔍 Network Request: Added feed_rewards_link_yippi_branch_ids parameter with \(merchantDataArray.count) merchants")
+            } else {
+                printIfDebug("🔍 Network Request: No valid merchants found, not adding feed_rewards_link_yippi_branch_ids parameter")
+            }
+        } else {
+            printIfDebug("🔍 Network Request: No tagMerchants provided or empty array")
         }
 
         var hashtags = TGUtil.findAllHashtagStrings(inputStr: feedContent)
@@ -549,6 +573,10 @@ class TGFeedNetworkManager: NSObject {
             ]
             params["tag_voucher"] = tagVoucherObjc
         }
+        if let aiFeedTargetBranchId = aiFeedTargetBranchId {
+            params["ai_feed_target_branch_id"] = aiFeedTargetBranchId
+        }
+        
         TGNetworkManager.shared.request(
             urlPath: path,
             method: .POST,
@@ -578,7 +606,7 @@ class TGFeedNetworkManager: NSObject {
     
     
     
-    func editRejectFeed(feedID: String, feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func editRejectFeed(feedID: String, feedContent: String, feedId: Int, privacy: String, images: [Int]?, feedFrom: Int, topics: [TGTopicCommonModel]?, repostType: String?, repostId: Int?, customAttachment: SharedViewModel?, location: TGLocationModel?, isHotFeed: Bool, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGTaggedBranchData]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds/reject/\(feedID)"
         
@@ -632,8 +660,22 @@ class TGFeedNetworkManager: NSObject {
             params["tag_users"] = userIDs
         }
         if let merchants = tagMerchants, merchants.count > 0 {
-            let merchantIDs = TGUtil.generateMatchingUserIDs(tagUsers: merchants, atStrings: atStrings)
-            params["feed_rewards_link_yippi_user_ids"] = merchantIDs
+            var merchantDataArray: [[String: Any]] = []
+            for merchant in merchants {
+                if let yippiUserID = merchant.yippiUserID, let miniProgramBranchID = merchant.miniProgramBranchID, miniProgramBranchID > 0 {
+                    // For editRejectFeed, include all merchants with valid data regardless of text matching
+                    // because the text content might have been modified during editing
+                    let merchantData: [String: Any] = [
+                        "merchant_yippi_user_id": yippiUserID,
+                        "yippis_wanted_branch_id": miniProgramBranchID
+                    ]
+                    merchantDataArray.append(merchantData)
+                }
+            }
+            
+            if !merchantDataArray.isEmpty {
+                params["feed_rewards_link_yippi_branch_ids"] = merchantDataArray
+            }
         }
 
         var hashtags = TGUtil.findAllHashtagStrings(inputStr: feedContent)
@@ -677,7 +719,7 @@ class TGFeedNetworkManager: NSObject {
     }
     
     
-    func editRejectShortVideo(feedID: String, shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
+    func editRejectShortVideo(feedID: String, shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGTaggedBranchData]?, tagVoucher: TagVoucherModel?, complete: @escaping ((_ feedId: Int?, _ error: NSError?) -> Void)) -> Void {
         
         let path = "api/v2/feeds/reject/\(feedID)"
         
@@ -722,10 +764,28 @@ class TGFeedNetworkManager: NSObject {
             params["tag_users"] = userIDs
         }
         if let merchants = tagMerchants, merchants.count > 0 {
-            let merchantIDs = TGUtil.generateMatchingUserIDs(tagUsers: merchants, atStrings: atStrings)
-            params["feed_rewards_link_yippi_user_ids"] = merchantIDs
+            var merchantIDs = TGUtil.generateMatchingMerchantIDs(tagUsers: merchants, atStrings: atStrings)
+            
+            var merchantDataArray: [[String: Any]] = []
+            for merchant in merchants {
+                if let yippiUserID = merchant.yippiUserID, let miniProgramBranchID = merchant.miniProgramBranchID, miniProgramBranchID > 0 {
+                    // Check if this merchant ID is found in the generated merchantIDs array
+                    let isMerchantFound = merchantIDs.contains(miniProgramBranchID)
+                    
+                    if isMerchantFound {
+                        let merchantData: [String: Any] = [
+                            "merchant_yippi_user_id": yippiUserID,
+                            "yippis_wanted_branch_id": miniProgramBranchID
+                        ]
+                        merchantDataArray.append(merchantData)
+                    }
+                }
+            }
+            
+            if !merchantDataArray.isEmpty {
+                params["feed_rewards_link_yippi_branch_ids"] = merchantDataArray
+            }
         }
-
         var hashtags = TGUtil.findAllHashtagStrings(inputStr: feedContent ?? "")
         hashtags = hashtags.map({$0.replacingOccurrences(of: "#", with: "")})
         hashtags = hashtags.map({$0.replacingOccurrences(of: " ", with: "")})
@@ -767,7 +827,7 @@ class TGFeedNetworkManager: NSObject {
         }
     }
     
-    func postShortVideo(shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGUserInfoModel]?, tagVoucher: TagVoucherModel?, complete: @escaping((_ feedId: Int?, _ error: NSError?) -> Void)) {
+    func postShortVideo(shortVideoID: Int, coverImageID: Int, feedMark: Int, feedContent: String?, privacy: String, feedFrom: Int, topics: [TGTopicCommonModel]?, location: TGLocationModel?, isHotFeed: Bool, soundId: String?, videoType: TGVideoType, tagUsers: [TGUserInfoModel]?, tagMerchants: [TGTaggedBranchData]?, tagVoucher: TagVoucherModel?, complete: @escaping((_ feedId: Int?, _ error: NSError?) -> Void)) {
         var param: [String: Any] = Dictionary()
 
         if let content = feedContent {
@@ -814,8 +874,22 @@ class TGFeedNetworkManager: NSObject {
             param["tag_users"] = userIDs
         }
         if let merchants = tagMerchants, merchants.count > 0 {
-            let merchantIDs = TGUtil.generateMatchingUserIDs(tagUsers: merchants, atStrings: atStrings)
-            param["feed_rewards_link_yippi_user_ids"] = merchantIDs
+            //var merchantIDs = TSUtil.generateMatchingUserIDs(tagUsers: merchants, atStrings: atStrings)
+            
+            var merchantDataArray: [[String: Any]] = []
+            for merchant in merchants {
+                if let yippiUserID = merchant.yippiUserID, let miniProgramBranchID = merchant.miniProgramBranchID, miniProgramBranchID > 0 {
+                    let merchantData: [String: Any] = [
+                        "merchant_yippi_user_id": yippiUserID,
+                        "yippis_wanted_branch_id": miniProgramBranchID
+                    ]
+                    merchantDataArray.append(merchantData)
+                }
+            }
+            
+            if !merchantDataArray.isEmpty {
+                param["feed_rewards_link_yippi_branch_ids"] = merchantDataArray
+            }
         }
 
         var hashtags = TGUtil.findAllHashtagStrings(inputStr: feedContent ?? "")

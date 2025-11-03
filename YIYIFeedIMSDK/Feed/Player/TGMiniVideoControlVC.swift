@@ -68,7 +68,7 @@ class TGMiniVideoControlVC: TGViewController, NSURLConnectionDataDelegate {
                 guard let self = self else { return }
                 if status == AVPStatusError {
                     //音频源文件问题导致播放失败了
-//                    self.showError(message: "error".localized)
+                    self.showError(message: "error".localized)
                     self.control.setFeed(self.model,self.isTranslateText,self.isExpand)
                     self.control.hidePlayBtn()
                 }
@@ -307,7 +307,7 @@ extension TGMiniVideoControlVC: TGMiniVideoControlViewDelegate {
           
             DispatchQueue.main.async {
                 guard let feedInfo = feedInfo, let weakself = self else {
-//                    self?.showTopIndicator(status: .faild, "system_error_msg".localized)
+                    self?.showTopIndicator(status: .faild, "system_error_msg".localized)
                     return
                 }
                 let cellModel = FeedListCellModel(feedListModel: feedInfo)

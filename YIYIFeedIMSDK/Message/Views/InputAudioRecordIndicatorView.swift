@@ -64,6 +64,18 @@ class Constants: NSObject {
     public static let supportEmail = "yippisupport@togalimited.com"
     public static let schemeAuthentication = "yippiapp"
     public static let hostAuthenticationCs = "CS"
+    
+    public struct KeyChain {
+        static let deviceUUID = "yippi.app.device.uuid"
+        public static let username = "yippi.app.device.username"
+        public static let userPIN = "keychain.user.pin"
+        
+        public static let faceID = "Face ID"
+        public static let touchID = "Touch ID"
+        public static let noBiometric = "No Biometric"
+        public static let unknownBiometric = "Unknown Biometric"
+        
+    }
 }
 
 enum AudioRecordPhase : Int {

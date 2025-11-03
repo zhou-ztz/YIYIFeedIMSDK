@@ -341,6 +341,49 @@ extension UIImage {
         return resultImage
     }
 }
+extension UIImage {
+    
+    func compress(toMaxSize maxSizeInBytes: Int = 10 * 1024 * 1024) -> Data? {
+        // 1. 先按最大宽度缩放（比如 1920px，差不多 1080p 清晰度）
+        let maxWidth: CGFloat = 1920
+        var newImage = self
+        if size.width > maxWidth {
+            let scale = maxWidth / size.width
+            let newSize = CGSize(width: maxWidth, height: size.height * scale)
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+            self.draw(in: CGRect(origin: .zero, size: newSize))
+            newImage = UIGraphicsGetImageFromCurrentImageContext() ?? self
+            UIGraphicsEndImageContext()
+        }
+        
+        var compression: CGFloat = 1.0
+        var minCompression: CGFloat = 0.1
+        var maxCompression: CGFloat = 1.0
+        guard var data = newImage.jpegData(compressionQuality: compression) else { return nil }
+
+        if data.count <= maxSizeInBytes {
+            return data
+        }
+
+        while compression > minCompression {
+            compression = (minCompression + maxCompression) / 2
+            if let newData = newImage.jpegData(compressionQuality: compression) {
+                data = newData
+                if data.count < maxSizeInBytes {
+                    minCompression = compression
+                } else {
+                    maxCompression = compression
+                }
+            }
+            // 差距小于 0.1MB 就停止
+            if abs(data.count - maxSizeInBytes) < 100 * 1024 {
+                break
+            }
+        }
+
+        return data
+    }
+}
 class TGFadeImageView: SDAnimatedImageView {
     
     override init(frame: CGRect) {

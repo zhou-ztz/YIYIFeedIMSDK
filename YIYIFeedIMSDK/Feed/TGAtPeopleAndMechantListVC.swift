@@ -13,7 +13,7 @@ enum UserInfoModelType {
 }
 class TGAtPeopleAndMechantListVC: TGViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
 
-    var selectedBlock: ((TGUserInfoModel?,UserInfoModelType) -> Void)?
+    var selectedBlock: ((Any?, String, String, UserInfoModelType) -> Void)?
     let topView = UIView().configure {
         $0.backgroundColor = .white
     }
@@ -43,11 +43,11 @@ class TGAtPeopleAndMechantListVC: TGViewController, UIPageViewControllerDataSour
         super.viewDidLoad()
         self.setCloseButton(backImage: true, titleStr: "tag_title_ppl_merchant".localized, completion: {
             if let currentVC = (self.pageController.viewControllers ?? []).first, let index = self.contentControllers.firstIndex(of: currentVC) {
-                self.selectedBlock?(nil, index == 0 ? .people : .merchant)
+                self.selectedBlock?(nil, "", "", index == 0 ? .people : .merchant)
                 return
             }
             
-            self.selectedBlock?(nil, .people)
+            self.selectedBlock?(nil, "", "", .people)
         })
         self.customNavigationBar.backItem.setTitle("tag_title_ppl_merchant".localized, for: .normal)
         view.backgroundColor = .white
@@ -76,15 +76,14 @@ class TGAtPeopleAndMechantListVC: TGViewController, UIPageViewControllerDataSour
         }
         
         peopleVC.selectedBlock = {[weak self] model in
-            self?.selectedBlock?(model, .people)
+            self?.selectedBlock?(model, "", "", .people)
             self?.navigationController?.popViewController(animated: true)
         }
         
-        mechantVC.selectedBlock = {[weak self] model in
-            self?.selectedBlock?(model, .merchant)
+        mechantVC.selectedBlock = {[weak self] model, appId, dealPath in
+            self?.selectedBlock?(model, appId, dealPath, .merchant)
             self?.navigationController?.popViewController(animated: true)
         }
-        
     }
     
     func setTopView(){

@@ -266,7 +266,7 @@ public class TGFeedInfoDetailViewController: TGViewController {
     private func setBottomViewData() {
         guard let model = model else { return }
         bottomToolBarView.isHidden = false
-        bottomToolBarView.loadToolbar(model: model.toolModel, canAcceptReward: model.canAcceptReward == 1 ? true : false, reactionType: model.reactionType)
+        bottomToolBarView.loadToolbar(model: model.toolModel, canAcceptReward: model.canAcceptReward == 1 ? true : false, reactionType: model.reactionType, isFeedInfo: true)
     }
     private func setBottomView() {
         self.backBaseView.addSubview(bottomToolBarView)
@@ -274,13 +274,16 @@ public class TGFeedInfoDetailViewController: TGViewController {
         
         bottomToolBarView.isHidden = true
         bottomToolBarView.onCommentAction = { [weak self] in
-            guard let self = self else { return }
-            self.commentModel = nil
-            self.activeKeyboard()
-            
-            if let tagVoucher = self.tagVoucher {
-                TGKeyboardToolbar.share.setTagVoucher(tagVoucher)
-            }
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard let self = self else { return }
+                self.commentModel = nil
+                self.activeKeyboard()
+                
+                if let tagVoucher = self.tagVoucher {
+                    TGKeyboardToolbar.share.setTagVoucher(tagVoucher)
+                }
+            })
+        
         }
         bottomToolBarView.onToolbarItemTapped = { [weak self] toolbarIndex in
             guard let self = self else {
@@ -288,11 +291,17 @@ public class TGFeedInfoDetailViewController: TGViewController {
             }
             switch toolbarIndex {
             case 0:
-                self.reactionHandler?.onTapReactionView()
+                TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                    self.reactionHandler?.onTapReactionView()
+                })
             case 1:
-                self.activeKeyboard()
+                TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                    TGKeyboardToolbar.share.keyboardBecomeFirstResponder()
+                })
             case 2:
-                self.navigationController?.presentPopVC(target: "", type: .share, delegate: self)
+                TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                    self.navigationController?.presentPopVC(target: "", type: .share, delegate: self)
+                })
             default: break
             }
         }
@@ -324,12 +333,15 @@ public class TGFeedInfoDetailViewController: TGViewController {
             $0.height.equalTo(25)
         }
         moreButton.addAction {
-            guard let id = RLSDKManager.shared.loginParma?.uid else {
-                return
-            }
-            guard let model = self.model else { return }
-            
-            self.navigationController?.presentPopVC(target: model, type: model.userId == id ? .moreMe : .moreUser , delegate: self)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard let id = RLSDKManager.shared.loginParma?.uid else {
+                    return
+                }
+                guard let model = self.model else { return }
+                
+                self.navigationController?.presentPopVC(target: model, type: model.userId == id ? .moreMe : .moreUser , delegate: self)
+            })
+      
         }
         let space = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         space.width = 12
@@ -542,50 +554,55 @@ public class TGFeedInfoDetailViewController: TGViewController {
     }
     private func configurePrimaryButton() {
         primaryButton.addTap { [weak self] (_) in
-            guard let self = self else { return }
-            
-            primaryButton.setTitle("Loading...".localized, for: .normal)
-            self.model?.userInfo?.updateFollow { [weak self] (success) in
-                DispatchQueue.main.async {
-                    if success {
-                        guard let self = self  else { return }
-                        guard let follower = self.model?.userInfo?.follower else { return }
-                        guard let userIdentity = self.model?.userInfo?.userIdentity else { return }
-                        // By Kit Foong (Trigger observer to update follow status)
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": follower, "userid": "\(userIdentity)"])
-                        self.updatePrimaryButton()
-                        self.refresh(true)
-                    } else {
-                        self?.updatePrimaryButton()
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                guard let self = self else { return }
+                self.primaryButton.setTitle("Loading...".localized, for: .normal)
+                self.model?.userInfo?.updateFollow { [weak self] (success) in
+                    DispatchQueue.main.async {
+                        if success {
+                            guard let self = self  else { return }
+                            guard let follower = self.model?.userInfo?.follower else { return }
+                            guard let userIdentity = self.model?.userInfo?.userIdentity else { return }
+                            // By Kit Foong (Trigger observer to update follow status)
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": follower, "userid": "\(userIdentity)"])
+                            self.updatePrimaryButton()
+                            self.refresh(true)
+                        } else {
+                            self?.updatePrimaryButton()
+                        }
                     }
                 }
-            }
+            })
+            
         }
     }
     private func followUserClicked() {
         
-        guard var object = model?.userInfo else { return }
-        
-        guard let relationship = object.relationshipWithCurrentUser else {
-            return
-        }
-        if relationship.status == .eachOther {
-            let me: String = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
-            let conversationId = "\(me)|1|\(object.username)"
-            let vc = TGChatViewController(conversationId: conversationId, conversationType: 1)
-            self.navigationController?.pushViewController(vc, animated: true)
+        TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+            guard var object = self.model?.userInfo else { return }
             
-        } else {
-            object.updateFollow { (success) in
-                DispatchQueue.main.async {
-                    if success {
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": object.follower, "userid": "\(object.userIdentity)"])
-                        self.updatePrimaryButton()
-                        self.refresh(true)
+            guard let relationship = object.relationshipWithCurrentUser else {
+                return
+            }
+            if relationship.status == .eachOther {
+                let me: String = NIMSDK.shared().v2LoginService.getLoginUser() ?? ""
+                let conversationId = "\(me)|1|\(object.username)"
+                let vc = TGChatViewController(conversationId: conversationId, conversationType: 1)
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+            } else {
+                object.updateFollow { (success) in
+                    DispatchQueue.main.async {
+                        if success {
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newChangeFollowStatus"), object: nil, userInfo: ["follow": object.follower, "userid": "\(object.userIdentity)"])
+                            self.updatePrimaryButton()
+                            self.refresh(true)
+                        }
                     }
                 }
             }
-        }
+        })
+      
     }
     private func postComment(message: String, contentType: CommentContentType) {
         guard let currentUserId = RLCurrentUserInfo.shared.uid, let feedId = self.model?.idindex else { return }
@@ -682,8 +699,10 @@ public class TGFeedInfoDetailViewController: TGViewController {
             guard status == true else {
                 if statusCode == 241 {
                     self.showDialog(image: nil, title: "fail_to_pin_title".localized, message: "fail_to_pin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
+                } else if statusCode == 4003 {
+                    return
                 } else {
-                    UIViewController.showBottomFloatingToast(with: errMessage, desc: "")
+                    self.showError(message: errMessage)
                 }
                 return
             }
@@ -895,19 +914,21 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
     func handlePopUpItemAction(itemType: TGPopUpItem) {
         switch itemType {
         case .message:
-            // 记录转发数
-            self.forwardFeed()
-            
-            if let model = self.model {
-                let messageModel = TGmessagePopModel(momentModel: model)
-                let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
-                if #available(iOS 11, *) {
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } else {
-                    let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
-                    self.navigationController?.present(navigation, animated: true, completion: nil)
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                // 记录转发数
+                self.forwardFeed()
+                
+                if let model = self.model {
+                    let messageModel = TGmessagePopModel(momentModel: model)
+                    let vc = TGContactsPickerViewController(model: messageModel, configuration: TGContactsPickerConfig.shareToChatConfig(), finishClosure: nil)
+                    if #available(iOS 11, *) {
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    } else {
+                        let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
+                        self.navigationController?.present(navigation, animated: true, completion: nil)
+                    }
                 }
-            }
+            })
             break
         case .shareExternal:
             // 记录转发数

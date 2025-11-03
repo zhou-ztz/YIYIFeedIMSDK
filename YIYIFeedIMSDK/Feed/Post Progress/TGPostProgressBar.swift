@@ -462,7 +462,7 @@ public class TGPostProgressBar: UIView {
             if object.isEditFeed == true {
                 self.postPhotosWithRejectFeed(object: object)
             } else {
-                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: nil, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher) { [weak self] (feedId, error) in
+                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: nil, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
                     DispatchQueue.main.async {
                         if error != nil {
                             self?.status = .fail
@@ -599,7 +599,7 @@ public class TGPostProgressBar: UIView {
             } complete: { [weak self] imageFileds in
                 if imageFileds.isEmpty == false && imageFileds.count > 0 {
                     self?.status = .finishingUp
-                    TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher) { [weak self] (feedId, error) in
+                    TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
                         DispatchQueue.main.async {
                             self?.status = .complete
                         }
@@ -684,7 +684,7 @@ public class TGPostProgressBar: UIView {
         } complete: { [weak self] imageFileds in
             if imageFileds.isEmpty == false && imageFileds.count > 0 {
                 self?.status = .finishingUp
-                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher) { [weak self] (feedId, error) in
+                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
                     DispatchQueue.main.async {
                         if error != nil {
                             self?.status = .fail
@@ -728,8 +728,9 @@ public class TGPostProgressBar: UIView {
                 }
             default:
                 imageMimeType.append("image/jpeg")
-                let compressedData = image?.jpegData(compressionQuality: 1.0) ?? Data()
-                uploadDatas.append(compressedData)
+                if let compressedData = image?.compress(toMaxSize: 10 * 1024 * 1024) {
+                    uploadDatas.append(compressedData)
+                }
             }
         }
         TGUploadNetworkManager().uploadFileToOBS(fileDatas: uploadDatas) { [weak self] progress in
@@ -753,7 +754,7 @@ public class TGPostProgressBar: UIView {
         } complete: { [weak self] imageFileds in
             if imageFileds.isEmpty == false && imageFileds.count > 0 {
                 self?.status = .finishingUp
-                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher) { [weak self] (feedId, error) in
+                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
                     DispatchQueue.main.async {
                         if error != nil {
                             self?.status = .fail
@@ -1004,8 +1005,9 @@ public struct TGPostModel {
             return true
         }else if let imgs = images, imgs.count > 0 {
             return true
-        }
-        else if video?.coverImage != nil {
+        }else if let postPhoto = postPhoto, postPhoto.count > 0 {
+           return true
+        }else if video?.coverImage != nil {
             return true
         }
         return false
@@ -1025,9 +1027,11 @@ public struct TGPostModel {
     //记录发布动态时标记的用户IDs
     let tagUsers: [TGUserInfoModel]?
     //记录发布动态时标记的商家IDs
-    let tagMerchants: [TGUserInfoModel]?
+    let tagMerchants: [TGTaggedBranchData]?
     //记录发布动态时标记的代金券ID
     let tagVoucher: TagVoucherModel?
+    // AI Feed
+    let aiFeedTargetBranchId: String?
 }
 
 public class TGPostTaskManager {

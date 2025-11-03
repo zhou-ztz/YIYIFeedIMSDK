@@ -161,7 +161,7 @@ public class FeedListCellModel: NSObject{
     
     var tagUsers: [TGUserInfoModel] = []
     
-    var rewardsLinkMerchantUsers: [TGUserInfoModel] = []
+    var rewardsLinkMerchantUsers: [TGTaggedBranchData] = []
     
     public var privacy: String = "EVERYONE"
 
@@ -201,6 +201,7 @@ public class FeedListCellModel: NSObject{
     public var isPinned = false
     public var afterTime: String = ""
     public var tagVoucher: TagVoucherModel? = nil
+    public var isAIFeed: Bool = false
     public override init() {
         
     }

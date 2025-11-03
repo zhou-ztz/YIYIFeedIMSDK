@@ -433,6 +433,7 @@
 		D711C86A2D1BEB1E004EA26B /* TGCommonTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711C8672D1BEB1E004EA26B /* TGCommonTool.swift */; };
 		D711C86B2D1BEB1E004EA26B /* Typist.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711C8682D1BEB1E004EA26B /* Typist.swift */; };
 		D711C86D2D1BEB81004EA26B /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711C86C2D1BEB81004EA26B /* Array+Extension.swift */; };
+		D720936A2EA8DFA3004ED449 /* TGTaggedBranchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72093692EA8DFA3004ED449 /* TGTaggedBranchModel.swift */; };
 		D72627932D41041D001E0DA6 /* TGCommentLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72627922D41041D001E0DA6 /* TGCommentLabel.swift */; };
 		D72BD69E2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D72BD69D2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard */; };
 		D72BD6A62DA4C65B00B95AEF /* LoadingButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = D72BD6A52DA4C65B00B95AEF /* LoadingButtons.h */; };
@@ -440,6 +441,10 @@
 		D72BD6AA2DA4C67800B95AEF /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D72BD6A92DA4C67800B95AEF /* icomoon.ttf */; };
 		D72E9B682D2B737600ACC703 /* TGNetworkURLPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72E9B672D2B737600ACC703 /* TGNetworkURLPath.swift */; };
 		D72E9B6C2D2B884600ACC703 /* TGLocationPOISearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72E9B6B2D2B884600ACC703 /* TGLocationPOISearchViewController.swift */; };
+		D730ECC32EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730ECC12EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.swift */; };
+		D730ECC42EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D730ECC22EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.xib */; };
+		D730ECC82EAA2B4700ABF175 /* TGRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730ECC72EAA2B4700ABF175 /* TGRootViewController.swift */; };
+		D730ECCA2EAA3BBF00ABF175 /* UIGestureRecognizer+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730ECC92EAA3BBF00ABF175 /* UIGestureRecognizer+Actions.swift */; };
 		D73AFB6C2D3F3A5C001C8458 /* TGCommentPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73AFB6B2D3F3A5C001C8458 /* TGCommentPageController.swift */; };
 		D746500A2D4339CB00C7DD82 /* UIViewController+Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74650092D4339CB00C7DD82 /* UIViewController+Navigator.swift */; };
 		D746FA692D4232340085F218 /* TGMiniVideoPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D746FA682D4232340085F218 /* TGMiniVideoPageViewController.swift */; };
@@ -458,6 +463,8 @@
 		D76668DF2D3507730086F90E /* TGMyFriendListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668DE2D3507730086F90E /* TGMyFriendListCell.swift */; };
 		D76668E32D35154E0086F90E /* TGAtMechantListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668E22D35154E0086F90E /* TGAtMechantListVC.swift */; };
 		D76668E62D351D490086F90E /* TGPostProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76668E52D351D490086F90E /* TGPostProgressBar.swift */; };
+		D76EEA682EAF26E200FFDA67 /* TGInteractivePanTransitionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76EEA672EAF26E200FFDA67 /* TGInteractivePanTransitionHandler.swift */; };
+		D76EEA6A2EAF751D00FFDA67 /* TGKeyChainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76EEA692EAF751D00FFDA67 /* TGKeyChainHelper.swift */; };
 		D775B4742D9658290062FF01 /* TGSimpleCommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4732D9658290062FF01 /* TGSimpleCommentModel.swift */; };
 		D775B4762D9670970062FF01 /* TGComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4752D9670970062FF01 /* TGComment.swift */; };
 		D775B4782D9671490062FF01 /* TGCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D775B4772D9671490062FF01 /* TGCommentViewModel.swift */; };
@@ -1021,6 +1028,7 @@
 		D711C8672D1BEB1E004EA26B /* TGCommonTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommonTool.swift; sourceTree = "<group>"; };
 		D711C8682D1BEB1E004EA26B /* Typist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typist.swift; sourceTree = "<group>"; };
 		D711C86C2D1BEB81004EA26B /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
+		D72093692EA8DFA3004ED449 /* TGTaggedBranchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGTaggedBranchModel.swift; sourceTree = "<group>"; };
 		D72627922D41041D001E0DA6 /* TGCommentLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentLabel.swift; sourceTree = "<group>"; };
 		D72BD69D2DA4C21600B95AEF /* ReportBottomSheetVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ReportBottomSheetVC.storyboard; sourceTree = "<group>"; };
 		D72BD6A52DA4C65B00B95AEF /* LoadingButtons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingButtons.h; sourceTree = "<group>"; };
@@ -1028,6 +1036,10 @@
 		D72BD6A92DA4C67800B95AEF /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		D72E9B672D2B737600ACC703 /* TGNetworkURLPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGNetworkURLPath.swift; sourceTree = "<group>"; };
 		D72E9B6B2D2B884600ACC703 /* TGLocationPOISearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGLocationPOISearchViewController.swift; sourceTree = "<group>"; };
+		D730ECC12EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAIFeedIntroBottomSheetVC.swift; sourceTree = "<group>"; };
+		D730ECC22EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TGAIFeedIntroBottomSheetVC.xib; sourceTree = "<group>"; };
+		D730ECC72EAA2B4700ABF175 /* TGRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRootViewController.swift; sourceTree = "<group>"; };
+		D730ECC92EAA3BBF00ABF175 /* UIGestureRecognizer+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIGestureRecognizer+Actions.swift"; sourceTree = "<group>"; };
 		D73AFB6B2D3F3A5C001C8458 /* TGCommentPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentPageController.swift; sourceTree = "<group>"; };
 		D74650092D4339CB00C7DD82 /* UIViewController+Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Navigator.swift"; sourceTree = "<group>"; };
 		D746FA682D4232340085F218 /* TGMiniVideoPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMiniVideoPageViewController.swift; sourceTree = "<group>"; };
@@ -1046,6 +1058,8 @@
 		D76668DE2D3507730086F90E /* TGMyFriendListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGMyFriendListCell.swift; sourceTree = "<group>"; };
 		D76668E22D35154E0086F90E /* TGAtMechantListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGAtMechantListVC.swift; sourceTree = "<group>"; };
 		D76668E52D351D490086F90E /* TGPostProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGPostProgressBar.swift; sourceTree = "<group>"; };
+		D76EEA672EAF26E200FFDA67 /* TGInteractivePanTransitionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGInteractivePanTransitionHandler.swift; sourceTree = "<group>"; };
+		D76EEA692EAF751D00FFDA67 /* TGKeyChainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGKeyChainHelper.swift; sourceTree = "<group>"; };
 		D775B4732D9658290062FF01 /* TGSimpleCommentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGSimpleCommentModel.swift; sourceTree = "<group>"; };
 		D775B4752D9670970062FF01 /* TGComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGComment.swift; sourceTree = "<group>"; };
 		D775B4772D9671490062FF01 /* TGCommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGCommentViewModel.swift; sourceTree = "<group>"; };
@@ -1355,6 +1369,7 @@
 				8A9F0D9E2CF44CD20021462C /* RLCurrentUserInfo.swift */,
 				8A4BB3A62D101A7000AAB4B8 /* TGWebViewController.swift */,
 				D76668D62D34FCFE0086F90E /* TGPTableViewCell.swift */,
+				D730ECC72EAA2B4700ABF175 /* TGRootViewController.swift */,
 			);
 			path = YIYIFeedIMSDK;
 			sourceTree = "<group>";
@@ -1579,6 +1594,7 @@
 				D7FEF9BF2D55BC2D00FF87E8 /* ScreenExtensions.swift */,
 				B1A889482D8D3FC800B678CB /* Notification+Extension.swift */,
 				D7E3B3882DA6282400DEA02D /* NotificationCenter+Actions.swift */,
+				D730ECC92EAA3BBF00ABF175 /* UIGestureRecognizer+Actions.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1614,6 +1630,7 @@
 				B193FC132D65AE7200BEB3F7 /* TGLocalizationManager.swift */,
 				B1A8894A2D8D491400B678CB /* RemarkNameManager.swift */,
 				B1A889552D93AE7600B678CB /* TGEventType.swift */,
+				D76EEA692EAF751D00FFDA67 /* TGKeyChainHelper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1929,6 +1946,15 @@
 			path = HTMLManager;
 			sourceTree = "<group>";
 		};
+		D730ECB82EAA082D00ABF175 /* AIFeed */ = {
+			isa = PBXGroup;
+			children = (
+				D730ECC12EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.swift */,
+				D730ECC22EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.xib */,
+			);
+			path = AIFeed;
+			sourceTree = "<group>";
+		};
 		D746FA832D4238CC0085F218 /* Player */ = {
 			isa = PBXGroup;
 			children = (
@@ -2154,6 +2180,7 @@
 				D775B4752D9670970062FF01 /* TGComment.swift */,
 				D775B4772D9671490062FF01 /* TGCommentViewModel.swift */,
 				D7F2C6F82D9BBC2F005EEFFD /* TGRejectListModel.swift */,
+				D72093692EA8DFA3004ED449 /* TGTaggedBranchModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2204,6 +2231,7 @@
 		F5CD2C6F2CFEB4C400EA7C7A /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				D730ECB82EAA082D00ABF175 /* AIFeed */,
 				D7F2C6F12D9BBAA9005EEFFD /* Rejected */,
 				D746FA832D4238CC0085F218 /* Player */,
 				D7ED1C6C2D3DFE4B00B7F95D /* FeedType */,
@@ -2230,6 +2258,7 @@
 				D73AFB6B2D3F3A5C001C8458 /* TGCommentPageController.swift */,
 				D746FA682D4232340085F218 /* TGMiniVideoPageViewController.swift */,
 				B193FD3B2D88031300BEB3F7 /* TGReportViewController.swift */,
+				D76EEA672EAF26E200FFDA67 /* TGInteractivePanTransitionHandler.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -2388,6 +2417,7 @@
 				8A9F0DF12CF48B3B0021462C /* reaction-like.json in Resources */,
 				B1EABB892D195E7A00EB7868 /* yippi-sns.graphql in Resources */,
 				B1EABB8A2D195E7A00EB7868 /* schema.json in Resources */,
+				D730ECC42EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.xib in Resources */,
 				8A9F0DFB2CF48B3B0021462C /* Localizable.strings in Resources */,
 				B19503E12DDB1814000B7554 /* SpeechToTextView.xib in Resources */,
 				8A9F0DF92CF48B3B0021462C /* Localizable.strings in Resources */,
@@ -2530,6 +2560,7 @@
 				B1EABB7C2D194AE800EB7868 /* IMStickerTabCollectionViewCell.swift in Sources */,
 				D7ED1C7C2D3E279100B7F95D /* TGTutorialView.swift in Sources */,
 				8A9F0D802CF430E70021462C /* MessageReplyView.swift in Sources */,
+				D730ECC32EAA091700ABF175 /* TGAIFeedIntroBottomSheetVC.swift in Sources */,
 				B1EABBA02D1AA33D00EB7868 /* StickerRPSMessageCell.swift in Sources */,
 				8A4BB3B72D114C9D00AAB4B8 /* TGNearByLocalContainerCell.swift in Sources */,
 				D7971DB42D2683DE009772B7 /* TGVideoRecordButton.swift in Sources */,
@@ -2584,12 +2615,14 @@
 				8ABF5F3E2CF82395001DC11E /* IMNotificationCenter.swift in Sources */,
 				B1EABCA12D30F9CB00EB7868 /* TGNewContactPickerViewController.swift in Sources */,
 				8A9F0D7F2CF430E70021462C /* ChatMoreActionView.swift in Sources */,
+				D76EEA682EAF26E200FFDA67 /* TGInteractivePanTransitionHandler.swift in Sources */,
 				8A9F0D6D2CF42AC70021462C /* RLColor.swift in Sources */,
 				B193FD5C2D890E5300BEB3F7 /* TGIndicatorWindowTop.swift in Sources */,
 				B1DA591A2D3A5A4400F83914 /* TGChatWallpaperViewController.swift in Sources */,
 				F596BF402D09A0080036274E /* TGDate.swift in Sources */,
 				B1EABC4B2D2E4FE700EB7868 /* VideoPlayerViewController.swift in Sources */,
 				8A9F0D5B2CF427A90021462C /* BaseMessageCell.swift in Sources */,
+				D730ECCA2EAA3BBF00ABF175 /* UIGestureRecognizer+Actions.swift in Sources */,
 				D79723862D269065009772B7 /* TGCameraViewController.swift in Sources */,
 				D7ED1C7A2D3E275500B7F95D /* TGRefreshView.swift in Sources */,
 				D7AD6A9B2D38FED7006A3A1F /* TGUploadNetworkManager.swift in Sources */,
@@ -2700,6 +2733,7 @@
 				F5CD2C952CFEB76800EA7C7A /* TGAvatarView.swift in Sources */,
 				B1A889492D8D3FC800B678CB /* Notification+Extension.swift in Sources */,
 				D711C8692D1BEB1E004EA26B /* TGAccountRegex.swift in Sources */,
+				D730ECC82EAA2B4700ABF175 /* TGRootViewController.swift in Sources */,
 				D7ED1C822D3E314200B7F95D /* TGFeedDetailInteractiveView.swift in Sources */,
 				D711C86A2D1BEB1E004EA26B /* TGCommonTool.swift in Sources */,
 				D746FA8A2D4242C20085F218 /* TGMiniVideoControlView.swift in Sources */,
@@ -2710,6 +2744,7 @@
 				D7047C1C2D3A4D7800E6FCF6 /* BallPulseSyncIndicator.swift in Sources */,
 				D7047C1D2D3A4D7800E6FCF6 /* LineSpinFadeLoader.swift in Sources */,
 				D7047C1F2D3A4D7800E6FCF6 /* LoadableButton.swift in Sources */,
+				D76EEA6A2EAF751D00FFDA67 /* TGKeyChainHelper.swift in Sources */,
 				D7047C202D3A4D7800E6FCF6 /* LineScaleIndicator.swift in Sources */,
 				D7047C232D3A4D7800E6FCF6 /* LineScalePulseIndicator.swift in Sources */,
 				D7047C242D3A4D7800E6FCF6 /* BallPulseIndicator.swift in Sources */,
@@ -2857,6 +2892,7 @@
 				B1EABC412D2E4C8300EB7868 /* VideoPlayerControlView.swift in Sources */,
 				B1EABC1F2D26820A00EB7868 /* TGVoucherRequest.swift in Sources */,
 				F5CD2C7B2CFEB4C400EA7C7A /* FeedListModel.swift in Sources */,
+				D720936A2EA8DFA3004ED449 /* TGTaggedBranchModel.swift in Sources */,
 				8A4BB36B2D0C118000AAB4B8 /* Extensions.swift in Sources */,
 				D79714EE2D26686C009772B7 /* TimeInterval+Extension.swift in Sources */,
 				D76668D92D34FD500086F90E /* Date+Extension.swift in Sources */,

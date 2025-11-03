@@ -65,6 +65,9 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
     var mode: Theme = .white
     
     var userIdList: [String] = []
+    var merchantIdList: [String] = []
+    var merchantAppIdList: [String] = []
+    var merchantDealPathList: [String] = []
     var htmlAttributedText: NSMutableAttributedString?
     
     private var colors: (highlightColor: UIColor, normalColor: UIColor) {
@@ -101,13 +104,16 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
     func setSourceData (commentModel: FeedCommentListCellModel) {
         self.text = nil
         self.delegate = self
-        HTMLManager.shared.removeHtmlTag(htmlString: commentModel.content, completion: { [weak self] (content, userIdList) in
+        HTMLManager.shared.removeHtmlTag(htmlString: commentModel.content, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
             guard let self = self else { return }
             self.userIdList = userIdList
+            self.merchantIdList = merchantIdList
+            self.merchantAppIdList = merchantAppIdList
+            self.merchantDealPathList = merchantDealPathList
             self.content = content
             self.htmlAttributedText = content.attributonString()
             if let attributedText = self.htmlAttributedText {
-                self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList)
+                self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList, self.merchantIdList, self.merchantAppIdList, self.merchantDealPathList)
             }
             
             if let replyUser = commentModel.replyUserInfo {
@@ -131,9 +137,12 @@ class TGCommentLabel: TYAttributedLabel, TYAttributedLabelDelegate {
     func setTGSourceData (commentModel: FeedCommentListCellModel) {
         self.text = nil
         self.delegate = self
-        HTMLManager.shared.removeHtmlTag(htmlString: commentModel.content, completion: { [weak self] (content, userIdList) in
+        HTMLManager.shared.removeHtmlTag(htmlString: commentModel.content, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
             guard let self = self else { return }
             self.userIdList = userIdList
+            self.merchantIdList = merchantIdList
+            self.merchantAppIdList = merchantAppIdList
+            self.merchantDealPathList = merchantDealPathList
             self.content = content
             self.htmlAttributedText = content.attributonString()
             if let attributedText = self.htmlAttributedText {

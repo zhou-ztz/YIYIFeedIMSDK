@@ -40,7 +40,8 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
     var campaignId: String = ""
     var hashtagId: String = ""
     var isExpand: Bool = false
-    let navigationDelegate = TGCustomNavigationDelegate()
+//    let navigationDelegate = TGCustomNavigationDelegate()
+    private var interactivePushController: TGInteractivePanTransitionHandler?
     
     private lazy var placeHolder: TGPlaceHolderView = {
         let view = TGPlaceHolderView(offset: 0, heading: "", detail: "", lottieName: "feed-loading", theme: .dark)
@@ -77,17 +78,17 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
         self.hashtagId = hashtagId
         switch self.type {
         case .detail(let feedId):
-//            placeHolder.makeVisible()
+            placeHolder.makeVisible()
             
             if videos.count > 0 {
-//                self.placeHolder.makeHidden()
+                self.placeHolder.makeHidden()
                 self.ableLoadMore = false
                 self.reloadPageData(false)
             } else {
                 
                 TGFeedNetworkManager.shared.fetchFeedDetailInfo(withFeedId: "\(feedId)") { feedInfo, error in
                     guard let feedInfo = feedInfo else { return }
-                   
+                    self.placeHolder.makeHidden()
                     let cellModel = FeedListCellModel(feedListModel: feedInfo)
                     self.videos = [cellModel]
                     //处理重复add uid的情况，先清除播放列表再添加，不然可能会导致串流
@@ -129,9 +130,9 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
         self.view.backgroundColor = .clear
         self.view.bringSubviewToFront(refreshView)
         
-//        self.view.addSubview(placeHolder)
-//        placeHolder.bindToEdges()
-//        placeHolder.isHidden = true
+        self.view.addSubview(placeHolder)
+        placeHolder.bindToEdges()
+        placeHolder.isHidden = true
         
         setupTabbar()
         
@@ -187,37 +188,29 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
     }
     
     deinit {
+        TGMiniVideoListPlayerManager.shared.stop()
         NotificationCenter.default.removeObserver(self)
         print("deinit MiniVideoPageViewController")
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        TGKeyboardToolbar.share.theme = .white
-//        TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
-//        
-//        if let ableReInit = UserDefaults.standard.value(forKey: "minivideo-ableReInit") as? Bool {
-//            if ableReInit == true && self.videos.count > 1 {
-//                //重新加载阿里云播放器列表数据
-//                UserDefaults.standard.set(false, forKey: "minivideo-ableReInit")
-//                self.initPlayerSource(videos)
-//            }
-//        }
-//        try? AVAudioSession.sharedInstance().setCategory(.playback)
-//        try? AVAudioSession.sharedInstance().setActive(true)
-//        //进入页面时将状态栏的字体改为白色
-//        UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
         
-        // Set up navigation delegate
-        if navigationController?.delegate !== navigationDelegate {
-            navigationController?.delegate = navigationDelegate
-            navigationDelegate.current = self
-            
-            guard let followStatus = self.videos.first?.userInfo?.followStatus else { return }
-            if followStatus != .oneself {
-                navigationDelegate.addEdgePushInteractionController(to: self.view, delegate: self)
-            }
-            navigationDelegate.addEdgeDismissInteractionController(to: self.view, delegate: self)
+        if let navigationController = self.navigationController {
+            interactivePushController = TGInteractivePanTransitionHandler(
+                attachTo: self.view,
+                navigationController: navigationController,
+                viewController: self,
+                pushProvider: { [weak self] in
+                    guard let self = self, let user = self.videos[self.currentIndex].userInfo, let followStatus = self.videos.first?.userInfo?.followStatus, followStatus != .oneself else {
+                        return nil
+                    }
+//                    return ProfileViewController(userId: user.userIdentity)
+                    return RLSDKManager.shared.feedDelegate?.fetchProfileVCById(userId: user.userIdentity)
+                },
+                allowDismiss: false
+            )
+            interactivePushController?.panGestureRecognizer.delegate = self
         }
         
         self.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -247,9 +240,14 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
             dataSource = nil
             delegate = nil
         }
-        TGMiniVideoListPlayerManager.shared.stop()
+        TGMiniVideoListPlayerManager.shared.pause()
         TGKeyboardToolbar.share.setStickerNightMode(isNight: false)
         TGKeyboardToolbar.share.theme = .white
+    }
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.hideBottomLoading()
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         //离开页面还原
         if #available(iOS 13.0, *) {
             UIApplication.shared.setStatusBarStyle(.darkContent, animated: true)
@@ -257,17 +255,16 @@ public class TGMiniVideoPageViewController: TGBaseContentPageController {
             UIApplication.shared.setStatusBarStyle(.default, animated: true)
         }
     }
-    
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         ///关闭右滑跳转个人详情页面
-        navigationDelegate.pushDestination = { [weak self] in
-            guard let self = self else { return nil }
-            if let user = self.videos[self.currentIndex].userInfo {
-                RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: user.userIdentity)
-            }
-            return nil
-        }
+//        navigationDelegate.pushDestination = { [weak self] in
+//            guard let self = self else { return nil }
+//            if let user = self.videos[self.currentIndex].userInfo {
+//                RLSDKManager.shared.imDelegate?.didPressUerProfile(uid: user.userIdentity)
+//            }
+//            return nil
+//        }
         //        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {
         //             DispatchQueue.main.async {
         //                 print("minivideo  =========== \(self.avPlayer) ")
@@ -349,6 +346,9 @@ extension TGMiniVideoPageViewController: UIPageViewControllerDelegate, UIPageVie
         guard let currentVC = viewController as? TGMiniVideoControlVC else { return nil }
         var index = currentVC.index
         if index >= videos.count - 1 {
+            if isFetching {
+                self.showBottomLoading(with: "loading_state".localized)
+            }
             return nil
         }
         if index % 10 == 0 {
@@ -412,10 +412,8 @@ extension TGMiniVideoPageViewController {
         placeHolder.makeVisible()
         TGFeedNetworkManager.shared.getFeeds(mediaType: .miniVideo, feedType: self.type, campaignId: campaignId, hashtagId: hashtagId) { [weak self] (resultsModel, errorMessage) in
             defer {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                    self?.networkOngoing = false
-                }
-//                self?.verticalPageHandler.controller = self
+                self?.isFetching = false
+                self?.placeHolder.makeHidden()
             }
             guard let self = self else { return }
             guard let models = resultsModel else {
@@ -441,7 +439,7 @@ extension TGMiniVideoPageViewController {
                 }
                 
                 if let error = errorMessage {
-//                    self?.showTopIndicator(status: .faild, error)
+                    self?.showTopIndicator(status: .faild, error.localizedDescription)
                     return
                 }
             }
@@ -478,6 +476,7 @@ extension TGMiniVideoPageViewController {
             }
             
             DispatchQueue.main.async {
+                self?.hideBottomLoading()
                 if let error = errorMessage {
 //                    self?.showError(message: error)
                     return
@@ -535,7 +534,9 @@ extension TGMiniVideoPageViewController {
             self?.createPostButtonClick(button)
         }
         navbar.moreButtonDidTapped = { [weak self] in
-            self?.moreButtonClick()
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+                self?.moreButtonClick()
+            })
         }
         
 //        bottomStackView.addArrangedSubview(taskManager.taskProgressView)
@@ -575,11 +576,14 @@ extension TGMiniVideoPageViewController {
     
     // MARK: - 更多
     private func moreButtonClick() {
-        guard let id = RLSDKManager.shared.loginParma?.uid else {
-            return
-        }
-        let model = self.videos[currentIndex]
-        self.navigationController?.presentPopVC(target: model, type: model.userId == id ? .moreMe : .moreUser , delegate: self)
+        TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
+            guard let id = RLSDKManager.shared.loginParma?.uid else {
+                return
+            }
+            let model = self.videos[self.currentIndex]
+            self.navigationController?.presentPopVC(target: model, type: model.userId == id ? .moreMe : .moreUser , delegate: self)
+        })
+ 
     }
 }
 
@@ -635,8 +639,13 @@ extension TGMiniVideoPageViewController: CustomPopListProtocol{
             vc = extenVC
             
             let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
-            self.present(navigation, animated: true, completion: nil)
-            
+            if let presentedVc = self.presentationController {
+                self.dismiss(animated: true, completion: {
+                    self.present(navigation, animated: true)
+                })
+            } else {
+                self.present(navigation, animated: true)
+            }
 
           case .deletePost:
              let feedId = model.idindex
@@ -664,14 +673,14 @@ extension TGMiniVideoPageViewController: CustomPopListProtocol{
                       if statusCode == 241 {
                           self.showDialog(image: nil, title: isPinned ? "fail_to_pin_title".localized : "fail_to_unpin_title".localized, message: isPinned ? "fail_to_pin_desc".localized : "fail_to_unpin_desc".localized, dismissedButtonTitle: "ok".localized, onDismissed: nil, onCancelled: nil)
                       } else {
-//                          self.showError(message: errMessage)
+                          self.showError(message: errMessage)
                       }
                       return
                   }
                   let newPined = !isPinned
                   
                   model.isPinned = newPined
-//                  self.showError(message: newPined ? "feed_pinned".localized : "feed_unpinned".localized)
+                  self.showError(message: newPined ? "feed_pinned".localized : "feed_unpinned".localized)
                   NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newPinnedFeed"), object: nil, userInfo: ["isPinned": !isPinned, "feedId": feedId])
               }
               break
@@ -686,9 +695,10 @@ extension TGMiniVideoPageViewController: CustomPopListProtocol{
                       model.toolModel?.isCommentDisabled = newValue == 1
                       DispatchQueue.main.async {
                           if newValue == 1 {
-//                              self.showTopIndicator(status: .success, "disable_comment_success".localized)
+                              self.showTips(message: "disable_comment_success".localized)
+                              self.showTopIndicator(status: .success, "disable_comment_success".localized)
                           } else {
-//                              self.showTopIndicator(status: .success, "enable_comment_success".localized)
+                              self.showTopIndicator(status: .success, "enable_comment_success".localized)
                           }
                           DispatchQueue.main.async {
                               self.reloadPageData()

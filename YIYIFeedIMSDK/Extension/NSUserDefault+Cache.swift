@@ -643,6 +643,7 @@ extension UserDefaults {
         }
     }
     
+  
     // Deep link URL
     static var deeplinkURL: URL? {
         get {
@@ -651,6 +652,28 @@ extension UserDefaults {
         
         set {
             UserDefaults.standard.set(newValue, forKey: "deeplink-url")
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    static var isGuestLogin: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: "guest-login")
+        }
+        
+        set {
+            UserDefaults.standard.set(newValue, forKey: "guest-login")
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    static var guestLoginToken: String? {
+        get {
+            return UserDefaults.standard.string(forKey: "guest-login-token")
+        }
+        
+        set {
+            UserDefaults.standard.set(newValue, forKey: "guest-login-token")
             UserDefaults.standard.synchronize()
         }
     }

@@ -129,7 +129,7 @@ public class FeedListModel: Mappable, Entity {
     var tagUsers: [TGUserInfoModel]? = nil
     /// @商户信息
     // objectbox: convert = { "dbType": "String", "converter": "TGUserInfoModel" }
-    var rewardsLinkMerchantUsers : [TGUserInfoModel]? = nil
+    var rewardsLinkMerchantUsers : [TGTaggedBranchData]? = nil
     
     /// 转发数
     public var feedForwardCount: Int = 0

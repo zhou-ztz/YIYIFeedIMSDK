@@ -30,6 +30,14 @@ class TGFeedDetailInteractiveView: UIView {
     @IBOutlet weak var bottomToolStackView: UIStackView!
     @IBOutlet weak var bottomVerticalStackView: UIStackView!
     
+    private var aiFeedView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: 0x000000).withAlphaComponent(0.1)
+        view.layer.cornerRadius = 8
+        view.clipsToBounds = true
+        return view
+    }()
+    
     let moreButton = UIButton(type: .custom).configure {
         $0.setImage(UIImage(named: "IMG_topbar_more_white"), for: .normal)
     }
@@ -118,10 +126,12 @@ class TGFeedDetailInteractiveView: UIView {
 
     var onCommentTouched: TGEmptyClosure?
     var onGiftTouched: TGEmptyClosure?
+    var onAITouched: TGEmptyClosure?
     var onMoreTouched: TGEmptyClosure?
     var onFollowTouched: TGEmptyClosure?
     var onForwardTouched: TGEmptyClosure?
     var onVoucherTouched: TGEmptyClosure?
+    var onReadMoreLabelStyleUpdate: ((Bool) -> Void)?
     var reactionHandler: TGReactionHandler?
     var onLocationViewTapped: ((String, String) -> Void)?
     var onTopicViewTapped: ((Int) -> Void)?
@@ -130,10 +140,14 @@ class TGFeedDetailInteractiveView: UIView {
     var translateHandler: ((Bool) -> Void)?
     var onTapHiddenUpdate: ((Bool) -> Void)?
     var userIdList: [String] = []
+    var merchantIdList: [String] = []
+    var merchantAppIdList: [String] = []
+    var merchantDealPathList: [String] = []
     var htmlAttributedText: NSMutableAttributedString?
     var onSearchPageTapped: ((String) -> Void)?
     var hasLocation: Bool = false
     var hasMerchants: Bool = false
+    
     
     init() {
         super.init(frame: .zero)
@@ -194,9 +208,10 @@ class TGFeedDetailInteractiveView: UIView {
             $0.right.left.equalToSuperview()
             $0.height.equalTo(44)
         }
-        voucherBottomView.addAction {
-            self.onVoucherTouched?()
+        voucherBottomView.voucherOnTapped = { [weak self] in
+            self?.onVoucherTouched?()
         }
+        
         bottomToolStackView.addArrangedSubview(commentView)
         commentView.snp.makeConstraints {
             $0.width.equalTo(UIScreen.main.bounds.width * 0.5)
@@ -343,18 +358,27 @@ class TGFeedDetailInteractiveView: UIView {
         }
     }
 
+    func updateAIFeedView(isShow: Bool) {
+        aiFeedView.isHidden = !isShow
+    }
+
+    
     func updateInfo(caption: String?, isExpand: Bool = false) {
-        HTMLManager.shared.removeHtmlTag(htmlString: caption.orEmpty, completion: { [weak self] (content, userIdList) in
+        HTMLManager.shared.removeHtmlTag(htmlString: caption.orEmpty, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
             guard let self = self else { return }
             self.userIdList = userIdList
+            self.merchantIdList = merchantIdList
+            self.merchantAppIdList = merchantAppIdList
+            self.merchantDealPathList = merchantDealPathList
             self.originalTexts = content
             self.htmlAttributedText = content.attributonString()
             if let attributedText = self.htmlAttributedText {
-                self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList)
+                self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, self.userIdList, self.merchantIdList, self.merchantAppIdList, self.merchantDealPathList)
             }
             self.readMoreLabel.isExpand = isExpand
+            self.onReadMoreLabelStyleUpdate?(!isExpand)
             self.readMoreLabel.numberOfLines = 2
-            self.readMoreLabel.setText(text: self.originalTexts, allowTruncation: true)
+            self.updateContentLabel(content: content, original: caption.orEmpty)
             self.readMoreLabel.onHeightChanged = { [weak self] in
                 guard let self = self else { return }
     //            self.bottomGradientView.layoutIfNeeded()
@@ -365,14 +389,15 @@ class TGFeedDetailInteractiveView: UIView {
             }
             
             self.readMoreLabel.onUsernameTapped = { name in
-                HTMLManager.shared.handleMentionTap(name: name, attributedText: self.htmlAttributedText)
+                HTMLManager.shared.handleMentionTap(name: name, attributedText: self.htmlAttributedText, currentVC: self.parentViewController)
             }
             
-            self.readMoreLabel.onHttpTagTapped = { url in
-//                self?.deeplink(urlString: url, isDismiss: true)
-                RLSDKManager.shared.imDelegate?.didPressSocialPost(urlString: url)
+            self.readMoreLabel.onHttpTagTapped = {[weak self] url in
+                RLSDKManager.shared.feedDelegate?.didOpenDeepLink(deepLink: url)
             }
+            
             readMoreLabel.onTextNumberOfLinesTapped = {[weak self] showLinesStyle in
+                self?.onReadMoreLabelStyleUpdate?(showLinesStyle == .TruncatableLabelShowLess)
                 guard let self = self, let model = self.feedItem, model.rewardsMerchantUsers.count > 0 else { return }
                 self.feedShopView.isHidden = showLinesStyle == .TruncatableLabelShowLess
                 self.feedMerchantNamesView.isHidden = showLinesStyle == .TruncatableLabelShowMore
@@ -388,9 +413,9 @@ class TGFeedDetailInteractiveView: UIView {
                 } else {
                     contentStack.removeArrangedSubview(locationAndMerchantScrollView)
                 }
-
             }
             
+//            translateButton.isHidden = !TSCurrentUserInfo.share.isLogin || self.originalTexts.isEmpty || self.originalTexts.containsOnlyEmoji
             translateButton.isHidden = self.originalTexts.isEmpty || self.originalTexts.containsOnlyEmoji
             translateDotView.isHidden = translateButton.isHidden
         })
@@ -399,17 +424,17 @@ class TGFeedDetailInteractiveView: UIView {
     func updateTranslateText() {
         TGFeedNetworkManager.shared.translateFeed(feedId: self.feedId) { [weak self] (translates, msg, status) in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                if status == true {
-                    self.translatedTexts = translates ?? ""
-                    self.readMoreLabel.setText(text: self.translatedTexts,
-                                               textColor: self.readMoreLabel.label.textColor,
-                                               allowTruncation: true)
-                    self.translateButton.isSelected = true
-                }else {
-                    self.translateButton.isSelected = false
+            self.translatedTexts = translates ?? ""
+            HTMLManager.shared.removeHtmlTag(htmlString: translates ?? "", completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
+                self?.userIdList = userIdList
+                self?.merchantIdList = merchantIdList
+                self?.merchantAppIdList = merchantAppIdList
+                self?.merchantDealPathList = merchantDealPathList
+                DispatchQueue.main.async {
+                    self?.updateContentLabel(content: content, original: translates ?? "")
+                    self?.translateButton.isSelected = true
                 }
-            }
+            })
         }
     }
 
@@ -428,6 +453,9 @@ class TGFeedDetailInteractiveView: UIView {
         viewCountLabel.sizeToFit()
         timeLabel.sizeToFit()
 
+        dateDotView.removeFromSuperview()
+        translateDotView.removeFromSuperview()
+        
         viewsAndTimeView.insertArrangedSubview(dateDotView, at: 1)
         dateDotView.snp.makeConstraints {
             $0.width.height.equalTo(2)
@@ -438,10 +466,13 @@ class TGFeedDetailInteractiveView: UIView {
         }
         
         if !isEdit {
-            //避免重复布局
-            if !viewsAndTimeView.arrangedSubviews.contains(translateDotView) {
-                viewsAndTimeView.insertArrangedSubview(translateDotView, at: 3)
-
+            viewsAndTimeView.insertArrangedSubview(translateDotView, at: 3)
+            
+            let existingTranslateContainer = viewsAndTimeView.arrangedSubviews.first { view in
+                return view.subviews.contains { $0 === translateButton }
+            }
+            
+            if existingTranslateContainer == nil {
                 let leftAligned = UIView()
                 leftAligned.addSubview(translateButton)
                 translateButton.contentHorizontalAlignment = .left
@@ -449,7 +480,7 @@ class TGFeedDetailInteractiveView: UIView {
                     v.top.left.bottom.right.equalToSuperview()
                     v.right.lessThanOrEqualToSuperview()
                 }
-
+                
                 viewsAndTimeView.addArrangedSubview(leftAligned)
             }
         }
@@ -461,8 +492,9 @@ class TGFeedDetailInteractiveView: UIView {
             guard let self = self, let button = button as? LoadableButton else { return }
             guard button.isSelected == false else {
                 self.htmlAttributedText = self.originalTexts.attributonString().setTextFont(14).setlineSpacing(0)
+                self.readMoreLabel.isExpand = self.readMoreLabel.currentLabelShowStyle == .TruncatableLabelShowMore
                 if let attributedText = self.htmlAttributedText {
-                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList)
+                    self.htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList)
                     self.readMoreLabel.setAttributeText(attString: attributedText, allowTruncation: true)
                 } else {
                     self.readMoreLabel.setText(text:  self.originalTexts, allowTruncation: true)
@@ -472,24 +504,8 @@ class TGFeedDetailInteractiveView: UIView {
                 return
             }
             
+            
             button.showLoader(userInteraction: false)
-            
-//            FeedListNetworkManager.translateFeed(feedId: self.feedId.stringValue) { [weak self] (translates) in
-//                guard let self = self else { return }
-//                DispatchQueue.main.async {
-//                    defer { button.hideLoader() }
-//                    self.translatedTexts = translates
-//                    self.readMoreLabel.setText(text: self.translatedTexts,
-//                                               textColor: self.readMoreLabel.label.textColor,
-//                                               allowTruncation: true)
-//                    button.isSelected = true
-//                    self.translateHandler?(button.isSelected)
-//                }
-//            } failure: { (message) in
-//                defer { button.hideLoader() }
-//                UIViewController.showBottomFloatingToast(with: "", desc: message)
-//            }
-            
             
             TGFeedNetworkManager.shared.translateFeed(feedId: self.feedId) { [weak self] (translates, msg, status) in
                 guard let self = self else { return }
@@ -513,6 +529,17 @@ class TGFeedDetailInteractiveView: UIView {
         viewsAndTimeView.layoutIfNeeded()
     }
     
+    func updateContentLabel(content: String, original: String) {
+        htmlAttributedText = content.attributonString().setTextFont(14).setlineSpacing(0)
+        if let attributedText = htmlAttributedText {
+            htmlAttributedText = HTMLManager.shared.formAttributeText(attributedText, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList)
+            readMoreLabel.setAttributeText(attString: attributedText, allowTruncation: true)
+        } else {
+            readMoreLabel.setText(text: original,
+                                       textColor: readMoreLabel.label.textColor,
+                                       allowTruncation: true)
+        }
+    }
     
     func updateCount(comment: Int, like: Int, forwardCount: Int) {
         
@@ -632,6 +659,25 @@ class TGFeedDetailInteractiveView: UIView {
             make.centerY.equalTo(pageCounterLabel)
             make.right.equalTo(-15)
         }
+        addSubview(aiFeedView)
+        aiFeedView.addAction {
+            self.onAITouched?()
+        }
+        aiFeedView.snp.makeConstraints { make in
+            make.centerY.equalTo(moreButton)
+            make.right.equalTo(moreButton.snp.left).offset(-10)
+            make.width.equalTo(60)
+            make.height.equalTo(28)
+        }
+        
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "ic_rl_aifeed_full")
+        
+        aiFeedView.addSubview(imageView)
+        imageView.bindToEdges()
+        
+        aiFeedView.makeHidden()
+        
         separatorLine.backgroundColor = UIColor(red: 84, green: 84, blue: 84)
         followButton.addTap { [weak self] (v) in
             self?.onFollowTouched?()
@@ -650,14 +696,10 @@ class TGFeedDetailInteractiveView: UIView {
         }
 
         reactionHandler?.onSelect = { [weak self] reaction in
-            DispatchQueue.main.async {
-//                guard TSCurrentUserInfo.share.isLogin == true else {
-//                    TSRootViewController.share.guestJoinLandingVC()
-//                    return
-//                }
+            TGRootViewController.share.verifyGuestModeOrNoLogin(success: {
                 guard let self = self else { return }
                 self.updateReactionButton(reactionType: reaction)
-            }
+            })
         }
 
         reactionHandler?.onSuccess = { [weak self] message in

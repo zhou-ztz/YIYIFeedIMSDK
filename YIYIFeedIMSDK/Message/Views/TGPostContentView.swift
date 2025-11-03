@@ -63,7 +63,7 @@ class TGPostContentView: UIView {
                         postContentLabel.text = value.content
                     }
                 } else {
-                    HTMLManager.shared.removeHtmlTag(htmlString: value.content, completion: { [weak self] (content, _) in
+                    HTMLManager.shared.removeHtmlTag(htmlString: value.content, completion: { [weak self] (content, _, _, _, _) in
                         guard let self = self else { return }
                         postContentLabel.text = content.removeNewLineChar()
                     })

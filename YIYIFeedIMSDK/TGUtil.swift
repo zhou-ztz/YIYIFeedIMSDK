@@ -55,6 +55,18 @@ class TGUtil {
         
         return Array(matchingUserIDs)
     }
+    class func generateMatchingMerchantIDs(tagUsers: [TGTaggedBranchData], atStrings: [String]) -> [Int] {
+        
+        var matchingUserIDs = Set<Int>()
+        
+        for atString in atStrings {
+            if let matchedUser = tagUsers.first(where: { $0.branchName?.removingSpecialCharacters() == atString.removingSpecialCharacters() }) {
+                matchingUserIDs.insert(matchedUser.miniProgramBranchID ?? 0)  // Insert into set, duplicates are automatically handled
+            }
+        }
+        
+        return Array(matchingUserIDs)
+    }
     //获取发布动态content里面所有的userIds
     class func findTSAtStrings(inputStr: String) -> [String] {
         let regx = try? NSRegularExpression(pattern: "@[^<]+?(?=</a>)", options: .caseInsensitive)
@@ -369,5 +381,105 @@ class TGUtil {
         }
         
         viewController.present(alert, animated: true, completion: nil)
+    }
+}
+struct TGReleasePulseData {
+    var privacyType: PrivacyType?
+    var topics: [TGTopicCommonModel]?
+    var location: TGLocationModel?
+    var tagUsers: [TGUserInfoModel]?
+    var tagMerchants: [TGTaggedBranchData]?
+    var rewardsMerchantUsers: [TGRewardsLinkMerchantUserModel]?
+}
+
+extension TGUtil {
+   
+    class func extractReleasePulseData(from model: Any) -> TGReleasePulseData {
+        var data = TGReleasePulseData()
+
+        if let postModel = model as? TGPostModel {
+            data.privacyType = PrivacyType(rawValue: postModel.privacy)
+            
+            if let topics = postModel.topics, let first = topics.first {
+                let topic = TGTopicCommonModel()
+                topic.id = first.id
+                topic.name = first.name
+                data.topics = [topic]
+            }
+            
+            if let loc = postModel.taggedLocation {
+                let location = TGLocationModel()
+                location.locationID = loc.locationID
+                location.locationName = loc.locationName
+                location.locationLatitude = loc.locationLatitude
+                location.locationLongtitude = loc.locationLongtitude
+                location.address = loc.address ?? ""
+                data.location = location
+            }
+            
+            data.tagUsers = postModel.tagUsers
+            data.tagMerchants = postModel.tagMerchants
+        } else if let detailModel = model as? FeedListCellModel {
+            data.privacyType = PrivacyType(rawValue: detailModel.privacy)
+            
+            if let first = detailModel.topics.first {
+                let topic = TGTopicCommonModel()
+                topic.id = first.topicId
+                topic.name = first.topicTitle
+                data.topics = [topic]
+            }
+            
+            if let loc = detailModel.location {
+                let location = TGLocationModel()
+                location.locationID = loc.locationID
+                location.locationName = loc.locationName
+                location.locationLatitude = loc.locationLatitude
+                location.locationLongtitude = loc.locationLongtitude
+                location.address = loc.address ?? ""
+                data.location = location
+            }
+            
+            data.tagUsers = detailModel.tagUsers
+            data.tagMerchants = detailModel.rewardsLinkMerchantUsers
+            data.rewardsMerchantUsers = detailModel.rewardsMerchantUsers
+        } else if let rejectDetailModel = model as? TGRejectDetailModel {
+            if let privacy = rejectDetailModel.privacy {
+                data.privacyType = PrivacyType(rawValue: privacy)
+            }
+
+            if let first = rejectDetailModel.topics.first {
+                let topic = TGTopicCommonModel()
+                topic.id = first.id
+                topic.name = first.name ?? ""
+                data.topics = [topic]
+            }
+
+            if let loc = rejectDetailModel.location {
+                let location = TGLocationModel()
+                location.locationID = loc.lid ?? ""
+                location.locationName = loc.name ?? ""
+                location.locationLatitude = loc.lat
+                location.locationLongtitude = loc.lng
+                location.address = loc.address ?? ""
+                data.location = location
+            }
+
+            data.tagUsers = rejectDetailModel.tagUsers
+            data.tagMerchants = rejectDetailModel.rewardsLinkMerchantUsers
+        }
+
+        return data
+    }
+
+    public class func configureReleasePulseViewController(model: Any, releasePulseVC: TGReleasePulseViewController) -> TGReleasePulseViewController {
+        let data = TGUtil.extractReleasePulseData(from: model)
+        releasePulseVC.rejectPrivacyType = data.privacyType
+        releasePulseVC.topics = data.topics ?? []
+        releasePulseVC.rejectLocation = data.location
+        releasePulseVC.selectedUsers = data.tagUsers ?? []
+        releasePulseVC.selectedMerchants = data.tagMerchants ?? []
+        releasePulseVC.rewardsMerchantUsers = data.rewardsMerchantUsers ?? []
+        
+        return releasePulseVC
     }
 }

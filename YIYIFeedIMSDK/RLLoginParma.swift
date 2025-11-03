@@ -36,4 +36,9 @@ public class RLLoginParma: NSObject {
     public var userInfoJson: String = ""
     /// webServerAddress
     public var webServerAddress: String = ""
+    
+    public var mpExtras: String = ""
+    
+    public var clientVersion: String = ""
+    
 }
