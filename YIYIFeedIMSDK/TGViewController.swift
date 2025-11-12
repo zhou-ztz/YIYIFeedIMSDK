@@ -22,7 +22,7 @@ public class TGViewController: UIViewController {
         stack.axis = .vertical
         return stack
     }()
-    var isHiddenNavigaBar: Bool = false {
+    public var isHiddenNavigaBar: Bool = false {
         didSet {
             customNavigationBar.isHidden = isHiddenNavigaBar
         }

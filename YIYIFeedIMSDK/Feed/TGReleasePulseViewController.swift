@@ -1776,7 +1776,7 @@ extension TGReleasePulseViewController: PhotoEditorDelegate{
     }
 }
 
-enum PrivacyType: String, CaseIterable {
+public enum PrivacyType: String, CaseIterable {
     case everyone
     case friends
     case `self`

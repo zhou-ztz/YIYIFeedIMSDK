@@ -127,7 +127,7 @@ public class TGRepostModel {
         }
     }
     
-    init(model: FeedListCellModel) {
+    public init(model: FeedListCellModel) {
         if model.repostType == nil {
             self.id = model.id["feedId"] ?? 0
             self.title = model.userName

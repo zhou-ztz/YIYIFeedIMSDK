@@ -38,6 +38,7 @@ public enum TGVideoType: Int {
 }
 public enum TGPostReleaseType: Int{
     case campaign = 0 //活动
+    case AIFeed = 1 //AIFeed
     case normalType  //其他
 }
 public enum TGPostProgressStatus {
@@ -599,10 +600,16 @@ public class TGPostProgressBar: UIView {
             } complete: { [weak self] imageFileds in
                 if imageFileds.isEmpty == false && imageFileds.count > 0 {
                     self?.status = .finishingUp
-                    TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
-                        DispatchQueue.main.async {
-                            self?.status = .complete
+                    TGFeedNetworkManager.shared.editRejectFeed(feedID: object.feedId ?? "", feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher) { [weak self] (feedId, error) in                           DispatchQueue.main.async {
+                        if error != nil {
+                            self?.status = .rejectPostFail
+                        } else {
+                            self?.status = .finishingUp
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                self?.status = .complete
+                            }
                         }
+                    }
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -617,7 +624,6 @@ public class TGPostProgressBar: UIView {
     }
     
     private func postPhotos(object: TGPostModel) {
- 
         guard let assets = object.phAssets else {
             self.status = .fail
             return
@@ -626,54 +632,93 @@ public class TGPostProgressBar: UIView {
         var imageMimeType: [String] = []
         var uploadDatas: [Data] = []
         option.isSynchronous = true
-        for asset in assets {
-            
-            PHImageManager.default().requestImageDataAndOrientation(for: asset, options: option) { [weak self] imageData, type, orientation, info in
-                guard let data = imageData, let image = UIImage(data: data) else {
-                    return
-                }
-                
-                self?.setThumbnail(image)
-                
-                switch type {
-                case String(kUTTypeGIF):
-                    imageMimeType.append("image/gif")
-                    let compressedData = ImageCompress.compressImageData(data, limitDataSize: 500 * 1024) ?? Data()
-                    uploadDatas.append(compressedData)
-                case "public.heic":
-                    imageMimeType.append("image/jpeg")
-                    if #available(iOS 10.0, *) {
-                        guard let ciImage = CIImage(data: data), let imageData = CIContext().jpegRepresentation(of: ciImage, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [:]), let image = UIImage(data: imageData) else {
-                            return
+        
+        // For tracking when all work is done
+        let dispatchGroup = DispatchGroup()
+        
+        // 1️⃣ Process network URLs
+        if type == .AIFeed,  let images = object.images as? [String] {
+            for (index, item) in images.enumerated() {
+                if let url = URL(string: item) {
+                    dispatchGroup.enter()
+                    URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+                        defer { dispatchGroup.leave() }
+                        if let data = data {
+                            uploadDatas.append(data)
+                            if index == 0, let image = UIImage(data: data) {
+                                DispatchQueue.main.async {
+                                    self?.setThumbnail(image)
+                                }
+                            }
+                        } else {
+                            printIfDebug("Failed to download: \(item), error: \(error?.localizedDescription ?? "Unknown error")")
                         }
-                        let compressedData = image.jpegData(compressionQuality: 1.0) ?? Data()
-                        uploadDatas.append(compressedData)
-                    }
-                default:
-                    imageMimeType.append("image/jpeg")
-                    let compressedData = image.jpegData(compressionQuality: 1.0) ?? Data()
-                    uploadDatas.append(compressedData)
+                    }.resume()
+                } else {
+                    printIfDebug("Invalid URL: \(item)")
                 }
             }
         }
-        if let images = object.images, images.count == 1, let image = images.first as? UIImage {
-            self.setThumbnail(image)
-            imageMimeType.append("image/jpeg")
-            let compressedData = image.jpegData(compressionQuality: 1.0) ?? Data()
-            uploadDatas.append(compressedData)
+        
+        // 2️⃣ After network URLs, process PHAssets
+        dispatchGroup.notify(queue: .global()) { [weak self] in
+            guard let self = self else { return }
+
+            for asset in assets {
+                PHImageManager.default().requestImageDataAndOrientation(for: asset, options: option) { [weak self] imageData, type, orientation, info in
+                    guard let data = imageData, let image = UIImage(data: data) else { return }
+
+                    DispatchQueue.main.async {
+                        self?.setThumbnail(image)
+                    }
+
+                    switch type {
+                    case String(kUTTypeGIF):
+                        imageMimeType.append("image/gif")
+                        let compressedData = ImageCompress.compressImageData(data, limitDataSize: 500 * 1024) ?? Data()
+                        uploadDatas.append(compressedData)
+                    case "public.heic":
+                        imageMimeType.append("image/jpeg")
+                        if #available(iOS 10.0, *) {
+                            if let ciImage = CIImage(data: data),
+                               let jpegData = CIContext().jpegRepresentation(of: ciImage, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [:]),
+                               let heicImage = UIImage(data: jpegData) {
+                                let compressedData = heicImage.jpegData(compressionQuality: 1.0) ?? Data()
+                                uploadDatas.append(compressedData)
+                            }
+                        }
+                    default:
+                        imageMimeType.append("image/jpeg")
+                        let compressedData = image.jpegData(compressionQuality: 1.0) ?? Data()
+                        uploadDatas.append(compressedData)
+                    }
+                }
+            }
+            
+            if let images = object.images, images.count == 1, let image = images.first as? UIImage {
+                self.setThumbnail(image)
+                imageMimeType.append("image/jpeg")
+                let compressedData = image.jpegData(compressionQuality: 1.0) ?? Data()
+                uploadDatas.append(compressedData)
+            }
+
+            // 3️⃣ Then upload (on main)
+            DispatchQueue.main.async {
+                self.startUpload(uploadDatas: uploadDatas, object: object)
+            }
         }
-      
-        TGUploadNetworkManager().uploadFileToOBS(fileDatas: uploadDatas) {[weak self] progress in
+    }
+    
+    private func startUpload(uploadDatas: [Data], object: TGPostModel) {
+        TGUploadNetworkManager().uploadFileToOBS(fileDatas: uploadDatas) { [weak self] progress in
             guard let self = self else { return }
             if progress.fractionCompleted == 1 {
                 self.arrProgress.append(progress)
             }
             DispatchQueue.main.async {
                 if uploadDatas.count > 1 {
-                    
                     var currentProg: Float = 0.1
                     let max: Float = 0.8
-                    
                     self.singleImg = max / Float(uploadDatas.count)
                     currentProg += self.singleImg * Float(self.arrProgress.count)
                     self.progressBar.setProgress(currentProg, animated: true)
@@ -681,10 +726,11 @@ public class TGPostProgressBar: UIView {
                     self.progressBar.setProgress(Float(progress.fractionCompleted) * 0.5, animated: true)
                 }
             }
-        } complete: { [weak self] imageFileds in
-            if imageFileds.isEmpty == false && imageFileds.count > 0 {
-                self?.status = .finishingUp
-                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFileds, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
+        } complete: { [weak self] imageFields in
+            guard let self = self else { return }
+            if imageFields.isEmpty == false && imageFields.count > 0 {
+                self.status = .finishingUp
+                TGFeedNetworkManager.shared.releasePost(feedContent: object.feedContent, feedId: object.feedMark, privacy: object.privacy, images: imageFields, feedFrom: 3, topics: object.topics, repostType: object.repostType, repostId: object.repostModel?.id, customAttachment: object.shareModel, location: object.taggedLocation, isHotFeed: object.isHotFeed, tagUsers: object.tagUsers, tagMerchants: object.tagMerchants, tagVoucher: object.tagVoucher, aiFeedTargetBranchId: object.aiFeedTargetBranchId) { [weak self] (feedId, error) in
                     DispatchQueue.main.async {
                         if error != nil {
                             self?.status = .fail
@@ -695,12 +741,10 @@ public class TGPostProgressBar: UIView {
                 }
             } else {
                 DispatchQueue.main.async {
-                    self?.status = .fail
+                    self.status = .fail
                 }
             }
-        
         }
-
     }
     private func postPhotosWithData(object: TGPostModel) {
     

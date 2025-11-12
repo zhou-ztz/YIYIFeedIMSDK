@@ -81,7 +81,6 @@ public protocol TGMessageDelegate: AnyObject {
     /// 打开礼品卡购买页面
     func didPressGiftSegmentVC(giftRecipient: String)
     
-    
 }
 
 public protocol TGFeedDelegate: AnyObject {
@@ -210,5 +209,25 @@ public class RLSDKManager: NSObject {
                 RLSDKManager.shared.currentUserInfo = model
             }
         }
+    }
+    
+    public func clickSearchMessages(topVc: UIViewController) {
+        let vc = TGMessageSearchListController()
+        topVc.present(TGNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true)
+    }
+    
+    public func clickNewChat(topVc: UIViewController) {
+        let vc = AddChatViewController(isShowCol: false, cancelType: .allwayShow)
+        topVc.present(TGNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true)
+    }
+    
+    public func clickCollectMessages(topVc: UIViewController) {
+        let vc = MsgCollectionViewController()
+        topVc.present(TGNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true)
+    }
+    
+    public func clickMeetting(topVc: UIViewController) {
+        let vc = TGMeetingListViewController()
+        topVc.present(TGNavigationController(rootViewController: vc).fullScreenRepresentation, animated: true)
     }
 }

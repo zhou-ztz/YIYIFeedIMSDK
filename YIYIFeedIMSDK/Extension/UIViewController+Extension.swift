@@ -547,7 +547,9 @@ extension UIViewController {
             popup.dismiss()
             onCancelled?()
         }
-        self.present(popup, animated: false)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+            self.present(popup, animated: false)
+        }
     }
     
     
@@ -651,7 +653,9 @@ extension UIViewController {
             popup.dismiss()
             onCancelled?()
         }
-        self.present(popup, animated: false)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+            self.present(popup, animated: false)
+        }
     }
     var isModal: Bool {
         return presentingViewController != nil || navigationController?.presentingViewController?.presentedViewController == navigationController || tabBarController?.presentingViewController is UITabBarController

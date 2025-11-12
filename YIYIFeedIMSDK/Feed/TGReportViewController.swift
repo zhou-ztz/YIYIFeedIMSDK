@@ -66,6 +66,7 @@ class TGReportViewController: TGViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.customNavigationBar.isHidden = true
         self.initialUI()
         self.initialDataSource()
         self.gerReportTypes()

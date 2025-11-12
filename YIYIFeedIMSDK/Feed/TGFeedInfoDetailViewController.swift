@@ -989,8 +989,11 @@ extension TGFeedInfoDetailViewController: CustomPopListProtocol {
             
             _ = self.configureReleasePulseViewController(detailModel: model, releasePulseVC: vc)
             
-            let navigation = TGNavigationController(rootViewController: vc).fullScreenRepresentation
-            self.present(navigation, animated: true, completion: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.present(TGNavigationController(rootViewController: vc).fullScreenRepresentation,
+                             animated: true,
+                             completion: nil)
+            }
             break
         case .deletePost:
             guard let model = model else {
