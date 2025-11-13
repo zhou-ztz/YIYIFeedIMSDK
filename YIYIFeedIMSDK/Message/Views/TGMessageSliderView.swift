@@ -16,7 +16,7 @@ class TGMessageSliderView: UIView {
         let stack = UIStackView()
         stack.distribution = .fill
         stack.axis = .horizontal
-        stack.spacing = 40
+        stack.spacing = 60
         stack.alignment = .center
         return stack
     }()

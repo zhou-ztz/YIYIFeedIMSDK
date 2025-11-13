@@ -65,17 +65,17 @@ class TGTruncatableLabel: UIView {
         
         label.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.width.equalToSuperview()
+//            $0.width.equalToSuperview()
         }
     
         label.setContentHuggingPriority(.required, for: .vertical)
         label.numberOfLines = self.numberOfLines
         
-        // Add tap gesture to the entire label
+//         Add tap gesture to the entire label
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLabelTap))
         label.addGestureRecognizer(tapGesture)
         label.isUserInteractionEnabled = true
-
+        
         stack.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalTo(scrollView.snp.width)
@@ -270,8 +270,8 @@ class TGTruncatableLabel: UIView {
                 finalHeight = min(labelHeight, 40)
             }
             
-            let height = min(finalHeight, maximumHeight)
-            $0.height.equalTo(height)
+            let adjustedHeight = max(1, min(finalHeight, maximumHeight))
+            $0.height.equalTo(adjustedHeight)
         }
     }
 }

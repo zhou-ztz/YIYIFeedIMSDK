@@ -559,10 +559,18 @@ class MessageUtils: NSObject {
     }
     
     class func mediaItems(conversationType: V2NIMConversationType) -> [MediaItem] {
-        if conversationType == .CONVERSATION_TYPE_TEAM {
-            return [.album, .camera, .file, .redpacket, .videoCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+        if RLSDKManager.shared.loginParma?.appType == .rewardslink {
+            if conversationType == .CONVERSATION_TYPE_TEAM {
+                return [.album, .camera, .file, .redpacket, .videoCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+            }
+            return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .gift, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+        } else {
+            if conversationType == .CONVERSATION_TYPE_TEAM {
+                return [.album, .camera, .file, .redpacket, .videoCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+            }
+            return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
         }
-        return [.album, .camera, .file, .redpacket, .videoCall, .voiceCall, .sendCard, .gift, .whiteBoard, .sendLocation, .collectMessage, .voiceToText, .rps]
+            
     }
     
     class func canMessageBePinned (_ model: TGMessageData) -> Bool {

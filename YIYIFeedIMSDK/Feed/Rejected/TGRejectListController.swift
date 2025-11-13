@@ -14,6 +14,7 @@ public class TGRejectListController: TGViewController {
     let limit: Int = 15
     /// 分页
     var page = 1
+    public var clearBadgeClosure: (()->())?
     private lazy var rejectListTableView: RLTableView = {
         let tableView = RLTableView(frame: CGRect(x: 0, y: 0, width: self.view.width, height: self.view.height - TSNavigationBarHeight), style: .plain)
         tableView.delegate = self
@@ -37,6 +38,7 @@ public class TGRejectListController: TGViewController {
         rejectListTableView.mj_header.beginRefreshing()
         rejectListTableView.bindToEdges()
         // Do any additional setup after loading the view.
+        
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -88,7 +90,8 @@ public class TGRejectListController: TGViewController {
             }
             TGFeedNetworkManager.shared.readAllNoti { model, error in
                 guard let model = model else { return }
-//                TGCurrentUserInfo.share.unreadCount.reject = 0
+                RLSDKManager.shared.feedDelegate?.didResetUnreadCount()
+                self.clearBadgeClosure?()
                 NotificationCenter.default.post(name: NSNotification.Name.DashBoard.reloadNotificationBadge, object: nil)
             }
         }

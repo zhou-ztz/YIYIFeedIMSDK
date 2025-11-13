@@ -14,6 +14,9 @@ class RLColor {
     static let share = RLColor()
     //主题色  136 64 242
     var theme: UIColor {
+        if let color = RLSDKManager.shared.loginParma?.themeColor {
+            return UIColor(hex: color)
+        }
         return UIColor(hex: 0xED1A3B)
     }
     
@@ -90,6 +93,9 @@ class MainColor {
     /// - 需要特别强调的文字、icon、按钮
     /// - 例如底部导航栏高亮按钮、顶部标题栏右侧可点击状态文字按钮、文章标题、填充类色块按钮、粉丝/点赞/关注/喜欢数 等
     var theme: UIColor {
+        if let color = RLSDKManager.shared.loginParma?.themeColor {
+            return UIColor(hex: color)
+        }
         return UIColor(hex: 0xED1A3B)
     }
     /// 蓝色按钮色

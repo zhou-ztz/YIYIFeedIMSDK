@@ -100,7 +100,7 @@ public class TGRejectedDetailController: TGViewController {
     }
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setCloseButton(backImage: true, titleStr: "".localized)
+//        setCloseButton(backImage: true, titleStr: "".localized)
     }
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -274,7 +274,7 @@ public class TGRejectedDetailController: TGViewController {
         scrollView.layoutIfNeeded()
         scrollView.contentSize = mainStackView.frame.size
         if readMoreLabel != nil {
-            readMoreLabel.setText(text: "")
+//            readMoreLabel.setText(text: "")
             readMoreLabel.numberOfLines = 0
             readMoreLabel.aliasColor = TGAppTheme.primaryBlueColor
             readMoreLabel.hashTagColor = TGAppTheme.primaryBlueColor

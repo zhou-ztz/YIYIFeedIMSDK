@@ -28,13 +28,17 @@ public class RLConversationListViewController: TGViewController {
     
     lazy var tableView: RLTableView = {
         let tb = RLTableView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 0), style: .plain)
-        //tb.rowHeight = 86
         tb.register(ConversationListCell.self, forCellReuseIdentifier: ConversationListCell.cellIdentifier)
         tb.showsVerticalScrollIndicator = false
         tb.separatorStyle = .none
         tb.delegate = self
         tb.dataSource = self
         tb.backgroundColor = .white
+        if #available(iOS 15.0, *) {
+            tb.sectionHeaderTopPadding = 0
+        } else {
+            // Fallback on earlier versions
+        }
         return tb
     }()
     
@@ -295,7 +299,7 @@ extension RLConversationListViewController: UITableViewDelegate, UITableViewData
             
             return headerView
         }
-        return nil
+        return UIView()
     }
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

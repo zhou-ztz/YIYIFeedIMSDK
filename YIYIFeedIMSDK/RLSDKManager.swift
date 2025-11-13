@@ -132,6 +132,10 @@ public protocol TGFeedDelegate: AnyObject {
     
     /// 获取ProfileViewController对象
     func fetchProfileVCById(userId: Int) -> UIViewController?
+    
+    /// 设置未读数清零
+    func didResetUnreadCount()
+    
 }
 
 public class RLSDKManager: NSObject {

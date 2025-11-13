@@ -7,6 +7,10 @@
 
 import UIKit
 
+public enum TGAppType {
+    case rewardslink, yippi
+}
+
 public class RLLoginParma: NSObject {
 
     public var themeColor: Int = 0xED1A3B
@@ -40,5 +44,7 @@ public class RLLoginParma: NSObject {
     public var mpExtras: String = ""
     
     public var clientVersion: String = ""
+    /// 接入app 类型
+    public var appType: TGAppType = .rewardslink
     
 }
