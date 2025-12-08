@@ -83,7 +83,8 @@ class TextMessageCell: BaseMessageCell {
         
         self.timeTickStackView.snp.remakeConstraints { make in
             if atSide {
-                make.top.right.bottom.equalToSuperview()
+                make.right.equalToSuperview()
+                make.centerY.equalToSuperview()
             } else {
                 make.bottom.right.equalToSuperview()
             }
@@ -95,14 +96,14 @@ class TextMessageCell: BaseMessageCell {
                 make.right.equalTo(self.timeTickStackView.snp.left).offset(-8)
             } else {
                 make.top.left.right.equalToSuperview()
-                make.bottom.equalTo(self.timeTickStackView.snp.top)
+                make.bottom.equalTo(self.timeTickStackView.snp.top).offset(-2)
             }
             make.height.greaterThanOrEqualTo(20)
         }
         
         self.textView.snp.remakeConstraints { make in
             make.top.equalToSuperview().offset(8)
-            make.bottom.equalToSuperview().offset(-8)
+            make.bottom.equalToSuperview().offset(atSide ? -8:-4)
             make.left.equalToSuperview().offset(showLeft ? 10:10)
             make.right.equalToSuperview().offset(showLeft ? -10:-10)
         }

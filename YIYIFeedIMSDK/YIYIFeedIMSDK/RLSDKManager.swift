@@ -159,7 +159,7 @@ public class RLSDKManager: NSObject {
         self.appKey = appKey
     }
     
-    public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping ()->Void){
+    public func loginIM(parma: RLLoginParma, success: @escaping ()->Void, failure: @escaping (Error?)->Void){
         self.loginParma = parma
         currentUserInfo = TGUserInfoModel.convert(parma.userInfoJson)?.first
         RLNIMSDKManager.shared.imLogin(with: self.loginParma?.imAccid ?? "", imToken: self.loginParma?.imToken ?? "") {
@@ -167,8 +167,8 @@ public class RLSDKManager: NSObject {
                 UserDefaults.standard.setValue(xToken , forKey: "TG_ACCESS_TOKEN")
             }
             success()
-        } failure: {
-            failure()
+        } failure: {error in
+            failure(error)
         }
         getCurrentUserInfo()
         predownloadSticker()

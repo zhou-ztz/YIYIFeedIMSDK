@@ -63,7 +63,7 @@ class LocationMessageCell: BaseMessageCell {
         timeTickStackView.snp.makeConstraints { make in
             make.top.equalTo(baseView.snp.bottom).offset(6)
             make.right.equalToSuperview().inset(5)
-            make.bottom.equalTo(-8)
+            make.bottom.equalTo(-5)
         }
         mapImage.snp.makeConstraints { make in
             make.left.top.right.equalToSuperview()

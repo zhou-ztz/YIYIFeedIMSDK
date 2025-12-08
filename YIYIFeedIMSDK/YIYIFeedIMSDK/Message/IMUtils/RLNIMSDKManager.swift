@@ -91,7 +91,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
     }
     
     
-    public func imLogin(with accid: String, imToken: String, success: @escaping ()->Void, failure: @escaping ()->Void){
+    public func imLogin(with accid: String, imToken: String, success: @escaping ()->Void, failure: @escaping (Error?)->Void){
 
         NIMSDK.shared().v2LoginService.login(accid, token: imToken, option: nil) {
             print("im login success")
@@ -99,7 +99,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
             success()
         } failure: { error in
             print("im login fail = \(error.detail), code = \(error.code)")
-            failure()
+            failure(error.nserror)
         }
 
     }

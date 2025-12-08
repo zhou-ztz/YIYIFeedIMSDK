@@ -51,7 +51,7 @@ class WhiteBoardMessageCell: BaseMessageCell {
         timeTickStackView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.right.equalToSuperview().inset(5)
-            make.bottom.equalTo(-8)
+            make.bottom.equalTo(-5)
         }
         whiteboardView.image = UIImage.set_image(named: "whiteboard_bg")
     }

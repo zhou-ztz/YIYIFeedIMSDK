@@ -119,7 +119,7 @@ class MultiImageMessageCell: BaseMessageCell {
         timeTickStackView.snp.makeConstraints { make in
             make.top.equalTo(displayImage4.snp.bottom).offset(8)
             make.right.equalToSuperview().inset(10)
-            make.bottom.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().inset(5)
         }
         
     }

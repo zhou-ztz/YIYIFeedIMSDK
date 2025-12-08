@@ -303,8 +303,8 @@ class ReplyMessageCell: BaseMessageCell {
         }
         
         timeTickStackView.snp.remakeConstraints { make in
-            make.bottom.right.equalToSuperview().inset(8)
-            
+            make.right.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().inset(5)
             if atSide {
                 make.left.greaterThanOrEqualTo(messageLabel.snp.right).inset(-8)
             }

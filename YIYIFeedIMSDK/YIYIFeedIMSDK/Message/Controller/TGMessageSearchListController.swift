@@ -189,7 +189,7 @@ class TGMessageSearchListController: TGViewController {
         // 创建搜索栏
         let searchBar = UISearchBar(frame: CGRect(x: 45, y: 50, width: view.bounds.width - 60, height: 36))
         searchBar.barStyle = .default
-        searchBar.searchBarStyle = .default
+        searchBar.searchBarStyle = .minimal
         searchBar.placeholder = "placeholder_search_message".localized
         searchBar.delegate = self
         searchBar.showsCancelButton = false

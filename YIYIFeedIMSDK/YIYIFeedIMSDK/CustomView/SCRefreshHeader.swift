@@ -9,7 +9,7 @@ import SnapKit
 
 class SCRefreshHeader: MJRefreshHeader {
     
-    private let pulseIndicator = BallPulseIndicator(radius: 20.0, color: TGAppTheme.red)
+    private let pulseIndicator = BallPulseIndicator(radius: 20.0, color: RLColor.main.theme)
     override var state: MJRefreshState {
         didSet {
             switch state {

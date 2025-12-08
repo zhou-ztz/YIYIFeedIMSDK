@@ -67,7 +67,8 @@ class ImageMessageCell: BaseMessageCell {
             make.bottom.equalTo(displayImage.snp.bottom)
         }
         timeTickStackView.snp.makeConstraints { make in
-            make.bottom.right.equalToSuperview().inset(10)
+            make.right.equalToSuperview().inset(10)
+            make.bottom.equalToSuperview().inset(6)
         }
       
     }

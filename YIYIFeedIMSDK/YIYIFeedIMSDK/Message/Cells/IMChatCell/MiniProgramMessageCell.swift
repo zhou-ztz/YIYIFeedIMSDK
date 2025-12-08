@@ -106,7 +106,7 @@ class MiniProgramMessageCell: BaseMessageCell {
         timeTickStackView.snp.makeConstraints { make in
             make.right.equalTo(-10)
             make.top.equalTo(background.snp.bottom).offset(8)
-            make.bottom.equalTo(-6)
+            make.bottom.equalTo(-5)
         }
 
         self.iconImage.isHidden = false
