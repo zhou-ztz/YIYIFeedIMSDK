@@ -74,22 +74,40 @@ class TGMessageRequestListController: TGViewController {
     }
     
     func loadData() {
-        viewmodel.getRequestList {[weak self] requestList, error in
-            self?.temRequestList = requestList ?? []
-            self?.tableRefresh()
-        }
         viewmodel.getTeamJoinActions { error in
         }
-        
+        let group = DispatchGroup()
+        group.enter()
+        viewmodel.getRequestList {[weak self] requestList, error in
+            self?.temRequestList = requestList ?? []
+            group.leave()
+            
+        }
+        group.enter()
         TGIMNetworkManager.getRequestUnreadCount {[weak self] model, error in
             self?.requestUnreadCount = model?.count ?? 0
+            group.leave()
+        }
+        
+        group.notify(queue: DispatchQueue.main) { [weak self] in
+            self?.tableRefresh()
         }
     }
     
     @objc func refresh() {
         if currentIndex == 0 {
+            let group = DispatchGroup()
+            group.enter()
             viewmodel.getRequestList {[weak self] requestList, error in
                 self?.temRequestList = requestList ?? []
+                group.leave()
+            }
+            group.enter()
+            TGIMNetworkManager.getRequestUnreadCount {[weak self] model, error in
+                self?.requestUnreadCount = model?.count ?? 0
+                group.leave()
+            }
+            group.notify(queue: DispatchQueue.main) { [weak self] in
                 self?.tableRefresh()
             }
         } else {
@@ -190,6 +208,7 @@ class TGMessageRequestListController: TGViewController {
         viewmodel.acceptFriendRequest(data: data) {[weak self] error in
             DispatchQueue.main.async {
                 self?.refresh()
+                RLSDKManager.shared.imDelegate?.requestListNofication()
             }
         }
     }
@@ -198,6 +217,7 @@ class TGMessageRequestListController: TGViewController {
         viewmodel.rejectFriendRequest(data: data) {[weak self] error in
             DispatchQueue.main.async {
                 self?.refresh()
+                RLSDKManager.shared.imDelegate?.requestListNofication()
             }
         }
     }
@@ -207,6 +227,7 @@ class TGMessageRequestListController: TGViewController {
             if error == nil {
                 self?.viewmodel.filterNotifications.remove(at: indexPath.row)
                 self?.tableRefresh()
+                RLSDKManager.shared.imDelegate?.requestListNofication()
             }
         }
     }
@@ -216,6 +237,7 @@ class TGMessageRequestListController: TGViewController {
             if error == nil {
                 self?.viewmodel.filterNotifications.remove(at: indexPath.row)
                 self?.tableRefresh()
+                RLSDKManager.shared.imDelegate?.requestListNofication()
             }
         }
     }

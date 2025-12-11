@@ -80,6 +80,8 @@ public protocol TGMessageDelegate: AnyObject {
     func didPressMyGiftVC(giftType: Int)
     /// 打开礼品卡购买页面
     func didPressGiftSegmentVC(giftRecipient: String)
+    /// 刷新消息未读数通知
+    func requestListNofication()
     
 }
 

@@ -133,7 +133,9 @@ public class TGMessageViewController: TGViewController {
     }
     func getRequestListCount() {
         TGIMUnreadCountManager.shared.getRequestlistCountAllUnreadCount {[weak self] count in
-            self?.sliderView.updateUnreadCount(count: count, index: 1)
+            DispatchQueue.main.async {
+                self?.sliderView.updateUnreadCount(count: count, index: 1)
+            }
         }
     }
     
