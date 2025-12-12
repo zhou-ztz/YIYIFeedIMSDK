@@ -165,7 +165,12 @@ class TGCreateGroupViewController: TGViewController {
     }
     
     @objc func rightBtnAction() {
-        createGroup()
+        RLSDKManager.shared.imDelegate?.checkIsVerifyAccount(topVc: self, completion: { [weak self] in
+            DispatchQueue.main.async {
+                self?.createGroup()
+            }
+        })
+        
     }
     
     func openCamera() {

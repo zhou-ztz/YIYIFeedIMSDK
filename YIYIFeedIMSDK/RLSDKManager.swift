@@ -82,7 +82,8 @@ public protocol TGMessageDelegate: AnyObject {
     func didPressGiftSegmentVC(giftRecipient: String)
     /// 刷新消息未读数通知
     func requestListNofication()
-    
+    /// KYC 验证
+    func checkIsVerifyAccount(topVc: UIViewController, completion: @escaping () -> Void)
 }
 
 public protocol TGFeedDelegate: AnyObject {

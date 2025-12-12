@@ -122,8 +122,14 @@ class AddChatViewController: NewContactsListViewController {
         groupImg.tintColor = .black
         groupStackView.addArrangedSubview(groupL)
         groupL.addAction {[weak self] in
-           let vc = AddGroupChatViewController()
-           self?.navigationController?.pushViewController(vc, animated: true)
+            guard let self = self else {return}
+            RLSDKManager.shared.imDelegate?.checkIsVerifyAccount(topVc: self, completion: {
+                DispatchQueue.main.async {
+                    let vc = AddGroupChatViewController()
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            })
+           
         }
         
         stackView.insertArrangedSubview(contactsStackView, at: 3)
