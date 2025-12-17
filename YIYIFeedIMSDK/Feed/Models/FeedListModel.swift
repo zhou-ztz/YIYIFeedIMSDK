@@ -579,3 +579,46 @@ public class TagVoucherModel: Mappable {
     }
 }
 
+public class AIFeedGeneratedResponse: Mappable {
+
+    public var content: String = ""
+    public var images: [String]? = nil
+    public var video: String? = nil
+    public var tagMerchant: [AIFeedTaggedMerchant]? = nil
+    public var tagVoucher: TagVoucherModel? = nil
+    public var miniProgramAppId: String = ""
+    public var miniProgramDealPath: String = ""
+
+    public required init?(map: Map) {}
+
+    public func mapping(map: Map) {
+        content                 <- map["content"]
+        images                  <- map["images"]
+        video                   <- map["video"]
+        tagMerchant             <- map["tagMerchant"]
+        tagVoucher              <- map["tag_voucher"]
+        miniProgramAppId        <- map["miniProgramAppId"]
+        miniProgramDealPath     <- map["miniProgramDealPath"]
+    }
+}
+
+public class AIFeedTaggedMerchant: Mappable {
+
+    public var userId: Int = 0
+    public var username: String = ""
+    public var name: String = ""
+    public var merchantYippiUserId: Int = 0
+    public var yippisWantedBranchId: Int = 0
+    public var branchName: String = ""
+
+    public required init?(map: Map) {}
+
+    public func mapping(map: Map) {
+        userId                  <- map["userId"]
+        username                <- map["username"]
+        name                    <- map["name"]
+        merchantYippiUserId     <- map["merchantYippiUserId"]
+        yippisWantedBranchId    <- map["yippisWantedBranchId"]
+        branchName              <- map["branchName"]
+    }
+}

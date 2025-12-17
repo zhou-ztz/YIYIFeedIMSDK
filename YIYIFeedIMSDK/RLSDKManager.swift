@@ -84,6 +84,8 @@ public protocol TGMessageDelegate: AnyObject {
     func requestListNofication()
     /// KYC 验证
     func checkIsVerifyAccount(topVc: UIViewController, completion: @escaping () -> Void)
+    /// 跳转青少年模块页面
+    func didPressTeenModeVC()
 }
 
 public protocol TGFeedDelegate: AnyObject {
@@ -153,8 +155,8 @@ public class RLSDKManager: NSObject {
     public weak var imDelegate: TGMessageDelegate?
     public weak var feedDelegate: TGFeedDelegate?
     // 云信 appKey
-    public func initSDK(appKey: String){
-        RLNIMSDKManager.shared.setupNIMSDK(appKey: appKey)
+    public func initSDK(appKey: String, apnsCername: String, pkCername: String){
+        RLNIMSDKManager.shared.setupNIMSDK(appKey: appKey, apnsCername: apnsCername, pkCername: pkCername)
         IMNotificationCenter.sharedCenter.start()
         setupIQKeyboardManager()
         UIImage.swizzleImageNamed

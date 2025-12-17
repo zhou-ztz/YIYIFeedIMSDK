@@ -443,17 +443,24 @@ extension TGReactionHandler {
         guard apiInProgress == false else { return }
         
         apiInProgress = true
-        let newReaction: ReactionTypes? = didSelectIcon == nil ? nil : reactions[didSelectIcon!]
-        let operation = TGReactionUpdateOperation(feedId: feedId, feedItem: feedItem, currentReaction: currentReaction, nextReaction: newReaction)
+        let newReaction: ReactionTypes?
         
+        if let selectedIndex = didSelectIcon, selectedIndex >= 0 && selectedIndex < reactions.count {
+            newReaction = reactions[selectedIndex]
+        } else {
+            newReaction = nil
+        }
+        
+        let operation = TGReactionUpdateOperation(feedId: feedId, feedItem: feedItem, currentReaction: currentReaction, nextReaction: newReaction)
+
         operation.onSuccess = { [weak self] (message) in
             self?.onSuccess?(message)
         }
-        
+
         operation.onError = { [weak self] (fallback, message) in
             self?.onError?(fallback, message)
         }
-        
+
         backgroundOperationQueue.addOperation(operation)
         operation.completionBlock = { [weak self] in
             self?.apiInProgress = false

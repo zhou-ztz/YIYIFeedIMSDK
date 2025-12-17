@@ -39,6 +39,7 @@ public class TGMessageViewController: TGViewController {
         commonUI()
         NotificationCenter.default.addObserver(self, selector: #selector(updateConversationUnreadCount), name: NSNotification.Name("updateConversationUnreadCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(checkWebIsOnline), name: NSNotification.Name("checkWebIsOnline"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshAfterTeenChanged), name: Notification.Name.DashBoard.teenModeChanged, object: nil)
     }
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -104,6 +105,16 @@ public class TGMessageViewController: TGViewController {
         customNavigationBar.setLeftViews(views: [leftBtn])
     }
     
+    @objc func refreshAfterTeenChanged() {
+        if !UserDefaults.teenModeIsEnable {
+            sliderView.isHidden = false
+            setChatButton()
+        } else {
+            sliderView.isHidden = true
+            customNavigationBar.setRightViews(views: [])
+        }
+    }
+    
     // MARK: - （右上角按钮点击事件）
     @objc func rightButtonClick() {
         let vc = TGMessageSearchListController()
@@ -142,14 +153,8 @@ public class TGMessageViewController: TGViewController {
     ///判断网页端是否在线
     @objc func checkWebIsOnline(){
         if let clients = NIMSDK.shared().v2LoginService.getLoginClients(), clients.count > 0 {
-            for client in clients {
-                if client.type == .LOGIN_CLIENT_TYPE_WEB {
-                    //is web login
-                    isWebLoggedIn = true
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil, userInfo: ["isLogIn": true])
-                    break
-                }
-            }
+            isWebLoggedIn = clients.contains { $0.type == .LOGIN_CLIENT_TYPE_WEB }
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil, userInfo: ["isLogIn": isWebLoggedIn])
         } else {
             isWebLoggedIn = false
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "isWebLoggedIn"), object: nil, userInfo:  ["isLogIn": false])

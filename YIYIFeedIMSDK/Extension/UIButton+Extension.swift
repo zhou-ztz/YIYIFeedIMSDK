@@ -67,6 +67,17 @@ extension UIButton {
         }
     }
     
+    func setText(text: String, font: UIFont?, color: UIColor) {
+        let attributedTitle = NSAttributedString(
+            string: text,
+            attributes: [
+                .font: font,
+                .foregroundColor: color
+            ]
+        )
+        setAttributedTitle(attributedTitle, for: .normal)
+    }
+    
     func setBackgroundColor(_ color: UIColor, for state: UIControl.State) {
         self.clipsToBounds = true  // add this to maintain corner radius
         UIGraphicsBeginImageContext(CGSize(width: 1, height: 1))

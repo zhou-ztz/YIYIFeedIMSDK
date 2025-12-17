@@ -45,6 +45,16 @@ enum PlaceholderViewType: Equatable {
     
     case noVoucher
     
+    case noReferral
+    
+    case noPlatformVoucher
+    
+    case noRegister
+    
+    case nothingYet
+    
+    case noSearchVoucher
+    
     var content: (image: UIImage?, text: String?, content: String?) {
         switch self {
         case .network, .networkWithRetry:
@@ -72,6 +82,8 @@ enum PlaceholderViewType: Equatable {
             return (UIImage(named: "placeholder_no_result"), "teen_mode_placeholder_msg".localized, "")
         case .noVoucher:
             return (UIImage(named: "placeholder_no_result"), "rw_no_voucher_placeholder_msg".localized, "")
+        case .noReferral:
+            return (UIImage(named: "placeholder_no_result"), "rw_error_title_no_one_here".localized, "rw_error_message_referral".localized)
         case .custom(let image, let text):
             return (image, text, "")
         case let .customWithButton(image, text, _ ):
@@ -80,6 +92,17 @@ enum PlaceholderViewType: Equatable {
             return (UIImage(), "rw_no_comments_yet".localized, "rw_be_first_comment".localized)
         case .imEmpty:
             return (UIImage(named: "placeholder_chat_empty"), "rw_text_say_hi_to_new_friend".localized, "")
+        case .noPlatformVoucher:
+            return (UIImage(named: "ic_voucher_placeholder_empty"), "rw_no_voucher_placeholder_msg".localized, "rw_no_voucher_placeholder_desc_msg".localized)
+        case .noRegister:
+            return (UIImage(named: "placeholder_no_result"), "rw_text_refer_empty_description".localized, "")
+            
+        case .nothingYet:
+            return (UIImage(named: "placeholder_no_result"), "rw_text_nothing_here_yet".localized, "")
+            
+        case .noSearchVoucher:
+            return (UIImage(named: "ic_voucher_placeholder_empty"), "rw_error_title_no_result_found".localized, "rw_error_message_no_result_found".localized)
+           
         }
     }
     

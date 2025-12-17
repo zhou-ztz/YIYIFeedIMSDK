@@ -517,6 +517,9 @@
 		D7B5868A2D27915600A52F1E /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586602D27915600A52F1E /* Protocols.swift */; };
 		D7B5868B2D27915600A52F1E /* PhotoEditor+Gestures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B586592D27915600A52F1E /* PhotoEditor+Gestures.swift */; };
 		D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7B5865F2D27915600A52F1E /* PhotoEditorViewController.xib */; };
+		D7BF91142EEFAF640091A7DF /* TGLoadingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF91132EEFAF640091A7DF /* TGLoadingTextView.swift */; };
+		D7BF91162EEFB0870091A7DF /* TGLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF91152EEFB0870091A7DF /* TGLoadingView.swift */; };
+		D7BF91182EEFB08F0091A7DF /* TGLoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7BF91172EEFB08F0091A7DF /* TGLoadingView.xib */; };
 		D7C4E9D12D2D20560043DD82 /* TGLocationPOICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D02D2D20560043DD82 /* TGLocationPOICell.swift */; };
 		D7C4E9D32D2D21BF0043DD82 /* TGThrottler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D22D2D21BF0043DD82 /* TGThrottler.swift */; };
 		D7C4E9D52D2D23FD0043DD82 /* TGRepostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9D42D2D23FD0043DD82 /* TGRepostView.swift */; };
@@ -1112,6 +1115,9 @@
 		D7B5866B2D27915600A52F1E /* UIImage+Size.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Size.swift"; sourceTree = "<group>"; };
 		D7B5866C2D27915600A52F1E /* UIImageView+Alpha.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Alpha.swift"; sourceTree = "<group>"; };
 		D7B5866D2D27915600A52F1E /* UIView+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Image.swift"; sourceTree = "<group>"; };
+		D7BF91132EEFAF640091A7DF /* TGLoadingTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGLoadingTextView.swift; sourceTree = "<group>"; };
+		D7BF91152EEFB0870091A7DF /* TGLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGLoadingView.swift; sourceTree = "<group>"; };
+		D7BF91172EEFB08F0091A7DF /* TGLoadingView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TGLoadingView.xib; sourceTree = "<group>"; };
 		D7C4E9D02D2D20560043DD82 /* TGLocationPOICell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGLocationPOICell.swift; sourceTree = "<group>"; };
 		D7C4E9D22D2D21BF0043DD82 /* TGThrottler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGThrottler.swift; sourceTree = "<group>"; };
 		D7C4E9D42D2D23FD0043DD82 /* TGRepostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TGRepostView.swift; sourceTree = "<group>"; };
@@ -1535,6 +1541,7 @@
 		8A9F0D952CF444490021462C /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				D7BF91122EEFAF4D0091A7DF /* TGLoadingView */,
 				D7047C1B2D3A4D7800E6FCF6 /* LoadingButtons */,
 				B1EABCA92D3507B200EB7868 /* Indicators */,
 				D7C4E9DD2D2D29C90043DD82 /* ActiveLabel */,
@@ -2068,6 +2075,16 @@
 			path = "Photo Editor";
 			sourceTree = "<group>";
 		};
+		D7BF91122EEFAF4D0091A7DF /* TGLoadingView */ = {
+			isa = PBXGroup;
+			children = (
+				D7BF91132EEFAF640091A7DF /* TGLoadingTextView.swift */,
+				D7BF91152EEFB0870091A7DF /* TGLoadingView.swift */,
+				D7BF91172EEFB08F0091A7DF /* TGLoadingView.xib */,
+			);
+			path = TGLoadingView;
+			sourceTree = "<group>";
+		};
 		D7C4E9DD2D2D29C90043DD82 /* ActiveLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -2396,6 +2413,7 @@
 				8A9F0DF22CF48B3B0021462C /* reaction-love.json in Resources */,
 				8A4BB3312D08352B00AAB4B8 /* NMCJSBridge.js in Resources */,
 				B1EABC9E2D30F41900EB7868 /* TGNewContactTableViewCell.xib in Resources */,
+				D7BF91182EEFB08F0091A7DF /* TGLoadingView.xib in Resources */,
 				D7B586962D27915600A52F1E /* PhotoEditorViewController.xib in Resources */,
 				B193FD512D88088B00BEB3F7 /* TGReportImageCollectionCell.xib in Resources */,
 				D764EC7B2D37869F00F62268 /* TGReleasePulseViewController.xib in Resources */,
@@ -2626,6 +2644,7 @@
 				D79723862D269065009772B7 /* TGCameraViewController.swift in Sources */,
 				D7ED1C7A2D3E275500B7F95D /* TGRefreshView.swift in Sources */,
 				D7AD6A9B2D38FED7006A3A1F /* TGUploadNetworkManager.swift in Sources */,
+				D7BF91142EEFAF640091A7DF /* TGLoadingTextView.swift in Sources */,
 				B193FBDC2D5C6D3200BEB3F7 /* EggModel.swift in Sources */,
 				B14CCF592E041D3000C563B8 /* TGCancelPopView.swift in Sources */,
 				B1EABCAB2D3507CB00EB7868 /* LBIndicator.swift in Sources */,
@@ -2705,6 +2724,7 @@
 				B193FCDD2D6EB5A500BEB3F7 /* TSLocalVideoCoverSelectedVC.m in Sources */,
 				B193FCDE2D6EB5A500BEB3F7 /* TZPhotoPreviewController.m in Sources */,
 				B193FCDF2D6EB5A500BEB3F7 /* TZProgressView.m in Sources */,
+				D7BF91162EEFB0870091A7DF /* TGLoadingView.swift in Sources */,
 				B193FCE02D6EB5A500BEB3F7 /* TZGifPhotoPreviewController.m in Sources */,
 				8A027A5D2CFDBE29008D1AC7 /* TGChatViewController.swift in Sources */,
 				8A027A572CFD5FF5008D1AC7 /* TGIMContactViewLayout.swift in Sources */,

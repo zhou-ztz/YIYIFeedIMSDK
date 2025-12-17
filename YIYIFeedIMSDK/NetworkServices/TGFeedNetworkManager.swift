@@ -1105,3 +1105,32 @@ class TGFeedNetworkManager: NSObject {
     
     
 }
+
+// MARK: AI Feeds
+extension TGFeedNetworkManager {
+    func getAIFeed(params: [String: Any], completion: @escaping(String?, AIFeedGeneratedResponse?) -> Void) {
+       
+        let path = "feeds/ai-feed/generate"
+        
+        TGNetworkManager.shared.request(
+            urlPath: path,
+            method: .GET,
+            params: params,
+            headers: nil
+        ) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(error?.localizedDescription, nil)
+                return
+            }
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let model = Mapper<AIFeedGeneratedResponse>().map(JSONString: jsonString)
+                completion(nil ,model)
+            } else {
+                let nserror = NSError(domain: "TGIMNetworkManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "json 解析失败"])
+                DispatchQueue.main.async {
+                    completion(nserror.localizedDescription, nil)
+                }
+            }
+        }
+    }
+}

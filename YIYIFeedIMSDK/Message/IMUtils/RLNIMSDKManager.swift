@@ -20,7 +20,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         super.init()
     }
     
-    func setupNIMSDK(appKey: String) {
+    func setupNIMSDK(appKey: String, apnsCername: String, pkCername: String) {
         
         NIMSDKConfig.shared().delegate = self
         NIMSDKConfig.shared().shouldSyncUnreadCount = true
@@ -29,9 +29,6 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         NIMSDKConfig.shared().shouldCountTeamNotification = true
         NIMSDKConfig.shared().maxAutoLoginRetryTimes = 3
         NIMSDKConfig.shared().teamReceiptEnabled = true
-        
-        let apnsCername = ""
-        let pkCername = ""
         //appKey
         let option = NIMSDKOption(appKey: appKey)
         option.apnsCername = apnsCername

@@ -206,6 +206,10 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
     public var tagVoucher: TagVoucherModel?
     public var isVoucherRemoved: Bool = false
     var isMiniVideo: Bool = false
+    var aiFeedParams: [String: Any] = [:]
+    let loadingView = TGLoadingView()
+    var aiStatusMessage : [String] = []
+    
     private var videoType: TGVideoType {
         return isMiniVideo ? .miniVideo : .normalVideo
     }
@@ -699,7 +703,14 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
             self.voucherName = tagVoucher.taggedVoucherTitle
         }
     }
-    
+    private func updateVoucherContent(tagVoucher: TagVoucherModel) {
+        self.voucherInfoView.isHidden = false
+        self.arrowImageView.isHidden = true
+        self.voucherConstantH.constant = 100
+        self.voucherLabel.text = tagVoucher.taggedVoucherTitle
+        self.voucherId = tagVoucher.taggedVoucherId
+        self.voucherName = tagVoucher.taggedVoucherTitle
+    }
     /// 发布按钮是否可点击
     fileprivate func setReleaseButtonIsEnabled() {
         if self.isReposting {
@@ -1026,10 +1037,13 @@ extension TGReleasePulseViewController {
                 tagVoucher = nil
             }
         }
+        let branchId = aiFeedParams["branch_id"] as? String ?? ""
         if self.type == .miniVideo {
             let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: self.privacyType.rawValue, repostModel: nil, shareModel: nil, topics: self.topics, taggedLocation: self.taggedLocation, phAssets: nil, postPhoto: nil, video: shortVideoAsset, soundId: nil, videoType: self.videoType, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: nil, rejectNeedsUploadVideo: isVideoDataChanged, videoCoverId: coverId, videoDataId: videoId, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher, aiFeedTargetBranchId: nil)
             if campaignDict != nil {
                 TGPostTaskManager.shared.addTask(postModel, type: .campaign)
+            } else if !aiFeedParams.isEmpty {
+                TGPostTaskManager.shared.addTask(postModel, type: .AIFeed)
             } else {
                 TGPostTaskManager.shared.addTask(postModel, type: .normalType)
             }
@@ -1037,6 +1051,8 @@ extension TGReleasePulseViewController {
             let postModel = TGPostModel(feedMark: TGAppUtil.shared.createResourceID(), isHotFeed: false, feedContent: postPulseContent, privacy: privacyType.rawValue, repostModel: repostModel, shareModel: sharedModel, topics: topics, taggedLocation: taggedLocation, phAssets: postPHAssets, postPhoto: postPhotoExtension, video: nil, soundId: nil, videoType: nil, postVideo: nil, isEditFeed: isFromEditFeed, feedId: feedId, images: selectedModelImages, rejectNeedsUploadVideo: nil, videoCoverId: nil, videoDataId: nil, tagUsers: selectedUsers, tagMerchants: selectedMerchants, tagVoucher: tagVoucher, aiFeedTargetBranchId: nil)
             if campaignDict != nil {
                 TGPostTaskManager.shared.addTask(postModel, type: .campaign)
+            } else if !aiFeedParams.isEmpty {
+                TGPostTaskManager.shared.addTask(postModel, type: .AIFeed)
             } else {
                 TGPostTaskManager.shared.addTask(postModel, type: .normalType)
             }
@@ -1187,6 +1203,30 @@ extension TGReleasePulseViewController {
                 self.contentTextView.attributedText = htmlAttributedText
                 self.contentTextView.delegate?.textViewDidChange!(contentTextView)
             })
+        }
+        
+        if let branchId = aiFeedParams["branch_id"] {
+            if let data = "ai_status_steps".localized.data(using: .utf8), let array = try? JSONDecoder().decode([String].self, from: data) {
+                aiStatusMessage = array
+            }
+            
+            loadingView.onCancel = { [weak self] in
+                guard let self = self else { return }
+                self.showImageCollectionView.imageDatas.append(UIImage(named: "IMG_edit_photo_frame"))
+                self.showImageCollectionView.reloadData()
+                self.calculationCollectionViewHeight()
+                
+                self.cancelNetworkRequest()
+                self.loadingView.dismiss()
+            }
+            loadingView.onRetry = { [weak self] in
+                guard let self = self else { return }
+                self.loadingView.restartAnimation()
+                self.getAIFeedContent(params: aiFeedParams)
+            }
+            loadingView.updateAnimationItems(items: aiStatusMessage)
+            loadingView.show()
+            getAIFeedContent(params: aiFeedParams)
         }
     }
     
@@ -1700,6 +1740,80 @@ extension TGReleasePulseViewController {
                 self.present(navigation, animated: true, completion: nil)
             }
         }
+    }
+}
+// MARK: AI Feed
+extension TGReleasePulseViewController {
+    private func cancelNetworkRequest() {
+//        if let networkRequest = networkRequest {
+//            RequestNetworkData.share.cancelCurrentRequest(request: networkRequest)
+//            self.networkRequest = nil
+//        }
+    }
+    
+    private func getAIFeedContent(params: [String: Any]) {
+        TGFeedNetworkManager.shared.getAIFeed(params: params, completion: { [weak self] msg, data in
+            guard let self = self else { return }
+        
+            if let msg = msg {
+                self.showError(message: msg)
+                self.loadingView.updateContent(title: "rl_ai_feed_generate_error_title".localized, desc: "rl_ai_feed_generate_error_desc".localized)
+                self.loadingView.retryButton.makeVisible()
+                return
+            }
+            
+            self.loadingView.dismiss()
+            
+            if let data = data {
+                HTMLManager.shared.removeHtmlTag(htmlString: "\(data.content)\n\n", isPostFeed: true, completion: { [weak self] (content, userIdList, merchantIdList, merchantAppIdList, merchantDealPathList) in
+                    guard let self = self else { return }
+                    var htmlAttributedText = content.attributonString()
+                    htmlAttributedText = HTMLManager.shared.formAttributeText(htmlAttributedText, userIdList, merchantIdList, merchantAppIdList,  merchantDealPathList, self.selectedMerchants)
+                    self.contentTextView.attributedText = htmlAttributedText
+                    self.contentTextView.delegate?.textViewDidChange!(contentTextView)
+                    
+                    for item in data.tagMerchant ?? [] {
+                        let merchantData = TGTaggedBranchData()
+                        merchantData.miniProgramBranchID = item.yippisWantedBranchId
+                        merchantData.branchName = item.branchName
+                        merchantData.yippiUserID = item.merchantYippiUserId
+                        
+                        self.selectedMerchants.append(merchantData)
+                        
+                        // Check if merchant mention already exists in the AI content
+                        let currentText = self.contentTextView.attributedText.string
+                        let merchantName = item.branchName ?? ""
+                        let merchantNameWithAt = "@\(merchantName)"
+                        
+                        if currentText.contains(merchantNameWithAt) {
+                            // Add attributes to the existing merchant mention
+                            if let updatedAttributedText = HTMLManager.shared.addMerchantAttributesToExistingMention(
+                                attributedText: self.contentTextView.attributedText,
+                                merchantName: merchantName,
+                                miniProgramBranchId: item.yippisWantedBranchId,
+                                appId: data.miniProgramAppId,
+                                dealPath: data.miniProgramDealPath
+                            ) {
+                                self.contentTextView.attributedText = updatedAttributedText
+                            } else {
+                                self.insertMerchantTagTextIntoContent(miniProgramBranchId: item.yippisWantedBranchId, branchName: item.branchName, appId: data.miniProgramAppId, dealPath: data.miniProgramDealPath, isPostFeed: true, userId: item.merchantYippiUserId)
+                            }
+                        } else {
+                            self.insertMerchantTagTextIntoContent(miniProgramBranchId: item.yippisWantedBranchId, branchName: item.branchName, appId: data.miniProgramAppId, dealPath: data.miniProgramDealPath, isPostFeed: true, userId: item.merchantYippiUserId)
+                        }
+                    }
+                })
+                
+                if !self.isMiniVideo {
+                    self.selectedModelImages.append(contentsOf: data.images ?? [])
+                    self.setShowImages()
+                }
+                
+                if let tagVoucher = data.tagVoucher, tagVoucher.taggedVoucherId > 0 {
+                    self.updateVoucherContent(tagVoucher: tagVoucher)
+                }
+            }
+        })
     }
 }
 //// MARK: - permission

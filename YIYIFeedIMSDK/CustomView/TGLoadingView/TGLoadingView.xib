@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24127" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TGLoadingView" customModule="YIYIFeedIMSDK" customModuleProvider="target">
+            <connections>
+                <outlet property="cancelButton" destination="fJ9-5K-jcf" id="DRx-o1-fZc"/>
+                <outlet property="contentView" destination="lWS-dh-WjI" id="xkE-sB-gb0"/>
+                <outlet property="descriptionLabel" destination="6sY-yg-0KU" id="2US-C2-apC"/>
+                <outlet property="imageView" destination="38Y-03-1Mj" id="Iqe-bK-rot"/>
+                <outlet property="loadingTextView" destination="uzn-Q4-4Bk" id="y1u-PF-EU3"/>
+                <outlet property="parentView" destination="X0Z-79-UUK" id="wGz-OX-raK"/>
+                <outlet property="retryButton" destination="Lo4-ex-8tw" id="Rbv-uK-Mf9"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="lWS-dh-WjI">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X0Z-79-UUK">
+                    <rect key="frame" x="146.66666666666666" y="321" width="100" height="100"/>
+                    <subviews>
+                        <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_rl_aifeed_error.png" translatesAutoresizingMaskIntoConstraints="NO" id="38Y-03-1Mj">
+                            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="38Y-03-1Mj" firstAttribute="leading" secondItem="X0Z-79-UUK" secondAttribute="leading" id="ASI-YT-4vO"/>
+                        <constraint firstAttribute="width" constant="100" id="Ezj-Of-ly4"/>
+                        <constraint firstAttribute="height" constant="100" id="OTA-Xk-5rk"/>
+                        <constraint firstAttribute="trailing" secondItem="38Y-03-1Mj" secondAttribute="trailing" id="TOz-Mr-98c"/>
+                        <constraint firstItem="38Y-03-1Mj" firstAttribute="top" secondItem="X0Z-79-UUK" secondAttribute="top" id="ZAm-Qd-c2H"/>
+                        <constraint firstAttribute="bottom" secondItem="38Y-03-1Mj" secondAttribute="bottom" id="kfu-iz-IyF"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uzn-Q4-4Bk" customClass="TGLoadingTextView" customModule="YIYIFeedIMSDK" customModuleProvider="target">
+                    <rect key="frame" x="16" y="431" width="361" height="20"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="duF-2n-jNr"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6sY-yg-0KU">
+                    <rect key="frame" x="16" y="466" width="361" height="0.0"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="9Fj-rQ-0cz">
+                    <rect key="frame" x="131.66666666666666" y="496" width="129.99999999999997" height="42"/>
+                    <subviews>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lo4-ex-8tw">
+                            <rect key="frame" x="0.0" y="0.0" width="130" height="42"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="42" id="HVM-co-DHa"/>
+                            </constraints>
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" title="Retry again">
+                                <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="14"/>
+                            </buttonConfiguration>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="8"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                            </userDefinedRuntimeAttributes>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fJ9-5K-jcf">
+                            <rect key="frame" x="0.0" y="0.0" width="130" height="42"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" title="Cancel">
+                                <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="14"/>
+                            </buttonConfiguration>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="8"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                            </userDefinedRuntimeAttributes>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="130" id="LKQ-Mg-UzP"/>
+                        <constraint firstItem="fJ9-5K-jcf" firstAttribute="height" secondItem="Lo4-ex-8tw" secondAttribute="height" id="g4w-FS-cBF"/>
+                    </constraints>
+                </stackView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="od0-9x-ZVw"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="uzn-Q4-4Bk" firstAttribute="leading" secondItem="od0-9x-ZVw" secondAttribute="leading" constant="16" id="3z1-c9-uoL"/>
+                <constraint firstItem="6sY-yg-0KU" firstAttribute="top" secondItem="uzn-Q4-4Bk" secondAttribute="bottom" constant="15" id="6pH-Zi-PBV"/>
+                <constraint firstItem="X0Z-79-UUK" firstAttribute="centerY" secondItem="od0-9x-ZVw" secondAttribute="centerY" constant="-80" id="KZz-nF-Hme"/>
+                <constraint firstItem="9Fj-rQ-0cz" firstAttribute="centerX" secondItem="od0-9x-ZVw" secondAttribute="centerX" id="NUp-41-ebR"/>
+                <constraint firstItem="uzn-Q4-4Bk" firstAttribute="top" secondItem="X0Z-79-UUK" secondAttribute="bottom" constant="10" id="Q0U-gg-zee"/>
+                <constraint firstItem="6sY-yg-0KU" firstAttribute="leading" secondItem="od0-9x-ZVw" secondAttribute="leading" constant="16" id="aNd-uo-DYO"/>
+                <constraint firstItem="od0-9x-ZVw" firstAttribute="trailing" secondItem="uzn-Q4-4Bk" secondAttribute="trailing" constant="16" id="ez0-6y-gnQ"/>
+                <constraint firstItem="od0-9x-ZVw" firstAttribute="trailing" secondItem="6sY-yg-0KU" secondAttribute="trailing" constant="16" id="hFa-nO-jUz"/>
+                <constraint firstItem="9Fj-rQ-0cz" firstAttribute="top" secondItem="6sY-yg-0KU" secondAttribute="bottom" constant="30" id="kcY-JB-pdP"/>
+                <constraint firstItem="X0Z-79-UUK" firstAttribute="centerX" secondItem="od0-9x-ZVw" secondAttribute="centerX" id="zFH-Dh-7N1"/>
+            </constraints>
+            <point key="canvasLocation" x="-1045" y="-75"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="ic_rl_aifeed_error.png" width="75" height="75"/>
+    </resources>
+</document>

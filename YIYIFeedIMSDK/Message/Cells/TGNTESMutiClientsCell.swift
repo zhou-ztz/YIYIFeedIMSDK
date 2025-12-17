@@ -21,7 +21,7 @@ class TGNTESMutiClientsCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
-        setupConstraints()
+        //setupConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -30,9 +30,11 @@ class TGNTESMutiClientsCell: UITableViewCell {
     
     // MARK: - Setup UI
     private func setupUI() {
-        contentView.addSubview(customContentView)
-        selectionStyle = .default
-        indentationWidth = 10
+        self.textLabel?.font = UIFont.systemFont(ofSize: 17)
+        self.textLabel?.textColor = UIColor(hex: 0x333333)
+        //contentView.addSubview(customContentView)
+        selectionStyle = .none
+       // indentationWidth = 10
     }
     
     // MARK: - Setup Constraints
@@ -44,8 +46,28 @@ class TGNTESMutiClientsCell: UITableViewCell {
     }
     
     // MARK: - Public Methods
-    func refreshWidthCilent(_ client: NIMLoginClient) {
-        
+    func refreshWidthCilent(_ client: V2NIMLoginClient) {
+        let name = clientName(clientType: client.type)
+        self.textLabel?.text = String(format: "multiport_logged_in".localized, name)
     }
     
+    func clientName(clientType: V2NIMLoginClientType) -> String {
+        var name: String = ""
+        switch clientType {
+        case .LOGIN_CLIENT_TYPE_ANDROID, .LOGIN_CLIENT_TYPE_HARMONY_OS, .LOGIN_CLIENT_TYPE_IOS, .LOGIN_CLIENT_TYPE_WINPHONE:
+            name = "rw_mobile_version".localized
+            break
+        case .LOGIN_CLIENT_TYPE_PC, .LOGIN_CLIENT_TYPE_MAC_OS:
+            name = "computer_version".localized
+            break
+        case .LOGIN_CLIENT_TYPE_WEB:
+            name = "rw_multiport_screen_label".localized
+            break
+        default:
+            name = "rw_mobile_version".localized
+            break
+        }
+        return name
+    }
+   
 }

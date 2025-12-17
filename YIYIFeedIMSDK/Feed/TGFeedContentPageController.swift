@@ -11,7 +11,10 @@ import Lottie
 public typealias onToolbarUpdate = ((Any) -> Void)
 
 public class TGFeedContentPageController: TGBaseContentPageController {
-    private let animateView = AnimationView()
+    private lazy var animateView: AnimationView = {
+        let view = AnimationView(name: "reaction-love")
+        return view
+    }()
     private(set) var dataModel = FeedListCellModel()
     private var pageHandler = PageHandler()
     let interactiveView = TGFeedDetailInteractiveView()
@@ -348,9 +351,6 @@ public class TGFeedContentPageController: TGBaseContentPageController {
     }
     
     private func executeLike() {
-        let likeAnimation = Animation.named("reaction-love")
-        animateView.animation = likeAnimation
-        
         animateView.isHidden = false
         animateView.play { finished in
             guard finished == true else { return }

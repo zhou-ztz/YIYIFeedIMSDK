@@ -70,6 +70,7 @@ public class RLConversationListViewController: TGViewController {
        // getConversationList()
         tableView.mj_header.beginRefreshing()
         NotificationCenter.default.addObserver(self, selector: #selector(updateWebLoggedInHeader(notice:)), name: Notification.Name(rawValue: "isWebLoggedIn"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshAfterTeenChanged), name: Notification.Name.DashBoard.teenModeChanged, object: nil)
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -84,6 +85,18 @@ public class RLConversationListViewController: TGViewController {
         
         isWebLoggedIn = flag
         tableView.reloadData()
+    }
+    
+    @objc func refreshAfterTeenChanged() {
+        if UserDefaults.teenModeIsEnable {
+            self.show(placeholder: .teenMode)
+        } else {
+            self.removePlaceholderView()
+        }
+    }
+    
+    override func placeholderButtonDidTapped() {
+        RLSDKManager.shared.imDelegate?.didPressTeenModeVC()
     }
     
     @objc func getConversationList() {
@@ -126,8 +139,8 @@ public class RLConversationListViewController: TGViewController {
     }
     
     @objc func isWebLoggedInTapped () {
-//        let vc = TGIMClientsViewController()
-//        self.navigationController?.pushViewController(vc, animated: true)
+        let vc = TGIMClientsViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
 }
