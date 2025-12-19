@@ -248,6 +248,7 @@ public class TGChatViewController: TGViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.view.endEditing(true)
         viewmodel.stop()
         NotificationCenter.default.removeObserver(self, name: Notification.Name.Gift.sendGift, object: nil)
     }

@@ -36,6 +36,7 @@ class RLNIMSDKManager: NSObject, NIMSDKConfigDelegate, V2NIMLoginListener {
         /// 使用 v2 版本
         let v2Option = V2NIMSDKOption()
         v2Option.useV1Login = false
+        v2Option.enableV2CloudConversation = true
         NIMSDK.shared().register(withOptionV2: option, v2Option: v2Option)
     
         

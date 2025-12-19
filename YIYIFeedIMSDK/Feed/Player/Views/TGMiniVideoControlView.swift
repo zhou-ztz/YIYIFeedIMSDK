@@ -577,9 +577,6 @@ class TGMiniVideoControlView: UIView {
     }
     
     private func executeLike() {
-        let likeAnimation = Animation.named("reaction-love")
-        animateView.animation = likeAnimation
-        
         animateView.isHidden = false
         animateView.play { finished in
             guard finished == true else { return }
@@ -806,7 +803,10 @@ class TGMiniVideoControlView: UIView {
         return TGTopicListView()
     }()
     
-    private lazy var animateView = AnimationView()
+    private lazy var animateView: AnimationView = {
+        let view = AnimationView(name: "reaction-love")
+        return view
+    }()
     
     var onToolbarUpdated: onToolbarUpdate?
     private var reactionHandler: TGReactionHandler?

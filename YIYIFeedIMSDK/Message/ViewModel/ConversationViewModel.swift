@@ -65,7 +65,7 @@ class ConversationViewModel: NSObject {
     
     
     func deleteRecentSession(recentSession: V2NIMConversation) {
-        weak var weakSelf = self
+        weak let weakSelf = self
         NIMSDK.shared().v2ConversationService.deleteConversation(recentSession.conversationId, clearMessage: true) {
             if let index = weakSelf?.conversationList.firstIndex(where: { session in
                 session == recentSession

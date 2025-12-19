@@ -43,7 +43,6 @@ class TextMessageCell: BaseMessageCell {
     
     override func setData(model: TGMessageData) {
         super.setData(model: model)
-        let showLeft = !(model.nimMessageModel?.isSelf ?? true)
         var attribute = TGNEEmotionTool.getAttWithStr(
           str: model.nimMessageModel?.text ?? "",
           font: UIFont.systemFont(ofSize: 14),
@@ -51,15 +50,22 @@ class TextMessageCell: BaseMessageCell {
         )
         if let ext = model.nimMessageModel?.serverExtension?.toDictionary {
             if let usernames = ext["usernames"] as? [String], usernames.count > 0 {
-                self.formMentionNamesContent(content: attribute, usernames: usernames) { attributedString in
-                    if let attributedString = attributedString {
-                        attribute = attributedString
-                        attribute = self.formUrlContent(content: attribute)
-                        self.contentLabel.attributedText = attribute
-                        self.textLayout(model: model)
-                    }
-                   
-                }
+                attribute = self.formMentionUsernamesContent(content: attribute, usernames: usernames)
+                attribute = self.formUrlContent(content: attribute)
+                self.contentLabel.attributedText = attribute
+                self.textLayout(model: model)
+//                self.formMentionNamesContent(content: attribute, usernames: usernames) { attributedString in
+//                    if let attributedString = attributedString {
+//                        attribute = attributedString
+//                        attribute = self.formUrlContent(content: attribute)
+//                        self.contentLabel.attributedText = attribute
+//                        DispatchQueue.main.async { [weak self] in
+//                            self?.textLayout(model: model)
+//                        }
+//                        
+//                    }
+//                   
+//                }
                
             }
             
@@ -139,10 +145,10 @@ class TextMessageCell: BaseMessageCell {
     
     
     func formUrlContent(content: NSMutableAttributedString) -> NSMutableAttributedString {
-        var mutableAttributedString = content
+        let mutableAttributedString = content
         
         guard let regex = try? NSRegularExpression(pattern: urlPattern, options: []) else { return mutableAttributedString }
-        let matches = regex.enumerateMatches(in: mutableAttributedString.string,
+        regex.enumerateMatches(in: mutableAttributedString.string,
                 range: NSRange(mutableAttributedString.string.startIndex..<mutableAttributedString.string.endIndex, in: mutableAttributedString.string)
         ) { (matchResult, _, stop) -> () in
             if let match = matchResult {

@@ -18,7 +18,12 @@ class TGTutorialView: UIView {
         return label
     }()
     
-    private let lottieView = AnimationView()
+    lazy var lottieView: AnimationView = {
+        let view = AnimationView(name: "guide")
+        view.loopMode = .loop
+        view.contentMode = .scaleAspectFit
+        return view
+    }()
     
     private lazy var container: UIStackView = {
         let view = UIStackView()
@@ -54,10 +59,9 @@ class TGTutorialView: UIView {
     }
     
     func play() {
-        lottieView.animation = Animation.named("guide")
-        lottieView.loopMode = .loop
-        lottieView.contentMode = .scaleAspectFit
-        lottieView.play()
+        if lottieView.isAnimationPlaying == false {
+            lottieView.play()
+        }
     }
     
     func stop() {

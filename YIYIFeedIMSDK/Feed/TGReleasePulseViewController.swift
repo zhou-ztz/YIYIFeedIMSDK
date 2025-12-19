@@ -206,7 +206,7 @@ public class TGReleasePulseViewController: UIViewController, UITextViewDelegate,
     public var tagVoucher: TagVoucherModel?
     public var isVoucherRemoved: Bool = false
     var isMiniVideo: Bool = false
-    var aiFeedParams: [String: Any] = [:]
+    public var aiFeedParams: [String: Any] = [:]
     let loadingView = TGLoadingView()
     var aiStatusMessage : [String] = []
     

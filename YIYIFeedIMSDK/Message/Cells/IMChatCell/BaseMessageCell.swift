@@ -337,6 +337,26 @@ class BaseMessageCell: UITableViewCell {
     }
     
     
+    func formMentionUsernamesContent(content: NSMutableAttributedString, usernames: [String]) -> NSMutableAttributedString {
+        let mutableAttributedString = content
+        for nickName in usernames {
+            guard let regex = try? NSRegularExpression(pattern: "@\(nickName)", options: []) else {
+                return mutableAttributedString
+            }
+            regex.enumerateMatches(in: mutableAttributedString.string,
+                                                 range: NSRange(mutableAttributedString.string.startIndex..<mutableAttributedString.string.endIndex, in: mutableAttributedString.string)
+            ) { (matchResult, _, stop) -> () in
+                if let match = matchResult {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: TGAppTheme.primaryColor, range: match.range)
+                }
+               
+            }
+        }
+        
+        return mutableAttributedString
+    }
+    
+    
     func formMentionNamesContent(content: NSMutableAttributedString, usernames: [String], completion: @escaping (NSMutableAttributedString?) -> Void ) {
         let mutableAttributedString = content
         let dispatchGroup = DispatchGroup()

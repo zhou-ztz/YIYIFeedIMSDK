@@ -100,10 +100,14 @@ public class RLConversationListViewController: TGViewController {
     }
     
     @objc func getConversationList() {
-        viewmodel.getConversationList { [weak self] list,_  in
+        viewmodel.getConversationList { [weak self] list,error  in
             guard let self = self else {return}
             DispatchQueue.main.async {
                 self.tableView.mj_header.endRefreshing()
+                if let _ = error {
+                    self.tableView.show(placeholderView: .serverError)
+                    return
+                }
                 self.tableView.reloadData()
                 self.tableView.mj_footer.isHidden = false
                 if let list = list, list.count < self.viewmodel.limit {
@@ -116,6 +120,7 @@ public class RLConversationListViewController: TGViewController {
                 } else {
                     self.tableView.mj_footer.endRefreshing()
                 }
+                
             }
             
         }

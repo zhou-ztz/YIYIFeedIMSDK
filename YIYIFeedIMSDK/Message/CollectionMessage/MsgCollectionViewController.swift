@@ -367,8 +367,8 @@ class MsgCollectionViewController: TGViewController {
     @objc func getData() {
         self.collection = nil
         let option = V2NIMCollectionOption()
-        option.limit = Int32(limit)
-        option.collectionType = Int32(self.selectedType.rawValue)
+        option.limit = limit
+        option.collectionType = self.selectedType.rawValue
         NIMSDK.shared().v2MessageService.getCollectionList(by: option) {[weak self] collections in
             guard let self = self else { return }
             self.dataArray.removeAll()
@@ -394,8 +394,8 @@ class MsgCollectionViewController: TGViewController {
     
     @objc func loadMore() {
         let option = V2NIMCollectionOption()
-        option.limit = Int32(limit)
-        option.collectionType = Int32(self.selectedType.rawValue)
+        option.limit = limit
+        option.collectionType = self.selectedType.rawValue
         if let collection = self.collection {
             option.anchorCollection = collection
         }
